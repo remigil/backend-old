@@ -1,6 +1,7 @@
 const response = require("../lib/response");
 const Users = require("../model/user");
 const bcrypt = require("bcrypt");
+const { JWTVerify } = require("../lib/encryption");
 
 exports.basicAuth = (req, res, next) => {
   const authHeader = req.headers["authorization"]?.replace("Basic ", "");
@@ -14,4 +15,13 @@ exports.basicAuth = (req, res, next) => {
   }
 };
 
-exports.jwtAuth = async (req, res, next) => {};
+exports.jwtAuth = async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const verify = JWTVerify(authHeader);
+  if (authHeader && verify.success) {
+    req.auth = verify.data;
+    next();
+  } else {
+    response(res, false, "Not Authorized", null, 401);
+  }
+};

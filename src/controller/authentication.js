@@ -1,7 +1,8 @@
 const response = require("../lib/response");
 const Users = require("../model/user");
 const bcrypt = require("bcrypt");
-const { JWTEncrypt } = require("../lib/encryption");
+const { JWTEncrypt, JWTVerify } = require("../lib/encryption");
+const moment = require("moment");
 
 class Authentication {
   static login = async (req, res) => {
@@ -13,11 +14,10 @@ class Authentication {
     });
     if (user) {
       if (bcrypt.compareSync(req.body.password, user.password)) {
-        const accessToken = JWTEncrypt(
-          JSON.stringify({
-            uid: user.id,
-          })
-        );
+        const accessToken = JWTEncrypt({
+          uid: user.id,
+          timestamp: moment().unix(),
+        });
         return response(res, true, "Login succeed", {
           accessToken,
         });

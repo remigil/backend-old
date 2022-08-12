@@ -52,13 +52,42 @@ exports.JWTEncrypt = (data) => {
   return jsonwebtoken.sign(data, privateKey, {
     issuer: process.env.JWT_ISSUER,
     audience: process.env.JWT_AUDIENCE,
-    algorithm: process.env.JWT_ALGORITHM,
     subject: process.env.JWT_SUBJECT,
     expiresIn: process.env.JWT_EXPIRE,
+    algorithm: process.env.JWT_ALGORITHM,
   });
 };
 
 exports.JWTDecrypt = (data) => {
   const publicKey = fs.readFileSync("./credentials/public.key");
   return jsonwebtoken.decode(data, publicKey);
+};
+
+exports.JWTVerify = (jwt) => {
+  const publicKey = fs.readFileSync("./credentials/public.key");
+  try {
+    if (
+      jsonwebtoken.verify(jwt, publicKey, {
+        issuer: process.env.JWT_ISSUER,
+        audience: process.env.JWT_AUDIENCE,
+        subject: process.env.JWT_SUBJECT,
+        algorithms: [process.env.JWT_ALGORITHM],
+      })
+    ) {
+      return {
+        success: true,
+        msg: "succeed",
+        data: this.JWTDecrypt(jwt),
+      };
+    }
+    return {
+      success: false,
+      msg: "Invalid Token",
+    };
+  } catch (e) {
+    return {
+      success: false,
+      msg: e.message,
+    };
+  }
 };
