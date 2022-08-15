@@ -7,6 +7,11 @@ router.use(
   require("../router/google_maps_api")
 );
 router.use(
+  "/v" + process.env.APP_VERSION + "/user-role",
+  authMiddleware.jwtAuth,
+  require("../router/user_role")
+);
+router.use(
   "/v" + process.env.APP_VERSION + "/auth",
   require("../router/authentication")
 );

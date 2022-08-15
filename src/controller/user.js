@@ -1,15 +1,26 @@
+const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Users = require("../model/user");
+const User = require("../model/user");
+const UserRole = require("../model/user_role");
 
 module.exports = class UserController {
   static getLoggedUser = async (req, res) => {
     response(
       res,
       true,
-      "Success",
-      await Users.findOne({
+      await User.findOne({
+        attributes: {
+          exclude: ["role_id"],
+        },
+        include: {
+          model: UserRole,
+          attributes: ["id", "name"],
+        },
         where: {
-          id: req.auth.uid,
+          id: AESDecrypt(req.auth.uid, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
         },
       })
     );

@@ -1,5 +1,5 @@
 const response = require("../lib/response");
-const Users = require("../model/user");
+const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const { JWTVerify } = require("../lib/encryption");
 

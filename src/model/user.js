@@ -1,15 +1,23 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
+const { StructureTimestamp } = require("../constanta/db_structure");
+const UserRole = require("./user_role");
+const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class Users extends Model {}
-Users.init(
+class User extends Model {}
+User.init(
   {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
     },
     nama: {
       type: Sequelize.STRING(100),
@@ -35,20 +43,11 @@ Users.init(
     email: {
       type: Sequelize.TEXT,
     },
-    created_at: {
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+    role_id: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
-    updated_at: {
-      type: "TIMESTAMP",
-      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-      allowNull: true,
-    },
-    deleted_at: {
-      type: Sequelize.DATE,
-      allowNull: true,
-    },
+    ...StructureTimestamp,
   },
   {
     defaultScope: { where: Sequelize.literal("users.deleted_at is null") },
@@ -57,6 +56,7 @@ Users.init(
         where: Sequelize.literal("users.deleted_at is null"),
       },
     },
+    indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
@@ -65,7 +65,8 @@ Users.init(
     sequelize: db,
   }
 );
+User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Users.sync({ alter: true });
+  User.sync({ alter: true });
 })();
-module.exports = Users;
+module.exports = User;

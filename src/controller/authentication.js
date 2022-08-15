@@ -1,12 +1,12 @@
 const response = require("../lib/response");
-const Users = require("../model/user");
+const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const { JWTEncrypt, JWTVerify } = require("../lib/encryption");
 const moment = require("moment");
 
 class Authentication {
   static login = async (req, res) => {
-    const user = await Users.findOne({
+    const user = await User.findOne({
       where: {
         username: req.body.username,
         status_verifikasi: 1,
