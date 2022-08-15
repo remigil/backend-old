@@ -15,5 +15,9 @@ router.use(
   "/v" + process.env.APP_VERSION + "/auth",
   require("../router/authentication")
 );
-router.use("/v" + process.env.APP_VERSION + "/user", require("../router/user"));
+router.use(
+  "/v" + process.env.APP_VERSION + "/user",
+  authMiddleware.jwtAuth,
+  require("../router/user")
+);
 module.exports = router;
