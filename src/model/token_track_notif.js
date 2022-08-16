@@ -1,13 +1,11 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
-const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
-const UserRole = require("./user_role");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class User extends Model {}
-User.init(
+class TokenTrackNotif extends Model {}
+TokenTrackNotif.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -19,54 +17,42 @@ User.init(
         });
       },
     },
-    nama: {
-      type: Sequelize.STRING(100),
-    },
-    alamat: {
+    token_fcm: {
       type: Sequelize.TEXT,
     },
-    username: {
+    token_track: {
       type: Sequelize.TEXT,
     },
-    password: {
-      type: Sequelize.TEXT,
-      set(value) {
-        this.setDataValue(
-          "password",
-          bcrypt.hashSync(value, bcrypt.genSaltSync(10))
-        );
-      },
-    },
-    status_verifikasi: {
+    user_id: {
       type: Sequelize.INTEGER,
+      allowNull: false,
     },
-    email: {
+    device_user: {
       type: Sequelize.TEXT,
-    },
-    role_id: {
-      type: Sequelize.INTEGER,
       allowNull: false,
     },
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("users.deleted_at is null") },
+    defaultScope: {
+      where: Sequelize.literal("token_track.deleted_at is null"),
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("users.deleted_at is null"),
+        where: Sequelize.literal("token_track.deleted_at is null"),
       },
     },
-    indexes: [{ fields: ["role_id"] }],
+    indexes: [{ fields: ["user_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "user",
-    modelName: "users",
+    tableName: "token_track",
+    modelName: "token_track",
     sequelize: db,
   }
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  User.sync({ alter: true });
+  TokenTrackNotif.sync({ alter: true });
 })();
-module.exports = User;
+module.exports = TokenTrackNotif;
