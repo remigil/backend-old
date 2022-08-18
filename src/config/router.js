@@ -21,8 +21,16 @@ router.use(
   require("../router/user")
 );
 router.use(
-  "/v" + process.env.APP_VERSION + "/track_notif",
+  "/v" + process.env.APP_VERSION + "/track-notif",
   authMiddleware.jwtAuth,
   require("../router/token_track_notif")
+);
+
+//--------tracking
+
+router.use(
+  "/track-location",
+  authMiddleware.jwtAuth,
+  require("../router/tracking/trackg20")
 );
 module.exports = router;

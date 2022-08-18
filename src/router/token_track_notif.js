@@ -3,8 +3,14 @@ const TokenTrackController = require("../controller/token_track_notif");
 const formValidation = require("../middleware/form_validation");
 const router = require("express").Router();
 router.get("/", TokenTrackController.get);
-router.post("/add", formValidation, TokenTrackController.add);
+router.post(
+  "/add",
+  body("nrp_user").notEmpty().isLength({ min: 8 }),
+  formValidation,
+  TokenTrackController.add
+);
 router.put("/edit/:id", TokenTrackController.edit);
+
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),

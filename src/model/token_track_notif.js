@@ -17,6 +17,9 @@ TokenTrackNotif.init(
         });
       },
     },
+    nrp_user: {
+      type: Sequelize.TEXT,
+    },
     token_fcm: {
       type: Sequelize.TEXT,
     },

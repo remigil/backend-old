@@ -4,6 +4,10 @@ const TokenTrackNotif = require("../model/token_track_notif");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
+const conditionalField = {
+  token_fcm: null,
+  token_track: null,
+};
 module.exports = class TokenTrackController {
   static get = async (req, res) => {
     try {
@@ -80,31 +84,30 @@ module.exports = class TokenTrackController {
     try {
       let getTrack = await TokenTrackNotif.findOne({
         where: {
-          device_user: req.body?.device_user,
+          nrp_user: req.body?.nrp_user,
         },
       });
       if (getTrack) {
-        await TokenTrackNotif.update(
-          {
-            token_fcm: req.body?.token_fcm,
-            token_track: req.body?.token_track,
-            user_id: AESDecrypt(req.auth.uid, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          {
-            where: {
-              device_user: req.body?.device_user,
-            },
-            transaction: transaction,
+        let objFieldUpdate = {};
+        Object.keys(conditionalField).forEach((val, key) => {
+          if (
+            req.body[val] != null &&
+            req.body[val] != "" &&
+            req.body[val] != undefined
+          ) {
+            objFieldUpdate[val] = req.body[val];
           }
-        );
+        });
+        await TokenTrackNotif.update(objFieldUpdate, {
+          where: {
+            nrp_user: req.body?.nrp_user,
+          },
+          transaction: transaction,
+        });
       } else {
         await TokenTrackNotif.create(
           {
-            token_fcm: req.body?.token_fcm,
-            token_track: req.body?.token_track,
+            nrp_user: req.body?.nrp_user,
             user_id: AESDecrypt(req.auth.uid, {
               isSafeUrl: true,
               parseMode: "string",
@@ -147,6 +150,41 @@ module.exports = class TokenTrackController {
       response(res, false, "Failed", e.message);
     }
   };
+  // static updateToken = async (req, res) => {
+  //   const transaction = await db.transaction();
+  //   let objFieldUpdate = {};
+  //   Object.keys(conditionalField).forEach((val, key) => {
+  //     if (
+  //       req.body[val] != null &&
+  //       req.body[val] != "" &&
+  //       req.body[val] != undefined
+  //     ) {
+  //       objFieldUpdate[val] = req.body[val];
+  //     }
+  //   });
+  //   try {
+  //     await TokenTrackNotif.update(
+  //       {
+  //         name: req.body?.name,
+  //         description: req.body?.description,
+  //       },
+  //       {
+  //         where: {
+  //           id: AESDecrypt(req.params.id, {
+  //             isSafeUrl: true,
+  //             parseMode: "string",
+  //           }),
+  //         },
+  //         transaction: transaction,
+  //       }
+  //     );
+  //     await transaction.commit();
+  //     response(res, true, "Succeed", null);
+  //   } catch (e) {
+  //     await transaction.rollback();
+  //     response(res, false, "Failed", e.message);
+  //   }
+  // };
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
