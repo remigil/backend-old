@@ -65,7 +65,6 @@ exports.JWTDecrypt = (data) => {
 
 exports.JWTVerify = (jwt) => {
   const publicKey = fs.readFileSync("./credentials/public.key");
-  jwt = jwt.slice(7, jwt.length);
   try {
     if (
       jsonwebtoken.verify(jwt, publicKey, {
