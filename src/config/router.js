@@ -20,11 +20,23 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/user")
 );
+
 router.use(
   "/v" + process.env.APP_VERSION + "/track-notif",
   authMiddleware.jwtAuth,
   require("../router/token_track_notif")
-);
+  );
+  
+  
+  // -------- OPERASI
+  router.use(
+    "/v" + process.env.APP_VERSION + "/vehicle",
+    // authMiddleware.jwtAuth,
+    require("../router/vehicle")
+  );
+
+
+
 
 //--------tracking
 
