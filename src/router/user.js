@@ -8,5 +8,10 @@ router.get(
   authMiddleware.jwtAuth,
   UserController.getLoggedUser
 );
+router.get(
+  "/logged-user-mobile",
+  authMiddleware.jwtAuth,
+  UserController.getLoggedUserMobile
+);
 router.post("/add", form_validation, UserController.add);
 module.exports = router;
