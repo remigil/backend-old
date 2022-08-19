@@ -1,6 +1,8 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const Vehicle = require("../model/vehicle"); 
+const { Op, Sequelize } = require("sequelize");
+const _ = require("lodash");
 const db = require("../config/database");
 module.exports = class VehicleController {
   static get = async (req, res) => {

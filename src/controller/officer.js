@@ -3,6 +3,8 @@ const response = require("../lib/response");
 const Officer = require("../model/officer"); 
 const db = require("../config/database");
 const fs = require('fs');
+const { Op, Sequelize } = require("sequelize");
+const _ = require("lodash");
 const formidable = require('formidable');
 
 module.exports = class OfficerController {
@@ -84,21 +86,15 @@ module.exports = class OfficerController {
     // return response(res, true, "Succeed", req.body.photo_officer); 
     try {
       if (req.body.photo_officer != null) { 
-        const form = new formidable.IncomingForm();
-        form.parse(req, function(err, fields, files){
-      
-            var oldPath = 'public/uploads/officer/';
-            var newPath = path.join(__dirname, 'public/uploads/officer/')
-                    + '/'+files.profilePic.name  
-            var rawData = fs.readFileSync(oldPath)
-          
-            fs.writeFile(newPath, rawData, function(err){
-                if(err) console.log(err)
-                photo_officer = newPath; 
-            });
+        let path = await req.body.photo_officer.filepath;
+        let file = await req.body.photo_officer;
+        let fileName = await file.originalFilename;
+        await fs.renameSync(path, "./public/uploads/officer/" + fileName, function (err) {
+          if (err) throw err;
         });
+        photo_officer = await fileName; 
       }else{
-        photo_officer = null; 
+        photo_officer = await null; 
       }
       await Officer.create(
         {

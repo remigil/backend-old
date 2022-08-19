@@ -44,6 +44,13 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/vip")
 );
+
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/schedule",
+  authMiddleware.jwtAuth,
+  require("../router/schedule")
+);
  
 
 

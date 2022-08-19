@@ -1,10 +1,10 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Vip = require("../model/vip"); 
+const Schedule = require("../model/schedule"); 
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
-module.exports = class VipController {
+module.exports = class ScheduleController {
   static get = async (req, res) => {
     try {
       const {
@@ -17,7 +17,7 @@ module.exports = class VipController {
         order = 0,
         orderDirection = "asc",
       } = req.query;
-      const modelAttr = Object.keys(Vip.getAttributes());
+      const modelAttr = Object.keys(Schedule.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
         getData.limit = length;
@@ -62,14 +62,17 @@ module.exports = class VipController {
           ...filters,
         };
       }
-      const data = await Vip.findAll(getData);
-      const count = await Vip.count({
+      const data = await Schedule.findAll(getData);
+      const count = await Schedule.count({
         where: getData?.where,
       });
+      const adaw = '[{\"latlong\":\"1.2323, -8.239393\"},{\"latlong\":\"2.2323, -9.239393\"}]';
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
         recordsTotal: count,
+        test:  JSON.parse(adaw)
+
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -79,12 +82,15 @@ module.exports = class VipController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vip.create(
+      await Schedule.create(
         {
-          name_vip: req.body.name_vip,
-          country_arrival_vip: req.body?.country_arrival_vip, 
-          position_vip: req.body?.position_vip, 
-          description_vip: req.body?.description_vip, 
+          activity: req.body.activity,
+          id_vip: req.body?.id_vip, 
+          id_team: req.body?.id_team, 
+          date_schedule: req.body?.date_schedule, 
+          start_time: req.body?.start_time, 
+          end_time: req.body?.end_time, 
+          coordinate_schedule: req.body?.coordinate_schedule,  
         },
         { transaction: transaction }
       ); 
@@ -98,12 +104,15 @@ module.exports = class VipController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vip.update(
+      await Schedule.update(
         {
-          name_vip: req.body.name_vip,
-          country_arrival_vip: req.body?.country_arrival_vip, 
-          position_vip: req.body?.position_vip, 
-          description_vip: req.body?.description_vip, 
+          activity: req.body.activity,
+          id_vip: req.body?.id_vip, 
+          id_team: req.body?.id_team, 
+          date_schedule: req.body?.date_schedule, 
+          start_time: req.body?.start_time, 
+          end_time: req.body?.end_time, 
+          coordinate_schedule: req.body?.coordinate_schedule,  
         },
         {
           where: {
@@ -125,7 +134,7 @@ module.exports = class VipController {
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vip.destroy({
+      await Schedule.destroy({
         where: {
           id: AESDecrypt(req.body.id, {
             isSafeUrl: true,
