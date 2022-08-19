@@ -2,7 +2,8 @@ const { body } = require("express-validator");
 const UserRoleController = require("../controller/user_role");
 const formValidation = require("../middleware/form_validation");
 const router = require("express").Router();
-router.get("/", UserRoleController.get);
+const authMiddleware = require("../middleware/authentication");
+router.get("/", authMiddleware.jwtAuth, UserRoleController.get);
 router.post(
   "/add",
   body("name").notEmpty().isLength({ min: 3 }),
