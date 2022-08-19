@@ -70,4 +70,10 @@ router.use(
   require("../router/polres")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/account",
+  authMiddleware.jwtAuth,
+  require("../router/account")
+);
+
 module.exports = router;
