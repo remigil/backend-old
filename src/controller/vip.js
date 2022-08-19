@@ -1,11 +1,8 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Officer = require("../model/officer"); 
+const Vip = require("../model/vip"); 
 const db = require("../config/database");
-const fs = require('fs');
-const formidable = require('formidable');
-
-module.exports = class OfficerController {
+module.exports = class VipController {
   static get = async (req, res) => {
     try {
       const {
@@ -18,7 +15,7 @@ module.exports = class OfficerController {
         order = 0,
         orderDirection = "asc",
       } = req.query;
-      const modelAttr = Object.keys(Officer.getAttributes());
+      const modelAttr = Object.keys(Vip.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
         getData.limit = length;
@@ -63,8 +60,8 @@ module.exports = class OfficerController {
           ...filters,
         };
       }
-      const data = await Officer.findAll(getData);
-      const count = await Officer.count({
+      const data = await Vip.findAll(getData);
+      const count = await Vip.count({
         where: getData?.where,
       });
       response(res, true, "Succeed", {
@@ -79,68 +76,18 @@ module.exports = class OfficerController {
   }; 
   static add = async (req, res) => {
     const transaction = await db.transaction();
-    let inputs = {};
-    var photo_officer = ''; 
-    // return response(res, true, "Succeed", req.body.photo_officer); 
     try {
-      if (req.body.photo_officer != null) { 
-        const form = new formidable.IncomingForm();
-        form.parse(req, function(err, fields, files){
-      
-            var oldPath = 'public/uploads/officer/';
-            var newPath = path.join(__dirname, 'public/uploads/officer/')
-                    + '/'+files.profilePic.name  
-            var rawData = fs.readFileSync(oldPath)
-          
-            fs.writeFile(newPath, rawData, function(err){
-                if(err) console.log(err)
-                photo_officer = newPath; 
-            });
-        });
-      }else{
-        photo_officer = null; 
-      }
-      await Officer.create(
+      await Vip.create(
         {
-          name_officer: req.body.name_officer,
-          photo_officer: photo_officer,
-          nrp_officer: req.body?.nrp_officer,
-          rank_officer: req.body?.rank_officer, 
-          structural_officer: req.body?.structural_officer, 
-          pam_officer: req.body?.pam_officer, 
-          phone_officer: req.body?.phone_officer, 
-          status_officer: req.body?.status_officer,  
+          name_vip: req.body.name_vip,
+          country_arrival_vip: req.body?.country_arrival_vip, 
+          position_vip: req.body?.position_vip, 
+          description_vip: req.body?.description_vip, 
         },
         { transaction: transaction }
       ); 
       await transaction.commit();
       response(res, true, "Succeed", null);
-      // await Object.values(transaction).forEach((val) => {
-      //   if (req.files != null && req.files[val.field] != null) {
-      //     let file = req.files[val.field];
-      //     let fileName = file.name;
-      //     let extension = fileName.split('.');
-      //     let path = process.env.APP_DEFAULT_PHOTO_PATH;
-      //     switch (val.field) {
-      //         case 'photo_officer': {
-      //             path = process.env.APP_OFFICER_PHOTO_PATH;
-      //             break;
-      //         }
-      //     }
-           
-      //     file.mv(path + fileName);
-      //     fs.rename(path + fileName, path + fileName, () => { });
-      //     inputs[val.fieldName] = fileName;
-      //   }
-      //   else if (req.body[val.field] != null) {
-      //     inputs[val.fieldName] = req.body[val.field];
-      //   }
-      //   else {
-      //       inputs[val.fieldName] = null;
-      //   }
-      // });
-      // await inputs.commit();
-      // response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -149,15 +96,12 @@ module.exports = class OfficerController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Officer.update(
+      await Vip.update(
         {
-          name_officer: req.body.name_officer,
-          nrp_officer: req.body?.nrp_officer,
-          rank_officer: req.body?.rank_officer, 
-          structural_officer: req.body?.structural_officer, 
-          pam_officer: req.body?.pam_officer, 
-          phone_officer: req.body?.phone_officer, 
-          status_officer: req.body?.status_officer,  
+          name_vip: req.body.name_vip,
+          country_arrival_vip: req.body?.country_arrival_vip, 
+          position_vip: req.body?.position_vip, 
+          description_vip: req.body?.description_vip, 
         },
         {
           where: {
@@ -179,7 +123,7 @@ module.exports = class OfficerController {
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Officer.destroy({
+      await Vip.destroy({
         where: {
           id: AESDecrypt(req.body.id, {
             isSafeUrl: true,

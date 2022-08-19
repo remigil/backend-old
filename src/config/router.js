@@ -39,6 +39,11 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/officer")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/vip",
+  authMiddleware.jwtAuth,
+  require("../router/vip")
+);
  
 
 
