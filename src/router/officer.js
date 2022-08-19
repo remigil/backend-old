@@ -1,20 +1,20 @@
 const router = require("express").Router();
 const { body } = require("express-validator");
-const VehicleController = require("../controller/vehicle");  
+const OfficerController = require("../controller/officer");  
 const formValidation = require("../middleware/form_validation");
-router.get("/", VehicleController.get);
+router.get("/", OfficerController.get);
 router.post(
   "/add",
-  body("no_vehicle").notEmpty().isLength({ min: 3 }),
+  body("name_officer").notEmpty().isLength({ min: 3 }),
   formValidation,
-  VehicleController.add
+  OfficerController.add
 );
-router.put("/edit/:id", VehicleController.edit);
+router.put("/edit/:id", OfficerController.edit);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  VehicleController.delete
+  OfficerController.delete
 );
 
 module.exports = router;

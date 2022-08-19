@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router = require("express").Router(); 
 const authMiddleware = require("../middleware/authentication");
 require("dotenv").config();
 router.use(
@@ -28,12 +28,19 @@ router.use(
   );
   
   
-  // -------- OPERASI
-  router.use(
-    "/v" + process.env.APP_VERSION + "/vehicle",
-    // authMiddleware.jwtAuth,
-    require("../router/vehicle")
-  );
+// -------- OPERASI 
+router.use(
+  "/v" + process.env.APP_VERSION + "/vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/vehicle")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/officer",
+  authMiddleware.jwtAuth,
+  require("../router/officer")
+);
+ 
+
 
 
 

@@ -5,8 +5,8 @@ const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class Vehicle extends Model {}
-Vehicle.init(
+class Officer extends Model {}
+Officer.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -18,38 +18,50 @@ Vehicle.init(
         });
       }, 
     },
-    no_vehicle: {
-      type: Sequelize.STRING(100),
+    name_officer: {
+      type: Sequelize.STRING(255),
+    }, 
+    photo_officer: {
+      type: Sequelize.TEXT,
     },
-    type_vehicle: {
+    nrp_officer: {
       type: Sequelize.STRING(255),
     },
-    brand_vehicle: {
+    rank_officer: {
       type: Sequelize.STRING(255),
     },  
-    ownership_vehicle: {
+    structural_officer: {
       type: Sequelize.STRING(255),
+    },  
+    pam_officer: {
+      type: Sequelize.STRING(255), 
+    },  
+    phone_officer: {
+      type: Sequelize.STRING(50),
+    },  
+    status_officer: {
+      type: Sequelize.INTEGER,
     }, 
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("vehicle.deleted_at is null") },
+    defaultScope: { where: Sequelize.literal("officer.deleted_at is null") },
     scopes: {
       deleted: {
-        where: Sequelize.literal("vehicle.deleted_at is null"),
+        where: Sequelize.literal("officer.deleted_at is null"),
       },
     },
     // indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "vehicle",
-    modelName: "vehicle",
+    tableName: "officer",
+    modelName: "officer",
     sequelize: db,
   }
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Vehicle.sync({ alter: true });
+  Officer.sync({ alter: true });
 })();
-module.exports = Vehicle;
+module.exports = Officer;

@@ -1,8 +1,9 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Vehicle = require("../model/vehicle"); 
+const Officer = require("../model/officer"); 
 const db = require("../config/database");
-module.exports = class VehicleController {
+const fs = require('fs');
+module.exports = class OfficerController {
   static get = async (req, res) => {
     try {
       const {
@@ -15,7 +16,7 @@ module.exports = class VehicleController {
         order = 0,
         orderDirection = "asc",
       } = req.query;
-      const modelAttr = Object.keys(Vehicle.getAttributes());
+      const modelAttr = Object.keys(Officer.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
         getData.limit = length;
@@ -60,8 +61,8 @@ module.exports = class VehicleController {
           ...filters,
         };
       }
-      const data = await Vehicle.findAll(getData);
-      const count = await Vehicle.count({
+      const data = await Officer.findAll(getData);
+      const count = await Officer.count({
         where: getData?.where,
       });
       response(res, true, "Succeed", {
@@ -76,18 +77,63 @@ module.exports = class VehicleController {
   }; 
   static add = async (req, res) => {
     const transaction = await db.transaction();
+    let inputs = {};
+    var photo_officer = '';
+    return response(res, true, "Succeed", req.files);
     try {
-      await Vehicle.create(
+      if (req.files.photo_officer != null) { 
+          let file = req.files.photo_officer;
+          let fileName = file.name;
+          let extension = fileName.split('.');
+          let path = process.env.APP_OFFICER_PHOTO_PATH; 
+           
+          file.mv(path + fileName);
+          fs.rename(path + fileName, path + fileName, () => { });
+          photo_officer = fileName; 
+      }else{
+        photo_officer = null; 
+      }
+      await Officer.create(
         {
-          no_vehicle: req.body.no_vehicle,
-          type_vehicle: req.body?.type_vehicle,
-          brand_vehicle: req.body?.brand_vehicle, 
-          ownership_vehicle: req.body?.ownership_vehicle, 
+          name_officer: req.body.name_officer,
+          photo_officer: photo_officer,
+          nrp_officer: req.body?.nrp_officer,
+          rank_officer: req.body?.rank_officer, 
+          structural_officer: req.body?.structural_officer, 
+          pam_officer: req.body?.pam_officer, 
+          phone_officer: req.body?.phone_officer, 
+          status_officer: req.body?.status_officer,  
         },
         { transaction: transaction }
       ); 
       await transaction.commit();
       response(res, true, "Succeed", null);
+      // await Object.values(transaction).forEach((val) => {
+      //   if (req.files != null && req.files[val.field] != null) {
+      //     let file = req.files[val.field];
+      //     let fileName = file.name;
+      //     let extension = fileName.split('.');
+      //     let path = process.env.APP_DEFAULT_PHOTO_PATH;
+      //     switch (val.field) {
+      //         case 'photo_officer': {
+      //             path = process.env.APP_OFFICER_PHOTO_PATH;
+      //             break;
+      //         }
+      //     }
+           
+      //     file.mv(path + fileName);
+      //     fs.rename(path + fileName, path + fileName, () => { });
+      //     inputs[val.fieldName] = fileName;
+      //   }
+      //   else if (req.body[val.field] != null) {
+      //     inputs[val.fieldName] = req.body[val.field];
+      //   }
+      //   else {
+      //       inputs[val.fieldName] = null;
+      //   }
+      // });
+      // await inputs.commit();
+      // response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -96,12 +142,15 @@ module.exports = class VehicleController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vehicle.update(
+      await Officer.update(
         {
-          no_vehicle: req.body.no_vehicle,
-          type_vehicle: req.body?.type_vehicle,
-          brand_vehicle: req.body?.brand_vehicle, 
-          ownership_vehicle: req.body?.ownership_vehicle, 
+          name_officer: req.body.name_officer,
+          nrp_officer: req.body?.nrp_officer,
+          rank_officer: req.body?.rank_officer, 
+          structural_officer: req.body?.structural_officer, 
+          pam_officer: req.body?.pam_officer, 
+          phone_officer: req.body?.phone_officer, 
+          status_officer: req.body?.status_officer,  
         },
         {
           where: {
@@ -123,7 +172,7 @@ module.exports = class VehicleController {
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vehicle.destroy({
+      await Officer.destroy({
         where: {
           id: AESDecrypt(req.body.id, {
             isSafeUrl: true,

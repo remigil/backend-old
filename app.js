@@ -7,6 +7,7 @@ const moment = require("moment");
 const path = require("path");
 const http = require("http");
 const socketInstace = require("./src/config/socketConnetion");
+// const fileupload = require('express-fileupload');
 const server = http.createServer(app);
 dotenv.config();
 const port = process.env.APP_PORT;
@@ -23,6 +24,7 @@ socketInstace(server);
 
 middlewareGlobal.beforeRouter(app);
 app.use(router);
+// app.use(fileupload());
 middlewareGlobal.afterRouter(app);
 server.listen(port, () => {
   console.log("[SERVER]", `Start at ${moment()} on Port ${port}`);
