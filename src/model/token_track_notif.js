@@ -26,9 +26,9 @@ TokenTrackNotif.init(
     token_track: {
       type: Sequelize.TEXT,
     },
-    user_id: {
+    team_id: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      // allowNull: false,
     },
     device_user: {
       type: Sequelize.TEXT,
@@ -45,7 +45,7 @@ TokenTrackNotif.init(
         where: Sequelize.literal("token_track.deleted_at is null"),
       },
     },
-    indexes: [{ fields: ["user_id"] }],
+    indexes: [{ fields: ["team_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
