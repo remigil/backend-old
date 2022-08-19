@@ -110,33 +110,7 @@ module.exports = class OfficerController {
         { transaction: transaction }
       ); 
       await transaction.commit();
-      response(res, true, "Succeed", null);
-      // await Object.values(transaction).forEach((val) => {
-      //   if (req.files != null && req.files[val.field] != null) {
-      //     let file = req.files[val.field];
-      //     let fileName = file.name;
-      //     let extension = fileName.split('.');
-      //     let path = process.env.APP_DEFAULT_PHOTO_PATH;
-      //     switch (val.field) {
-      //         case 'photo_officer': {
-      //             path = process.env.APP_OFFICER_PHOTO_PATH;
-      //             break;
-      //         }
-      //     }
-           
-      //     file.mv(path + fileName);
-      //     fs.rename(path + fileName, path + fileName, () => { });
-      //     inputs[val.fieldName] = fileName;
-      //   }
-      //   else if (req.body[val.field] != null) {
-      //     inputs[val.fieldName] = req.body[val.field];
-      //   }
-      //   else {
-      //       inputs[val.fieldName] = null;
-      //   }
-      // });
-      // await inputs.commit();
-      // response(res, true, "Succeed", null);
+      response(res, true, "Succeed", null); 
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -145,9 +119,21 @@ module.exports = class OfficerController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
+      if (req.body.photo_officer != null) { 
+        let path = await req.body.photo_officer.filepath;
+        let file = await req.body.photo_officer;
+        let fileName = await file.originalFilename;
+        await fs.renameSync(path, "./public/uploads/officer/" + fileName, function (err) {
+          if (err) throw err;
+        });
+        photo_officer = await fileName; 
+      }else{
+        photo_officer = await null; 
+      }
       await Officer.update(
         {
           name_officer: req.body.name_officer,
+          photo_officer: photo_officer,
           nrp_officer: req.body?.nrp_officer,
           rank_officer: req.body?.rank_officer, 
           structural_officer: req.body?.structural_officer, 
