@@ -9,8 +9,8 @@ const field_account = {
   polres_id: null,
   name_account: null,
   leader_team: null,
-  no_vehicle: null,
-  vip: null,
+  id_vehicle: null,
+  id_vip: null,
   id_account: null,
   password: null,
 };
@@ -79,20 +79,30 @@ module.exports = class AccountController {
       var data = [];
       var dummyData = {};
       for (let i = 0; i < dataRes.length; i++) {
-        // const dataVehicle = await Vehicle.findOne({
-        //   where: {
-        //     id: AESDecrypt(dataRes[i]["id_vehicle"], {
-        //       isSafeUrl: true,
-        //       parseMode: "string",
-        //     }),
-        //   },
-        // });
+        const dataVehicle = await Vehicle.findOne({
+          where: {
+            id: AESDecrypt(dataRes[i]["id_vehicle"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
+        const dataVip = await Vip.findOne({
+          where: {
+            id: AESDecrypt(dataRes[i]["id_vip"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
         dummyData["id"] = dataRes[i]["id"];
         dummyData["polres_id"] = dataRes[i]["polres_id"];
         dummyData["name_account"] = dataRes[i]["name_account"];
         dummyData["leader_team"] = dataRes[i]["leader_team"];
         dummyData["id_vehicle"] = dataRes[i]["id_vehicle"];
+        dummyData["no_vehicle"] = dataVehicle["no_vehicle"];
         dummyData["id_vip"] = dataRes[i]["id_vip"];
+        dummyData["vip"] = dataVip["name_vip"];
         dummyData["password"] = dataRes[i]["password"];
         dummyData["id_account"] = dataRes[i]["id_account"];
         data.push(dummyData);
