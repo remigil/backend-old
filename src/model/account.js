@@ -19,7 +19,7 @@ Account.init(
       },
     },
     polres_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     name_account: {

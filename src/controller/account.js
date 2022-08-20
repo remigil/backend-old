@@ -3,6 +3,7 @@ const response = require("../lib/response");
 const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const Vip = require("../model/vip");
+const Polres = require("../model/polres");
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const field_account = {
@@ -95,8 +96,18 @@ module.exports = class AccountController {
             }),
           },
         });
+        const dataPolres = await Polres.findOne({
+          where: {
+            id: AESDecrypt(dataRes[i]["polres_id"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
+        dummyData = {};
         dummyData["id"] = dataRes[i]["id"];
         dummyData["polres_id"] = dataRes[i]["polres_id"];
+        dummyData["name_polres"] = dataPolres["name_polres"];
         dummyData["name_account"] = dataRes[i]["name_account"];
         dummyData["leader_team"] = dataRes[i]["leader_team"];
         dummyData["id_vehicle"] = dataRes[i]["id_vehicle"];
@@ -118,7 +129,7 @@ module.exports = class AccountController {
   };
   static getId = async (req, res) => {
     try {
-      const data = await Account.findOne({
+      const dataRes = await Account.findOne({
         where: {
           id: AESDecrypt(req.params.id, {
             isSafeUrl: true,
@@ -126,6 +137,45 @@ module.exports = class AccountController {
           }),
         },
       });
+
+      var data = {};
+      const dataVehicle = await Vehicle.findOne({
+        where: {
+          id: AESDecrypt(dataRes["id_vehicle"], {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      const dataVip = await Vip.findOne({
+        where: {
+          id: AESDecrypt(dataRes["id_vip"], {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      const dataPolres = await Polres.findOne({
+        where: {
+          id: AESDecrypt(dataRes["polres_id"], {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+
+      data["id"] = dataRes["id"];
+      data["polres_id"] = dataRes["polres_id"];
+      data["name_polres"] = dataPolres["name_polres"];
+      data["name_account"] = dataRes["name_account"];
+      data["leader_team"] = dataRes["leader_team"];
+      data["id_vehicle"] = dataRes["id_vehicle"];
+      data["no_vehicle"] = dataVehicle["no_vehicle"];
+      data["id_vip"] = dataRes["id_vip"];
+      data["vip"] = dataVip["name_vip"];
+      data["password"] = dataRes["password"];
+      data["id_account"] = dataRes["id_account"];
+
       response(res, true, "Succeed", {
         data,
       });
