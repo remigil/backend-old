@@ -44,10 +44,11 @@ const socketInstace = (server) => {
     }
   });
   io.on("connection", function (socket) {
-    io.emit(
-      "connected",
-      `Welcome to web socket tracking and notification, your id socket is ${socket.id}`
-    );
+    // io.emit(
+    //   "connected",
+    //   `Welcome to web socket tracking and notification, your id socket is ${socket.id}`
+    // );
+    io.sockets.emit("from server", "HELLO!" + " " + socket.id);
     socket.on("message", function (message) {
       io.emit("message", message);
     });
