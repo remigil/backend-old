@@ -53,7 +53,6 @@ module.exports = class UserController {
           c.status_officer,
           b.name_account,
           b.leader_team,
-          b.vip,
           b.id_account
         FROM token_track a
         INNER JOIN account b ON a.team_id=b.id
