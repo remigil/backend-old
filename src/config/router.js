@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router = require("express").Router(); 
 const authMiddleware = require("../middleware/authentication");
 require("dotenv").config();
 router.use(
@@ -25,9 +25,10 @@ router.use(
   "/v" + process.env.APP_VERSION + "/track-notif",
   authMiddleware.jwtAuth,
   require("../router/token_track_notif")
-);
-
-// -------- OPERASI
+  );
+  
+  
+// -------- OPERASI 
 router.use(
   "/v" + process.env.APP_VERSION + "/vehicle",
   authMiddleware.jwtAuth,
@@ -44,11 +45,17 @@ router.use(
   require("../router/vip")
 );
 
+
 router.use(
   "/v" + process.env.APP_VERSION + "/schedule",
   authMiddleware.jwtAuth,
   require("../router/schedule")
 );
+ 
+
+
+
+
 
 //--------tracking
 
@@ -57,23 +64,4 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/tracking/trackg20")
 );
-
-// -------- polda
-router.use(
-  "/v" + process.env.APP_VERSION + "/polda",
-  authMiddleware.jwtAuth,
-  require("../router/polda")
-);
-router.use(
-  "/v" + process.env.APP_VERSION + "/polres",
-  authMiddleware.jwtAuth,
-  require("../router/polres")
-);
-
-router.use(
-  "/v" + process.env.APP_VERSION + "/account",
-  authMiddleware.jwtAuth,
-  require("../router/account")
-);
-
 module.exports = router;
