@@ -3,6 +3,10 @@ const { body } = require("express-validator");
 const OfficerController = require("../controller/officer");  
 const formValidation = require("../middleware/form_validation");
 router.get("/", OfficerController.get);
+router.get(
+  "/getId/:id",  
+  OfficerController.getId
+);
 router.post(
   "/add",
   body("name_officer").notEmpty().isLength({ min: 3 }),

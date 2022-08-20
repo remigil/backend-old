@@ -76,6 +76,25 @@ module.exports = class VehicleController {
     }
  
   }; 
+
+  static getId = async (req, res) => {
+    try {
+      const data = await Vehicle.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data, 
+      });
+    } catch (e) { 
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {

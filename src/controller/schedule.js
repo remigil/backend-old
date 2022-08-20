@@ -79,6 +79,25 @@ module.exports = class ScheduleController {
     }
  
   }; 
+
+  static getId = async (req, res) => {
+    try {
+      const data = await Schedule.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data, 
+      });
+    } catch (e) { 
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {

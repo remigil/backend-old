@@ -3,6 +3,10 @@ const { body } = require("express-validator");
 const ScheduleController = require("../controller/schedule");  
 const formValidation = require("../middleware/form_validation");
 router.get("/", ScheduleController.get);
+router.get(
+  "/getId/:id",  
+  ScheduleController.getId
+);
 router.post(
   "/add",
   body("activity").notEmpty().isLength({ min: 3 }),

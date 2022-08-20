@@ -79,6 +79,25 @@ module.exports = class OfficerController {
     }
  
   }; 
+
+  static getId = async (req, res) => {
+    try {
+      const data = await Officer.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data, 
+      });
+    } catch (e) { 
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     let inputs = {};
@@ -118,6 +137,7 @@ module.exports = class OfficerController {
   };
   static edit = async (req, res) => {
     const transaction = await db.transaction();
+    var photo_officer = ''; 
     try {
       if (req.body.photo_officer != null) { 
         let path = await req.body.photo_officer.filepath;

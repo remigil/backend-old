@@ -3,6 +3,10 @@ const { body } = require("express-validator");
 const VipController = require("../controller/vip");  
 const formValidation = require("../middleware/form_validation");
 router.get("/", VipController.get);
+router.get(
+  "/getId/:id",  
+  VipController.getId
+);
 router.post(
   "/add",
   body("name_vip").notEmpty().isLength({ min: 3 }),
