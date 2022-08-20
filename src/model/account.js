@@ -19,7 +19,7 @@ Account.init(
       },
     },
     polres_id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     name_account: {
@@ -49,7 +49,7 @@ Account.init(
     ...StructureTimestamp,
   },
   {
-    indexes: [{ fields: ["polres_id", "id_vehicle", "id_vip"] }],
+    // indexes: [{ fields: ["polres_id"] }],
     defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
     scopes: {
       deleted: {
