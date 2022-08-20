@@ -3,6 +3,7 @@ const { scope } = require("../model/token_track_notif");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
 const moment = require("moment");
+const LocationTrackController = require("../controller/track/locationTrack");
 const socketInstace = (server) => {
   const io = require("socket.io")(server, {
     cors: {},
@@ -43,18 +44,17 @@ const socketInstace = (server) => {
       next(new Error("Authentication error"));
     }
   });
-  io.on("connection", function (socket) {
-    // io.emit(
-    //   "connected",
-    //   `Welcome to web socket tracking and notification, your id socket is ${socket.id}`
-    // );
-    io.sockets.emit("from server", "HELLO!" + " " + socket.id);
+  io.on("connection", async (socket) => {
+    // let getData = await LocationTrackController.sendToSocket();
+    // io.sockets.emit("from server", getData);
     socket.on("message", function (message) {
       io.emit("message", message);
     });
     socket.on("trackingUser", async function (coordinate) {
       const { uid } = JWTVerify(socket.handshake.query.token).data;
-      await TrackG20.create({
+      console.log({ uid });
+      console.log(coordinate);
+      let sendTracking = await TrackG20.create({
         id_user: AESDecrypt(uid, {
           isSafeUrl: true,
           parseMode: "string",
@@ -63,7 +63,7 @@ const socketInstace = (server) => {
         longitude: coordinate.lon,
         date: moment(),
       });
-      //   io.to(socket.id).emit("message", check);
+      io.emit("sendToAdmin", await LocationTrackController.sendToSocket());
     });
   });
 };
