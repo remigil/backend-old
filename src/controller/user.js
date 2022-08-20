@@ -53,7 +53,6 @@ module.exports = class UserController {
           c.status_officer,
           b.name_account,
           b.leader_team,
-          b.no_vehicle,
           b.vip,
           b.id_account
         FROM token_track a

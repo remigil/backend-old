@@ -5,19 +5,17 @@ const { TrackG20 } = require("../model/tracking/g20");
 const moment = require("moment");
 const socketInstace = (server) => {
   const io = require("socket.io")(server, {
-    cors: {
-      origin: ["http://localhost:8450"],
-      credentials: true,
-    },
+    cors: {},
   }).use(async function (socket, next) {
     // authenticate jwt for socket connection
+
     try {
       if (
         socket.handshake.query &&
         socket.handshake.query.token &&
         socket.handshake.query.user_nrp
       ) {
-        const jwtCheck = JWTVerify("Bearer " + socket.handshake.query.token);
+        const jwtCheck = JWTVerify(socket.handshake.query.token);
 
         await TokenTrackNotif.update(
           {
@@ -25,7 +23,7 @@ const socketInstace = (server) => {
           },
           {
             where: {
-              user_id: AESDecrypt(jwtCheck.data.uid, {
+              team_id: AESDecrypt(jwtCheck.data.uid, {
                 isSafeUrl: true,
                 parseMode: "string",
               }),
@@ -54,7 +52,7 @@ const socketInstace = (server) => {
       io.emit("message", message);
     });
     socket.on("trackingUser", async function (coordinate) {
-      const { uid } = JWTVerify("Bearer " + socket.handshake.query.token).data;
+      const { uid } = JWTVerify(socket.handshake.query.token).data;
       await TrackG20.create({
         id_user: AESDecrypt(uid, {
           isSafeUrl: true,
