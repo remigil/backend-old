@@ -28,10 +28,10 @@ Account.init(
     leader_team: {
       type: Sequelize.STRING(200),
     },
-    no_vehicle: {
-      type: Sequelize.STRING(200),
+    id_vehicle: {
+      type: Sequelize.TEXT,
     },
-    vip: {
+    id_vip: {
       type: Sequelize.TEXT,
     },
     password: {

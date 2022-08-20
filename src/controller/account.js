@@ -1,6 +1,8 @@
 const db = require("../config/database");
 const response = require("../lib/response");
 const Account = require("../model/account");
+const Vehicle = require("../model/vehicle");
+const Vip = require("../model/vip");
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const field_account = {
@@ -70,14 +72,52 @@ module.exports = class AccountController {
           ...filters,
         };
       }
-      const data = await Account.findAll(getDataRules);
       const count = await Account.count({
         where: getDataRules?.where,
       });
+      const dataRes = await Account.findAll(getDataRules);
+      var data = [];
+      var dummyData = {};
+      for (let i = 0; i < dataRes.length; i++) {
+        // const dataVehicle = await Vehicle.findOne({
+        //   where: {
+        //     id: AESDecrypt(dataRes[i]["id_vehicle"], {
+        //       isSafeUrl: true,
+        //       parseMode: "string",
+        //     }),
+        //   },
+        // });
+        dummyData["id"] = dataRes[i]["id"];
+        dummyData["polres_id"] = dataRes[i]["polres_id"];
+        dummyData["name_account"] = dataRes[i]["name_account"];
+        dummyData["leader_team"] = dataRes[i]["leader_team"];
+        dummyData["id_vehicle"] = dataRes[i]["id_vehicle"];
+        dummyData["id_vip"] = dataRes[i]["id_vip"];
+        dummyData["password"] = dataRes[i]["password"];
+        dummyData["id_account"] = dataRes[i]["id_account"];
+        data.push(dummyData);
+      }
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
         recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getId = async (req, res) => {
+    try {
+      const data = await Account.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
