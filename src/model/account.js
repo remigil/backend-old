@@ -49,7 +49,7 @@ Account.init(
     ...StructureTimestamp,
   },
   {
-    indexes: [{ fields: ["polres_id"] }],
+    indexes: [{ fields: ["polres_id", "id_vehicle", "id_vip"] }],
     defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
     scopes: {
       deleted: {
