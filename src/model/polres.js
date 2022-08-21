@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Account = require("./account");
 const Model = Sequelize.Model;
 
 class Polres extends Model {}
@@ -56,6 +57,7 @@ Polres.init(
     sequelize: db,
   }
 );
+// Polres.hasMany(Account, { foreignKey: "id" });
 (async () => {
   Polres.sync({ alter: true });
 })();

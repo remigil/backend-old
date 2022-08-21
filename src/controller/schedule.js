@@ -1,6 +1,6 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Schedule = require("../model/schedule"); 
+const Schedule = require("../model/schedule");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
@@ -66,19 +66,15 @@ module.exports = class ScheduleController {
       const count = await Schedule.count({
         where: getData?.where,
       });
-      const adaw = '[{\"latlong\":\"1.2323, -8.239393\"},{\"latlong\":\"2.2323, -9.239393\"}]';
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
         recordsTotal: count,
-        test:  JSON.parse(adaw)
-
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
- 
-  }; 
+  };
 
   static getId = async (req, res) => {
     try {
@@ -91,9 +87,9 @@ module.exports = class ScheduleController {
         },
       });
       response(res, true, "Succeed", {
-        data, 
+        data,
       });
-    } catch (e) { 
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };
@@ -104,15 +100,15 @@ module.exports = class ScheduleController {
       await Schedule.create(
         {
           activity: req.body.activity,
-          id_vip: req.body?.id_vip, 
-          id_team: req.body?.id_team, 
-          date_schedule: req.body?.date_schedule, 
-          start_time: req.body?.start_time, 
-          end_time: req.body?.end_time, 
-          coordinate_schedule: req.body?.coordinate_schedule,  
+          id_vip: req.body?.id_vip,
+          id_team: req.body?.id_team,
+          date_schedule: req.body?.date_schedule,
+          start_time: req.body?.start_time,
+          end_time: req.body?.end_time,
+          coordinate_schedule: req.body?.coordinate_schedule,
         },
         { transaction: transaction }
-      ); 
+      );
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -126,12 +122,12 @@ module.exports = class ScheduleController {
       await Schedule.update(
         {
           activity: req.body.activity,
-          id_vip: req.body?.id_vip, 
-          id_team: req.body?.id_team, 
-          date_schedule: req.body?.date_schedule, 
-          start_time: req.body?.start_time, 
-          end_time: req.body?.end_time, 
-          coordinate_schedule: req.body?.coordinate_schedule,  
+          id_vip: req.body?.id_vip,
+          id_team: req.body?.id_team,
+          date_schedule: req.body?.date_schedule,
+          start_time: req.body?.start_time,
+          end_time: req.body?.end_time,
+          coordinate_schedule: req.body?.coordinate_schedule,
         },
         {
           where: {

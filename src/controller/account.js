@@ -11,8 +11,8 @@ const field_account = {
   name_account: null,
   leader_team: null,
   id_vehicle: null,
-  id_vip: null,
   id_account: null,
+  id_vip: null,
   password: null,
 };
 module.exports = class AccountController {
@@ -76,48 +76,28 @@ module.exports = class AccountController {
       const count = await Account.count({
         where: getDataRules?.where,
       });
-      const dataRes = await Account.findAll(getDataRules);
-      var data = [];
-      var dummyData = {};
-      for (let i = 0; i < dataRes.length; i++) {
-        const dataVehicle = await Vehicle.findOne({
-          where: {
-            id: AESDecrypt(dataRes[i]["id_vehicle"], {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
+      const data = await Account.findAll({
+        ...getDataRules,
+        include: [
+          {
+            model: Polres,
+            as: "polres",
+            foreignKey: "polres_id",
           },
-        });
-        const dataVip = await Vip.findOne({
-          where: {
-            id: AESDecrypt(dataRes[i]["id_vip"], {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
+          {
+            model: Vehicle,
+            as: "vehicle",
+            foreignKey: "id_vehicle",
           },
-        });
-        const dataPolres = await Polres.findOne({
-          where: {
-            id: AESDecrypt(dataRes[i]["polres_id"], {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
+          {
+            model: Vip,
+            as: "vips",
+            foreignKey: "id_vip",
+            required: false,
           },
-        });
-        dummyData = {};
-        dummyData["id"] = dataRes[i]["id"];
-        dummyData["polres_id"] = dataRes[i]["polres_id"];
-        dummyData["name_polres"] = dataPolres["name_polres"];
-        dummyData["name_account"] = dataRes[i]["name_account"];
-        dummyData["leader_team"] = dataRes[i]["leader_team"];
-        dummyData["id_vehicle"] = dataRes[i]["id_vehicle"];
-        dummyData["no_vehicle"] = dataVehicle["no_vehicle"];
-        dummyData["id_vip"] = dataRes[i]["id_vip"];
-        dummyData["vip"] = dataVip["name_vip"];
-        dummyData["password"] = dataRes[i]["password"];
-        dummyData["id_account"] = dataRes[i]["id_account"];
-        data.push(dummyData);
-      }
+        ],
+      });
+
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
@@ -129,7 +109,25 @@ module.exports = class AccountController {
   };
   static getId = async (req, res) => {
     try {
-      const dataRes = await Account.findOne({
+      const data = await Account.findOne({
+        include: [
+          {
+            model: Polres,
+            as: "polres",
+            foreignKey: "polres_id",
+          },
+          {
+            model: Vehicle,
+            as: "vehicle",
+            foreignKey: "id_vehicle",
+          },
+          {
+            model: Vip,
+            as: "vips",
+            foreignKey: "id_vip",
+            required: false,
+          },
+        ],
         where: {
           id: AESDecrypt(req.params.id, {
             isSafeUrl: true,
@@ -137,44 +135,6 @@ module.exports = class AccountController {
           }),
         },
       });
-
-      var data = {};
-      const dataVehicle = await Vehicle.findOne({
-        where: {
-          id: AESDecrypt(dataRes["id_vehicle"], {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-      const dataVip = await Vip.findOne({
-        where: {
-          id: AESDecrypt(dataRes["id_vip"], {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-      const dataPolres = await Polres.findOne({
-        where: {
-          id: AESDecrypt(dataRes["polres_id"], {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-
-      data["id"] = dataRes["id"];
-      data["polres_id"] = dataRes["polres_id"];
-      data["name_polres"] = dataPolres["name_polres"];
-      data["name_account"] = dataRes["name_account"];
-      data["leader_team"] = dataRes["leader_team"];
-      data["id_vehicle"] = dataRes["id_vehicle"];
-      data["no_vehicle"] = dataVehicle["no_vehicle"];
-      data["id_vip"] = dataRes["id_vip"];
-      data["vip"] = dataVip["name_vip"];
-      data["password"] = dataRes["password"];
-      data["id_account"] = dataRes["id_account"];
 
       response(res, true, "Succeed", {
         data,
@@ -189,7 +149,14 @@ module.exports = class AccountController {
       let fieldValue = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await Account.create(fieldValue, { transaction: transaction });
@@ -206,9 +173,17 @@ module.exports = class AccountController {
       let fieldValue = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
+
       await Account.update(fieldValue, {
         where: {
           id: AESDecrypt(req.params.id, {

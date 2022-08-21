@@ -46,19 +46,17 @@ class Authentication {
         return response(
           res,
           false,
-          "Akun Anda Tidak Terdaftar di database kami"
+          "Akun Anda Tidak Terdaftar di database kami",
+          401
         );
       }
 
       let nrp_user = await TokenTrackNotif.findOne({
         where: {
           nrp_user: officer.nrp_officer,
-          team_id: AESDecrypt(account.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
         },
       });
+
       if (nrp_user) {
         if (nrp_user.device_user != req.body.device_user) {
           return response(
@@ -79,6 +77,7 @@ class Authentication {
           })
         ).dataValues;
       }
+
       if (account) {
         if (bcrypt.compareSync(req.body.password, account.password)) {
           const accessToken = JWTEncrypt({
@@ -90,9 +89,24 @@ class Authentication {
           return response(res, true, "Login succeed", {
             accessToken,
           });
+        } else {
+          response(
+            res,
+            false,
+            "Login failed, please check your Password!",
+            account,
+            401
+          );
         }
+      } else {
+        response(
+          res,
+          false,
+          "Login failed, please check your Username!",
+          account,
+          401
+        );
       }
-      response(res, false, "Login failed, please try again!", nrp_user, 401);
     } catch (error) {
       response(res, false, "Login failed, please try again!", error.message);
     }

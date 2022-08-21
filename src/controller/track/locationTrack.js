@@ -30,7 +30,6 @@ module.exports = class LocationTrackController {
   };
   static sendToSocket = async () => {
     const today = moment(new Date()).format("YYYY-MM-DD");
-    console.log(today);
     const endDateToday = moment(today).endOf("day").toDate();
     const getTrack = await TrackG20.find({
       date: {

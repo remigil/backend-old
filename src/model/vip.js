@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
-const { StructureTimestamp } = require("../constanta/db_structure"); 
+const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
@@ -16,7 +16,7 @@ Vip.init(
         return AESEncrypt(String(this.getDataValue("id")), {
           isSafeUrl: true,
         });
-      }, 
+      },
     },
     name_vip: {
       type: Sequelize.STRING(100),
@@ -26,17 +26,17 @@ Vip.init(
     },
     position_vip: {
       type: Sequelize.STRING(255),
-    },  
+    },
     description_vip: {
       type: Sequelize.TEXT,
-    }, 
+    },
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("vip.deleted_at is null") },
+    defaultScope: { where: Sequelize.literal("vips.deleted_at is null") },
     scopes: {
       deleted: {
-        where: Sequelize.literal("vip.deleted_at is null"),
+        where: Sequelize.literal("vips.deleted_at is null"),
       },
     },
     // indexes: [{ fields: ["role_id"] }],
@@ -44,11 +44,10 @@ Vip.init(
     createdAt: "created_at",
     updatedAt: "updated_at",
     tableName: "vip",
-    modelName: "vip",
+    modelName: "vips",
     sequelize: db,
   }
 );
-// User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
   Vip.sync({ alter: true });
 })();

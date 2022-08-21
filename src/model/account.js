@@ -3,6 +3,9 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Polres = require("./polres");
+const Vehicle = require("./vehicle");
+const Vip = require("./vip");
 const Model = Sequelize.Model;
 
 class Account extends Model {}
@@ -19,7 +22,7 @@ Account.init(
       },
     },
     polres_id: {
-      type: Sequelize.TEXT,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
     name_account: {
@@ -29,10 +32,10 @@ Account.init(
       type: Sequelize.STRING(200),
     },
     id_vehicle: {
-      type: Sequelize.TEXT,
+      type: Sequelize.INTEGER,
     },
     id_vip: {
-      type: Sequelize.TEXT,
+      type: Sequelize.INTEGER,
     },
     password: {
       type: Sequelize.TEXT,
@@ -49,7 +52,7 @@ Account.init(
     ...StructureTimestamp,
   },
   {
-    // indexes: [{ fields: ["polres_id"] }],
+    indexes: [{ fields: ["polres_id"] }],
     defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
     scopes: {
       deleted: {
@@ -64,6 +67,17 @@ Account.init(
     sequelize: db,
   }
 );
+Account.hasOne(Polres, {
+  foreignKey: "id",
+  as: "polres",
+  sourceKey: "polres_id",
+});
+Account.hasOne(Vehicle, {
+  foreignKey: "id",
+  as: "vehicle",
+  sourceKey: "id_vehicle",
+});
+Account.hasOne(Vip, { foreignKey: "id", as: "vips", sourceKey: "id_vip" });
 (async () => {
   Account.sync({ alter: true });
 })();

@@ -108,7 +108,6 @@ module.exports = class PolresController {
       let index = 0;
       let listPolres = [];
       let idNotValid = [];
-      //   console.log(readExcell);
       for (const iterator of readExcell) {
         if (index == 0) {
           if (

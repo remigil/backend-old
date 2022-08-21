@@ -14,7 +14,7 @@ router.post(
   "/login-mobile",
   body("team").notEmpty().isLength({ min: 3 }),
   body("password").notEmpty().isLength({ min: 3 }),
-  body("nrp_user").notEmpty().isLength({ min: 8 }),
+  body("nrp_user").notEmpty().isLength({ min: 1 }),
   formValidation,
   Authentication.loginMobile
 );
