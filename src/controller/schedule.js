@@ -1,9 +1,20 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const Schedule = require("../model/schedule");
+const Officer = require("../model/officer");
+const Vip = require("../model/vip");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
+const field = {
+  activity: null,
+  id_vip: null,
+  id_officer: null,
+  date_schedule: null,
+  start_time: null,
+  end_time: null,
+  coordinate_schedule: null,
+};
 module.exports = class ScheduleController {
   static get = async (req, res) => {
     try {
@@ -62,17 +73,20 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
-      const data = await Schedule.findAll(getData);
+      const data = await Schedule.findAll({
+        ...getData,
+        include: ["officer"],
+      });
       const count = await Schedule.count({
         where: getData?.where,
       });
-      const adaw =
-        '[{"latlong":"1.2323, -8.239393"},{"latlong":"2.2323, -9.239393"}]';
+      // const adaw =
+      //   '[{"latlong":"1.2323, -8.239393"},{"latlong":"2.2323, -9.239393"}]';
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
         recordsTotal: count,
-        test: JSON.parse(adaw),
+        // test: JSON.parse(adaw),
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -100,18 +114,20 @@ module.exports = class ScheduleController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Schedule.create(
-        {
-          activity: req.body.activity,
-          id_vip: req.body?.id_vip,
-          id_team: req.body?.id_team,
-          date_schedule: req.body?.date_schedule,
-          start_time: req.body?.start_time,
-          end_time: req.body?.end_time,
-          coordinate_schedule: req.body?.coordinate_schedule,
-        },
-        { transaction: transaction }
-      );
+      let fieldValue = {};
+      Object.keys(field).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "id_officer" || val == "id_vip") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
+        }
+      });
+      await Schedule.create(fieldValue, { transaction: transaction });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -122,26 +138,28 @@ module.exports = class ScheduleController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Schedule.update(
-        {
-          activity: req.body.activity,
-          id_vip: req.body?.id_vip,
-          id_team: req.body?.id_team,
-          date_schedule: req.body?.date_schedule,
-          start_time: req.body?.start_time,
-          end_time: req.body?.end_time,
-          coordinate_schedule: req.body?.coordinate_schedule,
-        },
-        {
-          where: {
-            id: AESDecrypt(req.params.id, {
+      let fieldValue = {};
+      Object.keys(field).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "id_officer" || val == "id_vip") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
-            }),
-          },
-          transaction: transaction,
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
-      );
+      });
+      await Schedule.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

@@ -3,6 +3,8 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Vip = require("./vip");
+const Officer = require("./officer");
 const Model = Sequelize.Model;
 
 class Schedule extends Model {}
@@ -22,10 +24,10 @@ Schedule.init(
       type: Sequelize.STRING(255),
     },
     id_vip: {
-      type: Sequelize.TEXT,
+      type: Sequelize.INTEGER,
     },
-    id_account: {
-      type: Sequelize.TEXT,
+    id_officer: {
+      type: Sequelize.INTEGER,
     },
     date_schedule: {
       type: Sequelize.DATE,
@@ -63,7 +65,18 @@ Schedule.init(
     sequelize: db,
   }
 );
+// Schedule.hasOne(Vip, { foreignKey: "id", as: "vips", sourceKey: "id_vip" });
+// Schedule.belongsTo(Officer, {
+//   foreignKey: "id",
+//   as: "officer",
+//   sourceKey: "id_officer",
+// });
 // User.hasOne(UserRole, { foreignKey: "id" });
+Schedule.hasMany(Officer, {
+  foreignKey: "id",
+  as: "officer",
+  sourceKey: "id_officer",
+});
 (async () => {
   Schedule.sync({ alter: true });
 })();
