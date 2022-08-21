@@ -8,6 +8,11 @@ module.exports = class LocationTrackController {
       const { date } = req.query;
       const today = moment(date);
       const endDateToday = moment(today).endOf("day").toDate();
+
+      await TrackG20.deleteMany({
+        latitude: 1234,
+      });
+
       const getTrack = await TrackG20.find({
         date: {
           $gte: today,
@@ -22,6 +27,17 @@ module.exports = class LocationTrackController {
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
+  };
+  static sendToSocket = async () => {
+    const today = moment(new Date()).format("YYYY-MM-DD");
+    const endDateToday = moment(today).endOf("day").toDate();
+    const getTrack = await TrackG20.find({
+      date: {
+        $gte: today,
+        $lte: endDateToday,
+      },
+    });
+    return getTrack;
   };
   static getByUser = async (req, res) => {
     try {
