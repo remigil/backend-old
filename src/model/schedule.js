@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
-const { StructureTimestamp } = require("../constanta/db_structure"); 
+const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
@@ -16,29 +16,35 @@ Schedule.init(
         return AESEncrypt(String(this.getDataValue("id")), {
           isSafeUrl: true,
         });
-      }, 
+      },
     },
     activity: {
       type: Sequelize.STRING(255),
     },
     id_vip: {
-      type: Sequelize.STRING(255),
+      type: Sequelize.TEXT,
     },
-    id_team: {
-      type: Sequelize.STRING(255),
+    id_account: {
+      type: Sequelize.TEXT,
     },
     date_schedule: {
       type: Sequelize.DATE,
-    },  
+    },
     start_time: {
       type: Sequelize.TIME,
-    },   
+    },
     end_time: {
       type: Sequelize.TIME,
-    },   
+    },
+    address_schedule: {
+      type: Sequelize.TEXT,
+    },
     coordinate_schedule: {
       type: Sequelize.TEXT,
-    }, 
+    },
+    status_schedule: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {

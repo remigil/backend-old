@@ -1,6 +1,8 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Schedule = require("../model/schedule"); 
+const Schedule = require("../model/schedule");
+const Vip = require("../model/vip");
+const Account = require("../model/account");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
@@ -62,23 +64,59 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
-      const data = await Schedule.findAll(getData);
       const count = await Schedule.count({
         where: getData?.where,
       });
-      const adaw = '[{\"latlong\":\"1.2323, -8.239393\"},{\"latlong\":\"2.2323, -9.239393\"}]';
+      const dataRes = await Schedule.findAll(getData);
+      // const adaw =
+      //   '[{"latlong":"1.2323, -8.239393"},{"latlong":"2.2323, -9.239393"}]';
+
+      var data = [];
+      var dummyData = {};
+      for (let i = 0; i < dataRes.length; i++) {
+        const dataVip = await Vip.findOne({
+          where: {
+            id: AESDecrypt(dataRes[i]["id_vip"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
+        const dataAccount = await Account.findOne({
+          where: {
+            id: AESDecrypt(dataRes[i]["id_account"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
+
+        dummyData = {};
+        dummyData["id"] = dataRes[i]["id"];
+        dummyData["activity"] = dataRes[i]["activity"];
+        dummyData["id_vip"] = dataRes[i]["id_vip"];
+        dummyData["name_vip"] = dataVip["name_vip"];
+        dummyData["id_account"] = dataRes[i]["id_account"];
+        dummyData["name_account"] = dataAccount["name_account"];
+        dummyData["date_schedule"] = dataRes[i]["date_schedule"];
+        dummyData["start_time"] = dataRes[i]["start_time"];
+        dummyData["end_time"] = dataRes[i]["end_time"];
+        dummyData["address_schedule"] = dataRes[i]["address_schedule"];
+        dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
+        dummyData["status_schedule"] = dataRes[i]["status_schedule"];
+        data.push(dummyData);
+      }
+
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,
         recordsTotal: count,
-        test:  JSON.parse(adaw)
-
+        // test: JSON.parse(adaw),
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
- 
-  }; 
+  };
 
   static getId = async (req, res) => {
     try {
@@ -91,9 +129,9 @@ module.exports = class ScheduleController {
         },
       });
       response(res, true, "Succeed", {
-        data, 
+        data,
       });
-    } catch (e) { 
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };
@@ -104,15 +142,17 @@ module.exports = class ScheduleController {
       await Schedule.create(
         {
           activity: req.body.activity,
-          id_vip: req.body?.id_vip, 
-          id_team: req.body?.id_team, 
-          date_schedule: req.body?.date_schedule, 
-          start_time: req.body?.start_time, 
-          end_time: req.body?.end_time, 
-          coordinate_schedule: req.body?.coordinate_schedule,  
+          id_vip: req.body?.id_vip,
+          id_account: req.body?.id_account,
+          date_schedule: req.body?.date_schedule,
+          start_time: req.body?.start_time,
+          end_time: req.body?.end_time,
+          address_schedule: req.body?.address_schedule,
+          coordinate_schedule: req.body?.coordinate_schedule,
+          status_schedule: req.body?.status_schedule,
         },
         { transaction: transaction }
-      ); 
+      );
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -126,12 +166,14 @@ module.exports = class ScheduleController {
       await Schedule.update(
         {
           activity: req.body.activity,
-          id_vip: req.body?.id_vip, 
-          id_team: req.body?.id_team, 
-          date_schedule: req.body?.date_schedule, 
-          start_time: req.body?.start_time, 
-          end_time: req.body?.end_time, 
-          coordinate_schedule: req.body?.coordinate_schedule,  
+          id_vip: req.body?.id_vip,
+          id_account: req.body?.id_account,
+          date_schedule: req.body?.date_schedule,
+          start_time: req.body?.start_time,
+          end_time: req.body?.end_time,
+          address_schedule: req.body?.address_schedule,
+          coordinate_schedule: req.body?.coordinate_schedule,
+          status_schedule: req.body?.status_schedule,
         },
         {
           where: {
