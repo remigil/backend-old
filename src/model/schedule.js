@@ -24,10 +24,10 @@ Schedule.init(
       type: Sequelize.STRING(255),
     },
     id_vip: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING(255),
     },
-    id_officer: {
-      type: Sequelize.INTEGER,
+    id_account: {
+      type: Sequelize.STRING(255),
     },
     date_schedule: {
       type: Sequelize.DATE,
@@ -65,18 +65,6 @@ Schedule.init(
     sequelize: db,
   }
 );
-// Schedule.hasOne(Vip, { foreignKey: "id", as: "vips", sourceKey: "id_vip" });
-// Schedule.belongsTo(Officer, {
-//   foreignKey: "id",
-//   as: "officer",
-//   sourceKey: "id_officer",
-// });
-// User.hasOne(UserRole, { foreignKey: "id" });
-Schedule.hasMany(Officer, {
-  foreignKey: "id",
-  as: "officer",
-  sourceKey: "id_officer",
-});
 (async () => {
   Schedule.sync({ alter: true });
 })();
