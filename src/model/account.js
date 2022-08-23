@@ -46,9 +46,7 @@ Account.init(
         );
       },
     },
-    id_account: {
-      type: Sequelize.STRING(50),
-    },
+
     ...StructureTimestamp,
   },
   {
