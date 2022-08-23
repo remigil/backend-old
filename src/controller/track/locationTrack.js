@@ -10,19 +10,30 @@ module.exports = class LocationTrackController {
       const endDateToday = moment(today).endOf("day").toDate();
 
       await TrackG20.deleteMany({
-        latitude: 1234,
+        latitude: 123321,
       });
-
+      // let getTrack = await TrackG20.aggregate([
+      //   {
+      //     $match: {
+      //       date: {
+      //         $gte: today,
+      //         //   $lte: endDateToday,
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $sort: {
+      //       date: -1,
+      //     },
+      //   },
+      // ]);
       const getTrack = await TrackG20.find({
         date: {
           $gte: today,
           $lte: endDateToday,
         },
-        user_id: AESDecrypt(req.auth.uid, {
-          isSafeUrl: true,
-          parseMode: "string",
-        }),
-      });
+      }).sort({ date: -1 });
+
       response(res, true, "Succeed", getTrack);
     } catch (e) {
       response(res, false, "Failed", e.message);
