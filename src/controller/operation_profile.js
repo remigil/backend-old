@@ -16,13 +16,10 @@ const fieldData = {
   document_sprint: null,
   background_image: null,
   logo: null,
+  date_start_operation: null,
+  date_end_operation: null,
 };
-OperationProfile.belongsToMany(Polda, {
-  as: "polda",
-  through: "operation_profile_polda",
-  foreignKey: "operation_profile_id", // replaces `productId`
-  otherKey: "polda_id", // replaces `categoryId`
-});
+
 module.exports = class OperationProfileController {
   static get = async (req, res) => {
     try {

@@ -30,19 +30,23 @@ class Authentication {
   };
   static loginMobile = async (req, res) => {
     try {
+      const { team, nrp_user, device_user } = req.body;
       const account = await Account.findOne({
         where: {
-          name_account: req.body.team,
+          name_account: team,
         },
+        include: [
+          {
+            model: Officer,
+            as: "officer",
+            required: true,
+            where: {
+              nrp_officer: nrp_user,
+            },
+          },
+        ],
       });
-
-      const officer = await Officer.findOne({
-        where: {
-          nrp_officer: req.body.nrp_user,
-        },
-      });
-
-      if (!officer) {
+      if (account == null) {
         return response(
           res,
           false,
@@ -51,59 +55,47 @@ class Authentication {
         );
       }
 
-      let nrp_user = await TokenTrackNotif.findOne({
+      // let checkTokenTrack = await TokenTrackNotif.findOne({
+      let chcekDeviceUser = await TokenTrackNotif.findOne({
         where: {
-          nrp_user: officer.nrp_officer,
+          // nrp_user: nrp_user,
+          device_user: device_user,
         },
       });
 
-      if (nrp_user) {
-        if (nrp_user.device_user != req.body.device_user) {
+      if (bcrypt.compareSync(req.body.password, account.password)) {
+        if (chcekDeviceUser && chcekDeviceUser.nrp_user != nrp_user) {
           return response(
             res,
             false,
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
-        }
-      } else {
-        nrp_user = (
+        } else {
           await TokenTrackNotif.create({
-            nrp_user: officer.nrp_officer,
-            device_user: req.body.device_user,
+            nrp_user: nrp_user,
+            device_user: device_user,
+            polda_id: account.officer[0].polda_id,
             team_id: AESDecrypt(account.id, {
               isSafeUrl: true,
               parseMode: "string",
             }),
-          })
-        ).dataValues;
-      }
-
-      if (account) {
-        if (bcrypt.compareSync(req.body.password, account.password)) {
-          const accessToken = JWTEncrypt({
-            uid: account.id,
-            nrp_user: nrp_user.id,
-            officer: officer.id,
-            timestamp: moment().unix(),
           });
-          return response(res, true, "Login succeed", {
-            accessToken,
-          });
-        } else {
-          response(
-            res,
-            false,
-            "Login failed, please check your Password!",
-            account,
-            401
-          );
         }
+        const accessToken = JWTEncrypt({
+          uid: account.id,
+          nrp_user: nrp_user,
+          officer: account.officer[0].id,
+          timestamp: moment().unix(),
+        });
+        return response(res, true, "Login succeed", {
+          accessToken,
+        });
       } else {
         response(
           res,
           false,
-          "Login failed, please check your Username!",
-          account,
+          "Login failed, please check your Password!",
+          null,
           401
         );
       }

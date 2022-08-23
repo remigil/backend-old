@@ -9,7 +9,6 @@ const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const Officer = require("../model/officer");
 const field_account = {
-  polres_id: null,
   name_account: null,
   leader_team: null,
   id_vehicle: null,
@@ -17,13 +16,6 @@ const field_account = {
   id_vip: null,
   password: null,
 };
-
-Account.belongsToMany(Officer, {
-  as: "officer",
-  through: "trx_account_officer",
-  foreignKey: "account_id", // replaces `productId`
-  otherKey: "officer_id", // replaces `categoryId`
-});
 
 module.exports = class AccountController {
   static get = async (req, res) => {
@@ -90,12 +82,6 @@ module.exports = class AccountController {
         ...getDataRules,
         include: [
           {
-            model: Polres,
-            as: "polres",
-            foreignKey: "polres_id",
-            required: false,
-          },
-          {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
@@ -130,12 +116,6 @@ module.exports = class AccountController {
     try {
       const data = await Account.findOne({
         include: [
-          {
-            model: Polres,
-            as: "polres",
-            foreignKey: "polres_id",
-            required: false,
-          },
           {
             model: Vehicle,
             as: "vehicle",

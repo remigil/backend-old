@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Polda = require("./polda");
 const Model = Sequelize.Model;
 
 class OperationProfile extends Model {}
@@ -39,7 +40,12 @@ OperationProfile.init(
     logo: {
       type: Sequelize.TEXT,
     },
-
+    date_start_operation: {
+      type: Sequelize.DATEONLY,
+    },
+    date_end_operation: {
+      type: Sequelize.DATEONLY,
+    },
     ...StructureTimestamp,
   },
   {
@@ -59,6 +65,12 @@ OperationProfile.init(
     sequelize: db,
   }
 );
+OperationProfile.belongsToMany(Polda, {
+  as: "polda",
+  through: "operation_profile_polda",
+  foreignKey: "operation_profile_id", // replaces `productId`
+  otherKey: "polda_id", // replaces `categoryId`
+});
 (async () => {
   OperationProfile.sync({ alter: true });
 })();

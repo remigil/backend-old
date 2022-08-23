@@ -3,9 +3,9 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
-const Polres = require("./polres");
 const Vehicle = require("./vehicle");
 const Vip = require("./vip");
+const Officer = require("./officer");
 const Model = Sequelize.Model;
 
 class Account extends Model {}
@@ -21,10 +21,7 @@ Account.init(
         });
       },
     },
-    polres_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
+
     name_account: {
       type: Sequelize.STRING(50),
     },
@@ -50,7 +47,7 @@ Account.init(
     ...StructureTimestamp,
   },
   {
-    indexes: [{ fields: ["polres_id"] }],
+    indexes: [{ fields: ["id_vip", "id_vehicle"] }],
     defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
     scopes: {
       deleted: {
@@ -65,17 +62,19 @@ Account.init(
     sequelize: db,
   }
 );
-Account.hasOne(Polres, {
-  foreignKey: "id",
-  as: "polres",
-  sourceKey: "polres_id",
-});
+
 Account.hasOne(Vehicle, {
   foreignKey: "id",
   as: "vehicle",
   sourceKey: "id_vehicle",
 });
 Account.hasOne(Vip, { foreignKey: "id", as: "vips", sourceKey: "id_vip" });
+Account.belongsToMany(Officer, {
+  as: "officer",
+  through: "trx_account_officer",
+  foreignKey: "account_id",
+  otherKey: "officer_id",
+});
 (async () => {
   Account.sync({ alter: true });
 })();

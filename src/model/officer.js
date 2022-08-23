@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Polda = require("./polda");
 const Model = Sequelize.Model;
 
 class Officer extends Model {}
@@ -67,6 +68,12 @@ Officer.init(
     sequelize: db,
   }
 );
+Officer.hasOne(Polda, {
+  foreignKey: "id",
+  as: "polda",
+  sourceKey: "polda_id",
+});
+
 (async () => {
   Officer.sync({ alter: true });
 })();

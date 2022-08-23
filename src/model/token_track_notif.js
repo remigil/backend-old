@@ -28,7 +28,9 @@ TokenTrackNotif.init(
     },
     team_id: {
       type: Sequelize.INTEGER,
-      // allowNull: false,
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
     },
     device_user: {
       type: Sequelize.TEXT,
