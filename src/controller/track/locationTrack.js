@@ -32,7 +32,7 @@ module.exports = class LocationTrackController {
           $gte: today,
           $lte: endDateToday,
         },
-      }).sort({ date: -1 });
+      }).sort({ date: 1 });
 
       response(res, true, "Succeed", getTrack);
     } catch (e) {
