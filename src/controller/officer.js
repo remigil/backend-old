@@ -1,11 +1,11 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Officer = require("../model/officer"); 
+const Officer = require("../model/officer");
 const db = require("../config/database");
-const fs = require('fs');
+const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
-const formidable = require('formidable');
+const formidable = require("formidable");
 
 module.exports = class OfficerController {
   static get = async (req, res) => {
@@ -77,8 +77,7 @@ module.exports = class OfficerController {
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
- 
-  }; 
+  };
 
   static getId = async (req, res) => {
     try {
@@ -91,9 +90,9 @@ module.exports = class OfficerController {
         },
       });
       response(res, true, "Succeed", {
-        data, 
+        data,
       });
-    } catch (e) { 
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };
@@ -101,35 +100,47 @@ module.exports = class OfficerController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     let inputs = {};
-    var photo_officer = ''; 
-    // return response(res, true, "Succeed", req.body.photo_officer); 
+    var photo_officer = "";
+    // return response(res, true, "Succeed", req.body.photo_officer);
     try {
-      if (req.body.photo_officer != null) { 
-        let path = await req.body.photo_officer.filepath;
-        let file = await req.body.photo_officer;
-        let fileName = await file.originalFilename;
-        await fs.renameSync(path, "./public/uploads/officer/" + fileName, function (err) {
-          if (err) throw err;
-        });
-        photo_officer = await fileName; 
-      }else{
-        photo_officer = await null; 
+      if (req.body.photo_officer != null) {
+        let path = req.body.photo_officer.filepath;
+        let file = req.body.photo_officer;
+        let fileName = file.originalFilename;
+        fs.renameSync(
+          path,
+          "./public/uploads/officer/" + fileName,
+          function (err) {
+            if (err) throw err;
+          }
+        );
+        photo_officer = fileName;
+      } else {
+        photo_officer = null;
       }
       await Officer.create(
         {
           name_officer: req.body.name_officer,
           photo_officer: photo_officer,
           nrp_officer: req.body?.nrp_officer,
-          rank_officer: req.body?.rank_officer, 
-          structural_officer: req.body?.structural_officer, 
-          pam_officer: req.body?.pam_officer, 
-          phone_officer: req.body?.phone_officer, 
-          status_officer: req.body?.status_officer,  
+          rank_officer: req.body?.rank_officer,
+          structural_officer: req.body?.structural_officer,
+          pam_officer: req.body?.pam_officer,
+          phone_officer: req.body?.phone_officer,
+          status_officer: req.body?.status_officer,
+          polda_id: AESDecrypt(req.body.polda_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          polres_id: AESDecrypt(req.body.polres_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
         },
         { transaction: transaction }
-      ); 
+      );
       await transaction.commit();
-      response(res, true, "Succeed", null); 
+      response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -137,29 +148,41 @@ module.exports = class OfficerController {
   };
   static edit = async (req, res) => {
     const transaction = await db.transaction();
-    var photo_officer = ''; 
+    var photo_officer = "";
     try {
-      if (req.body.photo_officer != null) { 
-        let path = await req.body.photo_officer.filepath;
-        let file = await req.body.photo_officer;
-        let fileName = await file.originalFilename;
-        await fs.renameSync(path, "./public/uploads/officer/" + fileName, function (err) {
-          if (err) throw err;
-        });
-        photo_officer = await fileName; 
-      }else{
-        photo_officer = await null; 
+      if (req.body.photo_officer != null) {
+        let path = req.body.photo_officer.filepath;
+        let file = req.body.photo_officer;
+        let fileName = file.originalFilename;
+        fs.renameSync(
+          path,
+          "./public/uploads/officer/" + fileName,
+          function (err) {
+            if (err) throw err;
+          }
+        );
+        photo_officer = fileName;
+      } else {
+        photo_officer = null;
       }
       await Officer.update(
         {
           name_officer: req.body.name_officer,
           photo_officer: photo_officer,
           nrp_officer: req.body?.nrp_officer,
-          rank_officer: req.body?.rank_officer, 
-          structural_officer: req.body?.structural_officer, 
-          pam_officer: req.body?.pam_officer, 
-          phone_officer: req.body?.phone_officer, 
-          status_officer: req.body?.status_officer,  
+          rank_officer: req.body?.rank_officer,
+          structural_officer: req.body?.structural_officer,
+          pam_officer: req.body?.pam_officer,
+          phone_officer: req.body?.phone_officer,
+          status_officer: req.body?.status_officer,
+          polda_id: AESDecrypt(req.body.polda_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          polres_id: AESDecrypt(req.body.polres_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
         },
         {
           where: {
