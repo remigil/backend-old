@@ -32,7 +32,7 @@ class Authentication {
     try {
       const account = await Account.findOne({
         where: {
-          id_account: req.body.team,
+          name_account: req.body.team,
         },
       });
 
