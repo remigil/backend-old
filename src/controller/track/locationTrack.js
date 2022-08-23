@@ -9,32 +9,31 @@ module.exports = class LocationTrackController {
       const today = moment(date);
       const endDateToday = moment(today).endOf("day").toDate();
 
-      await TrackG20.deleteMany({
-        latitude: 123321,
-      });
-      // let getTrack = await TrackG20.aggregate([
-      //   {
-      //     $match: {
-      //       date: {
-      //         $gte: today,
-      //         //   $lte: endDateToday,
-      //       },
-      //     },
-      //   },
-      //   {
-      //     $sort: {
-      //       date: -1,
-      //     },
-      //   },
-      // ]);
       const getTrack = await TrackG20.find({
         date: {
           $gte: today,
           $lte: endDateToday,
         },
-      }).sort({ date: 1 });
+      }).sort({ date: -1 });
 
-      response(res, true, "Succeed", getTrack);
+      let track = getTrack.reduce((group, product) => {
+        const { nrp_user } = product;
+        group[nrp_user] = group[nrp_user] ?? [];
+        group[nrp_user].push(product);
+        return group;
+      }, {});
+
+      let valueData = [];
+      Object.keys(track).forEach((val, key) => {
+        valueData.push(
+          track[val].sort(function (a, b) {
+            var dateA = new Date(a.date_prop).getTime();
+            var dateB = new Date(b.date_prop).getTime();
+            return dateA < dateB ? -1 : 1;
+          })[0]
+        );
+      });
+      response(res, true, "Succeed", valueData);
     } catch (e) {
       response(res, false, "Failed", e.message);
     }

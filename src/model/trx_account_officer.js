@@ -3,10 +3,11 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+
 const Model = Sequelize.Model;
 
-class Officer extends Model {}
-Officer.init(
+class TrxAccountOfficer extends Model {}
+TrxAccountOfficer.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -18,50 +19,33 @@ Officer.init(
         });
       },
     },
-    name_officer: {
-      type: Sequelize.STRING(255),
+    account_id: {
+      type: Sequelize.INTEGER,
     },
-    photo_officer: {
-      type: Sequelize.TEXT,
-    },
-    nrp_officer: {
-      type: Sequelize.STRING(255),
-    },
-    rank_officer: {
-      type: Sequelize.STRING(255),
-    },
-    structural_officer: {
-      type: Sequelize.STRING(255),
-    },
-    pam_officer: {
-      type: Sequelize.STRING(255),
-    },
-    phone_officer: {
-      type: Sequelize.STRING(50),
-    },
-    status_officer: {
+    officer_id: {
       type: Sequelize.INTEGER,
     },
     ...StructureTimestamp,
   },
   {
     defaultScope: {
-      where: Sequelize.literal("officer.deleted_at is null"),
+      where: Sequelize.literal("trx_account_officers.deleted_at is null"),
     },
     scopes: {
       deleted: {
-        where: Sequelize.literal("officer.deleted_at is null"),
+        where: Sequelize.literal("trx_account_officers.deleted_at is null"),
       },
     },
+    indexes: [{ fields: ["account_id", "officer_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "officer",
-    modelName: "officer",
+    tableName: "trx_account_officer",
+    modelName: "trx_account_officers",
     sequelize: db,
   }
 );
 (async () => {
-  Officer.sync({ alter: true });
+  TrxAccountOfficer.sync({ alter: true });
 })();
-module.exports = Officer;
+module.exports = TrxAccountOfficer;

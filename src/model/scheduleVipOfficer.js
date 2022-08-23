@@ -3,10 +3,11 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+
 const Model = Sequelize.Model;
 
-class Officer extends Model {}
-Officer.init(
+class ScheduleVipOfficer extends Model {}
+ScheduleVipOfficer.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -18,50 +19,39 @@ Officer.init(
         });
       },
     },
-    name_officer: {
-      type: Sequelize.STRING(255),
+    vip_id: {
+      type: Sequelize.INTEGER,
     },
-    photo_officer: {
-      type: Sequelize.TEXT,
+    schedule_id: {
+      type: Sequelize.INTEGER,
     },
-    nrp_officer: {
-      type: Sequelize.STRING(255),
-    },
-    rank_officer: {
-      type: Sequelize.STRING(255),
-    },
-    structural_officer: {
-      type: Sequelize.STRING(255),
-    },
-    pam_officer: {
-      type: Sequelize.STRING(255),
-    },
-    phone_officer: {
-      type: Sequelize.STRING(50),
-    },
-    status_officer: {
+    officer_id: {
       type: Sequelize.INTEGER,
     },
     ...StructureTimestamp,
   },
   {
     defaultScope: {
-      where: Sequelize.literal("officer.deleted_at is null"),
+      where: Sequelize.literal("schedulevip.deleted_at is null"),
     },
     scopes: {
       deleted: {
-        where: Sequelize.literal("officer.deleted_at is null"),
+        where: Sequelize.literal("schedulevip.deleted_at is null"),
       },
     },
+    // indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "officer",
-    modelName: "officer",
+    tableName: "schedule_vipofficer",
+    modelName: "schedulevip",
     sequelize: db,
   }
 );
+// ScheduleVipOfficer.belongsTo(Schedule, {
+//   foreignKey: "id",
+// });
 (async () => {
-  Officer.sync({ alter: true });
+  ScheduleVipOfficer.sync({ alter: true });
 })();
-module.exports = Officer;
+module.exports = ScheduleVipOfficer;

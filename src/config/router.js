@@ -76,5 +76,23 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/account")
 );
+//---------- trx account profile
+router.use(
+  "/v" + process.env.APP_VERSION + "/account-officer",
+  authMiddleware.jwtAuth,
+  require("../router/trx_account_officer")
+);
+// --------- operation profile
+router.use(
+  "/v" + process.env.APP_VERSION + "/operation-profile",
+  authMiddleware.jwtAuth,
+  require("../router/operation_profile")
+);
+// --------- operation profile polda
+router.use(
+  "/v" + process.env.APP_VERSION + "/operation-profile-polda",
+  authMiddleware.jwtAuth,
+  require("../router/trx_operation_profile_polda")
+);
 
 module.exports = router;

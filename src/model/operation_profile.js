@@ -5,8 +5,8 @@ const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class Officer extends Model {}
-Officer.init(
+class OperationProfile extends Model {}
+OperationProfile.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -18,50 +18,48 @@ Officer.init(
         });
       },
     },
-    name_officer: {
-      type: Sequelize.STRING(255),
-    },
-    photo_officer: {
+    banner: {
       type: Sequelize.TEXT,
     },
-    nrp_officer: {
+    name_operation: {
       type: Sequelize.STRING(255),
     },
-    rank_officer: {
-      type: Sequelize.STRING(255),
+    time_start_operation: {
+      type: Sequelize.STRING(25),
     },
-    structural_officer: {
-      type: Sequelize.STRING(255),
+    time_end_operation: {
+      type: Sequelize.STRING(25),
     },
-    pam_officer: {
-      type: Sequelize.STRING(255),
+    document_sprint: {
+      type: Sequelize.TEXT,
     },
-    phone_officer: {
-      type: Sequelize.STRING(50),
+    background_image: {
+      type: Sequelize.TEXT,
     },
-    status_officer: {
-      type: Sequelize.INTEGER,
+    logo: {
+      type: Sequelize.TEXT,
     },
+
     ...StructureTimestamp,
   },
   {
     defaultScope: {
-      where: Sequelize.literal("officer.deleted_at is null"),
+      where: Sequelize.literal("operation_profile.deleted_at is null"),
     },
     scopes: {
       deleted: {
-        where: Sequelize.literal("officer.deleted_at is null"),
+        where: Sequelize.literal("operation_profile.deleted_at is null"),
       },
     },
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "officer",
-    modelName: "officer",
+    tableName: "operation_profile",
+    modelName: "operation_profile",
     sequelize: db,
   }
 );
 (async () => {
-  Officer.sync({ alter: true });
+  OperationProfile.sync({ alter: true });
 })();
-module.exports = Officer;
+module.exports = OperationProfile;

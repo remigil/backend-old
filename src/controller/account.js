@@ -4,8 +4,10 @@ const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const Vip = require("../model/vip");
 const Polres = require("../model/polres");
+
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
+const Officer = require("../model/officer");
 const field_account = {
   polres_id: null,
   name_account: null,
@@ -15,6 +17,14 @@ const field_account = {
   id_vip: null,
   password: null,
 };
+
+Account.belongsToMany(Officer, {
+  as: "officer",
+  through: "trx_account_officer",
+  foreignKey: "account_id", // replaces `productId`
+  otherKey: "officer_id", // replaces `categoryId`
+});
+
 module.exports = class AccountController {
   static get = async (req, res) => {
     try {
@@ -83,11 +93,13 @@ module.exports = class AccountController {
             model: Polres,
             as: "polres",
             foreignKey: "polres_id",
+            required: false,
           },
           {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
+            required: false,
           },
           {
             model: Vip,
@@ -95,7 +107,13 @@ module.exports = class AccountController {
             foreignKey: "id_vip",
             required: false,
           },
+          {
+            model: Officer,
+            as: "officer",
+            required: false,
+          },
         ],
+        subQuery: true,
       });
 
       response(res, true, "Succeed", {
@@ -104,6 +122,7 @@ module.exports = class AccountController {
         recordsTotal: count,
       });
     } catch (e) {
+      console.log(e);
       response(res, false, "Failed", e.message);
     }
   };
@@ -115,16 +134,23 @@ module.exports = class AccountController {
             model: Polres,
             as: "polres",
             foreignKey: "polres_id",
+            required: false,
           },
           {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
+            required: false,
           },
           {
             model: Vip,
             as: "vips",
             foreignKey: "id_vip",
+            required: false,
+          },
+          {
+            model: Officer,
+            as: "officer",
             required: false,
           },
         ],
