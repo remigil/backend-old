@@ -60,7 +60,7 @@ const socketInstace = (server) => {
               },
             ],
             where: {
-              id_account: username,
+              name_account: username,
             },
           });
           let dataOfficer = await Officer.findOne({
