@@ -39,20 +39,24 @@ const socketInstace = (server) => {
           let dataAccount = await Account.findOne({
             include: [
               {
-                model: Polres,
-                as: "polres",
-                foreignKey: "polres_id",
-              },
-              {
                 model: Vehicle,
                 as: "vehicle",
                 foreignKey: "id_vehicle",
+                required: false,
               },
               {
                 model: Vip,
                 as: "vips",
                 foreignKey: "id_vip",
                 required: false,
+              },
+              {
+                model: Officer,
+                as: "officer",
+                required: true,
+                where: {
+                  nrp_officer: socket.handshake.query.user_nrp,
+                },
               },
             ],
             where: {
