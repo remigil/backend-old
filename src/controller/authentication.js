@@ -55,11 +55,14 @@ class Authentication {
         );
       }
 
-      // let checkTokenTrack = await TokenTrackNotif.findOne({
       let chcekDeviceUser = await TokenTrackNotif.findOne({
         where: {
-          // nrp_user: nrp_user,
           device_user: device_user,
+        },
+      });
+      let nrpDeviceUser = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user: nrp_user,
         },
       });
 
@@ -70,7 +73,7 @@ class Authentication {
             false,
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
-        } else if (!chcekDeviceUser) {
+        } else if (!chcekDeviceUser && !nrpDeviceUser) {
           await TokenTrackNotif.create({
             nrp_user: nrp_user,
             device_user: device_user,
