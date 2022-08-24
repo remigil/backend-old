@@ -70,7 +70,7 @@ class Authentication {
             false,
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
-        } else {
+        } else if (!chcekDeviceUser) {
           await TokenTrackNotif.create({
             nrp_user: nrp_user,
             device_user: device_user,
