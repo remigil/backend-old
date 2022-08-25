@@ -83,6 +83,21 @@ class Authentication {
               parseMode: "string",
             }),
           });
+        } else if (!chcekDeviceUser && nrpDeviceUser.nrp_user == nrp_user) {
+          return response(
+            res,
+            false,
+            "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
+          );
+          // await TokenTrackNotif.create({
+          //   nrp_user: nrp_user,
+          //   device_user: device_user,
+          //   polda_id: account.officer[0].polda_id,
+          //   team_id: AESDecrypt(account.id, {
+          //     isSafeUrl: true,
+          //     parseMode: "string",
+          //   }),
+          // });
         }
         const accessToken = JWTEncrypt({
           uid: account.id,

@@ -1,11 +1,9 @@
 const { AESDecrypt, JWTVerify } = require("../lib/encryption");
-const { scope } = require("../model/token_track_notif");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
 const moment = require("moment");
 const LocationTrackController = require("../controller/track/locationTrack");
 const Account = require("../model/account");
-const Polres = require("../model/polres");
 const Vehicle = require("../model/vehicle");
 const Vip = require("../model/vip");
 const Officer = require("../model/officer");
