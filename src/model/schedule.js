@@ -3,8 +3,8 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
-const Vip = require("./vip");
-const Officer = require("./officer");
+const Renpam = require("./renpam");
+
 const Model = Sequelize.Model;
 
 class Schedule extends Model {}
@@ -20,17 +20,15 @@ Schedule.init(
         });
       },
     },
+    operation_id: {
+      type: Sequelize.INTEGER,
+    },
     activity: {
       type: Sequelize.STRING(255),
     },
-    id_vip: {
-      type: Sequelize.STRING(255),
-    },
-    id_account: {
-      type: Sequelize.STRING(255),
-    },
+
     date_schedule: {
-      type: Sequelize.DATE,
+      type: Sequelize.DATEONLY,
     },
     start_time: {
       type: Sequelize.TIME,
@@ -65,6 +63,11 @@ Schedule.init(
     sequelize: db,
   }
 );
+Schedule.hasMany(Renpam, {
+  foreignKey: "schedule_id",
+  sourceKey: "id",
+  as: "renpams",
+});
 (async () => {
   Schedule.sync({ alter: true });
 })();

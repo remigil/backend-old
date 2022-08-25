@@ -1,0 +1,84 @@
+const Sequelize = require("sequelize");
+const db = require("../config/database");
+const bcrypt = require("bcrypt");
+const { StructureTimestamp } = require("../constanta/db_structure");
+const { AESEncrypt } = require("../lib/encryption");
+const Account = require("./account");
+
+const Model = Sequelize.Model;
+
+class Renpam extends Model {}
+Renpam.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    operation_id: {
+      type: Sequelize.INTEGER,
+    },
+    schedule_id: {
+      type: Sequelize.INTEGER,
+    },
+    name_renpam: {
+      type: Sequelize.STRING(50),
+    },
+    type_renpam: {
+      // type [1: patroli, 2: pengawalan, 3: penjagaan]
+      type: Sequelize.INTEGER,
+    },
+    route: {
+      type: Sequelize.JSON,
+    },
+    route_alternatif_1: {
+      type: Sequelize.JSON,
+    },
+    route_alternatif_2: {
+      type: Sequelize.JSON,
+    },
+    coordinate_guarding: {
+      type: Sequelize.JSON,
+    },
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+    start_time: {
+      type: Sequelize.TIME,
+    },
+    end_time: {
+      type: Sequelize.TIME,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: { where: Sequelize.literal("renpams.deleted_at is null") },
+    scopes: {
+      deleted: {
+        where: Sequelize.literal("renpams.deleted_at is null"),
+      },
+    },
+    indexes: [{ fields: ["schedule_id"] }],
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "renpam",
+    modelName: "renpams",
+    sequelize: db,
+  }
+);
+Renpam.belongsToMany(Account, {
+  as: "accounts",
+  through: "renpam_account",
+  foreignKey: "renpam_id",
+  otherKey: "account_id",
+});
+(async () => {
+  Renpam.sync({ alter: true });
+})();
+module.exports = Renpam;

@@ -19,6 +19,9 @@ Officer.init(
         });
       },
     },
+    operation_id: {
+      type: Sequelize.INTEGER,
+    },
     name_officer: {
       type: Sequelize.STRING(255),
     },

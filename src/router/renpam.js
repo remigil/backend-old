@@ -1,28 +1,27 @@
 const router = require("express").Router();
 const { body } = require("express-validator");
-const ScheduleController = require("../controller/schedule");
+const RenpamController = require("../controller/renpam");
 const formValidation = require("../middleware/form_validation");
-router.get("/", ScheduleController.get);
-router.get("/transaction", ScheduleController.trx);
-router.get("/getId/:id", ScheduleController.getId);
+router.get("/", RenpamController.get);
+// router.get("/getId/:id", RenpamController.getId);
 router.post(
   "/add",
-  body("activity").notEmpty().isLength({ min: 3 }),
+  //   body("activity").notEmpty().isLength({ min: 3 }),
   formValidation,
-  ScheduleController.add
+  RenpamController.add
 );
-router.put("/edit/:id", ScheduleController.edit);
+router.put("/edit/:id", RenpamController.edit);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  ScheduleController.delete
+  RenpamController.delete
 );
 router.delete(
   "/hardDelete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  ScheduleController.delete
+  RenpamController.delete
 );
 
 module.exports = router;

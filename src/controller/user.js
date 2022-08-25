@@ -52,8 +52,7 @@ module.exports = class UserController {
           c.phone_officer,
           c.status_officer,
           b.name_account,
-          b.leader_team,
-          b.id_account
+          b.leader_team
         FROM token_track a
         INNER JOIN account b ON a.team_id=b.id
         INNER JOIN officer c ON a.nrp_user=c.nrp_officer

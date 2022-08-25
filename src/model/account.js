@@ -21,7 +21,9 @@ Account.init(
         });
       },
     },
-
+    operation_id: {
+      type: Sequelize.INTEGER,
+    },
     name_account: {
       type: Sequelize.STRING(50),
     },

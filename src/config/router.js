@@ -95,4 +95,20 @@ router.use(
   require("../router/trx_operation_profile_polda")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/renpam",
+  authMiddleware.jwtAuth,
+  require("../router/renpam")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/renpam-account",
+  authMiddleware.jwtAuth,
+  require("../router/renpam_account")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/renpam-vip",
+  authMiddleware.jwtAuth,
+  require("../router/renpam_vip")
+);
+
 module.exports = router;

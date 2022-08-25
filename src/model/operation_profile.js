@@ -25,12 +25,6 @@ OperationProfile.init(
     name_operation: {
       type: Sequelize.STRING(255),
     },
-    time_start_operation: {
-      type: Sequelize.STRING(25),
-    },
-    time_end_operation: {
-      type: Sequelize.STRING(25),
-    },
     document_sprint: {
       type: Sequelize.TEXT,
     },

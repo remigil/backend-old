@@ -11,8 +11,6 @@ const Polda = require("../model/polda");
 const fieldData = {
   banner: null,
   name_operation: null,
-  time_start_operation: null,
-  time_end_operation: null,
   document_sprint: null,
   background_image: null,
   logo: null,
