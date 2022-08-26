@@ -42,12 +42,7 @@ const socketInstace = (server) => {
                 foreignKey: "id_vehicle",
                 required: false,
               },
-              {
-                model: Vip,
-                as: "vips",
-                foreignKey: "id_vip",
-                required: false,
-              },
+
               {
                 model: Officer,
                 as: "officer",
@@ -119,7 +114,7 @@ const socketInstace = (server) => {
         longitude: coordinate.lon,
         name_account: dataAccount.name_account,
         name_team: dataAccount.leader_team, // [ketua tim]
-        vip: dataAccount.vips.name_vip, // [nama vip]
+        // vip: dataAccount.vips.name_vip, // [nama vip]
         nrp_user: dataOfficer.nrp_officer,
         handphone: dataOfficer.phone_officer,
         no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]

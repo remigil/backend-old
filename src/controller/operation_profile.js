@@ -26,11 +26,9 @@ const fieldData = {
 //   foreignKey: "operation_profile_id", // replaces `productId`
 //   otherKey: "polres_id", // replaces `categoryId`
 // });
-Polda.belongsToMany(Polres, {
-  // as: "polres",
-  through: "operation_profile_polres",
+Polda.hasMany(Polres, {
   foreignKey: "polda_id", // replaces `productId`
-  otherKey: "polres_id", // replaces `categoryId`
+  sourceKey: "id",
 });
 module.exports = class OperationProfileController {
   static get = async (req, res) => {
@@ -100,10 +98,14 @@ module.exports = class OperationProfileController {
             include: [
               {
                 model: Polres,
-                // as: "polres",
-                // required: false,
+                required: false,
               },
             ],
+          },
+          {
+            model: Polres,
+            as: "polres",
+            required: false,
           },
         ],
       });

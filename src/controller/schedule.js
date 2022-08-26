@@ -45,19 +45,15 @@ const queryGlobal = ({ select, join, condition, account_id }) => {
   return query;
 };
 const castingJumlahHariIni = (data, today) => {
-  let jumlahHariIni = [];
-  for (const e of data) {
-    if (e[today] != undefined) {
-      jumlahHariIni.push(...e[today]);
-    }
-  }
-  return jumlahHariIni;
+  let getToday = data.filter((e) => e.tanggal == today);
+  return getToday.length ? getToday[0].data : [];
 };
 module.exports = class ScheduleController {
   static trx = async (req, res) => {
     try {
       let queryRepam = [];
       let { date, operation_id, type, jumlahHariini } = req.query;
+      console.log(req.query);
       let jumlah_data = {
         renpam: {
           jumlah: 0,
@@ -125,7 +121,8 @@ module.exports = class ScheduleController {
           })
         );
         renpamData.push({
-          [iterator.date]: result_renpam,
+          tanggal: iterator.date,
+          data: result_renpam,
         });
       }
 
@@ -150,8 +147,10 @@ module.exports = class ScheduleController {
             account_id: req.auth.uid,
           })
         );
+
         vipData.push({
-          [iterator.date]: result_vip,
+          tanggal: iterator.date,
+          data: result_vip,
         });
       }
 
@@ -173,8 +172,10 @@ module.exports = class ScheduleController {
             account_id: req.auth.uid,
           })
         );
+
         kegiatanData.push({
-          [iterator.date]: result_kegiatan,
+          tanggal: iterator.date,
+          data: result_kegiatan,
         });
       }
 

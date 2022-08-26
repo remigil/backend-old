@@ -19,7 +19,7 @@ OperationProfilePolres.init(
         });
       },
     },
-    polda_id: {
+    operation_profile_id: {
       type: Sequelize.INTEGER,
     },
     polres_id: {
@@ -36,7 +36,7 @@ OperationProfilePolres.init(
         where: Sequelize.literal("operation_profile_polres.deleted_at is null"),
       },
     },
-    indexes: [{ fields: ["polda_id", "polres_id"] }],
+    indexes: [{ fields: ["operation_profile_id", "polres_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
