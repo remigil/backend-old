@@ -13,7 +13,6 @@ const field_account = {
   leader_team: null,
   id_vehicle: null,
   id_account: null,
-  id_vip: null,
   password: null,
 };
 
@@ -85,12 +84,6 @@ module.exports = class AccountController {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
-            required: false,
-          },
-          {
-            model: Vip,
-            as: "vips",
-            foreignKey: "id_vip",
             required: false,
           },
           {

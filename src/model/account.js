@@ -33,9 +33,6 @@ Account.init(
     id_vehicle: {
       type: Sequelize.INTEGER,
     },
-    id_vip: {
-      type: Sequelize.INTEGER,
-    },
     password: {
       type: Sequelize.TEXT,
       set(value) {
@@ -49,7 +46,7 @@ Account.init(
     ...StructureTimestamp,
   },
   {
-    indexes: [{ fields: ["id_vip", "id_vehicle"] }],
+    indexes: [{ fields: ["id_vehicle"] }],
     defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
     scopes: {
       deleted: {
@@ -70,7 +67,6 @@ Account.hasOne(Vehicle, {
   as: "vehicle",
   sourceKey: "id_vehicle",
 });
-Account.hasOne(Vip, { foreignKey: "id", as: "vips", sourceKey: "id_vip" });
 Account.belongsToMany(Officer, {
   as: "officer",
   through: "trx_account_officer",

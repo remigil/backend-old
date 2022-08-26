@@ -7,6 +7,7 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const formidable = require("formidable");
 const Polda = require("../model/polda");
+const Polres = require("../model/polres");
 
 const fieldData = {
   banner: null,
@@ -81,7 +82,19 @@ module.exports = class OperationProfileController {
         include: [
           {
             model: Polda,
+            // include: [
+            //   {
+            //     model: Polres,
+            //     as: "datapolres",
+            //     required: false,
+            //   },
+            // ],
             as: "polda",
+            required: false,
+          },
+          {
+            model: Polres,
+            as: "polres",
             required: false,
           },
         ],

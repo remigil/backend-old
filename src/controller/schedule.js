@@ -281,67 +281,65 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
-      const dataRes = await Schedule.findAll(getData);
+      const data = await Schedule.findAll(getData);
       const count = await Schedule.count({
         where: getData?.where,
       });
 
-      var data = [];
-      var dummyData = {};
-      for (let i = 0; i < dataRes.length; i++) {
-        const arrayIdVip = dataRes[i]["id_vip"].split(",");
-        const dataVip = await Vip.findAll({
-          where: {
-            id: arrayIdVip,
-          },
-        });
+      // var data = [];
+      // var dummyData = {};
+      // for (let i = 0; i < dataRes.length; i++) {
+      //   const arrayIdVip = dataRes[i]["id_vip"].split(",");
+      //   const dataVip = await Vip.findAll({
+      //     where: {
+      //       id: arrayIdVip,
+      //     },
+      //   });
 
-        const arrayIdAccount = dataRes[i]["id_account"].split(",");
-        const dataAccount = await Account.findAll({
-          where: {
-            id: arrayIdAccount,
-          },
-        });
+      //   const arrayIdAccount = dataRes[i]["id_account"].split(",");
+      //   const dataAccount = await Account.findAll({
+      //     where: {
+      //       id: arrayIdAccount,
+      //     },
+      //   });
 
-        var encryptIdAccount = [];
-        for (let i = 0; i < arrayIdAccount.length; i++) {
-          encryptIdAccount.push(
-            AESEncrypt(arrayIdAccount[i], {
-              isSafeUrl: true,
-              parseMode: "string",
-            })
-          );
-        }
+      //   var encryptIdAccount = [];
+      //   for (let i = 0; i < arrayIdAccount.length; i++) {
+      //     encryptIdAccount.push(
+      //       AESEncrypt(arrayIdAccount[i], {
+      //         isSafeUrl: true,
+      //         parseMode: "string",
+      //       })
+      //     );
+      //   }
 
-        var encryptIdVip = [];
-        for (let i = 0; i < arrayIdVip.length; i++) {
-          encryptIdVip.push(
-            AESEncrypt(arrayIdVip[i], {
-              isSafeUrl: true,
-              parseMode: "string",
-            })
-          );
-        }
+      //   var encryptIdVip = [];
+      //   for (let i = 0; i < arrayIdVip.length; i++) {
+      //     encryptIdVip.push(
+      //       AESEncrypt(arrayIdVip[i], {
+      //         isSafeUrl: true,
+      //         parseMode: "string",
+      //       })
+      //     );
+      //   }
 
-        dummyData = {};
-        dummyData["id"] = dataRes[i]["id"];
-        dummyData["activity"] = dataRes[i]["activity"];
-        dummyData["id_vip"] = encryptIdVip.toString();
-        dummyData["id_account"] = encryptIdAccount.toString();
-        dummyData["date_schedule"] = dataRes[i]["date_schedule"];
-        dummyData["start_time"] = dataRes[i]["start_time"];
-        dummyData["end_time"] = dataRes[i]["end_time"];
-        dummyData["address_schedule"] = dataRes[i]["address_schedule"];
-        dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
-        dummyData["status_schedule"] = dataRes[i]["status_schedule"];
-        dummyData["vips"] = dataVip;
-        dummyData["accounts"] = dataAccount;
+      //   dummyData = {};
+      //   dummyData["id"] = dataRes[i]["id"];
+      //   dummyData["activity"] = dataRes[i]["activity"];
+      //   dummyData["id_vip"] = encryptIdVip.toString();
+      //   dummyData["id_account"] = encryptIdAccount.toString();
+      //   dummyData["date_schedule"] = dataRes[i]["date_schedule"];
+      //   dummyData["start_time"] = dataRes[i]["start_time"];
+      //   dummyData["end_time"] = dataRes[i]["end_time"];
+      //   dummyData["address_schedule"] = dataRes[i]["address_schedule"];
+      //   dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
+      //   dummyData["status_schedule"] = dataRes[i]["status_schedule"];
+      //   dummyData["vips"] = dataVip;
+      //   dummyData["accounts"] = dataAccount;
 
-        data.push(dummyData);
-      }
+      //   data.push(dummyData);
+      // }
 
-      // const adaw =
-      //   '[{"latlong":"1.2323, -8.239393"},{"latlong":"2.2323, -9.239393"}]';
       response(res, true, "Succeed", {
         data,
         recordsFiltered: count,

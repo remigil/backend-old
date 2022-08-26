@@ -94,6 +94,11 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/trx_operation_profile_polda")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/operation-profile-polres",
+  authMiddleware.jwtAuth,
+  require("../router/trx_operation_profile_polres")
+);
 
 router.use(
   "/v" + process.env.APP_VERSION + "/renpam",
