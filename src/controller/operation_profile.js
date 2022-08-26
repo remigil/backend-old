@@ -8,6 +8,8 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const Polda = require("../model/polda");
 const Polres = require("../model/polres");
+const OperationProfilePolda = require("../model/operation_profile_polda");
+const OperationProfilePolres = require("../model/operation_profile_polres");
 
 const fieldData = {
   banner: null,
@@ -18,7 +20,18 @@ const fieldData = {
   date_start_operation: null,
   date_end_operation: null,
 };
-
+// OperationProfile.belongsToMany(Polres, {
+//   as: "polres",
+//   through: "operation_profile_polres",
+//   foreignKey: "operation_profile_id", // replaces `productId`
+//   otherKey: "polres_id", // replaces `categoryId`
+// });
+Polda.belongsToMany(Polres, {
+  // as: "polres",
+  through: "operation_profile_polres",
+  foreignKey: "polda_id", // replaces `productId`
+  otherKey: "polres_id", // replaces `categoryId`
+});
 module.exports = class OperationProfileController {
   static get = async (req, res) => {
     try {
@@ -82,20 +95,15 @@ module.exports = class OperationProfileController {
         include: [
           {
             model: Polda,
-            // include: [
-            //   {
-            //     model: Polres,
-            //     as: "datapolres",
-            //     required: false,
-            //   },
-            // ],
             as: "polda",
             required: false,
-          },
-          {
-            model: Polres,
-            as: "polres",
-            required: false,
+            include: [
+              {
+                model: Polres,
+                // as: "polres",
+                // required: false,
+              },
+            ],
           },
         ],
       });
@@ -108,6 +116,7 @@ module.exports = class OperationProfileController {
         recordsTotal: count,
       });
     } catch (e) {
+      console.log(e);
       response(res, false, "Failed", e.message);
     }
   };

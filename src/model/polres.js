@@ -43,10 +43,17 @@ Polres.init(
   },
   {
     indexes: [{ fields: ["polda_id"] }],
-    defaultScope: { where: Sequelize.literal("polres.deleted_at is null") },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("polres.deleted_at is null"),
+        // where: Sequelize.literal("polres.deleted_at is null"),
+        where: {
+          deleted_at: null,
+        },
       },
     },
     deletedAt: "deleted_at",

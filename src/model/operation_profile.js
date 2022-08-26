@@ -66,11 +66,7 @@ OperationProfile.belongsToMany(Polda, {
   foreignKey: "operation_profile_id", // replaces `productId`
   otherKey: "polda_id", // replaces `categoryId`
 });
-// Polda.belongsToMany(Polres, {
-//   as: "datapolres",
-//   through: "polres",
-//   otherKey: "polda_id", // replaces `productId`
-// });
+
 OperationProfile.belongsToMany(Polres, {
   as: "polres",
   through: "operation_profile_polres",

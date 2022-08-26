@@ -18,7 +18,7 @@ const field = {
   coordinate_schedule: null,
   status_schedule: 0,
 };
-const queryGlobal = ({ select, join, condition }) => {
+const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
                 r.id as id_ranpam,
                 r.name_renpam,
@@ -32,24 +32,32 @@ const queryGlobal = ({ select, join, condition }) => {
                 r.end_time
                 ${select}
               FROM renpam r
-              
+              INNER JOIN renpam_account ra ON ra.renpam_id=r.id
               ${join}
-              ${
-                condition
-                  ? `
-                WHERE ${condition}
-              `
-                  : ""
-              }
+              WHERE 1=1
+              ${condition ? condition : ""}
+              AND ra.account_id=${AESDecrypt(account_id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              })}
               order by r.date ASC`;
 
   return query;
+};
+const castingJumlahHariIni = (data, today) => {
+  let jumlahHariIni = [];
+  for (const e of data) {
+    if (e[today] != undefined) {
+      jumlahHariIni.push(...e[today]);
+    }
+  }
+  return jumlahHariIni;
 };
 module.exports = class ScheduleController {
   static trx = async (req, res) => {
     try {
       let queryRepam = [];
-      let { date, operation_id } = req.query;
+      let { date, operation_id, type, jumlahHariini } = req.query;
       let jumlah_data = {
         renpam: {
           jumlah: 0,
@@ -68,9 +76,29 @@ module.exports = class ScheduleController {
           data: [],
         },
       };
-      if (date != undefined) {
-        queryRepam.push(`r.date='${date}'`);
+
+      let dateIterator = "";
+      let no = 0;
+      for (const iterator of date.split(",")) {
+        dateIterator += `'${iterator}'`;
+        if (no != date.split(",").length - 1) {
+          dateIterator += ",";
+        }
+        no++;
       }
+      if (date != undefined) {
+        queryRepam.push(`r.date IN (${dateIterator})`);
+      }
+
+      let [dateGroup] = await db.query(`
+      SELECT r.date FROM renpam r
+      INNER JOIN renpam_account ra ON ra.renpam_id=r.id
+      WHERE ra.account_id=${AESDecrypt(req.auth.uid, {
+        isSafeUrl: true,
+        parseMode: "string",
+      })}
+      ${queryRepam.length ? "AND " + queryRepam.join("AND") : ""}
+      GROUP BY r.date`);
       if (operation_id != undefined) {
         queryRepam.push(
           `r.operation_id=${AESDecrypt(operation_id, {
@@ -80,146 +108,119 @@ module.exports = class ScheduleController {
         );
       }
 
-      let [result_renpam] = await db.query(
-        queryGlobal({
-          select: `
-          ,s.*,
+      let renpamData = [];
+      for (const iterator of dateGroup) {
+        let [result_renpam] = await db.query(
+          queryGlobal({
+            select: `
+            ,s.*,
+                  s.id as id_schedule
+            `,
+            join: `
+            LEFT JOIN schedule s ON s.id=r.schedule_id
+            `,
+            condition: `
+            AND r.date='${iterator.date}'`,
+            account_id: req.auth.uid,
+          })
+        );
+        renpamData.push({
+          [iterator.date]: result_renpam,
+        });
+      }
+
+      let vipData = [];
+      for (const iterator of dateGroup) {
+        let [result_vip] = await db.query(
+          queryGlobal({
+            select: `
+              ,v.*,
+               v.id as id_vip,
+               s.*,
+                  s.id as id_schedule
+            `,
+            join: `
+            LEFT JOIN schedule s ON s.id=r.schedule_id
+              INNER JOIN renpam_vip rv ON rv.renpam_id=r.id
+              INNER JOIN vip v ON v.id=rv.vip_id
+            `,
+            condition: `
+             AND r.date='${iterator.date}'
+            `,
+            account_id: req.auth.uid,
+          })
+        );
+        vipData.push({
+          [iterator.date]: result_vip,
+        });
+      }
+
+      let kegiatanData = [];
+      for (const iterator of dateGroup) {
+        let [result_kegiatan] = await db.query(
+          queryGlobal({
+            select: `
+            ,s.*,
                 s.id as id_schedule
           `,
-          join: `
-          LEFT JOIN schedule s ON s.id=r.schedule_id
+            join: `
+          INNER JOIN schedule s ON s.id=r.schedule_id
+            
           `,
-          condition: queryRepam.join(" AND "),
-        })
-      );
-      let [result_vip] = await db.query(
-        queryGlobal({
-          select: `
-            ,v.*,
-             v.id as id_vip,
-             s.*,
-                s.id as id_schedule
-          `,
-          join: `
-          LEFT JOIN schedule s ON s.id=r.schedule_id
-            INNER JOIN renpam_vip rv ON rv.renpam_id=r.id
-            INNER JOIN vip v ON v.id=rv.vip_id
-          `,
-          condition: "",
-        })
-      );
-      let [result_kegiatan] = await db.query(
+            condition: `
+              AND r.date='${iterator.date}'
+            `,
+            account_id: req.auth.uid,
+          })
+        );
+        kegiatanData.push({
+          [iterator.date]: result_kegiatan,
+        });
+      }
+
+      let [result_petugas] = await db.query(
         queryGlobal({
           select: `
             ,s.*,
                 s.id as id_schedule
           `,
           join: `
-          INNER JOIN schedule s ON s.id=r.schedule_id
-            
+          LEFT JOIN schedule s ON s.id=r.schedule_id
+          
+          INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
+          INNER JOIN officer o ON o.id=tao.officer_id
           `,
           condition: "",
+          account_id: req.auth.uid,
         })
       );
+
       jumlah_data = {
         ...jumlah_data,
         renpam: {
-          jumlah: result_renpam.length,
-          data: result_renpam,
+          jumlah: castingJumlahHariIni(renpamData, jumlahHariini).length,
+          data: renpamData,
         },
         vip: {
-          jumlah: result_vip.length,
-          data: result_vip,
+          jumlah: castingJumlahHariIni(vipData, jumlahHariini).length,
+          data: vipData,
         },
         kegiatan: {
-          jumlah: result_kegiatan.length,
-          data: result_kegiatan,
+          jumlah: castingJumlahHariIni(kegiatanData, jumlahHariini).length,
+          data: kegiatanData,
+        },
+        petugas: {
+          jumlah: result_petugas.length,
+          data: result_petugas,
         },
       };
 
-      response(res, true, "Succeed", jumlah_data);
-      // Schedule.findAll({
-      //   include: [
-      //     {
-      //       model: Renpam,
-      //       as: "renpams",
-      //       order: [
-      //         ["date", "ASC"],
-      //         ["start_time", "ASC"],
-      //       ],
-      //     },
-      //   ],
-      //   order: [
-      //     ["date_schedule", "ASC"],
-      //     ["start_time", "ASC"],
-      //   ],
-      // })
-      //   .then(async (responseSchedule) => {
-      //     let tampungDataSchedule = [];
-      //     for (const schedule of responseSchedule) {
-      //       let tampungDataRenpam = [];
-      //       let { renpams } = schedule;
-      //       for (const renpam of renpams) {
-      //         let { id } = renpam;
-      //         let [account] = await db.query(
-      //           `
-      //           SELECT
-      //               ra.*,
-      //               a.name_account,
-      //               a.leader_team
-
-      //           FROM renpam_account ra
-      //           INNER JOIN account a ON ra.account_id=a.id
-      //           where ra.renpam_id=${AESDecrypt(id, {
-      //             isSafeUrl: true,
-      //             parseMode: "string",
-      //           })}
-      //         `
-      //         );
-      //         tampungDataRenpam.push({
-      //           ...renpam.dataValues,
-      //           account: account,
-      //         });
-      //       }
-      //       // console.log(tampungDataRenpam);
-      //       tampungDataSchedule.push({
-      //         ...schedule.dataValues,
-      //         renpams: tampungDataRenpam,
-      //       });
-      //     }
-      //     response(res, true, "Succeed", {
-      //       tampungDataSchedule,
-      //       // test: JSON.parse(adaw),
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     // console.log(error);
-      //     response(res, false, "Failed", error.message);
-      //   });
-
-      // const [data] = await db.query(
-      //   `
-      //   SELECT
-      //       s.*,
-      //       r.id as id_renpam,
-      //       r.name_renpam,
-      //       r.type_renpam,
-      //       r.route,
-      //       r.route_alternatif_1,
-      //       r.route_alternatif_2,
-      //       r.coordinate_guarding,
-      //       r.date as date_renpam,
-      //       r.start_time as start_renpam,
-      //       r.end_time as end_renpam,
-
-      //   FROM schedule s
-      //   INNER JOIN renpam r ON s.id=r.schedule_id
-      // `
-      // );
-      // response(res, true, "Succeed", {
-      //   dataRes,
-      //   // test: JSON.parse(adaw),
-      // });
+      response(
+        res,
+        true,
+        "Succeed",
+        type ? { [type]: jumlah_data[type] } : jumlah_data
+      );
     } catch (e) {
       response(res, false, "Failed", e.message);
     }

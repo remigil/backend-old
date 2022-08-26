@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const OperationProfilePolres = require("./operation_profile_polres");
 
 const Model = Sequelize.Model;
 
@@ -45,6 +46,7 @@ OperationProfilePolda.init(
     sequelize: db,
   }
 );
+
 (async () => {
   OperationProfilePolda.sync({ alter: true });
 })();
