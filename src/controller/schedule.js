@@ -183,7 +183,9 @@ module.exports = class ScheduleController {
         queryGlobal({
           select: `
             ,s.*,
-                s.id as id_schedule
+                s.id as id_schedule,
+                o.*,
+                o.id as id_officer
           `,
           join: `
           LEFT JOIN schedule s ON s.id=r.schedule_id
