@@ -47,6 +47,9 @@ Renpam.init(
     coordinate_guarding: {
       type: Sequelize.JSON,
     },
+    end_coordinate_renpam: {
+      type: Sequelize.JSON,
+    },
     date: {
       type: Sequelize.DATEONLY,
     },

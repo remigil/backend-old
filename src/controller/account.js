@@ -4,6 +4,7 @@ const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const Vip = require("../model/vip");
 const Polres = require("../model/polres");
+const AccountProfile = require("../model/trx_account_officer");
 
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
@@ -13,6 +14,7 @@ const field_account = {
   leader_team: null,
   id_vehicle: null,
   id_account: null,
+  officers: null,
   password: null,
 };
 
@@ -116,12 +118,6 @@ module.exports = class AccountController {
             required: false,
           },
           {
-            model: Vip,
-            as: "vips",
-            foreignKey: "id_vip",
-            required: false,
-          },
-          {
             model: Officer,
             as: "officer",
             required: false,
@@ -146,6 +142,7 @@ module.exports = class AccountController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
+      let fieldValueOfficer = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
@@ -153,12 +150,39 @@ module.exports = class AccountController {
               isSafeUrl: true,
               parseMode: "string",
             });
+          } else if (val == "officers") {
+            fieldValue[val] = JSON.parse(req.body[val]);
           } else {
             fieldValue[val] = req.body[val];
           }
         }
       });
-      await Account.create(fieldValue, { transaction: transaction });
+      await Account.create(fieldValue, { transaction: transaction })
+        .then((ress) => {
+          if (
+            fieldValue["officers"].length > 0 ||
+            fieldValue["officers"].length != null
+          ) {
+            for (let i = 0; i < fieldValue["officers"].length; i++) {
+              fieldValueOfficer = {};
+              fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueOfficer["officer_id"] = AESDecrypt(
+                fieldValue["officers"][i],
+                {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }
+              );
+              AccountProfile.create(fieldValueOfficer);
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

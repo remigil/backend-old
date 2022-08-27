@@ -24,6 +24,7 @@ const fieldData = {
   route_alternatif_1: null,
   route_alternatif_2: null,
   coordinate_guarding: null,
+  coordinate_renpam: null,
   date: null,
   start_time: null,
   end_time: null,
@@ -122,6 +123,43 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getId = async (req, res) => {
+    try {
+      const data = await Renpam.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: false,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+      });
+
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {

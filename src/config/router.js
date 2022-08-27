@@ -51,6 +51,13 @@ router.use(
   require("../router/schedule")
 );
 
+// CCTV
+router.use(
+  "/v" + process.env.APP_VERSION + "/cctv",
+  authMiddleware.jwtAuth,
+  require("../router/cctv")
+);
+
 //--------tracking
 
 router.use(
