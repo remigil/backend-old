@@ -128,23 +128,24 @@ module.exports = class TokenTrackController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await TokenTrackNotif.update(
-        {
-          name: req.body?.name,
-          description: req.body?.description,
-        },
-        {
-          where: {
-            id: AESDecrypt(req.params.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          transaction: transaction,
+      let objFieldUpdate = {};
+      Object.keys(conditionalField).forEach((val, key) => {
+        if (
+          req.body[val] != null &&
+          req.body[val] != "" &&
+          req.body[val] != undefined
+        ) {
+          objFieldUpdate[val] = req.body[val];
         }
-      );
+      });
+      await TokenTrackNotif.update(objFieldUpdate, {
+        where: {
+          nrp_user: req.auth.nrp_user,
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
-      response(res, true, "Succeed", null);
+      response(res, true, "Succeed", req.auth);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);

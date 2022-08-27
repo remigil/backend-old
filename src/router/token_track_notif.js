@@ -9,7 +9,7 @@ router.post(
   formValidation,
   TokenTrackController.add
 );
-router.put("/edit/:id", TokenTrackController.edit);
+router.put("/edit", TokenTrackController.edit);
 
 router.delete(
   "/delete",
