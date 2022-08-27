@@ -4,16 +4,31 @@ const Renpam = require("../model/renpam");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
+const fs = require("fs");
+const Schedule = require("../model/schedule");
+const Account = require("../model/account");
+const Vip = require("../model/vip");
+const RenpamAccount = require("../model/renpam_account");
+const RenpamVip = require("../model/renpam_vip");
+
+Renpam.hasOne(Schedule, {
+  foreignKey: "id", // replaces `productId`
+  sourceKey: "schedule_id",
+});
 const fieldData = {
+  operation_id: null,
   schedule_id: null,
   name_renpam: null,
   type_renpam: null,
   route: null,
   route_alternatif_1: null,
   route_alternatif_2: null,
+  coordinate_guarding: null,
   date: null,
   start_time: null,
   end_time: null,
+  vips: null,
+  accounts: null,
 };
 
 module.exports = class RenpamController {
@@ -74,7 +89,26 @@ module.exports = class RenpamController {
           ...filters,
         };
       }
-      const data = await Renpam.findAll(getDataRules);
+      const data = await Renpam.findAll({
+        ...getDataRules,
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: false,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+      });
       const count = await Renpam.count({
         where: getDataRules?.where,
       });
@@ -89,25 +123,73 @@ module.exports = class RenpamController {
   };
   static add = async (req, res) => {
     const transaction = await db.transaction();
-    const { vip, account } = req.body;
     try {
-      let value = {};
+      let fieldValue = {};
+      let fieldValueVip = {};
+      let fieldValueAccount = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          value[val] = req.body[val];
-        } else {
-          value[val] = null;
+          if (val == "operation_id" || val == "schedule_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else if (val == "route" || val == "vips" || val == "accounts") {
+            fieldValue[val] = JSON.parse(req.body[val]);
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
-      await Renpam.create(
-        {
-          name: req.body.name,
-          description: req.body?.description,
-        },
-        { transaction: transaction }
-      );
-      await transaction.commit();
-      response(res, true, "Succeed", null);
+      Renpam.create(fieldValue, {
+        transaction: transaction,
+      })
+        .then((op) => {
+          if (
+            fieldValue["accounts"].length > 0 ||
+            fieldValue["accounts"].length != null
+          ) {
+            for (let i = 0; i < fieldValue["accounts"].length; i++) {
+              fieldValueAccount = {};
+              fieldValueAccount["renpam_id"] = AESDecrypt(op["id"], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueAccount["account_id"] = AESDecrypt(
+                fieldValue["accounts"][i],
+                {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }
+              );
+              RenpamAccount.create(fieldValueAccount);
+            }
+          }
+
+          if (
+            fieldValue["vips"].length > 0 ||
+            fieldValue["vips"].length != null
+          ) {
+            for (let i = 0; i < fieldValue["vips"].length; i++) {
+              fieldValueVip = {};
+              fieldValueVip["renpam_id"] = AESDecrypt(op["id"], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueVip["vip_id"] = AESDecrypt(fieldValue["vips"][i], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              RenpamVip.create(fieldValueVip);
+            }
+          }
+
+          transaction.commit();
+          response(res, true, "Succeed", fieldValueVip);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -116,21 +198,27 @@ module.exports = class RenpamController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Renpam.update(
-        {
-          name: req.body?.name,
-          description: req.body?.description,
-        },
-        {
-          where: {
-            id: AESDecrypt(req.params.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          transaction: transaction,
+      let fieldValue = {};
+      Object.keys(field_account).forEach((val, key) => {
+        if (val == "operation_id" || val == "schedule_id") {
+          fieldValue[val] = AESDecrypt(req.body[val], {
+            isSafeUrl: true,
+            parseMode: "string",
+          });
+        } else {
+          fieldValue[val] = req.body[val];
         }
-      );
+      });
+
+      await Renpam.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

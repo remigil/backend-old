@@ -3,7 +3,9 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Schedule = require("./schedule");
 const Account = require("./account");
+const Vip = require("./vip");
 
 const Model = Sequelize.Model;
 
@@ -77,6 +79,12 @@ Renpam.belongsToMany(Account, {
   through: "renpam_account",
   foreignKey: "renpam_id",
   otherKey: "account_id",
+});
+Renpam.belongsToMany(Vip, {
+  as: "vips",
+  through: "renpam_vip",
+  foreignKey: "renpam_id",
+  otherKey: "vip_id",
 });
 (async () => {
   Renpam.sync({ alter: true });

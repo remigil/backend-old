@@ -8,8 +8,6 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const Polda = require("../model/polda");
 const Polres = require("../model/polres");
-const OperationProfilePolda = require("../model/operation_profile_polda");
-const OperationProfilePolres = require("../model/operation_profile_polres");
 
 const fieldData = {
   banner: null,
@@ -19,13 +17,8 @@ const fieldData = {
   logo: null,
   date_start_operation: null,
   date_end_operation: null,
+  // level_operation: null,
 };
-// OperationProfile.belongsToMany(Polres, {
-//   as: "polres",
-//   through: "operation_profile_polres",
-//   foreignKey: "operation_profile_id", // replaces `productId`
-//   otherKey: "polres_id", // replaces `categoryId`
-// });
 Polda.hasMany(Polres, {
   foreignKey: "polda_id", // replaces `productId`
   sourceKey: "id",
@@ -102,11 +95,11 @@ module.exports = class OperationProfileController {
               },
             ],
           },
-          {
-            model: Polres,
-            as: "polres",
-            required: false,
-          },
+          // {
+          //   model: Polres,
+          //   as: "polres",
+          //   required: false,
+          // },
         ],
       });
       const count = await OperationProfile.count({

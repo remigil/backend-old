@@ -5,9 +5,9 @@ const middlewareGlobal = require("./src/config/global_middleware");
 const dotenv = require("dotenv");
 const moment = require("moment");
 const path = require("path");
-const http = require("http"); 
-const socketInstace = require("./src/config/socketConnetion"); 
-const bodyParser = require("body-parser"); 
+const http = require("http");
+const socketInstace = require("./src/config/socketConnetion");
+const bodyParser = require("body-parser");
 const server = http.createServer(app);
 dotenv.config();
 const port = process.env.APP_PORT;
@@ -23,7 +23,7 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
 socketInstace(server);
 
 middlewareGlobal.beforeRouter(app);
-app.use(router); 
+app.use(router);
 middlewareGlobal.afterRouter(app);
 server.listen(port, () => {
   console.log("[SERVER]", `Start at ${moment()} on Port ${port}`);

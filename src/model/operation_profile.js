@@ -35,6 +35,9 @@ OperationProfile.init(
     logo: {
       type: Sequelize.TEXT,
     },
+    // level_operation: {
+    //   type: Sequelize.STRING(255),
+    // },
     date_start_operation: {
       type: Sequelize.DATEONLY,
     },
@@ -67,12 +70,12 @@ OperationProfile.belongsToMany(Polda, {
   otherKey: "polda_id", // replaces `categoryId`
 });
 
-OperationProfile.belongsToMany(Polres, {
-  as: "polres",
-  through: "operation_profile_polres",
-  foreignKey: "operation_profile_id", // replaces `productId`
-  otherKey: "polres_id", // replaces `categoryId`
-});
+// OperationProfile.belongsToMany(Polres, {
+//   as: "polres",
+//   through: "operation_profile_polres",
+//   foreignKey: "operation_profile_id", // replaces `productId`
+//   otherKey: "polres_id", // replaces `categoryId`
+// });
 (async () => {
   OperationProfile.sync({ alter: true });
 })();

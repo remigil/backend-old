@@ -355,7 +355,7 @@ module.exports = class ScheduleController {
 
   static getId = async (req, res) => {
     try {
-      const dataRes = await Schedule.findOne({
+      const data = await Schedule.findOne({
         where: {
           id: AESDecrypt(req.params.id, {
             isSafeUrl: true,
@@ -363,55 +363,6 @@ module.exports = class ScheduleController {
           }),
         },
       });
-
-      var data = {};
-
-      const arrayIdVip = dataRes["id_vip"].split(",");
-      const dataVip = await Vip.findAll({
-        where: {
-          id: arrayIdVip,
-        },
-      });
-
-      const arrayIdAccount = dataRes["id_account"].split(",");
-      const dataAccount = await Account.findAll({
-        where: {
-          id: arrayIdAccount,
-        },
-      });
-
-      var encryptIdAccount = [];
-      for (let i = 0; i < arrayIdAccount.length; i++) {
-        encryptIdAccount.push(
-          AESEncrypt(arrayIdAccount[i], {
-            isSafeUrl: true,
-            parseMode: "string",
-          })
-        );
-      }
-
-      var encryptIdVip = [];
-      for (let i = 0; i < arrayIdVip.length; i++) {
-        encryptIdVip.push(
-          AESEncrypt(arrayIdVip[i], {
-            isSafeUrl: true,
-            parseMode: "string",
-          })
-        );
-      }
-
-      data["id"] = dataRes["id"];
-      data["activity"] = dataRes["activity"];
-      data["id_vip"] = encryptIdVip.toString();
-      data["id_account"] = encryptIdAccount.toString();
-      data["date_schedule"] = dataRes["date_schedule"];
-      data["start_time"] = dataRes["start_time"];
-      data["end_time"] = dataRes["end_time"];
-      data["address_schedule"] = dataRes["address_schedule"];
-      data["coordinate_schedule"] = dataRes["coordinate_schedule"];
-      data["status_schedule"] = dataRes["status_schedule"];
-      data["vips"] = dataVip;
-      data["accounts"] = dataAccount;
 
       response(res, true, "Succeed", {
         data,
