@@ -179,12 +179,12 @@ module.exports = class AccountController {
               AccountProfile.create(fieldValueOfficer);
             }
           }
+          transaction.commit();
+          response(res, true, "Succeed", null);
         })
         .catch((err) => {
           console.log(err);
         });
-      await transaction.commit();
-      response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -193,14 +193,43 @@ module.exports = class AccountController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
+      // let fieldValue = {};
+      // Object.keys(field_account).forEach((val, key) => {
+      //   if (req.body[val]) {
+      //     if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
+      //       fieldValue[val] = AESDecrypt(req.body[val], {
+      //         isSafeUrl: true,
+      //         parseMode: "string",
+      //       });
+      //     } else {
+      //       fieldValue[val] = req.body[val];
+      //     }
+      //   }
+      // });
+
+      // await Account.update(fieldValue, {
+      //   where: {
+      //     id: AESDecrypt(req.params.id, {
+      //       isSafeUrl: true,
+      //       parseMode: "string",
+      //     }),
+      //   },
+      //   transaction: transaction,
+      // });
+      // await transaction.commit();
+      // response(res, true, "Succeed", null);
+
       let fieldValue = {};
+      let fieldValueOfficer = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
+          if (val == "id_vehicle") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
             });
+          } else if (val == "officers") {
+            fieldValue[val] = JSON.parse(req.body[val]);
           } else {
             fieldValue[val] = req.body[val];
           }
@@ -215,9 +244,49 @@ module.exports = class AccountController {
           }),
         },
         transaction: transaction,
-      });
-      await transaction.commit();
-      response(res, true, "Succeed", null);
+      })
+        .then((op) => {
+          if (
+            fieldValue["officers"].length > 0 ||
+            fieldValue["officers"].length != null
+          ) {
+            AccountProfile.destroy({
+              where: {
+                account_id: AESDecrypt(req.params.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+              transaction: transaction,
+            })
+              .then((ress) => {
+                for (let i = 0; i < fieldValue["officers"].length; i++) {
+                  fieldValueOfficer = {};
+                  fieldValueOfficer["account_id"] = AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  });
+                  fieldValueOfficer["officer_id"] = AESDecrypt(
+                    fieldValue["officers"][i],
+                    {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }
+                  );
+                  AccountProfile.create(fieldValueOfficer);
+                }
+
+                transaction.commit();
+                response(res, true, "Succeed", ress);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
