@@ -260,20 +260,28 @@ module.exports = class AccountController {
               transaction: transaction,
             })
               .then((ress) => {
-                for (let i = 0; i < fieldValue["officers"].length; i++) {
-                  fieldValueOfficer = {};
-                  fieldValueOfficer["account_id"] = AESDecrypt(req.params.id, {
-                    isSafeUrl: true,
-                    parseMode: "string",
-                  });
-                  fieldValueOfficer["officer_id"] = AESDecrypt(
-                    fieldValue["officers"][i],
-                    {
-                      isSafeUrl: true,
-                      parseMode: "string",
-                    }
-                  );
-                  AccountProfile.create(fieldValueOfficer);
+                if (
+                  fieldValue["officers"].length > 0 ||
+                  fieldValue["officers"].length != null
+                ) {
+                  for (let i = 0; i < fieldValue["officers"].length; i++) {
+                    fieldValueOfficer = {};
+                    fieldValueOfficer["account_id"] = AESDecrypt(
+                      req.params.id,
+                      {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      }
+                    );
+                    fieldValueOfficer["officer_id"] = AESDecrypt(
+                      fieldValue["officers"][i],
+                      {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      }
+                    );
+                    AccountProfile.create(fieldValueOfficer);
+                  }
                 }
 
                 transaction.commit();
