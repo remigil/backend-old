@@ -29,6 +29,7 @@ const fieldData = {
   end_time: null,
   vips: null,
   accounts: null,
+  status_renpam: 0,
 };
 
 module.exports = class RenpamController {

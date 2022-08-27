@@ -56,6 +56,9 @@ Renpam.init(
     end_time: {
       type: Sequelize.TIME,
     },
+    status_renpam: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
