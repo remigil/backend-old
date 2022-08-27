@@ -134,7 +134,14 @@ module.exports = class RenpamController {
               isSafeUrl: true,
               parseMode: "string",
             });
-          } else if (val == "route" || val == "vips" || val == "accounts") {
+          } else if (
+            val == "route" ||
+            val == "vips" ||
+            val == "accounts" ||
+            val == "route_alternatif_1" ||
+            val == "route_alternatif_2" ||
+            val == "coordinate_guarding"
+          ) {
             fieldValue[val] = JSON.parse(req.body[val]);
           } else {
             fieldValue[val] = req.body[val];
