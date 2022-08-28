@@ -58,6 +58,18 @@ router.use(
   require("../router/cctv")
 );
 
+// FASUM
+router.use(
+  "/v" + process.env.APP_VERSION + "/category_fasum",
+  authMiddleware.jwtAuth,
+  require("../router/category_fasum")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/fasum",
+  authMiddleware.jwtAuth,
+  require("../router/fasum")
+);
+
 //--------tracking
 
 router.use(

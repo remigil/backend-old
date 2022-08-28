@@ -3,11 +3,12 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
-const Account = require("./account");
+const CategoryFasum = require("./category_fasum");
+
 const Model = Sequelize.Model;
 
-class Polres extends Model {}
-Polres.init(
+class Fasum extends Model {}
+Fasum.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -19,65 +20,62 @@ Polres.init(
         });
       },
     },
-    polda_id: {
+    fasum_type: {
       type: Sequelize.INTEGER,
-      allowNull: false,
     },
-    code_satpas: {
-      type: Sequelize.STRING(5),
+    fasum_name: {
+      type: Sequelize.STRING(255),
     },
-    name_polres: {
-      type: Sequelize.STRING(200),
-    },
-    address: {
+    fasum_logo: {
       type: Sequelize.TEXT,
     },
-    latitude: {
+    fasum_address: {
       type: Sequelize.TEXT,
     },
-    longitude: {
+    fasum_phone: {
+      type: Sequelize.STRING(255),
+    },
+    fasum_lat: {
       type: Sequelize.TEXT,
     },
-    logo_polres: {
+    fasum_lng: {
       type: Sequelize.TEXT,
     },
-    phone_polres: {
-      type: Sequelize.STRING(50),
+    fasum_description: {
+      type: Sequelize.TEXT,
     },
-    open_time: {
+    fasum_open_time: {
       type: Sequelize.TIME,
     },
-    close_time: {
+    fasum_close_time: {
       type: Sequelize.TIME,
     },
-
+    fasum_status: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
-    indexes: [{ fields: ["polda_id"] }],
-    defaultScope: {
-      where: {
-        deleted_at: null,
-      },
-    },
+    defaultScope: { where: Sequelize.literal("fasum.deleted_at is null") },
     scopes: {
       deleted: {
-        // where: Sequelize.literal("polres.deleted_at is null"),
-        where: {
-          deleted_at: null,
-        },
+        where: Sequelize.literal("fasum.deleted_at is null"),
       },
     },
+    // indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "polres",
-    modelName: "polres",
+    tableName: "fasum",
+    modelName: "fasum",
     sequelize: db,
   }
 );
-// Polres.hasMany(Account, { foreignKey: "id" });
+Fasum.hasOne(CategoryFasum, {
+  foreignKey: "id",
+  sourceKey: "fasum_type",
+});
 (async () => {
-  Polres.sync({ alter: true });
+  Fasum.sync({ alter: true });
 })();
-module.exports = Polres;
+module.exports = Fasum;
