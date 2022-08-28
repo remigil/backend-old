@@ -113,7 +113,7 @@ const socketInstace = (server) => {
         latitude: coordinate.lat,
         longitude: coordinate.lon,
         name_account: dataAccount.name_account,
-        id_officer: dataOfficer.id,
+        // id_officer: dataOfficer.id,
         name_team: dataAccount.leader_team, // [ketua tim]
         // vip: dataAccount.vips.name_vip, // [nama vip]
         nrp_user: dataOfficer.nrp_officer,
