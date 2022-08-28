@@ -90,7 +90,6 @@ const socketInstace = (server) => {
           next(new Error("Authentication error"));
         }
       } catch (error) {
-        console.log(error.message);
         next(new Error("Authentication error"));
       }
     }
@@ -99,7 +98,6 @@ const socketInstace = (server) => {
     io.emit("message", "test");
     socket.on("message", function (message) {
       // io.emit("message", message);
-      console.log(message);
     });
     socket.on("trackingUser", async function (coordinate) {
       const { username, password, user_nrp, type, dataAccount, dataOfficer } =
@@ -113,7 +111,10 @@ const socketInstace = (server) => {
         latitude: coordinate.lat,
         longitude: coordinate.lon,
         name_account: dataAccount.name_account,
-        // id_officer: dataOfficer.id,
+        id_officer: AESDecrypt(dataOfficer.id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        }),
         name_team: dataAccount.leader_team, // [ketua tim]
         // vip: dataAccount.vips.name_vip, // [nama vip]
         nrp_user: dataOfficer.nrp_officer,
@@ -122,7 +123,7 @@ const socketInstace = (server) => {
         type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
         date: moment(),
       });
-      console.log(sendTracking);
+
       io.emit("sendToAdmin", await LocationTrackController.sendToSocket());
     });
   });
