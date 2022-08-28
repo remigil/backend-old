@@ -6,6 +6,7 @@ const collection = {
   id_user: String,
   latitude: Number,
   longitude: Number,
+  id_officer: Number,
   date: Date,
   photo_officer: String, //[foto petugas]
   name_account: String,
