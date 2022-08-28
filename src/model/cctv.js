@@ -51,6 +51,12 @@ Cctv.init(
     lng_cctv: {
       type: Sequelize.TEXT,
     },
+    link_cctv: {
+      type: Sequelize.TEXT,
+    },
+    status_cctv: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {

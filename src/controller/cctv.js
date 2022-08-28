@@ -4,6 +4,7 @@ const Cctv = require("../model/cctv");
 const db = require("../config/database");
 const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
+const readXlsxFile = require("read-excel-file/node");
 const _ = require("lodash");
 const formidable = require("formidable");
 
@@ -143,32 +144,46 @@ module.exports = class CctvController {
       let idNotValid = [];
       for (const iterator of readExcell) {
         if (index == 0) {
-          if (
-            iterator[1] != "ID Polda" &&
-            iterator[2] != "Polres" &&
-            iterator[3] != "Kode Satpas" &&
-            iterator[4] != "Alamat"
-          ) {
-            response(res, false, "Failed", null);
-          }
+          // if (
+          //   iterator[1] != "1address_cctv" &&
+          //   iterator[2] != "1vms_cctv" &&
+          //   iterator[3] != "1jenis_cctv" &&
+          //   iterator[4] != "1merek_cctv" &&
+          //   iterator[5] != "1type_cctv" &&
+          //   iterator[6] != "1ip_cctv" &&
+          //   iterator[7] != "1gateway_cctv" &&
+          //   iterator[8] != "1username_cctv" &&
+          //   iterator[9] != "1password_cctv" &&
+          //   iterator[10] != "1lat_cctv" &&
+          //   iterator[11] != "1lng_cctv"
+          // ) {
+          //   response(res, false, "Failed", null);
+          // }
         } else {
           listPolres.push({
-            polda_id: iterator[1],
-            name_polres: iterator[2],
-            code_satpas: iterator[3],
-            address: iterator[4],
-            latitude: iterator[5] || null,
-            longitude: iterator[6] || null,
+            address_cctv: iterator[1],
+            vms_cctv: iterator[2],
+            jenis_cctv: iterator[3],
+            merek_cctv: iterator[4],
+            type_cctv: iterator[5],
+            ip_cctv: iterator[6],
+            gateway_cctv: iterator[7],
+            username_cctv: iterator[8],
+            password_cctv: iterator[9],
+            lat_cctv: iterator[10] || null,
+            lng_cctv: iterator[11] || null,
+            link_cctv: iterator[12],
+            status_cctv: iterator[13],
           });
         }
         index++;
       }
-      const poldaUp = await Cctv.bulkCreate(listPolres, {
+      const ress = await Cctv.bulkCreate(listPolres, {
         transaction: t,
       });
       await t.commit();
 
-      response(res, true, "Succed", poldaUp);
+      response(res, true, "Succed", ress);
     } catch (error) {
       await t.rollback();
       response(res, false, "Failed", error.message);
