@@ -11,6 +11,12 @@ router.post(
   formValidation,
   GoogleAPIs.directionAPI
 );
+router.get(
+  "/direction-custom",
+
+  formValidation,
+  GoogleAPIs.directionAPICostumize
+);
 router.post(
   "/reverse-geocode",
   body("lat").notEmpty().isNumeric(),

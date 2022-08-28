@@ -1,4 +1,6 @@
 const { Client } = require("@googlemaps/google-maps-services-js");
+const { default: axios } = require("axios");
+
 const response = require("../lib/response");
 
 const googleMapClient = new Client();
@@ -25,7 +27,50 @@ class GoogleAPIs {
         return response(res, false, err.message, err, 500);
       });
   }
+  static async directionAPICostumize(req, res) {
+    const { coordinate } = req.query;
+    if (!coordinate) {
+      return response(res, false, "coordinate Tidak boleh kosong", [], 400);
+    }
+    let dataCoordinate = "";
+    coordinate.forEach((coordinateData, index) => {
+      dataCoordinate += coordinateData;
+      dataCoordinate += index != coordinate.length - 1 ? ";" : "";
+    });
 
+    let data = await axios({
+      url:
+        "https://router.project-osrm.org/route/v1/car/" +
+        dataCoordinate +
+        "?overview=simplified&geometries=geojson&alternatives=3&steps=true",
+    });
+
+    let directions = [];
+    let getDataRoutes = data.data.routes[0].legs;
+    getDataRoutes.forEach((leg) => {
+      leg.steps.forEach((step, j) => {
+        step.geometry.coordinates.forEach((intersection, k) => {
+          directions.push({
+            latitude: intersection[1],
+            longitude: intersection[0],
+          });
+        });
+      });
+    });
+
+    return response(res, false, "Succ", directions, 200);
+  }
+  static async directionAPIfromOSRM(req, res) {
+    try {
+      let data = await axios({
+        url: "https://router.project-osrm.org/route/v1/car/114.97874568698023,-8.296820638729233;115.01140823591524,-8.317828529069729;115.02462636118737,-8.319967139352391?overview=true&geometries=polyline&alternatives=true&steps=true",
+      });
+
+      return response(res, false, error.message, error, 500);
+    } catch (error) {
+      return response(res, false, error.message, error, 500);
+    }
+  }
   static reverseGeocodingAPI(req, res) {
     googleMapClient
       .reverseGeocode({
