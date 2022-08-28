@@ -20,27 +20,18 @@ const field = {
 };
 const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
-                r.id as id_ranpam,
-                r.name_renpam,
-                r.type_renpam,
-                r.route,
-                r.route_alternatif_1,
-                r.route_alternatif_2,
-                r.coordinate_guarding,
-                r.date,
-                r.start_time,
-                r.end_time
+                
                 ${select}
               FROM renpam r
               INNER JOIN renpam_account ra ON ra.renpam_id=r.id
               ${join}
               WHERE 1=1
-              ${condition ? condition : ""}
               AND ra.account_id=${AESDecrypt(account_id, {
                 isSafeUrl: true,
                 parseMode: "string",
               })}
-              order by r.date ASC`;
+              ${condition ? condition : ""}
+            `;
 
   return query;
 };
@@ -53,7 +44,6 @@ module.exports = class ScheduleController {
     try {
       let queryRepam = [];
       let { date, operation_id, type, jumlahHariini } = req.query;
-      console.log(req.query);
       let jumlah_data = {
         renpam: {
           jumlah: 0,
@@ -103,20 +93,32 @@ module.exports = class ScheduleController {
           })}`
         );
       }
-
+      // renpam data
       let renpamData = [];
       for (const iterator of dateGroup) {
         let [result_renpam] = await db.query(
           queryGlobal({
             select: `
-            ,s.*,
+            r.id as id_ranpam,
+            r.name_renpam,
+            r.type_renpam,
+            r.route,
+            r.route_alternatif_1,
+            r.route_alternatif_2,
+            r.coordinate_guarding,
+            r.date,
+            r.start_time,
+            r.end_time
+                  ,
+            s.*,
                   s.id as id_schedule
             `,
             join: `
             LEFT JOIN schedule s ON s.id=r.schedule_id
             `,
             condition: `
-            AND r.date='${iterator.date}'`,
+            AND r.date='${iterator.date}' 
+            order by r.date ASC`,
             account_id: req.auth.uid,
           })
         );
@@ -125,16 +127,17 @@ module.exports = class ScheduleController {
           data: result_renpam,
         });
       }
-
+      // vip data
       let vipData = [];
       for (const iterator of dateGroup) {
         let [result_vip] = await db.query(
           queryGlobal({
             select: `
-              ,v.*,
-               v.id as id_vip,
-               s.*,
-                  s.id as id_schedule
+          
+              v.name_vip,
+              v.country_arrival_vip,
+              v.position_vip,
+               v.id as id_vip
             `,
             join: `
             LEFT JOIN schedule s ON s.id=r.schedule_id
@@ -142,7 +145,8 @@ module.exports = class ScheduleController {
               INNER JOIN vip v ON v.id=rv.vip_id
             `,
             condition: `
-             AND r.date='${iterator.date}'
+             AND r.date='${iterator.date}' 
+              GROUP BY v.id
             `,
             account_id: req.auth.uid,
           })
@@ -153,13 +157,24 @@ module.exports = class ScheduleController {
           data: result_vip,
         });
       }
-
+      // kegiatan data
       let kegiatanData = [];
       for (const iterator of dateGroup) {
         let [result_kegiatan] = await db.query(
           queryGlobal({
             select: `
-            ,s.*,
+            r.id as id_ranpam,
+            r.name_renpam,
+            r.type_renpam,
+            r.route,
+            r.route_alternatif_1,
+            r.route_alternatif_2,
+            r.coordinate_guarding,
+            r.date,
+            r.start_time,
+            r.end_time
+                  ,
+            s.*,
                 s.id as id_schedule
           `,
             join: `
@@ -168,6 +183,8 @@ module.exports = class ScheduleController {
           `,
             condition: `
               AND r.date='${iterator.date}'
+
+              order by r.date ASC
             `,
             account_id: req.auth.uid,
           })
@@ -178,26 +195,27 @@ module.exports = class ScheduleController {
           data: result_kegiatan,
         });
       }
-
+      // petugas data
       let [result_petugas] = await db.query(
+        // ,s.*,
+        //         s.id as id_schedule,
         queryGlobal({
           select: `
-            ,s.*,
-                s.id as id_schedule,
-                o.*,
-                o.id as id_officer
+         o.name_officer,
+                o.id as id_officer,
+                o.rank_officer
           `,
           join: `
           LEFT JOIN schedule s ON s.id=r.schedule_id
-          
           INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
           INNER JOIN officer o ON o.id=tao.officer_id
+         
           `,
-          condition: "",
+          condition: " GROUP BY o.id",
           account_id: req.auth.uid,
         })
       );
-
+      console.log(castingJumlahHariIni(kegiatanData, jumlahHariini));
       jumlah_data = {
         ...jumlah_data,
         renpam: {
