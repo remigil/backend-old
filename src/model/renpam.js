@@ -35,6 +35,12 @@ Renpam.init(
       // type [1: patroli, 2: pengawalan, 3: penjagaan]
       type: Sequelize.INTEGER,
     },
+    title_start: {
+      type: Sequelize.TEXT,
+    },
+    title_end: {
+      type: Sequelize.TEXT,
+    },
     route: {
       type: Sequelize.JSON,
     },

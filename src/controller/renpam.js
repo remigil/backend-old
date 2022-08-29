@@ -20,6 +20,8 @@ const fieldData = {
   schedule_id: null,
   name_renpam: null,
   type_renpam: null,
+  title_start: null,
+  title_end: null,
   route: null,
   route_alternatif_1: null,
   route_alternatif_2: null,
