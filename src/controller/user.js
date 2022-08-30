@@ -36,10 +36,9 @@ module.exports = class UserController {
         isSafeUrl: true,
         parseMode: "string",
       });
-      let getProfile = await db
+      let [getProfile] = await db
         .query(
-          `
-        SELECT 
+          `SELECT 
           a.token_fcm,
           a.token_track,
           a.device_user,
@@ -52,20 +51,28 @@ module.exports = class UserController {
           c.phone_officer,
           c.status_officer,
           b.name_account,
-          b.leader_team
+          b.leader_team,
+          v.no_vehicle,
+          v.type_vehicle,
+          v.brand_vehicle,
+          v.ownership_vehicle
         FROM token_track a
         INNER JOIN account b ON a.team_id=b.id
+        INNER JOIN vehicle v ON v.id=b.id_vehicle
         INNER JOIN officer c ON a.nrp_user=c.nrp_officer
         where team_id=${idAccount} AND c.id=${idOfficer}
       `
         )
         .then(([results, metadata]) => results);
-      return response(
-        res,
-        true,
-        "Succeed",
-        getProfile.length ? getProfile[0] : null
-      );
+      let [account_tim] = await db.query(`
+              SELECT o.* FROM trx_account_officer tao 
+              INNER JOIN officer o ON tao.officer_id=o.id
+              WHERE tao.officer_id=${idOfficer}
+          `);
+      return response(res, true, "Succeed", {
+        ...getProfile,
+        officer: account_tim,
+      });
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

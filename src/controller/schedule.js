@@ -224,16 +224,30 @@ module.exports = class ScheduleController {
             account_id: req.auth.uid,
           })
         );
-
+        let kegiatanDataItem = [];
+        for (const iterator of result_kegiatan) {
+          let [get_vip] = await db.query(`
+              SELECT v.* from vip v
+              inner join renpam_vip rv ON v.id=rv.vip_id
+              where rv.renpam_id=${iterator.id_ranpam}
+          `);
+          console.log(get_vip);
+          kegiatanDataItem.push({
+            ...iterator,
+            vip: get_vip,
+          });
+        }
+        // result_kegiatan.forEach(async(kegiatan, index)=>{
+        //   let [vip_kegiatan] = await
+        // })
+        // let [kegiatanWithVip] =
         kegiatanData.push({
           tanggal: iterator.date,
-          data: result_kegiatan,
+          data: kegiatanDataItem,
         });
       }
       // petugas data
       let [result_petugas] = await db.query(
-        // ,s.*,
-        //         s.id as id_schedule,
         queryGlobal({
           select: `
          o.name_officer,
