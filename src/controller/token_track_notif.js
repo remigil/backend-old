@@ -151,47 +151,13 @@ module.exports = class TokenTrackController {
       response(res, false, "Failed", e.message);
     }
   };
-  // static updateToken = async (req, res) => {
-  //   const transaction = await db.transaction();
-  //   let objFieldUpdate = {};
-  //   Object.keys(conditionalField).forEach((val, key) => {
-  //     if (
-  //       req.body[val] != null &&
-  //       req.body[val] != "" &&
-  //       req.body[val] != undefined
-  //     ) {
-  //       objFieldUpdate[val] = req.body[val];
-  //     }
-  //   });
-  //   try {
-  //     await TokenTrackNotif.update(
-  //       {
-  //         name: req.body?.name,
-  //         description: req.body?.description,
-  //       },
-  //       {
-  //         where: {
-  //           id: AESDecrypt(req.params.id, {
-  //             isSafeUrl: true,
-  //             parseMode: "string",
-  //           }),
-  //         },
-  //         transaction: transaction,
-  //       }
-  //     );
-  //     await transaction.commit();
-  //     response(res, true, "Succeed", null);
-  //   } catch (e) {
-  //     await transaction.rollback();
-  //     response(res, false, "Failed", e.message);
-  //   }
-  // };
+
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
       await TokenTrackNotif.destroy({
         where: {
-          id: AESDecrypt(req.body.id, {
+          nrp_user: AESDecrypt(req.body.id, {
             isSafeUrl: true,
             parseMode: "string",
           }),

@@ -13,7 +13,7 @@ router.put("/edit", TokenTrackController.edit);
 
 router.delete(
   "/delete",
-  body("id").notEmpty().isLength({ min: 1 }),
+  // body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
   TokenTrackController.delete
 );
