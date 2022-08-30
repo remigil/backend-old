@@ -108,8 +108,9 @@ module.exports = class ScheduleController {
             r.coordinate_guarding,
             r.date,
             r.start_time,
-            r.end_time
-                  ,
+            r.end_time,
+            r.title_start,
+            r.title_end,
             s.*,
                   s.id as id_schedule
             `,
@@ -122,6 +123,40 @@ module.exports = class ScheduleController {
             account_id: req.auth.uid,
           })
         );
+        result_renpam = result_renpam.map((renpam) => ({
+          ...renpam,
+          route: renpam.route
+            ? renpam.route.map(
+                (route) => route.latLng.lng + "," + route.latLng.lat
+              )
+            : "",
+          route_alternatif_1: renpam.route_alternatif_1
+            ? renpam.route_alternatif_1.map(
+                (route) => route.latLng.lng + "," + route.latLng.lat
+              )
+            : "",
+          route_alternatif_2: renpam.route_alternatif_2
+            ? renpam.route_alternatif_2.map(
+                (route) => route.latLng.lng + "," + route.latLng.lat
+              )
+            : "",
+          address_route_1: renpam.route
+            ? renpam.route.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+          address_route_2: renpam.route_alternatif_1
+            ? renpam.route_alternatif_1.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+          address_route_3: renpam.route_alternatif_2
+            ? renpam.route_alternatif_2.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+        }));
+
         renpamData.push({
           tanggal: iterator.date,
           data: result_renpam,
@@ -215,7 +250,7 @@ module.exports = class ScheduleController {
           account_id: req.auth.uid,
         })
       );
-      console.log(castingJumlahHariIni(kegiatanData, jumlahHariini));
+
       jumlah_data = {
         ...jumlah_data,
         renpam: {
