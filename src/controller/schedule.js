@@ -128,17 +128,17 @@ module.exports = class ScheduleController {
           ...renpam,
           route: renpam.route
             ? renpam.route.map(
-                (route) => route.latLng.lng + "," + route.latLng.lat
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
               )
             : "",
           route_alternatif_1: renpam.route_alternatif_1
             ? renpam.route_alternatif_1.map(
-                (route) => route.latLng.lng + "," + route.latLng.lat
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
               )
             : "",
           route_alternatif_2: renpam.route_alternatif_2
             ? renpam.route_alternatif_2.map(
-                (route) => route.latLng.lng + "," + route.latLng.lat
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
               )
             : "",
           address_route_1: renpam.route
