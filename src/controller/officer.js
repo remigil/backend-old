@@ -8,6 +8,9 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
+const { Client } = require("@googlemaps/google-maps-services-js");
+
+const googleMapClient = new Client();
 const fieldData = {
   name_officer: null,
   photo_officer: null,
@@ -111,7 +114,7 @@ module.exports = class OfficerController {
   };
   static getUserTrack = async (req, res) => {
     try {
-      const { officer_id, team_id } = req.query;
+      const { officer_id, team_id, lat, lon } = req.query;
       const account = await Account.findOne({
         where: {
           id: team_id,
@@ -147,9 +150,29 @@ module.exports = class OfficerController {
           AND ra.account_id=${team_id}
 
         GROUP BY v.id`);
+      const address = await googleMapClient.reverseGeocode({
+        params: {
+          key: process.env.GOOGLE_MAPS_API_KEY,
+          latlng: {
+            latitude: lat,
+            longitude: lon,
+          },
+          result_type: [
+            "administrative_area_level_1",
+            "administrative_area_level_2",
+            "administrative_area_level_3",
+            "administrative_area_level_4",
+            "administrative_area_level_5",
+            "administrative_area_level_6",
+            "administrative_area_level_7",
+          ],
+        },
+      });
+
       response(res, true, "Succeed", {
         ...account.dataValues,
         vip: vip_renpam,
+        lokasi: address.data.results[0].formatted_address,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
