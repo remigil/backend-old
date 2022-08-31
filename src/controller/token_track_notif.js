@@ -4,6 +4,8 @@ const TokenTrackNotif = require("../model/token_track_notif");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
+const pagination = require("../lib/pagination-parser");
+
 const conditionalField = {
   token_fcm: null,
   token_track: null,
@@ -18,18 +20,23 @@ module.exports = class TokenTrackController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(TokenTrackNotif.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {

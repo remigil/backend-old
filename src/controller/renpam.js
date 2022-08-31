@@ -10,6 +10,7 @@ const Account = require("../model/account");
 const Vip = require("../model/vip");
 const RenpamAccount = require("../model/renpam_account");
 const RenpamVip = require("../model/renpam_vip");
+const pagination = require("../lib/pagination-parser");
 
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
@@ -45,18 +46,23 @@ module.exports = class RenpamController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Renpam.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {

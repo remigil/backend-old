@@ -9,6 +9,7 @@ const formidable = require("formidable");
 const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const { Client } = require("@googlemaps/google-maps-services-js");
+const pagination = require("../lib/pagination-parser");
 
 const googleMapClient = new Client();
 const fieldData = {
@@ -33,18 +34,23 @@ module.exports = class OfficerController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Officer.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getData.limit = length;
-        getData.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getData.limit = resPage.limit;
+        getData.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getData.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {

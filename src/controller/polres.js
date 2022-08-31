@@ -7,6 +7,7 @@ const { AESDecrypt } = require("../lib/encryption");
 const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 const Polda = require("../model/polda");
+const pagination = require("../lib/pagination-parser");
 
 const fieldData = {
   polda_id: null,
@@ -30,18 +31,25 @@ module.exports = class PolresController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Polres.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
+
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {

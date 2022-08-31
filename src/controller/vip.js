@@ -1,9 +1,11 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const Vip = require("../model/vip"); 
+const Vip = require("../model/vip");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
+const pagination = require("../lib/pagination-parser");
+
 module.exports = class VipController {
   static get = async (req, res) => {
     try {
@@ -14,18 +16,23 @@ module.exports = class VipController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Vip.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getData.limit = length;
-        getData.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getData.limit = resPage.limit;
+        getData.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getData.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
@@ -74,8 +81,7 @@ module.exports = class VipController {
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
- 
-  }; 
+  };
 
   static getId = async (req, res) => {
     try {
@@ -88,9 +94,9 @@ module.exports = class VipController {
         },
       });
       response(res, true, "Succeed", {
-        data, 
+        data,
       });
-    } catch (e) { 
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };
@@ -101,12 +107,12 @@ module.exports = class VipController {
       await Vip.create(
         {
           name_vip: req.body.name_vip,
-          country_arrival_vip: req.body?.country_arrival_vip, 
-          position_vip: req.body?.position_vip, 
-          description_vip: req.body?.description_vip, 
+          country_arrival_vip: req.body?.country_arrival_vip,
+          position_vip: req.body?.position_vip,
+          description_vip: req.body?.description_vip,
         },
         { transaction: transaction }
-      ); 
+      );
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -120,9 +126,9 @@ module.exports = class VipController {
       await Vip.update(
         {
           name_vip: req.body.name_vip,
-          country_arrival_vip: req.body?.country_arrival_vip, 
-          position_vip: req.body?.position_vip, 
-          description_vip: req.body?.description_vip, 
+          country_arrival_vip: req.body?.country_arrival_vip,
+          position_vip: req.body?.position_vip,
+          description_vip: req.body?.description_vip,
         },
         {
           where: {

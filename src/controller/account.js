@@ -9,6 +9,8 @@ const AccountProfile = require("../model/trx_account_officer");
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const Officer = require("../model/officer");
+const pagination = require("../lib/pagination-parser");
+
 const field_account = {
   name_account: null,
   leader_team: null,
@@ -28,18 +30,23 @@ module.exports = class AccountController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Account.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {

@@ -7,6 +7,7 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
 const Renpam = require("../model/renpam");
+const pagination = require("../lib/pagination-parser");
 const field = {
   activity: null,
   id_vip: null,
@@ -304,18 +305,23 @@ module.exports = class ScheduleController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = 0,
+        order = null,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Schedule.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getData.limit = length;
-        getData.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getData.limit = resPage.limit;
+        getData.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getData.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
