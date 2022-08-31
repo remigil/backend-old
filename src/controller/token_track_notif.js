@@ -164,7 +164,7 @@ module.exports = class TokenTrackController {
     try {
       await TokenTrackNotif.destroy({
         where: {
-          nrp_user: AESDecrypt(req.body.id, {
+          id: AESDecrypt(req.body.id, {
             isSafeUrl: true,
             parseMode: "string",
           }),
