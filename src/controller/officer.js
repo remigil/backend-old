@@ -6,6 +6,8 @@ const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const formidable = require("formidable");
+const Account = require("../model/account");
+const Vehicle = require("../model/vehicle");
 const fieldData = {
   name_officer: null,
   photo_officer: null,
@@ -107,7 +109,52 @@ module.exports = class OfficerController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getUserTrack = async (req, res) => {
+    try {
+      const { officer_id, team_id } = req.query;
+      const account = await Account.findOne({
+        where: {
+          id: team_id,
+        },
+        include: [
+          {
+            model: Officer,
+            as: "officer",
+            required: true,
+            where: {
+              id: officer_id,
+            },
+          },
+          {
+            model: Vehicle,
+            as: "vehicle",
+          },
+        ],
+      });
+      const [vip_renpam] = await db.query(`SELECT
+        v.name_vip,
+        v.country_arrival_vip,
+        v.position_vip,
+         v.id as id_vip
+          FROM renpam r
+          INNER JOIN renpam_account ra ON ra.renpam_id=r.id
 
+      LEFT JOIN schedule s ON s.id=r.schedule_id
+        INNER JOIN renpam_vip rv ON rv.renpam_id=r.id
+        INNER JOIN vip v ON v.id=rv.vip_id
+
+          WHERE 1=1
+          AND ra.account_id=${team_id}
+
+        GROUP BY v.id`);
+      response(res, true, "Succeed", {
+        ...account.dataValues,
+        vip: vip_renpam,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static add = async (req, res) => {
     const transaction = await db.transaction();
     var photo_officer = "";
