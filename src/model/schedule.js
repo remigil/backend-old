@@ -26,7 +26,9 @@ Schedule.init(
     activity: {
       type: Sequelize.STRING(255),
     },
-
+    photo_schedule: {
+      type: Sequelize.TEXT,
+    },
     date_schedule: {
       type: Sequelize.DATEONLY,
     },

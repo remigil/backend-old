@@ -7,6 +7,7 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
 const Renpam = require("../model/renpam");
+const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
 const field = {
   activity: null,
@@ -18,6 +19,7 @@ const field = {
   address_schedule: null,
   coordinate_schedule: null,
   status_schedule: 0,
+  photo_schedule: null,
 };
 const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
@@ -479,6 +481,18 @@ module.exports = class ScheduleController {
               );
             }
             fieldValue[val] = dataIdVip.toString();
+          } else if (val == "photo_schedule") {
+            let path = req.body.photo_schedule.filepath;
+            let file = req.body.photo_schedule;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/schedule/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
           }
         }
       });
