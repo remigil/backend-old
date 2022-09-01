@@ -150,11 +150,30 @@ class GoogleAPIs {
   }
   static async directionAPIfromOSRM(req, res) {
     try {
-      let data = await axios({
-        url: "https://router.project-osrm.org/route/v1/car/114.97874568698023,-8.296820638729233;115.01140823591524,-8.317828529069729;115.02462636118737,-8.319967139352391?overview=true&geometries=polyline&alternatives=true&steps=true",
+      const place = await googleMapClient.placeDetails({
+        params: {
+          place_id: req.query.place_id,
+          key: process.env.GOOGLE_MAPS_API_KEY,
+        },
       });
-
-      return response(res, false, error.message, error, 500);
+      return response(
+        res,
+        true,
+        "success",
+        {
+          detail_alamat: place.data.result.formatted_address,
+          name_place: place.data.result.name,
+          photos: {
+            referece: place.data.result?.photos[0]?.photo_reference,
+            height: place.data.result?.photos[0]?.height,
+            width: place.data.result?.photos[0]?.width,
+          },
+          coordinate: place.data.result.geometry.location,
+          // result: place.data.result,
+          // datas: photo.data,
+        },
+        200
+      );
     } catch (error) {
       return response(res, false, error.message, error, 500);
     }

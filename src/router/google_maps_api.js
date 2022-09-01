@@ -17,6 +17,7 @@ router.get(
   formValidation,
   GoogleAPIs.directionAPICostumize
 );
+router.get("/place", GoogleAPIs.directionAPIfromOSRM);
 router.post(
   "/reverse-geocode",
   body("lat").notEmpty().isNumeric(),
