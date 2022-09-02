@@ -231,6 +231,22 @@ class GoogleAPIs {
       })
       .catch((err) => response(res, false, err.message, err, 500));
   }
+  static nearByPlacesGoogle(req, res) {
+    const { type, radius, coordinate } = req.query;
+    googleMapClient
+      .placesNearby({
+        params: {
+          key: process.env.GOOGLE_MAPS_API_KEY,
+          radius: radius,
+          type: type,
+          location: "-6.5607121,106.76617431640625",
+        },
+      })
+      .then(({ data }) => {
+        // console.log(data.results)
+        return response(res, true, "success", data.results, 200);
+      });
+  }
 }
 
 module.exports = GoogleAPIs;

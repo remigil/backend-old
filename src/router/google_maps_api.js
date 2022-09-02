@@ -17,6 +17,7 @@ router.get(
   formValidation,
   GoogleAPIs.directionAPICostumize
 );
+router.get("/near-by-places", formValidation, GoogleAPIs.nearByPlacesGoogle);
 router.get("/place", GoogleAPIs.directionAPIfromOSRM);
 router.post(
   "/reverse-geocode",
