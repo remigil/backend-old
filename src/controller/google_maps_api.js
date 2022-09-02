@@ -169,8 +169,6 @@ class GoogleAPIs {
             width: place.data.result?.photos[0]?.width,
           },
           coordinate: place.data.result.geometry.location,
-          // result: place.data.result,
-          // datas: photo.data,
         },
         200
       );

@@ -134,5 +134,10 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/renpam_vip")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/filter-search",
+  authMiddleware.jwtAuth,
+  require("../router/filterSearch")
+);
 
 module.exports = router;
