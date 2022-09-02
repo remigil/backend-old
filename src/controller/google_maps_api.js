@@ -173,7 +173,11 @@ class GoogleAPIs {
         200
       );
     } catch (error) {
-      return response(res, false, error.message, error, 500);
+      console.log({ error });
+      return req.json({
+        error: error.message,
+      });
+      // return response(res, false, error.message, error, 500);
     }
   }
   static reverseGeocodingAPI(req, res) {
