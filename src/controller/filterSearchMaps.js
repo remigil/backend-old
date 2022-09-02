@@ -14,6 +14,7 @@ const moment = require("moment");
 const { TrackG20 } = require("../model/tracking/g20");
 const Cctv = require("../model/cctv");
 const Polres = require("../model/polres");
+const Fasum = require("../model/fasum");
 const googleMapClient = new Client();
 const fieldData = {
   turjawali: async () => {
@@ -53,7 +54,9 @@ const fieldData = {
     return await Cctv.findAll();
   },
   titik_laporan: null,
-  fasum: null,
+  fasum: async () => {
+    return await Fasum.findAll();
+  },
   troublespot: null,
   jadwal_kegiatan: null,
   operasi: null,
