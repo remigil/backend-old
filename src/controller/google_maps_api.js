@@ -174,7 +174,7 @@ class GoogleAPIs {
       );
     } catch (error) {
       console.log({ error });
-      return req.json({
+      return res.json({
         error: error.message,
       });
       // return response(res, false, error.message, error, 500);
