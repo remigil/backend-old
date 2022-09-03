@@ -118,7 +118,12 @@ module.exports = class ScheduleController {
             r.title_end,
             
             CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
-            r.status_renpam
+            CASE 
+            WHEN r.type_renpam = 1 THEN 'Patroli' 
+            WHEN r.type_renpam = 2 THEN 'Pengawalan' 
+            WHEN r.type_renpam = 3 THEN 'Penjagaan' 
+                 
+                 ELSE 'Patroli' END AS title_renpam_type
             
             `,
             join: `
