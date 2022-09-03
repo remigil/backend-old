@@ -24,7 +24,7 @@ class GoogleAPIs {
         return response(res, true, "Succeed", gres.data, 200);
       })
       .catch((err) => {
-        return response(res, false, err.message, err, 500);
+        res.json({ err: err.message });
       });
   }
   static async directionAPICostumize(req, res) {
