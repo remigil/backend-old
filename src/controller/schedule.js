@@ -102,6 +102,8 @@ module.exports = class ScheduleController {
         let [result_renpam] = await db.query(
           queryGlobal({
             select: `
+            s.*,
+                  s.id as id_schedule,
             r.id as id_ranpam,
             r.name_renpam,
             r.type_renpam,
@@ -110,12 +112,14 @@ module.exports = class ScheduleController {
             r.route_alternatif_2,
             r.coordinate_guarding,
             r.date,
-            r.start_time,
-            r.end_time,
+            r.start_time as renpam_start_time,
+            r.end_time as renpam_end_time,
             r.title_start,
             r.title_end,
-            s.*,
-                  s.id as id_schedule
+            
+            CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
+            r.status_renpam
+            
             `,
             join: `
             LEFT JOIN schedule s ON s.id=r.schedule_id
@@ -234,7 +238,6 @@ module.exports = class ScheduleController {
               inner join renpam_vip rv ON v.id=rv.vip_id
               where rv.renpam_id=${iterator.id_ranpam}
           `);
-          console.log(get_vip);
           kegiatanDataItem.push({
             ...iterator,
             vip: get_vip,
