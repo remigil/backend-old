@@ -27,9 +27,7 @@ Account.init(
     name_account: {
       type: Sequelize.STRING(50),
     },
-    phone_account: {
-      type: Sequelize.STRING(50),
-    },
+
     leader_team: {
       type: Sequelize.STRING(200),
     },

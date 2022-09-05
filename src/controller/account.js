@@ -13,7 +13,7 @@ const pagination = require("../lib/pagination-parser");
 
 const field_account = {
   name_account: null,
-  phone_account: null,
+
   leader_team: null,
   id_vehicle: null,
   id_account: null,
