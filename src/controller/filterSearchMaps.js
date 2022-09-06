@@ -80,20 +80,13 @@ module.exports = class FilterSearchController {
         }
       });
 
-      let data = Promise.all(tampungArr).then((cek) => {
+      Promise.all(tampungArr).then((cek) => {
         let objData = {};
         Object.keys(tampung).forEach((val, key) => {
           objData[val] = cek[key] ? cek[key] : [];
         });
         response(res, true, "Succeed", objData);
       });
-      //   response(
-      //     res,
-      //     true,
-      //     "Succeed",
-      //     filter.split(",").some((e) => e == "cctv")
-      //   );
-      //   console.log(tampung);
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
