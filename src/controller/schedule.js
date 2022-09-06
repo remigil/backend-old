@@ -211,16 +211,7 @@ module.exports = class ScheduleController {
           queryGlobal({
             select: `
             r.id as id_ranpam,
-            r.name_renpam,
-            r.type_renpam,
-            r.route,
-            r.route_alternatif_1,
-            r.route_alternatif_2,
-            r.coordinate_guarding,
-            r.date,
-            r.start_time,
-            r.end_time
-                  ,
+            
             s.*,
                 s.id as id_schedule
           `,
@@ -230,6 +221,7 @@ module.exports = class ScheduleController {
           `,
             condition: `
               AND r.date='${iterator.date}'
+              AND s.date_schedule='${iterator.date}'
 
               order by r.date ASC
             `,
