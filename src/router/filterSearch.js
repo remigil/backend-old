@@ -4,5 +4,6 @@ const FilterSearchController = require("../controller/filterSearchMaps");
 
 const formValidation = require("../middleware/form_validation");
 router.get("/", FilterSearchController.get);
+router.get("/filter2", FilterSearchController.getMultiplePlace);
 
 module.exports = router;

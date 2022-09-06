@@ -62,6 +62,18 @@ const fieldData = {
   operasi: null,
 };
 
+const nearByPlacesGoogle = ({ type, radius, coordinate }) => {
+  return googleMapClient.placesNearby({
+    params: {
+      key: process.env.GOOGLE_MAPS_API_KEY,
+      radius: radius,
+      type: type,
+      location: coordinate,
+      opennow: true,
+    },
+  });
+};
+
 module.exports = class FilterSearchController {
   static get = async (req, res) => {
     try {
@@ -89,6 +101,24 @@ module.exports = class FilterSearchController {
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
+    }
+  };
+  static getMultiplePlace = async (req, res) => {
+    try {
+      const { type } = req.query;
+      // const type = "mosque,school,cafe,hospital,lodging,restaurant,tourist_attraction,fire_station,shopping_mall";
+      let tampung_nearby = [];
+      for (const iterator of type.split(",")) {
+        let aaa = await nearByPlacesGoogle({
+          type: iterator,
+          radius: 1500,
+          coordinate: "-8.800194,115.171878",
+        });
+        tampung_nearby.push(...aaa.data.results);
+      }
+      response(res, true, "Success", tampung_nearby);
+    } catch (e) {
+      response(res, false, "Failed", e);
     }
   };
 };
