@@ -242,13 +242,17 @@ class GoogleAPIs {
         params: {
           key: process.env.GOOGLE_MAPS_API_KEY,
           radius: radius,
-          type: type,
-          location: "-6.5607121,106.76617431640625",
+          // type: type,
+          type: ["lodging", "hospital", "cafe"],
+          location: coordinate,
+          pagetoken:
+            "AeJbb3ffrCUuWZZLCkUTzs8UAxVoCBhnZfIp54PRVusYog4UQXcf4jc2ekSuMbo5NYx7lBv41TQLiz1h7-l7EGwe7hIC8k03k0kvxag4FYaugR7mqRxAGfnKgBwE3gBnch5lU9dn4SB3JXelJojkYBGzB6EEe-Fpwm_BytYCQtk6aAO3bXaAWNFuitYA5CAzHElu1660rdQVT16pWaoaFGa44WB9lxzln8LYdGYd7II9n7bkl_MSSLhvv5tewp1F25T1G99dn_MzxPFFyPVhBoC7x0E7e8gjmqVN27AtNN-Bh7VHjgcFyyxNHywDiXh6BtWRfasIntTS5s687GUWvnQf1RIVGe4wnK04YqFrExr0jwaIUy9B2LlqgJBvio1ABs9C1Xl-vnUuQCzuk_NkaGedZvP3nvRGChbO-8aEWelXwQiEUH5Y7T0UIduc",
+          // rankby: "distance",
         },
       })
       .then(({ data }) => {
         // console.log(data.results)
-        return response(res, true, "success", data.results, 200);
+        return response(res, true, "success", data, 200);
       });
   }
 }
