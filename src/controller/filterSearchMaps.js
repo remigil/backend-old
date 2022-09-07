@@ -26,7 +26,7 @@ const fieldData = {
         $gte: today,
         $lte: endDateToday,
       },
-    }).sort({ date: -1 });
+    }).sort({ updated_at: -1 });
 
     let track = getTrack.reduce((group, product) => {
       const { nrp_user } = product;
