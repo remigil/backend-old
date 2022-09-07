@@ -221,14 +221,14 @@ module.exports = class ScheduleController {
           `,
             condition: `
               AND r.date='${iterator.date}'
-              
+              AND s.date_schedule='${iterator.date}'
 
               order by r.date ASC
             `,
             account_id: req.auth.uid,
           })
         );
-        // AND s.date_schedule='${iterator.date}'
+        //
         let kegiatanDataItem = [];
         for (const iterator of result_kegiatan) {
           let [get_vip] = await db.query(`
@@ -236,6 +236,7 @@ module.exports = class ScheduleController {
               inner join renpam_vip rv ON v.id=rv.vip_id
               where rv.renpam_id=${iterator.id_ranpam}
           `);
+
           kegiatanDataItem.push({
             ...iterator,
             vip: get_vip,
@@ -245,10 +246,12 @@ module.exports = class ScheduleController {
         //   let [vip_kegiatan] = await
         // })
         // let [kegiatanWithVip] =
-        kegiatanData.push({
-          tanggal: iterator.date,
-          data: kegiatanDataItem,
-        });
+        if (result_kegiatan.length) {
+          kegiatanData.push({
+            tanggal: iterator.date,
+            data: kegiatanDataItem,
+          });
+        }
       }
       // petugas data
       let [result_petugas] = await db.query(
