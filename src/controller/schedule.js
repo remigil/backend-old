@@ -221,13 +221,14 @@ module.exports = class ScheduleController {
           `,
             condition: `
               AND r.date='${iterator.date}'
-              AND s.date_schedule='${iterator.date}'
+              
 
               order by r.date ASC
             `,
             account_id: req.auth.uid,
           })
         );
+        // AND s.date_schedule='${iterator.date}'
         let kegiatanDataItem = [];
         for (const iterator of result_kegiatan) {
           let [get_vip] = await db.query(`
