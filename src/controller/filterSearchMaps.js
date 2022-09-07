@@ -54,8 +54,17 @@ const fieldData = {
     return await Cctv.findAll();
   },
   titik_laporan: null,
-  fasum: async () => {
-    return await Fasum.findAll();
+  fasum: async ({ type, coordinate, radius }) => {
+    let tampung_nearby = [];
+    for (const iterator of type.split(",")) {
+      let nearby = await nearByPlacesGoogle({
+        type: iterator,
+        radius: radius,
+        coordinate: coordinate,
+      });
+      tampung_nearby.push(...nearby.data.results);
+    }
+    return tampung_nearby;
   },
   troublespot: null,
   jadwal_kegiatan: null,
@@ -77,14 +86,24 @@ const nearByPlacesGoogle = ({ type, radius, coordinate }) => {
 module.exports = class FilterSearchController {
   static get = async (req, res) => {
     try {
-      const { filter } = req.query;
+      const { filter, type, coordinate, radius } = req.query;
       let tampung = {};
       let tampungArr = [];
       Object.keys(fieldData).forEach((value, key) => {
         if (fieldData[value]) {
           if (filter.split(",").some((e) => e == value)) {
-            tampung[value] = true;
-            tampungArr.push(fieldData[value]());
+            if (value == "fasum") {
+              let aaa = fieldData[value]({
+                type,
+                radius,
+                coordinate,
+              });
+              tampung[value] = true;
+              tampungArr.push(aaa);
+            } else {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value]());
+            }
           }
         } else {
           tampung[value] = true;
@@ -105,14 +124,14 @@ module.exports = class FilterSearchController {
   };
   static getMultiplePlace = async (req, res) => {
     try {
-      const { type } = req.query;
+      const { type, coordinate } = req.query;
       // const type = "mosque,school,cafe,hospital,lodging,restaurant,tourist_attraction,fire_station,shopping_mall";
       let tampung_nearby = [];
       for (const iterator of type.split(",")) {
         let aaa = await nearByPlacesGoogle({
           type: iterator,
           radius: 1500,
-          coordinate: "-8.800194,115.171878",
+          coordinate: coordinate,
         });
         tampung_nearby.push(...aaa.data.results);
       }
