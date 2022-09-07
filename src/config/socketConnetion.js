@@ -103,29 +103,41 @@ const socketInstace = (server) => {
       const { username, password, user_nrp, type, dataAccount, dataOfficer } =
         socket.handshake.query;
 
-      let sendTracking = await TrackG20.create({
-        id_user: AESDecrypt(dataAccount.id, {
-          isSafeUrl: true,
-          parseMode: "string",
-        }),
-        latitude: coordinate.lat,
-        longitude: coordinate.lon,
-        name_account: dataAccount.name_account,
-        id_officer: AESDecrypt(dataOfficer.id, {
-          isSafeUrl: true,
-          parseMode: "string",
-        }),
-        name_team: dataAccount.leader_team, // [ketua tim]
-        // vip: dataAccount.vips.name_vip, // [nama vip]
-        nrp_user: dataOfficer.nrp_officer,
-        handphone: dataOfficer.phone_officer,
-        no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-        type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-        date: moment(),
-      });
+      let sendTracking = await TrackG20.findOneAndUpdate(
+        {
+          latitude: coordinate.lat,
+          longitude: coordinate.lon,
+          date: moment().format("YYYY-MM-DD"),
+        },
+        {
+          id_user: AESDecrypt(dataAccount.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          latitude: coordinate.lat,
+          longitude: coordinate.lon,
+          name_account: dataAccount.name_account,
+          id_officer: AESDecrypt(dataOfficer.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          name_team: dataAccount.leader_team, // [ketua tim]
+          // vip: dataAccount.vips.name_vip, // [nama vip]
+          nrp_user: dataOfficer.nrp_officer,
+          handphone: dataOfficer.phone_officer,
+          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+          date: moment().format("YYYY-MM-DD"),
+        },
+        {
+          new: true,
+          upsert: true,
+          rawResult: true, // Return the raw result from the MongoDB driver
+        }
+      );
 
       io.emit("sendToAdmin", await LocationTrackController.sendToSocket());
-      io.emit("sendToAdminMobile", sendTracking);
+      io.emit("sendToAdminMobile", sendTracking.value);
     });
   });
 };
