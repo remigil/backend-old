@@ -4,6 +4,7 @@ const AccountController = require("../controller/account");
 const formValidation = require("../middleware/form_validation");
 router.get("/", AccountController.get);
 router.get("/getId/:id", AccountController.getId);
+router.get("/getOfficerTeam", AccountController.getOfficerAccount);
 router.post(
   "/add",
   //   body("name_officer").notEmpty().isLength({ min: 3 }),

@@ -10,6 +10,7 @@ const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const Officer = require("../model/officer");
 const pagination = require("../lib/pagination-parser");
+const TrxAccountOfficer = require("../model/trx_account_officer");
 
 const field_account = {
   name_account: null,
@@ -112,6 +113,34 @@ module.exports = class AccountController {
       });
     } catch (e) {
       console.log(e);
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getOfficerAccount = async (req, res) => {
+    try {
+      const idOfficer = AESDecrypt(req.auth.officer, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      let account_id = await TrxAccountOfficer.findOne({
+        where: {
+          officer_id: parseInt(idOfficer),
+        },
+      });
+      let dataAccount = await Account.findOne({
+        where: {
+          id: account_id.account_id,
+        },
+        include: [
+          {
+            model: Officer,
+            as: "officer",
+            required: true,
+          },
+        ],
+      });
+      response(res, true, "Succeed", dataAccount.officer);
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };

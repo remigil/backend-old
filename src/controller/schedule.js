@@ -9,6 +9,8 @@ const db = require("../config/database");
 const Renpam = require("../model/renpam");
 const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
+const TrxAccountOfficer = require("../model/trx_account_officer");
+const Officer = require("../model/officer");
 const field = {
   activity: null,
   id_vip: null,
@@ -254,23 +256,57 @@ module.exports = class ScheduleController {
         }
       }
       // petugas data
-      let [result_petugas] = await db.query(
-        queryGlobal({
-          select: `
-         o.name_officer,
-                o.id as id_officer,
-                o.rank_officer
-          `,
-          join: `
-          LEFT JOIN schedule s ON s.id=r.schedule_id
-          INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
-          INNER JOIN officer o ON o.id=tao.officer_id
-         
-          `,
-          condition: " GROUP BY o.id",
-          account_id: req.auth.uid,
-        })
-      );
+      // const idOfficer = AESDecrypt(req.auth.officer, {
+      //   isSafeUrl: true,
+      //   parseMode: "string",
+      // });
+      // let account_id = TrxAccountOfficer.findOne({
+      //   where: {
+      //     officer_id: idOfficer
+      //   }
+      // })
+      const idOfficer = AESDecrypt(req.auth.officer, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      let account_id = await TrxAccountOfficer.findOne({
+        where: {
+          officer_id: parseInt(idOfficer),
+        },
+      });
+      let dataAccount = await Account.findOne({
+        where: {
+          id: account_id.account_id,
+        },
+        include: [
+          {
+            model: Officer,
+            as: "officer",
+            required: true,
+          },
+        ],
+      });
+      // let [result_petugas] = await db.query(`
+      //   SELECT * FROM account a
+      //   INNER JOIN
+      // `);
+      // let [result_petugas] = await db.query(
+      //   queryGlobal({
+      //     select: `
+      //    o.name_officer,
+      //           o.id as id_officer,
+      //           o.rank_officer
+      //     `,
+      //     join: `
+      //     LEFT JOIN schedule s ON s.id=r.schedule_id
+      //     INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
+      //     INNER JOIN officer o ON o.id=tao.officer_id
+
+      //     `,
+      //     condition: " GROUP BY o.id",
+      //     account_id: req.auth.uid,
+      //   })
+      // );
 
       jumlah_data = {
         ...jumlah_data,
@@ -287,8 +323,8 @@ module.exports = class ScheduleController {
           data: kegiatanData,
         },
         petugas: {
-          jumlah: result_petugas.length,
-          data: result_petugas,
+          jumlah: dataAccount?.officer?.length,
+          data: dataAccount?.officer,
         },
       };
 
