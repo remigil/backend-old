@@ -46,15 +46,17 @@ class GoogleAPIs {
       if (alternatif1) {
         alternatif1.forEach((coordinateData, index) => {
           dataCoordinateAlter1 += coordinateData;
-          dataCoordinateAlter1 += index != coordinate.length - 1 ? ";" : "";
+          dataCoordinateAlter1 += index != alternatif1.length - 1 ? ";" : "";
         });
       }
+      console.log({ dataCoordinateAlter1 });
       if (alternatif2) {
         alternatif2.forEach((coordinateData, index) => {
           dataCoordinateAlter2 += coordinateData;
-          dataCoordinateAlter2 += index != coordinate.length - 1 ? ";" : "";
+          dataCoordinateAlter2 += index != alternatif2.length - 1 ? ";" : "";
         });
       }
+
       let data = await axios({
         url:
           "https://router.project-osrm.org/route/v1/car/" +
@@ -150,7 +152,7 @@ class GoogleAPIs {
         200
       );
     } catch (error) {
-      console.log({ error });
+      // console.log({ error });
       // return response(res, true, "success", data, 200);
       res.json({ err: error.message });
     }
