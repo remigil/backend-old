@@ -335,9 +335,8 @@ module.exports = class RenpamController {
                 where: {
                   renpam_id: fieldValueAccount["renpam_id"],
                 },
-              }).then((ress) => {
-                RenpamAccount.create(fieldValueAccount);
               });
+              RenpamAccount.create(fieldValueAccount);
               // }
             }
           }
@@ -362,9 +361,8 @@ module.exports = class RenpamController {
                     parseMode: "string",
                   }),
                 },
-              }).then((ress) => {
-                RenpamVip.create(fieldValueVip);
               });
+              RenpamVip.create(fieldValueVip);
               // }
             }
           }
