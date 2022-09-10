@@ -15,6 +15,8 @@ const { TrackG20 } = require("../model/tracking/g20");
 const Cctv = require("../model/cctv");
 const Polres = require("../model/polres");
 const Fasum = require("../model/fasum");
+const Schedule = require("../model/schedule");
+
 const googleMapClient = new Client();
 const fieldData = {
   turjawali: async () => {
@@ -67,7 +69,9 @@ const fieldData = {
     return tampung_nearby;
   },
   troublespot: null,
-  jadwal_kegiatan: null,
+  jadwal_kegiatan: async () => {
+    return await Schedule.findAll();
+  },
   operasi: null,
 };
 
