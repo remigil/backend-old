@@ -253,16 +253,56 @@ module.exports = class RenpamController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
-      Object.keys(field_account).forEach((val, key) => {
-        if (val == "operation_id" || val == "schedule_id") {
-          fieldValue[val] = AESDecrypt(req.body[val], {
-            isSafeUrl: true,
-            parseMode: "string",
-          });
-        } else {
-          fieldValue[val] = req.body[val];
+      let fieldValueVip = {};
+      let fieldValueAccount = {};
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "operation_id" || val == "schedule_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else if (
+            val == "route" ||
+            val == "vips" ||
+            val == "accounts" ||
+            val == "route_alternatif_1" ||
+            val == "route_alternatif_2" ||
+            val == "coordinate_guarding"
+          ) {
+            fieldValue[val] = JSON.parse(req.body[val]);
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
+
+      const dataRenAc = RenpamAccount.findOne({
+        where: {
+          renpam_id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      const dataRenVip = RenpamAccount.findOne({
+        where: {
+          renpam_id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+
+      // const dataRenpamm = await Renpam.findOne({
+      //   where: {
+      //     id: AESDecrypt(req.params.id, {
+      //       isSafeUrl: true,
+      //       parseMode: "string",
+      //     }),
+      //   },
+      // });
+      // return response(res, true, "cek aja", fieldValue);
 
       await Renpam.update(fieldValue, {
         where: {
@@ -272,9 +312,69 @@ module.exports = class RenpamController {
           }),
         },
         transaction: transaction,
-      });
-      await transaction.commit();
-      response(res, true, "Succeed", null);
+      })
+        .then((op) => {
+          // console.log(fieldValue);
+          if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
+            for (let i = 0; i < fieldValue["accounts"].length; i++) {
+              fieldValueAccount = {};
+              fieldValueAccount["renpam_id"] = AESDecrypt(req.params.id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueAccount["account_id"] = AESDecrypt(
+                fieldValue["accounts"][i],
+                {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }
+              );
+
+              // if (dataRenAc && dataRenVip) {
+              RenpamAccount.destroy({
+                where: {
+                  renpam_id: fieldValueAccount["renpam_id"],
+                },
+              }).then((ress) => {
+                RenpamAccount.create(fieldValueAccount);
+              });
+              // }
+            }
+          }
+
+          if (fieldValue["vips"] && fieldValue["vips"].length > 0) {
+            for (let i = 0; i < fieldValue["vips"].length; i++) {
+              fieldValueVip = {};
+              fieldValueVip["renpam_id"] = AESDecrypt(req.params.id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueVip["vip_id"] = AESDecrypt(fieldValue["vips"][i], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+
+              // if (dataRenAc && dataRenVip) {
+              RenpamVip.destroy({
+                where: {
+                  renpam_id: AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              }).then((ress) => {
+                RenpamVip.create(fieldValueVip);
+              });
+              // }
+            }
+          }
+
+          transaction.commit();
+          response(res, true, "Succeed", fieldValueVip);
+        })
+        .catch((err) => {
+          console.log({ error: err, message: "ini ereror" });
+        });
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
