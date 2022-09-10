@@ -209,11 +209,12 @@ module.exports = class ScheduleController {
       // kegiatan data
       let kegiatanData = [];
       for (const iterator of dateGroup) {
+        // AND s.date_schedule='${iterator.date}'
         let [result_kegiatan] = await db.query(
           queryGlobal({
             select: `
             r.id as id_ranpam,
-            
+            r.*,
             s.*,
                 s.id as id_schedule
           `,
@@ -223,7 +224,7 @@ module.exports = class ScheduleController {
           `,
             condition: `
               AND r.date='${iterator.date}'
-              AND s.date_schedule='${iterator.date}'
+              
 
               order by r.date ASC
             `,
@@ -256,15 +257,7 @@ module.exports = class ScheduleController {
         }
       }
       // petugas data
-      // const idOfficer = AESDecrypt(req.auth.officer, {
-      //   isSafeUrl: true,
-      //   parseMode: "string",
-      // });
-      // let account_id = TrxAccountOfficer.findOne({
-      //   where: {
-      //     officer_id: idOfficer
-      //   }
-      // })
+
       const idOfficer = AESDecrypt(req.auth.officer, {
         isSafeUrl: true,
         parseMode: "string",
@@ -286,27 +279,6 @@ module.exports = class ScheduleController {
           },
         ],
       });
-      // let [result_petugas] = await db.query(`
-      //   SELECT * FROM account a
-      //   INNER JOIN
-      // `);
-      // let [result_petugas] = await db.query(
-      //   queryGlobal({
-      //     select: `
-      //    o.name_officer,
-      //           o.id as id_officer,
-      //           o.rank_officer
-      //     `,
-      //     join: `
-      //     LEFT JOIN schedule s ON s.id=r.schedule_id
-      //     INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
-      //     INNER JOIN officer o ON o.id=tao.officer_id
-
-      //     `,
-      //     condition: " GROUP BY o.id",
-      //     account_id: req.auth.uid,
-      //   })
-      // );
 
       jumlah_data = {
         ...jumlah_data,
