@@ -33,7 +33,7 @@ Renpam.init(
     },
     type_renpam: {
       // type [1: patroli, 2: pengawalan, 3: penjagaan, 4:]
-      type: Sequelize.STRING(50),
+      type: Sequelize.INTEGER,
     },
     title_start: {
       type: Sequelize.TEXT,
