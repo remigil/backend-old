@@ -382,16 +382,12 @@ module.exports = class RenpamController {
   static editMobile = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      let fieldValue = {};
-      let fieldValueVip = {};
-      let fieldValueAccount = {};
-
       let renpam = await Renpam.update(
         {
           status_renpam: 1,
           end_time: req.body.end_time,
           choose_rute: req.body.choose_rute,
-          end_coordinate_renpam: req.body.end_coordinate_renpam,
+          end_coordinate_renpam: JSON.parse(req.body.end_coordinate_renpam),
         },
         {
           where: {

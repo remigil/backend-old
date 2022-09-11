@@ -11,7 +11,7 @@ router.post(
   RenpamController.add
 );
 router.put("/edit/:id", RenpamController.edit);
-router.put("/editMobile/:id", RenpamController.editMobile);
+router.put("/editMobile/:id", formValidation, RenpamController.editMobile);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
