@@ -56,6 +56,9 @@ Renpam.init(
     end_coordinate_renpam: {
       type: Sequelize.JSON,
     },
+    choose_rute: {
+      type: Sequelize.INTEGER, // 1 = utama, 2=alternatif 1, 3= alternatif 2
+    },
     date: {
       type: Sequelize.DATEONLY,
     },

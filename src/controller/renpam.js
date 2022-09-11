@@ -34,6 +34,7 @@ const fieldData = {
   vips: null,
   accounts: null,
   status_renpam: 0,
+  choose_rute: null,
 };
 
 module.exports = class RenpamController {
