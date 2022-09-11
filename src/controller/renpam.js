@@ -379,6 +379,33 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+  static editMobile = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      let fieldValueVip = {};
+      let fieldValueAccount = {};
+
+      await Renpam.update(
+        {
+          status_renpam: 1,
+          end_time: req.body.end_time,
+          choose_rute: req.body.choose_rute,
+          end_coordinate_renpam: req.body.end_coordinate_renpam,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+          transaction: transaction,
+        }
+      );
+      response(res, true, "Success", []);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
