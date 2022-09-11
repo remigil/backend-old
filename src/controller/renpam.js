@@ -386,7 +386,7 @@ module.exports = class RenpamController {
       let fieldValueVip = {};
       let fieldValueAccount = {};
 
-      await Renpam.update(
+      let renpam = await Renpam.update(
         {
           status_renpam: 1,
           end_time: req.body.end_time,
@@ -400,7 +400,8 @@ module.exports = class RenpamController {
           transaction: transaction,
         }
       );
-      response(res, true, "Success", []);
+      await transaction.commit();
+      response(res, true, "Success", renpam);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
