@@ -5,8 +5,8 @@ const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class CategoryFasum extends Model {}
-CategoryFasum.init(
+class Panic_button extends Model {}
+Panic_button.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -18,13 +18,17 @@ CategoryFasum.init(
         });
       },
     },
-    subject: {
+    foto: {
       type: Sequelize.STRING(255),
     },
+
     categori: {
       type: Sequelize.INTEGER,
     },
     status: {
+      type: Sequelize.INTEGER,
+    },
+    officer_id: {
       type: Sequelize.INTEGER,
     },
     coordinate: {
@@ -38,23 +42,27 @@ CategoryFasum.init(
   },
   {
     defaultScope: {
-      where: Sequelize.literal("category_fasum.deleted_at is null"),
+      where: {
+        deleted_at: null,
+      },
     },
     scopes: {
       deleted: {
-        where: Sequelize.literal("category_fasum.deleted_at is null"),
+        where: {
+          deleted_at: null,
+        },
       },
     },
     // indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "category_fasum",
-    modelName: "category_fasum",
+    tableName: "panic_button",
+    modelName: "panic_button",
     sequelize: db,
   }
 );
 (async () => {
-  CategoryFasum.sync({ alter: true });
+  Panic_button.sync({ alter: true });
 })();
-module.exports = CategoryFasum;
+module.exports = Panic_button;

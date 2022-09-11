@@ -139,5 +139,10 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/filterSearch")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/panic-button",
+  authMiddleware.jwtAuth,
+  require("../router/panicButton")
+);
 
 module.exports = router;
