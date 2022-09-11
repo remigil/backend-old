@@ -200,10 +200,7 @@ module.exports = class RenpamController {
         transaction: transaction,
       })
         .then((op) => {
-          if (
-            fieldValue["accounts"].length > 0 ||
-            fieldValue["accounts"].length != null
-          ) {
+          if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
             for (let i = 0; i < fieldValue["accounts"].length; i++) {
               fieldValueAccount = {};
               fieldValueAccount["renpam_id"] = AESDecrypt(op["id"], {
@@ -221,10 +218,7 @@ module.exports = class RenpamController {
             }
           }
 
-          if (
-            fieldValue["vips"].length > 0 ||
-            fieldValue["vips"].length != null
-          ) {
+          if (fieldValue["vips"] && fieldValue["vips"].length > 0) {
             for (let i = 0; i < fieldValue["vips"].length; i++) {
               fieldValueVip = {};
               fieldValueVip["renpam_id"] = AESDecrypt(op["id"], {

@@ -11,6 +11,7 @@ const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
 const TrxAccountOfficer = require("../model/trx_account_officer");
 const Officer = require("../model/officer");
+
 const field = {
   activity: null,
   id_vip: null,
@@ -372,64 +373,54 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
-      const data = await Schedule.findAll(getData);
+      const dataRes = await Schedule.findAll(getData);
       const count = await Schedule.count({
         where: getData?.where,
       });
 
-      // var data = [];
-      // var dummyData = {};
-      // for (let i = 0; i < dataRes.length; i++) {
-      //   const arrayIdVip = dataRes[i]["id_vip"].split(",");
-      //   const dataVip = await Vip.findAll({
-      //     where: {
-      //       id: arrayIdVip,
-      //     },
-      //   });
+      var data = [];
+      var dummyData = {};
+      for (let i = 0; i < dataRes.length; i++) {
+        const dataRenpam = await Renpam.findAll({
+          where: {
+            schedule_id: AESDecrypt(dataRes[i]["id"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+        });
 
-      //   const arrayIdAccount = dataRes[i]["id_account"].split(",");
-      //   const dataAccount = await Account.findAll({
-      //     where: {
-      //       id: arrayIdAccount,
-      //     },
-      //   });
+        // operation_id: null,
+        // activity: null,
+        // id_vip: null,
+        // id_account: null,
+        // date_schedule: null,
+        // start_time: null,
+        // end_time: null,
+        // address_schedule: null,
+        // coordinate_schedule: null,
+        // status_schedule: 0,
+        // photo_schedule: null,
 
-      //   var encryptIdAccount = [];
-      //   for (let i = 0; i < arrayIdAccount.length; i++) {
-      //     encryptIdAccount.push(
-      //       AESEncrypt(arrayIdAccount[i], {
-      //         isSafeUrl: true,
-      //         parseMode: "string",
-      //       })
-      //     );
-      //   }
+        dummyData = {};
+        dummyData["id"] = dataRes[i]["id"];
+        dummyData["operation_id"] = dataRes[i]["operation_id"];
+        dummyData["activity"] = dataRes[i]["activity"];
+        dummyData["photo_schedule"] = dataRes[i]["photo_schedule"];
+        dummyData["date_schedule"] = dataRes[i]["date_schedule"];
+        dummyData["start_time"] = dataRes[i]["start_time"];
+        dummyData["end_time"] = dataRes[i]["end_time"];
+        dummyData["address_schedule"] = dataRes[i]["address_schedule"];
+        dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
+        dummyData["status_schedule"] = dataRes[i]["status_schedule"];
+        dummyData["renpams"] = dataRenpam;
 
-      //   var encryptIdVip = [];
-      //   for (let i = 0; i < arrayIdVip.length; i++) {
-      //     encryptIdVip.push(
-      //       AESEncrypt(arrayIdVip[i], {
-      //         isSafeUrl: true,
-      //         parseMode: "string",
-      //       })
-      //     );
-      //   }
+        dummyData["created_at"] = dataRes[i]["created_at"];
+        dummyData["updated_at"] = dataRes[i]["updated_at"];
+        dummyData["deleted_at"] = dataRes[i]["deleted_at"];
 
-      //   dummyData = {};
-      //   dummyData["id"] = dataRes[i]["id"];
-      //   dummyData["activity"] = dataRes[i]["activity"];
-      //   dummyData["id_vip"] = encryptIdVip.toString();
-      //   dummyData["id_account"] = encryptIdAccount.toString();
-      //   dummyData["date_schedule"] = dataRes[i]["date_schedule"];
-      //   dummyData["start_time"] = dataRes[i]["start_time"];
-      //   dummyData["end_time"] = dataRes[i]["end_time"];
-      //   dummyData["address_schedule"] = dataRes[i]["address_schedule"];
-      //   dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
-      //   dummyData["status_schedule"] = dataRes[i]["status_schedule"];
-      //   dummyData["vips"] = dataVip;
-      //   dummyData["accounts"] = dataAccount;
-
-      //   data.push(dummyData);
-      // }
+        data.push(dummyData);
+      }
 
       response(res, true, "Succeed", {
         data,
