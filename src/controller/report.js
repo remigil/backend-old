@@ -110,7 +110,7 @@ module.exports = class ReportController {
       const [data] = await db.query(
         `SELECT * FROM report r WHERE to_char(created_at, 'YYYY-MM-DD')='${moment().format(
           "YYYY-MM-DD"
-        )}' AND type='LAP'`
+        )}' ORDER BY updated_at DESC`
       );
       response(res, true, "Succeed", {
         data,
