@@ -71,6 +71,9 @@ Renpam.init(
     status_renpam: {
       type: Sequelize.INTEGER,
     },
+    note_kakor: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {
