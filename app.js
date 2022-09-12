@@ -19,7 +19,7 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
     app.use(f.url, express.static(path.join(__dirname, f.path)));
   });
 }
-
+app.use(express.static(path.join(__dirname, "./public")));
 socketInstace(server);
 
 middlewareGlobal.beforeRouter(app);
