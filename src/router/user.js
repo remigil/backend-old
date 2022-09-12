@@ -13,5 +13,17 @@ router.get(
   authMiddleware.jwtAuth,
   UserController.getLoggedUserMobile
 );
-router.post("/add", form_validation, UserController.add);
+router.post(
+  "/add",
+  body("username").notEmpty().isLength({ min: 3 }),
+  form_validation,
+  UserController.add
+);
+router.put("/edit/:id", UserController.edit);
+router.delete(
+  "/delete",
+  body("id").notEmpty().isLength({ min: 1 }),
+  form_validation,
+  UserController.delete
+);
 module.exports = router;

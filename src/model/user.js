@@ -19,11 +19,8 @@ User.init(
         });
       },
     },
-    nama: {
-      type: Sequelize.STRING(100),
-    },
-    alamat: {
-      type: Sequelize.TEXT,
+    operation_id: {
+      type: Sequelize.INTEGER,
     },
     username: {
       type: Sequelize.TEXT,

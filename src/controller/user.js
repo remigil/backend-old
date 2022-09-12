@@ -4,11 +4,21 @@ const User = require("../model/user");
 const UserRole = require("../model/user_role");
 const db = require("../config/database");
 const Account = require("../model/account");
+
+const fieldData = {
+  operation_id: null,
+  username: null,
+  status_verifikasi: 0,
+  email: null,
+  role_id: null,
+  password: null,
+};
 module.exports = class UserController {
   static getLoggedUser = async (req, res) => {
     response(
       res,
       true,
+      "Succeed",
       await User.findOne({
         attributes: {
           exclude: ["role_id"],
@@ -80,18 +90,86 @@ module.exports = class UserController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await User.create(
-        {
-          nama: req.body.nama,
-          alamat: req.body?.alamat,
-          username: req.body?.username,
-          status_verifikasi: 0,
-          email: req.body?.email,
-          role_id: req.body?.role_id,
-          password: req.body?.password,
+      let fieldValue = {};
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "polres_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
+        }
+      });
+      await User.create(fieldValue, { transaction: transaction });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static edit = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          fieldValue[val] = req.body[val];
+        }
+      });
+      await User.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
         },
-        { transaction: transaction }
-      );
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static delete = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      fieldValue["deleted_at"] = new Date();
+      await User.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.body.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static hardDelete = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      await User.destroy({
+        where: {
+          id: AESDecrypt(req.body.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
