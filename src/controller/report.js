@@ -50,10 +50,10 @@ module.exports = class ReportController {
       }
       // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
       getData.order = [
-        // [
-        //   order != null ? order : "id",
-        //   orderDirection != null ? orderDirection : "asc",
-        // ],
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
       ];
       if (search != null) {
         let whereBuilder = [];
@@ -105,7 +105,20 @@ module.exports = class ReportController {
       response(res, false, "Failed", e.message);
     }
   };
-
+  static laporanToday = async (req, res) => {
+    try {
+      const [data] = await db.query(
+        `SELECT * FROM report r WHERE to_char(created_at, 'YYYY-MM-DD')='${moment().format(
+          "YYYY-MM-DD"
+        )}' AND type='LAP'`
+      );
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static getId = async (req, res) => {
     try {
       const data = await PanicButton.findOne({
