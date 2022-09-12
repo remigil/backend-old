@@ -1,12 +1,18 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const PanicButton = require("../model/panic_button");
+const PanicButton = require("../model/report");
 const db = require("../config/database");
 const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const pagination = require("../lib/pagination-parser");
+const moment = require("moment");
+const prefix = require("../middleware/prefix");
+const codeReport = require("../middleware/codeReport");
+const Officer = require("../model/officer");
 const fieldData = {
+  code: null,
+  type: null,
   foto: null,
   subject: null,
   categori: null,
@@ -14,6 +20,13 @@ const fieldData = {
   coordinate: null,
   description: null,
   officer_id: null,
+};
+const getCodeReport = async ({ monthYear, type }) => {
+  let [getCode] =
+    await db.query(`select count(to_char(created_at, 'MMYY')) as count  from report r
+    where to_char(created_at, 'MMYY')='${monthYear}' AND type='${type}'
+    group by to_char(created_at, 'MMYY')`);
+  return getCode.length ? prefix(getCode[0].count) : prefix(1);
 };
 module.exports = class PanicButtonController {
   static get = async (req, res) => {
@@ -142,16 +155,38 @@ module.exports = class PanicButtonController {
         isSafeUrl: true,
         parseMode: "string",
       });
+      fieldValueData["type"] = "PNC";
+      let kode = await getCodeReport({
+        monthYear: moment().format("MMYY"),
+        type: "PNC",
+      });
+      let typeCode = codeReport(req.body.categori);
+      let id_officer = AESDecrypt(req.auth.officer, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      let officerGetPolres = await Officer.findOne({
+        where: {
+          id: id_officer,
+        },
+      });
+      let getCode = `PNC/${moment().format("MMYY")}/${kode}/P/${typeCode}/${
+        officerGetPolres.polres_id
+      }`;
+      fieldValueData["code"] = getCode;
       let op = await PanicButton.create(fieldValueData, {
         transaction: transaction,
       });
+
       await transaction.commit();
+
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {

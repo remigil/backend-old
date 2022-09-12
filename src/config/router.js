@@ -144,5 +144,10 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/panicButton")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/report",
+  authMiddleware.jwtAuth,
+  require("../router/report")
+);
 
 module.exports = router;
