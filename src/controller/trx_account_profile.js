@@ -70,10 +70,11 @@ module.exports = class AccountProfileController {
       response(res, false, "Failed", e.message);
     }
   };
+
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await AccountProfile.destroy({
+      var data = await AccountProfile.destroy({
         where: {
           id: AESDecrypt(req.body.id, {
             isSafeUrl: true,
@@ -83,7 +84,31 @@ module.exports = class AccountProfileController {
         transaction: transaction,
       });
       await transaction.commit();
-      response(res, true, "Succeed", null);
+      response(res, true, "Succeed", data);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static delete2param = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      var data = await AccountProfile.destroy({
+        where: {
+          account_id: AESDecrypt(req.body.account_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          officer_id: AESDecrypt(req.body.officer_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", data);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);

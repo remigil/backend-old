@@ -18,4 +18,11 @@ router.delete(
   formValidation,
   TrxAccountProfile.delete
 );
+router.delete(
+  "/delete2param",
+  body("account_id").notEmpty().isLength({ min: 1 }),
+  body("officer_id").notEmpty().isLength({ min: 1 }),
+  formValidation,
+  TrxAccountProfile.delete2param
+);
 module.exports = router;
