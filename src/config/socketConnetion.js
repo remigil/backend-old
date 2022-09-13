@@ -16,21 +16,21 @@ const socketInstace = (server) => {
     // authenticate jwt for socket connection
     const { username, password, user_nrp, type } = socket.handshake.query;
     if (type == "Admin") {
-      const user = await User.findOne({
-        where: {
-          username: username,
-          status_verifikasi: 1,
-        },
-      });
-      if (user) {
-        if (bcrypt.compareSync(password, user.password)) {
-          next();
-        } else {
-          next(new Error("Authentication error"));
-        }
-      } else {
-        next(new Error("Authentication error"));
-      }
+      // const user = await User.findOne({
+      //   where: {
+      //     username: username,
+      //     status_verifikasi: 1,
+      //   },
+      // });
+      // if (user) {
+      //   if (bcrypt.compareSync(password, user.password)) {
+      //     next();
+      //   } else {
+      //     next(new Error("Authentication error"));
+      //   }
+      // } else {
+      //   next(new Error("Authentication error"));
+      // }
     } else if (type == "Officier") {
       try {
         if (socket.handshake.query && socket.handshake.query.user_nrp) {
