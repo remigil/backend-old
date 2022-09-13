@@ -96,6 +96,7 @@ const socketInstace = (server) => {
   });
   io.on("connection", async (socket) => {
     io.emit("message", "test");
+    console.log({ socket });
     socket.on("message", function (message) {
       // io.emit("message", message);
     });
