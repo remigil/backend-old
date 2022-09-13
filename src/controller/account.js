@@ -19,9 +19,14 @@ const field_account = {
   id_vehicle: null,
   id_account: null,
   officers: null,
+  vehicles: null,
   password: null,
 };
 
+// AccountProfile.hasOne(Vehicle, {
+//   foreignKey: "vehicle_id", // replaces `productId`
+//   sourceKey: "id",
+// });
 module.exports = class AccountController {
   static get = async (req, res) => {
     try {
@@ -99,7 +104,18 @@ module.exports = class AccountController {
           },
           {
             model: Officer,
-            as: "officer",
+            // as: "leader",
+            foreignKey: "leader_team",
+            required: false,
+          },
+          {
+            model: Officer,
+            as: "officers",
+            required: false,
+          },
+          {
+            model: Vehicle,
+            as: "vehicles",
             required: false,
           },
         ],
@@ -156,7 +172,18 @@ module.exports = class AccountController {
           },
           {
             model: Officer,
-            as: "officer",
+            // as: "leader",
+            foreignKey: "leader_team",
+            required: false,
+          },
+          {
+            model: Officer,
+            as: "officers",
+            required: false,
+          },
+          {
+            model: Vehicle,
+            as: "vehicles",
             required: false,
           },
         ],
@@ -178,50 +205,72 @@ module.exports = class AccountController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      let fieldValue = {};
-      let fieldValueOfficer = {};
-      Object.keys(field_account).forEach((val, key) => {
-        if (req.body[val]) {
-          if (val == "polres_id" || val == "id_vehicle" || val == "id_vip") {
-            fieldValue[val] = AESDecrypt(req.body[val], {
-              isSafeUrl: true,
-              parseMode: "string",
-            });
-          } else if (val == "officers") {
-            fieldValue[val] = JSON.parse(req.body[val]);
-          } else {
-            fieldValue[val] = req.body[val];
-          }
-        }
+      const findAccount = await Account.findOne({
+        where: {
+          name_account: req.body["name_account"],
+        },
       });
-      await Account.create(fieldValue, { transaction: transaction })
-        .then((ress) => {
-          if (
-            fieldValue["officers"].length > 0 ||
-            fieldValue["officers"].length != null
-          ) {
-            for (let i = 0; i < fieldValue["officers"].length; i++) {
-              fieldValueOfficer = {};
-              fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
+      if (findAccount) {
+        response(res, false, "Accound sudah ada", null);
+      } else {
+        let fieldValue = {};
+        let fieldValueOfficer = {};
+        Object.keys(field_account).forEach((val, key) => {
+          if (req.body[val]) {
+            if (val == "id_vehicle" || val == "leader_team") {
+              fieldValue[val] = AESDecrypt(req.body[val], {
                 isSafeUrl: true,
                 parseMode: "string",
               });
-              fieldValueOfficer["officer_id"] = AESDecrypt(
-                fieldValue["officers"][i],
-                {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }
-              );
-              AccountProfile.create(fieldValueOfficer);
+            } else if (val == "officers" || val == "vehicles") {
+              fieldValue[val] = JSON.parse(req.body[val]);
+            } else {
+              fieldValue[val] = req.body[val];
             }
           }
-          transaction.commit();
-          response(res, true, "Succeed", null);
-        })
-        .catch((err) => {
-          console.log(err);
         });
+        await Account.create(fieldValue, { transaction: transaction })
+          .then((ress) => {
+            if (
+              fieldValue["officers"] ||
+              fieldValue["officers"].length > 0 ||
+              fieldValue["officers"].length != null
+            ) {
+              for (let i = 0; i < fieldValue["officers"].length; i++) {
+                fieldValueOfficer = {};
+                fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                });
+                fieldValueOfficer["officer_id"] = AESDecrypt(
+                  fieldValue["officers"][i],
+                  {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }
+                );
+                if (
+                  fieldValue["vehicles"] ||
+                  fieldValue["vehicles"].length > 0
+                ) {
+                  fieldValueOfficer["vehicle_id"] = AESDecrypt(
+                    fieldValue["vehicles"][i],
+                    {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }
+                  );
+                }
+                AccountProfile.create(fieldValueOfficer);
+              }
+            }
+            transaction.commit();
+            response(res, true, "Succeed", null);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -260,12 +309,12 @@ module.exports = class AccountController {
       let fieldValueOfficer = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "id_vehicle") {
+          if (val == "id_vehicle" || val == "leader_team") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
             });
-          } else if (val == "officers") {
+          } else if (val == "officers" || val == "vehicles") {
             fieldValue[val] = JSON.parse(req.body[val]);
           } else {
             fieldValue[val] = req.body[val];
@@ -284,6 +333,7 @@ module.exports = class AccountController {
       })
         .then((op) => {
           if (
+            fieldValue["officers"] ||
             fieldValue["officers"].length > 0 ||
             fieldValue["officers"].length != null
           ) {
@@ -298,6 +348,7 @@ module.exports = class AccountController {
             })
               .then((ress) => {
                 if (
+                  fieldValue["officers"] ||
                   fieldValue["officers"].length > 0 ||
                   fieldValue["officers"].length != null
                 ) {
@@ -317,6 +368,19 @@ module.exports = class AccountController {
                         parseMode: "string",
                       }
                     );
+
+                    if (
+                      fieldValue["vehicles"] ||
+                      fieldValue["vehicles"].length > 0
+                    ) {
+                      fieldValueOfficer["vehicle_id"] = AESDecrypt(
+                        fieldValue["vehicles"][i],
+                        {
+                          isSafeUrl: true,
+                          parseMode: "string",
+                        }
+                      );
+                    }
                     AccountProfile.create(fieldValueOfficer);
                   }
                 }

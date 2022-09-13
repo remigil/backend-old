@@ -25,6 +25,9 @@ TrxAccountOfficer.init(
     officer_id: {
       type: Sequelize.INTEGER,
     },
+    vehicle_id: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
@@ -36,7 +39,7 @@ TrxAccountOfficer.init(
         where: Sequelize.literal("trx_account_officers.deleted_at is null"),
       },
     },
-    indexes: [{ fields: ["account_id", "officer_id"] }],
+    // indexes: [{ fields: ["account_id", "officer_id", "vehicle_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",

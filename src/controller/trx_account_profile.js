@@ -9,6 +9,7 @@ const formidable = require("formidable");
 let fieldData = {
   account_id: null,
   officer_id: null,
+  vehicle_id: null,
 };
 module.exports = class AccountProfileController {
   static add = async (req, res) => {
