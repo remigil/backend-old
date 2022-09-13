@@ -136,7 +136,8 @@ const socketInstace = (server) => {
         }
       );
 
-      io.emit("sendToAdmin", await LocationTrackController.sendToSocket());
+      io.emit("sendToAdmin", sendTracking.value);
+
       io.emit("sendToAdminMobile", sendTracking.value);
     });
   });
