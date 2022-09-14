@@ -45,12 +45,17 @@ const socketInstace = (server) => {
 
               {
                 model: Officer,
-                as: "officer",
+                as: "officers",
                 required: true,
                 where: {
                   nrp_officer: socket.handshake.query.user_nrp,
                 },
               },
+              // {
+              //   model: Officer,
+              //   as: "leader_team",
+              //   required: false,
+              // },
             ],
             where: {
               name_account: username,
@@ -63,6 +68,7 @@ const socketInstace = (server) => {
           });
           socket.handshake.query["dataAccount"] = dataAccount;
           socket.handshake.query["dataOfficer"] = dataOfficer;
+          // console.log({ dataAccount });
           if (dataAccount) {
             if (bcrypt.compareSync(password, dataAccount.password)) {
               const aaaaa = await TokenTrackNotif.update(
@@ -102,7 +108,12 @@ const socketInstace = (server) => {
     socket.on("trackingUser", async function (coordinate) {
       const { username, password, user_nrp, type, dataAccount, dataOfficer } =
         socket.handshake.query;
-
+      let officerData = await Officer.findOne({
+        where: {
+          id: parseInt(dataAccount?.leader_team),
+        },
+      });
+      console.log({ kesini: "iya", officerData });
       let sendTracking = await TrackG20.findOneAndUpdate(
         {
           latitude: coordinate.lat,
@@ -121,7 +132,8 @@ const socketInstace = (server) => {
             isSafeUrl: true,
             parseMode: "string",
           }),
-          name_team: dataAccount.leader_team, // [ketua tim]
+          // name_team: dataAccount?.leader_team, // [ketua tim]
+          name_team: officerData.dataValues.name_officer, // [ketua tim]
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
           handphone: dataOfficer.phone_officer,
@@ -135,7 +147,7 @@ const socketInstace = (server) => {
           rawResult: true, // Return the raw result from the MongoDB driver
         }
       );
-
+      // console.log({ sendTracking });
       io.emit("sendToAdmin", sendTracking.value);
 
       io.emit("sendToAdminMobile", sendTracking.value);

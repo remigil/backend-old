@@ -128,7 +128,7 @@ module.exports = class OfficerController {
         include: [
           {
             model: Officer,
-            as: "officer",
+            as: "officers",
             required: true,
             where: {
               id: officer_id,

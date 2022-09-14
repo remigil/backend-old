@@ -49,10 +49,18 @@ Account.init(
   },
   {
     // indexes: [{ fields: ["id_vehicle"] }],
-    defaultScope: { where: Sequelize.literal("accounts.deleted_at is null") },
+    // Sequelize.literal("accounts.deleted_at is null")
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("accounts.deleted_at is null"),
+        where: {
+          // Sequelize.literal("accounts.deleted_at is null")
+          deleted_at: null,
+        },
       },
     },
     deletedAt: "deleted_at",

@@ -268,6 +268,7 @@ module.exports = class ScheduleController {
           officer_id: parseInt(idOfficer),
         },
       });
+
       let dataAccount = await Account.findOne({
         where: {
           id: account_id.account_id,
@@ -275,7 +276,7 @@ module.exports = class ScheduleController {
         include: [
           {
             model: Officer,
-            as: "officer",
+            as: "officers",
             required: true,
           },
         ],
@@ -296,8 +297,8 @@ module.exports = class ScheduleController {
           data: kegiatanData,
         },
         petugas: {
-          jumlah: dataAccount?.officer?.length,
-          data: dataAccount?.officer,
+          jumlah: dataAccount?.officers?.length,
+          data: dataAccount?.officers,
         },
       };
 

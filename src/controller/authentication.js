@@ -38,7 +38,7 @@ class Authentication {
         include: [
           {
             model: Officer,
-            as: "officer",
+            as: "officers",
             required: true,
             where: {
               nrp_officer: nrp_user,
@@ -77,7 +77,7 @@ class Authentication {
           await TokenTrackNotif.create({
             nrp_user: nrp_user,
             device_user: device_user,
-            polda_id: account.officer[0].polda_id,
+            polda_id: account.officers[0].polda_id,
             team_id: AESDecrypt(account.id, {
               isSafeUrl: true,
               parseMode: "string",
@@ -92,7 +92,7 @@ class Authentication {
           // await TokenTrackNotif.create({
           //   nrp_user: nrp_user,
           //   device_user: device_user,
-          //   polda_id: account.officer[0].polda_id,
+          //   polda_id: account.officers[0].polda_id,
           //   team_id: AESDecrypt(account.id, {
           //     isSafeUrl: true,
           //     parseMode: "string",
@@ -102,11 +102,12 @@ class Authentication {
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,
-          officer: account.officer[0].id,
+          officer: account.officers[0].id,
           timestamp: moment().unix(),
         });
         return response(res, true, "Login succeed", {
           accessToken,
+          // account,
         });
       } else {
         response(
