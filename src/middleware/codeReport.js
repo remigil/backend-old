@@ -8,15 +8,15 @@ module.exports = (n) => {
       type: "Kecelakaan Lalu Lintas",
       code: "L",
     },
-    3: {
-      type: "Tindakan Kriminal",
-      code: "K",
-    },
+    // 3: {
+    //   type: "Tindakan Kriminal",
+    //   code: "K",
+    // },
     4: {
       type: "Kemacetan",
       code: "Kemacetan",
     },
-    5: {
+    3: {
       type: "Bencana Alam",
       code: "B",
     },
