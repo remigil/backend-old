@@ -259,6 +259,33 @@ class GoogleAPIs {
         return response(res, true, "success", data, 200);
       });
   }
+  static placePhotoGoogle(req, res) {
+    try {
+      const { photo_reference } = req.query;
+      googleMapClient
+        .placePhoto({
+          params: {
+            photoreference: photo_reference,
+            maxwidth: 500,
+            // client_id: '',
+            // client_secret: '',
+
+            key: process.env.GOOGLE_MAPS_API_KEY,
+            // radius: radius,
+            // type: type,
+            // location: coordinate,
+          },
+        })
+        .then(({ data }) => {
+          return response(res, true, "success", data, 200);
+        })
+        .catch((err) => {
+          response(res, false, err.message, err, 500);
+        });
+    } catch (err) {
+      response(res, false, err.message, err, 500);
+    }
+  }
 }
 
 module.exports = GoogleAPIs;
