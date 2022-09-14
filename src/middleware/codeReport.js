@@ -5,7 +5,7 @@ module.exports = (n) => {
       code: "K",
     },
     2: {
-      type: "Kecelakaan",
+      type: "Kecelakaan Lalu Lintas",
       code: "L",
     },
     3: {
@@ -19,6 +19,10 @@ module.exports = (n) => {
     5: {
       type: "Bencana Alam",
       code: "B",
+    },
+    999: {
+      type: "Lainnya",
+      code: "LN",
     },
   };
 

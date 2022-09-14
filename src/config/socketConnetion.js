@@ -88,7 +88,6 @@ const socketInstace = (server) => {
 
               next();
             } else {
-              console.log("kesana");
               return next(new Error("Authentication error"));
             }
           }
@@ -113,7 +112,7 @@ const socketInstace = (server) => {
           id: parseInt(dataAccount?.leader_team),
         },
       });
-      console.log({ kesini: "iya", officerData });
+
       let sendTracking = await TrackG20.findOneAndUpdate(
         {
           latitude: coordinate.lat,
@@ -127,7 +126,7 @@ const socketInstace = (server) => {
           }),
           latitude: coordinate.lat,
           longitude: coordinate.lon,
-          name_account: dataAccount.name_account,
+          name_account: dataAccount.dataValues.name_account,
           id_officer: AESDecrypt(dataOfficer.id, {
             isSafeUrl: true,
             parseMode: "string",
@@ -136,7 +135,7 @@ const socketInstace = (server) => {
           name_team: officerData.dataValues.name_officer, // [ketua tim]
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
-          handphone: dataOfficer.phone_officer,
+          handphone: officerData.dataValues.phone_officer,
           no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
           type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
           date: moment().format("YYYY-MM-DD"),

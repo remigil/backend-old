@@ -104,7 +104,7 @@ module.exports = class AccountController {
           },
           {
             model: Officer,
-            // as: "leader",
+
             foreignKey: "leader_team",
             required: false,
           },
@@ -141,6 +141,35 @@ module.exports = class AccountController {
       let account_id = await TrxAccountOfficer.findOne({
         where: {
           officer_id: parseInt(idOfficer),
+        },
+      });
+      let dataAccount = await Account.findOne({
+        where: {
+          id: account_id.account_id,
+        },
+        include: [
+          {
+            model: Officer,
+            as: "officers",
+            required: true,
+          },
+        ],
+      });
+      response(res, true, "Succeed", dataAccount.officers);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getOfficerAccountById = async (req, res) => {
+    try {
+      // const idOfficer = AESDecrypt(req.auth.officer, {
+      //   isSafeUrl: true,
+      //   parseMode: "string",
+      // });
+      console.log({ id: req });
+      let account_id = await TrxAccountOfficer.findOne({
+        where: {
+          officer_id: parseInt(req.query.id),
         },
       });
       let dataAccount = await Account.findOne({

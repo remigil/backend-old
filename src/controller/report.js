@@ -108,9 +108,13 @@ module.exports = class ReportController {
   static laporanToday = async (req, res) => {
     try {
       const [data] = await db.query(
-        `SELECT * FROM report r WHERE to_char(created_at, 'YYYY-MM-DD')='${moment().format(
+        `SELECT r.*, a.name_account FROM report r 
+        
+        INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
+        INNER JOIN account a ON a.id=tao.account_id
+        WHERE to_char(r.created_at, 'YYYY-MM-DD')='${moment().format(
           "YYYY-MM-DD"
-        )}' ORDER BY updated_at DESC`
+        )}' AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
       );
       response(res, true, "Succeed", {
         data,

@@ -138,6 +138,12 @@ module.exports = class OfficerController {
             model: Vehicle,
             as: "vehicle",
           },
+          {
+            model: Officer,
+            // as: "leader",
+            foreignKey: "leader_team",
+            required: false,
+          },
         ],
       });
       const [vip_renpam] = await db.query(`SELECT
@@ -177,6 +183,8 @@ module.exports = class OfficerController {
 
       response(res, true, "Succeed", {
         ...account.dataValues,
+        leader_team: account.dataValues.officer?.name_officer,
+        phone_leader: account.dataValues.officer?.phone_officer,
         vip: vip_renpam,
         lokasi: address.data.results[0].formatted_address,
       });
