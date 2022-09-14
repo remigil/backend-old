@@ -150,12 +150,12 @@ module.exports = class AccountController {
         include: [
           {
             model: Officer,
-            as: "officer",
+            as: "officers",
             required: true,
           },
         ],
       });
-      response(res, true, "Succeed", dataAccount.officer);
+      response(res, true, "Succeed", dataAccount.officers);
     } catch (e) {
       response(res, false, "Failed", e.message);
     }

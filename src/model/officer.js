@@ -56,11 +56,17 @@ Officer.init(
   },
   {
     defaultScope: {
-      where: Sequelize.literal("officer.deleted_at is null"),
+      where: {
+        // Sequelize.literal("officer.deleted_at is null")
+        deleted_at: null,
+      },
     },
     scopes: {
       deleted: {
-        where: Sequelize.literal("officer.deleted_at is null"),
+        where: {
+          // Sequelize.literal("officer.deleted_at is null")
+          deleted_at: null,
+        },
       },
     },
     deletedAt: "deleted_at",
