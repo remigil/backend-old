@@ -332,65 +332,58 @@ module.exports = class AccountController {
         transaction: transaction,
       })
         .then((op) => {
-          if (
-            fieldValue["officers"] ||
-            fieldValue["officers"].length > 0 ||
-            fieldValue["officers"].length != null
-          ) {
-            AccountProfile.destroy({
-              where: {
-                account_id: AESDecrypt(req.params.id, {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
-              },
-              transaction: transaction,
-            })
-              .then((ress) => {
-                if (
-                  fieldValue["officers"] ||
-                  fieldValue["officers"].length > 0 ||
-                  fieldValue["officers"].length != null
-                ) {
-                  for (let i = 0; i < fieldValue["officers"].length; i++) {
-                    fieldValueOfficer = {};
-                    fieldValueOfficer["account_id"] = AESDecrypt(
-                      req.params.id,
-                      {
-                        isSafeUrl: true,
-                        parseMode: "string",
-                      }
-                    );
-                    fieldValueOfficer["officer_id"] = AESDecrypt(
-                      fieldValue["officers"][i],
-                      {
-                        isSafeUrl: true,
-                        parseMode: "string",
-                      }
-                    );
-
-                    if (
-                      fieldValue["vehicles"] ||
-                      fieldValue["vehicles"].length > 0
-                    ) {
-                      fieldValueOfficer["vehicle_id"] = AESDecrypt(
-                        fieldValue["vehicles"][i],
-                        {
-                          isSafeUrl: true,
-                          parseMode: "string",
-                        }
-                      );
-                    }
-                    AccountProfile.create(fieldValueOfficer);
-                  }
-                }
-
-                transaction.commit();
-                response(res, true, "Succeed", ress);
-              })
-              .catch((err) => {
-                console.log(err);
+          if (fieldValue["officers"] || fieldValue["officers"].length > 0) {
+            for (let i = 0; i < fieldValue["officers"].length; i++) {
+              var officer_id = AESDecrypt(fieldValue["officers"][i], {
+                isSafeUrl: true,
+                parseMode: "string",
               });
+              // return response(res, true, "Succeed", officer_id);
+
+              AccountProfile.destroy({
+                where: {
+                  account_id: AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                  officer_id: officer_id,
+                },
+              })
+                .then((op) => {
+                  fieldValueOfficer = {};
+                  fieldValueOfficer["account_id"] = AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  });
+                  fieldValueOfficer["officer_id"] = AESDecrypt(
+                    fieldValue["officers"][i],
+                    {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }
+                  );
+
+                  if (
+                    fieldValue["vehicles"] ||
+                    fieldValue["vehicles"].length > 0
+                  ) {
+                    fieldValueOfficer["vehicle_id"] = AESDecrypt(
+                      fieldValue["vehicles"][i],
+                      {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      }
+                    );
+                  }
+                  AccountProfile.create(fieldValueOfficer);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            }
+
+            transaction.commit();
+            response(res, true, "Succeed", null);
           }
         })
         .catch((err) => {
