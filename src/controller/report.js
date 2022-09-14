@@ -108,9 +108,10 @@ module.exports = class ReportController {
   static laporanToday = async (req, res) => {
     try {
       const [data] = await db.query(
-        `SELECT r.*, a.name_account FROM report r 
+        `SELECT r.*, a.name_account, o.name_officer FROM report r 
         
         INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
+        INNER JOIN officer o ON r.officer_id=o.id
         INNER JOIN account a ON a.id=tao.account_id
         WHERE to_char(r.created_at, 'YYYY-MM-DD')='${moment().format(
           "YYYY-MM-DD"
