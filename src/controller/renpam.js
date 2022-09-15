@@ -68,25 +68,6 @@ module.exports = class RenpamController {
           orderDirection != null ? orderDirection : "asc",
         ],
       ];
-      if (search != null) {
-        let whereBuilder = [];
-        modelAttr.forEach((key) => {
-          whereBuilder.push(
-            Sequelize.where(
-              Sequelize.fn(
-                "lower",
-                Sequelize.cast(Sequelize.col(key), "varchar")
-              ),
-              {
-                [Op.like]: `%${search.toLowerCase()}%`,
-              }
-            )
-          );
-        });
-        getDataRules.where = {
-          [Op.or]: whereBuilder,
-        };
-      }
 
       let date_ob = new Date();
       if (start_date != null && end_date != null) {
@@ -125,6 +106,27 @@ module.exports = class RenpamController {
           },
         };
       }
+
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+
       if (
         filter != null &&
         filter.length > 0 &&
