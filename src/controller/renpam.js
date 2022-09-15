@@ -50,7 +50,10 @@ module.exports = class RenpamController {
         filterSearch = [],
         order = null,
         orderDirection = "asc",
+        start_date = null,
+        end_date = null,
       } = req.query;
+      // return response(res, false, "Failed", start_date);
       const modelAttr = Object.keys(Renpam.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
@@ -82,6 +85,44 @@ module.exports = class RenpamController {
         });
         getDataRules.where = {
           [Op.or]: whereBuilder,
+        };
+      }
+
+      let date_ob = new Date();
+      if (start_date != null && end_date != null) {
+        // console.log("tgl");
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      } else if (start_date == null && end_date != null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [date_ob, end_date],
+          },
+        };
+      } else if (start_date != null && end_date == null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, date_ob],
+          },
         };
       }
       if (
