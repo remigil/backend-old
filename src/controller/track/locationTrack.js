@@ -51,21 +51,25 @@ module.exports = class LocationTrackController {
   };
   static getByUser = async (req, res) => {
     try {
-      const { date } = req.query;
+      // const { date } = req.query;
 
-      const today = moment(date);
+      const today = moment().format("YYYY-MM-DD");
       const endDateToday = moment(today).endOf("day").toDate();
       const getTrack = await TrackG20.find({
         date: {
           $gte: today,
           $lte: endDateToday,
         },
-        user_id: AESDecrypt(req.params.id, {
+        id_officer: AESDecrypt(req.auth.officer, {
           isSafeUrl: true,
           parseMode: "string",
         }),
-      });
-      response(res, true, "Succeed", getTrack);
+      })
+        .limit(1)
+        .sort({
+          created_at: -1,
+        });
+      response(res, true, "Succeed", getTrack.length ? getTrack[0] : {});
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
