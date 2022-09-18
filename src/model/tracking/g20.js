@@ -10,6 +10,7 @@ const collection = {
   date: Date,
   photo_officer: String, //[foto petugas]
   name_account: String,
+  name_officer: String,
   name_team: String, // [ketua tim]
   vip: String, // [nama vip]
   nrp_user: String,

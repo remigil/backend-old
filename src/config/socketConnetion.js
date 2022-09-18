@@ -133,6 +133,7 @@ const socketInstace = (server) => {
           }),
           // name_team: dataAccount?.leader_team, // [ketua tim]
           name_team: officerData.dataValues.name_officer, // [ketua tim]
+          name_officer: dataOfficer.name_officer,
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
           handphone: officerData.dataValues.phone_officer,
