@@ -49,7 +49,7 @@ class GoogleAPIs {
           dataCoordinateAlter1 += index != alternatif1.length - 1 ? ";" : "";
         });
       }
-      console.log({ dataCoordinateAlter1 });
+
       if (alternatif2) {
         alternatif2.forEach((coordinateData, index) => {
           dataCoordinateAlter2 += coordinateData;
@@ -124,7 +124,7 @@ class GoogleAPIs {
         false,
         "Succ",
         {
-          route: directions,
+          route: directions.reverse(),
           distanceKmRoute:
             (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
           durationRoute:
@@ -145,8 +145,8 @@ class GoogleAPIs {
             ? (responseAlter2?.data?.routes[0].duration / 60).toFixed(2) +
               " Menit"
             : "0 Menit",
-          alternatif1: directionsAlter1,
-          alternatif2: directionsAlter2,
+          alternatif1: directionsAlter1.reverse(),
+          alternatif2: directionsAlter2.reverse(),
           data: data.data,
         },
         200
