@@ -51,6 +51,38 @@ router.use(
   require("../router/schedule")
 );
 
+// MASTER DATA
+router.use(
+  "/v" + process.env.APP_VERSION + "/position",
+  authMiddleware.jwtAuth,
+  require("../router/position")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/country",
+  authMiddleware.jwtAuth,
+  require("../router/country")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/rank_officer",
+  authMiddleware.jwtAuth,
+  require("../router/rank_officer")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/structural",
+  authMiddleware.jwtAuth,
+  require("../router/structural")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/ownership_vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/ownership_vehicle")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/fuel_vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/fuel_vehicle")
+);
+
 // CCTV
 router.use(
   "/v" + process.env.APP_VERSION + "/cctv",
