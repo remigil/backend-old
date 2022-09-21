@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
+const Officer = require("./officer");
 const Model = Sequelize.Model;
 
 class Panic_button extends Model {}
@@ -83,6 +84,10 @@ Panic_button.init(
     sequelize: db,
   }
 );
+Panic_button.hasOne(Officer, {
+  foreignKey: "id",
+  sourceKey: "officer_id",
+});
 (async () => {
   Panic_button.sync({ alter: true });
 })();

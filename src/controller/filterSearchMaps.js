@@ -58,6 +58,11 @@ const fieldData = {
   },
   titik_laporan: async (req) => {
     return await Panic_button.findAll({
+      include: [
+        {
+          model: Officer,
+        },
+      ],
       where: {
         officer_id: AESDecrypt(req.auth.officer, {
           isSafeUrl: true,
