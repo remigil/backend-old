@@ -16,6 +16,7 @@ const Cctv = require("../model/cctv");
 const Polres = require("../model/polres");
 const Fasum = require("../model/fasum");
 const Schedule = require("../model/schedule");
+const Panic_button = require("../model/report");
 
 const googleMapClient = new Client();
 const fieldData = {
@@ -55,7 +56,16 @@ const fieldData = {
   cctv: async () => {
     return await Cctv.findAll();
   },
-  titik_laporan: null,
+  titik_laporan: async (req) => {
+    return await Panic_button.findAll({
+      where: {
+        officer_id: AESDecrypt(req.auth.officer, {
+          isSafeUrl: true,
+          parseMode: "string",
+        }),
+      },
+    });
+  },
   fasum: async ({ type, coordinate, radius }) => {
     let tampung_nearby = [];
     for (const iterator of type.split(",")) {
@@ -104,6 +114,10 @@ module.exports = class FilterSearchController {
               });
               tampung[value] = true;
               tampungArr.push(aaa);
+            } else if (value == "titik_laporan") {
+              console.log("kesini");
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
             } else {
               tampung[value] = true;
               tampungArr.push(fieldData[value]());
