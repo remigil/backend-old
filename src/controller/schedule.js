@@ -119,7 +119,7 @@ module.exports = class ScheduleController {
             r.end_time as renpam_end_time,
             r.title_start,
             r.title_end,
-            
+            r.note_kakor,
             CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
             CASE 
             WHEN r.type_renpam = 1 THEN 'Patroli' 
