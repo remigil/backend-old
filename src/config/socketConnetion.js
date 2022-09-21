@@ -112,7 +112,7 @@ const socketInstace = (server) => {
           id: parseInt(dataAccount?.leader_team),
         },
       });
-
+      console.log({ dataAccount });
       let sendTracking = await TrackG20.findOneAndUpdate(
         {
           latitude: coordinate.lat,
@@ -137,8 +137,8 @@ const socketInstace = (server) => {
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
           handphone: officerData.dataValues.phone_officer,
-          no_vehicle: dataAccount?.vehicle?.no_vehicle || null, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+          no_vehicle: null, // [plat nomor]
+          type_vehicle: null, // ["motor"]
           date: moment().format("YYYY-MM-DD"),
         },
         {
