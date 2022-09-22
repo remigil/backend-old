@@ -249,9 +249,9 @@ module.exports = class RenpamController {
         }
       });
       if (req.body.route) {
-        fieldValue["direction_route"] = await direction_route(
-          JSON.parse(req.body.route)
-        );
+        let test = await direction_route(JSON.parse(req.body.route));
+        console.log({ test, body: req.body.route });
+        fieldValue["direction_route"] = test;
       }
       if (req.body.route_alternatif_1) {
         fieldValue["direction_route_alter1"] = await direction_route(
