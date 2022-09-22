@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Officer = require("./officer");
+const TrxAccountOfficer = require("./trx_account_officer");
+const Account = require("./account");
 const Model = Sequelize.Model;
 
 class Panic_button extends Model {}
@@ -84,10 +86,28 @@ Panic_button.init(
     sequelize: db,
   }
 );
-Panic_button.hasOne(Officer, {
-  foreignKey: "id",
-  sourceKey: "officer_id",
+// Panic_button.hasOne(Officer, {
+//   foreignKey: "id",
+//   sourceKey: "officer_id",
+// });
+Panic_button.belongsToMany(Officer, {
+  // as: "officers",
+  through: "trx_account_officer",
+  foreignKey: "officer_id",
+  otherKey: "officer_id",
+  // otherKey: "vehicle_id",
 });
+Panic_button.belongsToMany(Account, {
+  // as: "officers",
+  through: "trx_account_officer",
+  foreignKey: "officer_id",
+  otherKey: "officer_id",
+  // otherKey: "vehicle_id",
+});
+// Panic_button.hasOne(TrxAccountOfficer, {
+//   foreignKey: "officer_id",
+//   sourceKey: "officer_id",
+// });
 (async () => {
   Panic_button.sync({ alter: true });
 })();

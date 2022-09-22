@@ -68,7 +68,6 @@ const socketInstace = (server) => {
           });
           socket.handshake.query["dataAccount"] = dataAccount;
           socket.handshake.query["dataOfficer"] = dataOfficer;
-          // console.log({ dataAccount });
           if (dataAccount) {
             if (bcrypt.compareSync(password, dataAccount.password)) {
               const aaaaa = await TokenTrackNotif.update(
@@ -85,7 +84,6 @@ const socketInstace = (server) => {
                   },
                 }
               );
-
               next();
             } else {
               return next(new Error("Authentication error"));

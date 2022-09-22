@@ -13,9 +13,13 @@ router.post(
 );
 router.get(
   "/direction-custom",
-
   formValidation,
   GoogleAPIs.directionAPICostumize
+);
+router.get(
+  "/test-renpam",
+  // formValidation,
+  GoogleAPIs.testRenpam
 );
 router.get("/near-by-places", formValidation, GoogleAPIs.nearByPlacesGoogle);
 router.get("/placePhotoGoogle", formValidation, GoogleAPIs.placePhotoGoogle);

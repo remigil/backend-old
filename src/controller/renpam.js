@@ -11,6 +11,7 @@ const Vip = require("../model/vip");
 const RenpamAccount = require("../model/renpam_account");
 const RenpamVip = require("../model/renpam_vip");
 const pagination = require("../lib/pagination-parser");
+const direction_route = require("../middleware/direction_route");
 
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
@@ -213,6 +214,13 @@ module.exports = class RenpamController {
     }
   };
 
+  static listInstruksi = async (req, res) => {
+    try {
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
@@ -240,6 +248,21 @@ module.exports = class RenpamController {
           }
         }
       });
+      if (req.body.route) {
+        fieldValue["direction_route"] = await direction_route(
+          JSON.parse(req.body.route)
+        );
+      }
+      if (req.body.route_alternatif_1) {
+        fieldValue["direction_route_alter1"] = await direction_route(
+          JSON.parse(req.body.route_alternatif_1)
+        );
+      }
+      if (req.body.route_alternatif_2) {
+        fieldValue["direction_route_alter2"] = await direction_route(
+          JSON.parse(req.body.route_alternatif_2)
+        );
+      }
       Renpam.create(fieldValue, {
         transaction: transaction,
       })

@@ -2,6 +2,7 @@ const { Client } = require("@googlemaps/google-maps-services-js");
 const { default: axios } = require("axios");
 
 const response = require("../lib/response");
+const direction_route = require("../middleware/direction_route");
 
 const googleMapClient = new Client();
 class GoogleAPIs {
@@ -27,6 +28,55 @@ class GoogleAPIs {
         res.json({ err: err.message });
       });
   }
+  static async testRenpam(req, res) {
+    try {
+      const coordinate = [
+        {
+          options: {},
+          latLng: { lat: -8.446436807349965, lng: 115.48338206802615 },
+          name: "Duda, Kecamatan Selat, Karangasem, Provinsi Bali, 80862, Indonesia",
+          _initHooksCalled: true,
+        },
+        {
+          options: {},
+          latLng: { lat: -8.441590535185332, lng: 115.55850593057666 },
+          name: "Bebandem, Kecamatan Bebandem, Karangasem, Provinsi Bali, 80813, Indonesia",
+          _initHooksCalled: true,
+        },
+      ];
+      // let coordinateString = "";
+      // coordinate.forEach((coordinateData, index) => {
+      //   coordinateString +=
+      //     coordinateData.latLng.lng + "," + coordinateData.latLng.lat;
+      //   coordinateString += index != coordinate.length - 1 ? ";" : "";
+      // });
+
+      // let data = await axios({
+      //   url:
+      //     "https://router.project-osrm.org/route/v1/car/" +
+      //     coordinateString +
+      //     "?overview=simplified&geometries=geojson&alternatives=3&steps=true",
+      // });
+      // let directions = [];
+      // let getDataRoutes = data.data.routes[0].legs;
+      // getDataRoutes.forEach((leg) => {
+      //   leg.steps.forEach((step, j) => {
+      //     step.geometry.coordinates.forEach((intersection, k) => {
+      //       directions.push({
+      //         latitude: intersection[1],
+      //         longitude: intersection[0],
+      //       });
+      //     });
+      //   });
+      // });
+      let directions = await direction_route(coordinate);
+      return response(res, true, "Berhasil", directions, 200);
+    } catch (error) {
+      return res.json({
+        error: error.message,
+      });
+    }
+  }
   static async directionAPICostumize(req, res) {
     try {
       const { coordinate, alternatif1, alternatif2 } = req.query;
@@ -38,6 +88,7 @@ class GoogleAPIs {
       let dataCoordinateAlter1 = "";
       let responseAlter1 = {};
       let responseAlter2 = {};
+
       coordinate.forEach((coordinateData, index) => {
         dataCoordinate += coordinateData;
         dataCoordinate += index != coordinate.length - 1 ? ";" : "";

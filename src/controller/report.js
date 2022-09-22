@@ -10,6 +10,8 @@ const moment = require("moment");
 const prefix = require("../middleware/prefix");
 const codeReport = require("../middleware/codeReport");
 const Officer = require("../model/officer");
+const Panic_button = require("../model/report");
+const Account = require("../model/account");
 const fieldData = {
   code: null,
   type: null,
@@ -119,6 +121,37 @@ module.exports = class ReportController {
       );
       response(res, true, "Succeed", {
         data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static riwayat = async (req, res) => {
+    try {
+      let { limit, page } = req.query;
+      const resPage = pagination.getPagination(limit, page);
+      const riwayat = await Panic_button.findAndCountAll({
+        include: [
+          {
+            model: Officer,
+          },
+          {
+            model: Account,
+          },
+        ],
+        order: [["created_at", "DESC"]],
+        raw: true,
+        nest: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+      });
+
+      response(res, true, "Succeed", {
+        limit,
+        page,
+        total: riwayat.count,
+        total_page: riwayat.rows.length,
+        ...riwayat,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);

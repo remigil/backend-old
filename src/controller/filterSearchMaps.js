@@ -62,6 +62,9 @@ const fieldData = {
         {
           model: Officer,
         },
+        {
+          model: Account,
+        },
       ],
       where: {
         officer_id: AESDecrypt(req.auth.officer, {
