@@ -124,10 +124,11 @@ module.exports = class ScheduleController {
             CASE 
             WHEN r.type_renpam = 1 THEN 'Patroli' 
             WHEN r.type_renpam = 2 THEN 'Pengawalan' 
-            WHEN r.type_renpam = 3 THEN 'Penjagaan' 
-                 
-                 ELSE 'Patroli' END AS title_renpam_type
-            
+            WHEN r.type_renpam = 3 THEN 'Penjagaan'
+            ELSE 'Patroli' END AS title_renpam_type,
+            r.direction_route,
+            r.direction_route_alter1,
+            r.direction_route_alter2
             `,
             join: `
             LEFT JOIN schedule s ON s.id=r.schedule_id
