@@ -33,14 +33,14 @@ class GoogleAPIs {
       const coordinate = [
         {
           options: {},
-          latLng: { lat: -8.446436807349965, lng: 115.48338206802615 },
-          name: "Duda, Kecamatan Selat, Karangasem, Provinsi Bali, 80862, Indonesia",
+          latLng: { lat: -8.145423076153314, lng: 114.5802625899731 },
+          name: "Jalan Melati, Pahlengkong, Buleleng, Provinsi Bali, 81155, Indonesia",
           _initHooksCalled: true,
         },
         {
           options: {},
-          latLng: { lat: -8.441590535185332, lng: 115.55850593057666 },
-          name: "Bebandem, Kecamatan Bebandem, Karangasem, Provinsi Bali, 80813, Indonesia",
+          latLng: { lat: -8.145423076153314, lng: 114.6096588840146 },
+          name: "Sumberkima, Buleleng, Provinsi Bali, 81155, Indonesia",
           _initHooksCalled: true,
         },
       ];
