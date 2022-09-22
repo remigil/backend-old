@@ -136,7 +136,7 @@ const socketInstace = (server) => {
           name_officer: dataOfficer.name_officer,
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
-          handphone: officerData.dataValues.phone_officer,
+          handphone: dataOfficer?.phone_officer,
           // no_vehicle: null, // [plat nomor]
           // type_vehicle: null, // ["motor"]
           no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
