@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
-const { StructureTimestamp } = require("../constanta/db_structure"); 
+const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
@@ -16,7 +16,7 @@ Vehicle.init(
         return AESEncrypt(String(this.getDataValue("id")), {
           isSafeUrl: true,
         });
-      }, 
+      },
     },
     no_vehicle: {
       type: Sequelize.STRING(100),
@@ -26,10 +26,13 @@ Vehicle.init(
     },
     brand_vehicle: {
       type: Sequelize.STRING(255),
-    },  
+    },
+    fuel_vehicle: {
+      type: Sequelize.STRING(255),
+    },
     ownership_vehicle: {
       type: Sequelize.STRING(255),
-    }, 
+    },
     ...StructureTimestamp,
   },
   {

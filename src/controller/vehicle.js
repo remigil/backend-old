@@ -109,6 +109,7 @@ module.exports = class VehicleController {
           no_vehicle: req.body.no_vehicle,
           type_vehicle: req.body?.type_vehicle,
           brand_vehicle: req.body?.brand_vehicle,
+          fuel_vehicle: req.body?.fuel_vehicle,
           ownership_vehicle: req.body?.ownership_vehicle,
         },
         { transaction: transaction }
@@ -128,6 +129,7 @@ module.exports = class VehicleController {
           no_vehicle: req.body.no_vehicle,
           type_vehicle: req.body?.type_vehicle,
           brand_vehicle: req.body?.brand_vehicle,
+          fuel_vehicle: req.body?.fuel_vehicle,
           ownership_vehicle: req.body?.ownership_vehicle,
         },
         {
