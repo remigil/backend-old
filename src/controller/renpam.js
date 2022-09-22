@@ -251,17 +251,22 @@ module.exports = class RenpamController {
       if (req.body.route) {
         let test = await direction_route(JSON.parse(req.body.route));
 
-        fieldValue["direction_route"] = test;
+        fieldValue["direction_route"] = test.route;
+        fieldValue["estimasi"] = test.estimasi;
       }
       if (req.body.route_alternatif_1) {
-        fieldValue["direction_route_alter1"] = await direction_route(
+        let routeAlter1 = await direction_route(
           JSON.parse(req.body.route_alternatif_1)
         );
+        fieldValue["direction_route_alter1"] = routeAlter1.route;
+        fieldValue["estimasi"] = routeAlter1.estimasi;
       }
       if (req.body.route_alternatif_2) {
-        fieldValue["direction_route_alter2"] = await direction_route(
+        let routeAlter2 = await direction_route(
           JSON.parse(req.body.route_alternatif_2)
         );
+        fieldValue["direction_route_alter2"] = routeAlter2;
+        fieldValue["estimasi"] = routeAlter2.estimasi;
       }
       Renpam.create(fieldValue, {
         transaction: transaction,

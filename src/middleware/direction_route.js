@@ -26,5 +26,8 @@ module.exports = async (coordinate = []) => {
       });
     });
   });
-  return directions.reverse();
+  return {
+    route: directions.reverse(),
+    estimasi: (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
+  };
 };

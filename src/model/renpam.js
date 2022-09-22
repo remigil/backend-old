@@ -44,6 +44,15 @@ Renpam.init(
     route: {
       type: Sequelize.JSON,
     },
+    estimasi: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_alter1: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_alter2: {
+      type: Sequelize.STRING(20),
+    },
     route_alternatif_1: {
       type: Sequelize.JSON,
     },
