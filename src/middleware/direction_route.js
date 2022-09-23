@@ -2,7 +2,8 @@ const { default: axios } = require("axios");
 
 module.exports = async (coordinate = []) => {
   let coordinateString = "";
-  coordinate.forEach((coordinateData, index) => {
+
+  coordinate?.forEach((coordinateData, index) => {
     coordinateString +=
       coordinateData.latLng.lng + "," + coordinateData.latLng.lat;
     coordinateString += index != coordinate.length - 1 ? ";" : "";
@@ -27,7 +28,10 @@ module.exports = async (coordinate = []) => {
     });
   });
   return {
-    route: directions.reverse(),
+    route: directions?.reverse(),
     estimasi: (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
+    estimasiWaktu: data?.data?.routes[0].duration
+      ? (data?.data?.routes[0].duration / 60).toFixed(2) + " Menit"
+      : "0 Menit",
   };
 };

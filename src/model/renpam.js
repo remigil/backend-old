@@ -44,25 +44,10 @@ Renpam.init(
     route: {
       type: Sequelize.JSON,
     },
-    estimasi: {
-      type: Sequelize.STRING(20),
-    },
-    estimasi_alter1: {
-      type: Sequelize.STRING(20),
-    },
-    estimasi_alter2: {
-      type: Sequelize.STRING(20),
-    },
     route_alternatif_1: {
       type: Sequelize.JSON,
     },
     route_alternatif_2: {
-      type: Sequelize.JSON,
-    },
-    coordinate_guarding: {
-      type: Sequelize.JSON,
-    },
-    end_coordinate_renpam: {
       type: Sequelize.JSON,
     },
     direction_route: {
@@ -74,6 +59,31 @@ Renpam.init(
     direction_route_alter2: {
       type: Sequelize.JSON,
     },
+    estimasi: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_alter1: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_alter2: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_time: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_time_alter1: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_time_alter2: {
+      type: Sequelize.STRING(20),
+    },
+    coordinate_guarding: {
+      type: Sequelize.JSON,
+    },
+    end_coordinate_renpam: {
+      type: Sequelize.JSON,
+    },
+
     choose_rute: {
       type: Sequelize.INTEGER, // 1 = utama, 2=alternatif 1, 3= alternatif 2
     },
@@ -95,10 +105,16 @@ Renpam.init(
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("renpams.deleted_at is null") },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("renpams.deleted_at is null"),
+        where: {
+          deleted_at: null,
+        },
       },
     },
     indexes: [{ fields: ["schedule_id"] }],
