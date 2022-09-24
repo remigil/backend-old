@@ -50,6 +50,12 @@ Renpam.init(
     route_alternatif_2: {
       type: Sequelize.JSON,
     },
+    route_masyarakat: {
+      type: Sequelize.JSON,
+    },
+    route_umum: {
+      type: Sequelize.JSON,
+    },
     direction_route: {
       type: Sequelize.JSON,
     },
