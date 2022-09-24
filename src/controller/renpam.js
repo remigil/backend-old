@@ -28,6 +28,8 @@ const fieldData = {
   route: null,
   route_alternatif_1: null,
   route_alternatif_2: null,
+  route_masyarakat: null,
+  route_umum: null,
   coordinate_guarding: null,
   coordinate_renpam: null,
   date: null,
@@ -298,6 +300,8 @@ module.exports = class RenpamController {
             val == "accounts" ||
             val == "route_alternatif_1" ||
             val == "route_alternatif_2" ||
+            val == "route_masyarakat" ||
+            val == "route_umum" ||
             val == "coordinate_guarding"
           ) {
             fieldValue[val] = JSON.parse(req.body[val]);
@@ -328,6 +332,22 @@ module.exports = class RenpamController {
         fieldValue["direction_route_alter2"] = routeAlter2;
         fieldValue["estimasi_alter2"] = routeAlter2.estimasi;
         fieldValue["estimasi_time_alter2"] = routeAlter2.estimasiWaktu;
+      }
+      if (req.body.route_masyarakat) {
+        let routeAlter3 = await direction_route(
+          JSON.parse(req.body.route_masyarakat)
+        );
+        fieldValue["direction_route_masyarakat"] = routeAlter3;
+        fieldValue["estimasi_masyarakat"] = routeAlter3.estimasi;
+        fieldValue["estimasi_time_masyarakat"] = routeAlter3.estimasiWaktu;
+      }
+      if (req.body.route_umum) {
+        let routeAlter4 = await direction_route(
+          JSON.parse(req.body.route_umum)
+        );
+        fieldValue["direction_route_umum"] = routeAlter4;
+        fieldValue["estimasi_umum"] = routeAlter4.estimasi;
+        fieldValue["estimasi_time_umum"] = routeAlter4.estimasiWaktu;
       }
       Renpam.create(fieldValue, {
         transaction: transaction,
@@ -396,6 +416,8 @@ module.exports = class RenpamController {
             val == "accounts" ||
             val == "route_alternatif_1" ||
             val == "route_alternatif_2" ||
+            val == "route_masyarakat" ||
+            val == "route_umum" ||
             val == "coordinate_guarding"
           ) {
             fieldValue[val] = JSON.parse(req.body[val]);
@@ -444,6 +466,23 @@ module.exports = class RenpamController {
         fieldValue["direction_route_alter2"] = routeAlter2;
         fieldValue["estimasi_alter2"] = routeAlter2.estimasi;
         fieldValue["estimasi_time_alter2"] = routeAlter2.estimasiWaktu;
+      }
+
+      if (req.body.route_masyarakat) {
+        let routeAlter3 = await direction_route(
+          JSON.parse(req.body.route_masyarakat)
+        );
+        fieldValue["direction_route_masyarakat"] = routeAlter3;
+        fieldValue["estimasi_masyarakat"] = routeAlter3.estimasi;
+        fieldValue["estimasi_time_masyarakat"] = routeAlter3.estimasiWaktu;
+      }
+      if (req.body.route_umum) {
+        let routeAlter4 = await direction_route(
+          JSON.parse(req.body.route_umum)
+        );
+        fieldValue["direction_route_umum"] = routeAlter4;
+        fieldValue["estimasi_umum"] = routeAlter4.estimasi;
+        fieldValue["estimasi_time_umum"] = routeAlter4.estimasiWaktu;
       }
       // const dataRenpamm = await Renpam.findOne({
       //   where: {

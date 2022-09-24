@@ -59,6 +59,12 @@ Renpam.init(
     direction_route_alter2: {
       type: Sequelize.JSON,
     },
+    direction_route_masyarakat: {
+      type: Sequelize.JSON,
+    },
+    direction_route_umum: {
+      type: Sequelize.JSON,
+    },
     estimasi: {
       type: Sequelize.STRING(20),
     },
@@ -68,6 +74,12 @@ Renpam.init(
     estimasi_alter2: {
       type: Sequelize.STRING(20),
     },
+    estimasi_masyarakat: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_umum: {
+      type: Sequelize.STRING(20),
+    },
     estimasi_time: {
       type: Sequelize.STRING(20),
     },
@@ -75,6 +87,12 @@ Renpam.init(
       type: Sequelize.STRING(20),
     },
     estimasi_time_alter2: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_time_masyarakat: {
+      type: Sequelize.STRING(20),
+    },
+    estimasi_time_umum: {
       type: Sequelize.STRING(20),
     },
     coordinate_guarding: {
