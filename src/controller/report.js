@@ -129,6 +129,7 @@ module.exports = class ReportController {
   static riwayat = async (req, res) => {
     try {
       let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
       const resPage = pagination.getPagination(limit, page);
       const riwayat = await Panic_button.findAndCountAll({
         include: [
@@ -146,12 +147,13 @@ module.exports = class ReportController {
         limit: resPage.limit,
         offset: resPage.offset,
       });
-
       response(res, true, "Succeed", {
         limit,
         page,
         total: riwayat.count,
-        total_page: riwayat.rows.length,
+        total_page: Math.ceil(
+          parseInt(riwayat.count) / parseInt(resPage.limit)
+        ),
         ...riwayat,
       });
     } catch (e) {
