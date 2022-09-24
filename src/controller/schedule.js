@@ -325,6 +325,65 @@ module.exports = class ScheduleController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getIdRenpam = async (req, res) => {
+    try {
+      let [result_renpam] = await db.query(
+        queryGlobal({
+          select: `
+          s.*,
+                s.id as id_schedule,
+          r.id as id_ranpam,
+          r.name_renpam,
+          r.type_renpam,
+          r.route,
+          r.route_alternatif_1,
+          r.route_alternatif_2,
+          r.coordinate_guarding,
+          r.date,
+          r.start_time as renpam_start_time,
+          r.end_time as renpam_end_time,
+          r.title_start,
+          r.title_end,
+          r.note_kakor,
+          CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
+          CASE 
+          WHEN r.type_renpam = 1 THEN 'Patroli' 
+          WHEN r.type_renpam = 2 THEN 'Pengawalan' 
+          WHEN r.type_renpam = 3 THEN 'Penjagaan'
+          ELSE 'Patroli' END AS title_renpam_type,
+          r.direction_route,
+          r.direction_route_alter1,
+          r.direction_route_alter2,
+          r.direction_route_masyarakat,
+          r.direction_route_umum,
+          r.estimasi,
+          r.estimasi_alter1,
+          r.estimasi_alter2,
+          r.estimasi_masyarakat,
+          r.estimasi_umum,
+          r.estimasi_time,
+          r.estimasi_time_alter1,
+          r.estimasi_time_alter2,
+          r.estimasi_time_masyarakat,
+          r.estimasi_time_umum
+          `,
+          join: `
+          LEFT JOIN schedule s ON s.id=r.schedule_id
+          `,
+          condition: `
+          AND r.id=${AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          })} 
+          order by r.date ASC`,
+          account_id: req.auth.uid,
+        })
+      );
+      response(res, true, "Succeed", result_renpam);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static get = async (req, res) => {
     try {
       const {

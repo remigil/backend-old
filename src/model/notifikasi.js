@@ -19,38 +19,27 @@ Notification.init(
         });
       },
     },
-    operation_id: {
-      type: Sequelize.INTEGER,
+    type: {
+      type: Sequelize.STRING(100),
+      //panic button, laporan, instruksi
     },
-    name_officer: {
+    title: {
       type: Sequelize.STRING(255),
     },
-    photo_officer: {
+    decription: {
       type: Sequelize.TEXT,
     },
-    nrp_officer: {
-      type: Sequelize.STRING(255),
-    },
-    rank_officer: {
-      type: Sequelize.STRING(255),
-    },
-    structural_officer: {
-      type: Sequelize.STRING(255),
-    },
-    pam_officer: {
-      type: Sequelize.STRING(255),
-    },
-    phone_officer: {
-      type: Sequelize.STRING(50),
-    },
-    status_officer: {
+    is_read: {
       type: Sequelize.INTEGER,
     },
-    polda_id: {
+    officer_id: {
       type: Sequelize.INTEGER,
     },
-    polres_id: {
-      type: Sequelize.INTEGER,
+    mobile: {
+      type: Sequelize.TEXT,
+    },
+    web: {
+      type: Sequelize.TEXT,
     },
     ...StructureTimestamp,
   },

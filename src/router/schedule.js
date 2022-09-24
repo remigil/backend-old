@@ -5,6 +5,7 @@ const formValidation = require("../middleware/form_validation");
 router.get("/", ScheduleController.get);
 router.get("/transaction", ScheduleController.trx);
 router.get("/getId/:id", ScheduleController.getId);
+router.get("/getIdRenpam/:id", ScheduleController.getIdRenpam);
 router.post(
   "/add",
   body("activity").notEmpty().isLength({ min: 3 }),

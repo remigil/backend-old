@@ -126,6 +126,24 @@ module.exports = class ReportController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getLaporanById = async (req, res) => {
+    try {
+      const [data] = await db.query(
+        `SELECT r.*, a.name_account, o.name_officer FROM report r 
+        
+        INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
+        INNER JOIN officer o ON r.officer_id=o.id
+        INNER JOIN account a ON a.id=tao.account_id
+        WHERE r.id=${AESDecrypt(req.params.id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        })} AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
+      );
+      response(res, true, "Succeed", data);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static riwayat = async (req, res) => {
     try {
       let { limit, page } = req.query;

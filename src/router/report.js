@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const ReportController = require("../controller/report");
 const formValidation = require("../middleware/form_validation");
 router.get("/", ReportController.get);
+router.get("/getLaporanById/:id", ReportController.getLaporanById);
 router.get("/laporanToday", ReportController.laporanToday);
 router.get("/riwayat", ReportController.riwayat);
 router.post("/add", formValidation, ReportController.add);
