@@ -12,6 +12,7 @@ const RenpamAccount = require("../model/renpam_account");
 const RenpamVip = require("../model/renpam_vip");
 const pagination = require("../lib/pagination-parser");
 const direction_route = require("../middleware/direction_route");
+const Officer = require("../model/officer");
 
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
@@ -216,6 +217,63 @@ module.exports = class RenpamController {
 
   static listInstruksi = async (req, res) => {
     try {
+      // console.log(
+      //   AESDecrypt(req.auth.officer, {
+      //     isSafeUrl: true,
+      //     parseMode: "string",
+      //   })
+      // );
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      let renpamData = await Renpam.findAndCountAll({
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: true,
+            include: [
+              {
+                model: Officer,
+                as: "officers",
+                where: {
+                  id: AESDecrypt(req.auth.officer, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              },
+            ],
+            // where:{
+
+            // }
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+        // raw: true,
+        // nest: true,
+        order: [["date", "DESC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+      });
+      let mapDataWithDate = renpamData;
+      response(res, true, "Succeed", {
+        limit: resPage.limit,
+        page: page,
+        total: renpamData.count,
+        total_page: renpamData.rows.length,
+        ...renpamData,
+      });
     } catch (e) {
       response(res, false, "Failed", e.message);
     }

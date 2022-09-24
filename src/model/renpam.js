@@ -126,6 +126,7 @@ Renpam.init(
     sequelize: db,
   }
 );
+
 Renpam.belongsToMany(Account, {
   as: "accounts",
   through: "renpam_account",
@@ -138,6 +139,7 @@ Renpam.belongsToMany(Vip, {
   foreignKey: "renpam_id",
   otherKey: "vip_id",
 });
+
 (async () => {
   Renpam.sync({ alter: true });
 })();

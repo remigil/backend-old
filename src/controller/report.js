@@ -137,6 +137,7 @@ module.exports = class ReportController {
           },
           {
             model: Account,
+            required: false,
           },
         ],
         order: [["created_at", "DESC"]],

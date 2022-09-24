@@ -4,6 +4,7 @@ const RenpamController = require("../controller/renpam");
 const formValidation = require("../middleware/form_validation");
 router.get("/", RenpamController.get);
 router.get("/getId/:id", RenpamController.getId);
+router.get("/listInstruksi", RenpamController.listInstruksi);
 router.post(
   "/add",
   //   body("activity").notEmpty().isLength({ min: 3 }),

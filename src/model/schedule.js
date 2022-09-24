@@ -50,10 +50,16 @@ Schedule.init(
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("schedule.deleted_at is null") },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("schedule.deleted_at is null"),
+        where: {
+          deleted_at: null,
+        },
       },
     },
     // indexes: [{ fields: ["role_id"] }],

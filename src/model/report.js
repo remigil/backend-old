@@ -86,22 +86,23 @@ Panic_button.init(
     sequelize: db,
   }
 );
-// Panic_button.hasOne(Officer, {
-//   foreignKey: "id",
-//   sourceKey: "officer_id",
-// });
-Panic_button.belongsToMany(Officer, {
-  // as: "officers",
-  through: "trx_account_officer",
-  foreignKey: "officer_id",
-  otherKey: "officer_id",
-  // otherKey: "vehicle_id",
+Panic_button.hasOne(Officer, {
+  foreignKey: "id",
+  sourceKey: "officer_id",
 });
+// Panic_button.belongsToMany(Officer, {
+//   // as: "officers",
+//   through: "trx_account_officer",
+//   foreignKey: "officer_id",
+//   otherKey: "officer_id",
+//   // otherKey: "vehicle_id",
+// });
 Panic_button.belongsToMany(Account, {
   // as: "officers",
   through: "trx_account_officer",
   foreignKey: "officer_id",
   otherKey: "officer_id",
+  sourceKey: "officer_id",
   // otherKey: "vehicle_id",
 });
 // Panic_button.hasOne(TrxAccountOfficer, {
