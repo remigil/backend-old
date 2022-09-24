@@ -42,7 +42,6 @@ const socketInstace = (server) => {
                 foreignKey: "id_vehicle",
                 required: false,
               },
-
               {
                 model: Officer,
                 as: "officers",
