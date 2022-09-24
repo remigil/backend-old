@@ -132,9 +132,9 @@ module.exports = class ScheduleController {
             r.estimasi,
             r.estimasi_alter1,
             r.estimasi_alter2,
-            e.estimasi_time,
-            e.estimasi_time_alter1,
-            e.estimasi_time_alter2
+            r.estimasi_time,
+            r.estimasi_time_alter1,
+            r.estimasi_time_alter2
             `,
             join: `
             LEFT JOIN schedule s ON s.id=r.schedule_id
