@@ -45,17 +45,14 @@ const fieldData = {
   choose_rute: 0,
   note_kakor: null,
 };
-const queryGlobal = ({ select, join, condition, account_id }) => {
+const queryGlobal = ({ select, join, condition }) => {
   let query = `SELECT 
                 ${select}
               FROM renpam r
               INNER JOIN renpam_account ra ON ra.renpam_id=r.id
               ${join}
               WHERE 1=1
-              AND ra.account_id=${AESDecrypt(account_id, {
-                isSafeUrl: true,
-                parseMode: "string",
-              })}
+              
               ${condition ? condition : ""}
             `;
 
@@ -449,7 +446,7 @@ module.exports = class RenpamController {
                           parseMode: "string",
                         })} 
                         order by r.date ASC`,
-                        account_id: req.auth.uid,
+                        // account_id: req.auth.uid,
                       })
                     );
                     result_renpam = result_renpam.map((renpam) => ({
@@ -488,7 +485,13 @@ module.exports = class RenpamController {
                           }))
                         : [],
                     }));
-
+                    console.log(
+                      { result_renpam },
+                      AESDecrypt(op.id, {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      })
+                    );
                     NotifikasiController.addGlobal({
                       deepLink: notifHandler.mobile.instruksi + op.id,
                       type: "instruksi",
