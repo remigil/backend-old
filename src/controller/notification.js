@@ -136,7 +136,8 @@ module.exports = class NotifikasiController {
       };
     } catch (e) {
       await transaction.rollback();
-      response(res, false, "Failed", e.message);
+      return e;
+      //   response(res, false, "Failed", e.message);
     }
   };
   static add = async (req, res) => {
