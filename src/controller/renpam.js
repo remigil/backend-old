@@ -45,7 +45,22 @@ const fieldData = {
   choose_rute: 0,
   note_kakor: null,
 };
+const queryGlobal = ({ select, join, condition, account_id }) => {
+  let query = `SELECT 
+                ${select}
+              FROM renpam r
+              INNER JOIN renpam_account ra ON ra.renpam_id=r.id
+              ${join}
+              WHERE 1=1
+              AND ra.account_id=${AESDecrypt(account_id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              })}
+              ${condition ? condition : ""}
+            `;
 
+  return query;
+};
 module.exports = class RenpamController {
   static get = async (req, res) => {
     try {
@@ -384,7 +399,96 @@ module.exports = class RenpamController {
                     where: {
                       nrp_officer: iterator.nrp_user,
                     },
-                  }).then((dataOffice) => {
+                  }).then(async (dataOffice) => {
+                    let [result_renpam] = await db.query(
+                      queryGlobal({
+                        select: `
+                        s.*,
+                              s.id as id_schedule,
+                        r.id as id_ranpam,
+                        r.name_renpam,
+                        r.type_renpam,
+                        r.route,
+                        r.route_alternatif_1,
+                        r.route_alternatif_2,
+                        r.coordinate_guarding,
+                        r.date,
+                        r.start_time as renpam_start_time,
+                        r.end_time as renpam_end_time,
+                        r.title_start,
+                        r.title_end,
+                        r.note_kakor,
+                        CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
+                        CASE 
+                        WHEN r.type_renpam = 1 THEN 'Patroli' 
+                        WHEN r.type_renpam = 2 THEN 'Pengawalan' 
+                        WHEN r.type_renpam = 3 THEN 'Penjagaan'
+                        ELSE 'Patroli' END AS title_renpam_type,
+                        r.direction_route,
+                        r.direction_route_alter1,
+                        r.direction_route_alter2,
+                        r.direction_route_masyarakat,
+                        r.direction_route_umum,
+                        r.estimasi,
+                        r.estimasi_alter1,
+                        r.estimasi_alter2,
+                        r.estimasi_masyarakat,
+                        r.estimasi_umum,
+                        r.estimasi_time,
+                        r.estimasi_time_alter1,
+                        r.estimasi_time_alter2,
+                        r.estimasi_time_masyarakat,
+                        r.estimasi_time_umum
+                        `,
+                        join: `
+                        LEFT JOIN schedule s ON s.id=r.schedule_id
+                        `,
+                        condition: `
+                        AND r.id=${AESDecrypt(op.id, {
+                          isSafeUrl: true,
+                          parseMode: "string",
+                        })} 
+                        order by r.date ASC`,
+                        account_id: req.auth.uid,
+                      })
+                    );
+                    result_renpam = result_renpam.map((renpam) => ({
+                      ...renpam,
+                      route: renpam.route
+                        ? renpam.route.map(
+                            (route) =>
+                              route.latLng?.lng + "," + route.latLng?.lat
+                          )
+                        : "",
+                      route_alternatif_1: renpam.route_alternatif_1
+                        ? renpam.route_alternatif_1.map(
+                            (route) =>
+                              route.latLng?.lng + "," + route.latLng?.lat
+                          )
+                        : "",
+                      route_alternatif_2: renpam.route_alternatif_2
+                        ? renpam.route_alternatif_2.map(
+                            (route) =>
+                              route.latLng?.lng + "," + route.latLng?.lat
+                          )
+                        : "",
+                      address_route_1: renpam.route
+                        ? renpam.route.map((route) => ({
+                            address: route.name,
+                          }))
+                        : [],
+                      address_route_2: renpam.route_alternatif_1
+                        ? renpam.route_alternatif_1.map((route) => ({
+                            address: route.name,
+                          }))
+                        : [],
+                      address_route_3: renpam.route_alternatif_2
+                        ? renpam.route_alternatif_2.map((route) => ({
+                            address: route.name,
+                          }))
+                        : [],
+                    }));
+
                     NotifikasiController.addGlobal({
                       deepLink: notifHandler.mobile.instruksi + op.id,
                       type: "instruksi",
@@ -394,7 +498,9 @@ module.exports = class RenpamController {
                         isSafeUrl: true,
                         parseMode: "string",
                       }),
-                      mobile: notifHandler.mobile.instruksi + op.id,
+                      mobile:
+                        notifHandler.mobile.instruksi +
+                        JSON.stringify(result_renpam[0]),
                       web: notifHandler.mobile.instruksi + op.id,
                       to: iterator.token_fcm,
                     })
