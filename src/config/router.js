@@ -182,4 +182,10 @@ router.use(
   require("../router/report")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/notifikasi",
+  authMiddleware.jwtAuth,
+  require("../router/notifikasi")
+);
+
 module.exports = router;

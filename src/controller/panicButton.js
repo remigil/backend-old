@@ -10,6 +10,8 @@ const moment = require("moment");
 const prefix = require("../middleware/prefix");
 const codeReport = require("../middleware/codeReport");
 const Officer = require("../model/officer");
+const NotifikasiController = require("./notification");
+const notifHandler = require("../middleware/notifHandler");
 const fieldData = {
   code: null,
   type: null,
@@ -125,7 +127,6 @@ module.exports = class PanicButtonController {
   };
   static add = async (req, res) => {
     const transaction = await db.transaction();
-
     try {
       let fieldValueData = {};
       Object.keys(fieldData).forEach((key) => {
@@ -174,12 +175,20 @@ module.exports = class PanicButtonController {
         officerGetPolres.polres_id
       }`;
       fieldValueData["code"] = getCode;
+      console.log({ fieldValueData });
       let op = await PanicButton.create(fieldValueData, {
         transaction: transaction,
       });
-
       await transaction.commit();
-
+      await NotifikasiController.addGlobal({
+        deepLink: notifHandler.mobile.panic_button + op.id,
+        type: "panic_button",
+        title: "Panic Button",
+        description: req.body.description,
+        officer_id: id_officer,
+        mobile: notifHandler.mobile.panic_button + op.id,
+        web: notifHandler.mobile.panic_button + op.id,
+      });
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();

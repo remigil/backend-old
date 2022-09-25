@@ -255,6 +255,7 @@ module.exports = class ReportController {
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
+      console.log({ e });
       response(res, false, "Failed", e.message);
     }
   };

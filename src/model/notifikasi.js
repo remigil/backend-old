@@ -26,11 +26,12 @@ Notification.init(
     title: {
       type: Sequelize.STRING(255),
     },
-    decription: {
+    description: {
       type: Sequelize.TEXT,
     },
     is_read: {
       type: Sequelize.INTEGER,
+      defaultValue: 0,
     },
     officer_id: {
       type: Sequelize.INTEGER,
