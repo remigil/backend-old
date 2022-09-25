@@ -35,6 +35,9 @@ Renpam.init(
       // type [1: patroli, 2: pengawalan, 3: penjagaan, 4:]
       type: Sequelize.INTEGER,
     },
+    total_vehicle: {
+      type: Sequelize.INTEGER,
+    },
     title_start: {
       type: Sequelize.TEXT,
     },
