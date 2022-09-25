@@ -6,6 +6,7 @@ const _ = require("lodash");
 const db = require("../config/database");
 const pagination = require("../lib/pagination-parser");
 const { default: axios } = require("axios");
+const TokenTrackNotif = require("../model/token_track_notif");
 
 const fieldData = Object.keys(Notifikasi.getAttributes());
 module.exports = class NotifikasiController {
@@ -93,10 +94,12 @@ module.exports = class NotifikasiController {
       officer_id,
       mobile,
       web,
+      to,
     }
   ) => {
     const transaction = await db.transaction();
     try {
+      //   "eldsqKJHTFeHj1oW0byUtg:APA91bHq0vnBdPOICdAwFEupkQPHWgCJxjZnTCDxBdB-vOKdRGI86Pdat7G9CiEDIaUZslQqgpmUmhB5fSrUSAcDBt55muH_x_9uKox46AfS1xzFOd6WSo9JrezwxlaM78rLmVL2N_TZ"
       let dataProcess = await axios({
         url: "https://fcm.googleapis.com/fcm/send",
         method: "POST",
@@ -106,7 +109,7 @@ module.exports = class NotifikasiController {
           "Content-Type": "application/json",
         },
         data: {
-          to: "eldsqKJHTFeHj1oW0byUtg:APA91bHq0vnBdPOICdAwFEupkQPHWgCJxjZnTCDxBdB-vOKdRGI86Pdat7G9CiEDIaUZslQqgpmUmhB5fSrUSAcDBt55muH_x_9uKox46AfS1xzFOd6WSo9JrezwxlaM78rLmVL2N_TZ",
+          to: data.to,
           notification: {
             body: data.description,
             title: data.title,

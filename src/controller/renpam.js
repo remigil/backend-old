@@ -15,6 +15,7 @@ const direction_route = require("../middleware/direction_route");
 const Officer = require("../model/officer");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
+const TokenTrackNotif = require("../model/token_track_notif");
 
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
@@ -370,18 +371,44 @@ module.exports = class RenpamController {
                   parseMode: "string",
                 }
               );
-              await NotifikasiController.addGlobal({
-                deepLink: notifHandler.mobile.instruksi + op.id,
-                type: "instruksi",
-                title: "Instruksi",
-                description: op.name_renpam,
-                officer_id: AESDecrypt(fieldValue["accounts"][i], {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
-                mobile: notifHandler.mobile.instruksi + op.id,
-                web: notifHandler.mobile.instruksi + op.id,
+              TokenTrackNotif.findAll({
+                where: {
+                  team_id: AESDecrypt(fieldValue["accounts"][i], {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              }).then((dataTrack) => {
+                for (const iterator of dataTrack) {
+                  Officer.findOne({
+                    where: {
+                      nrp_officer: iterator.nrp_user,
+                    },
+                  }).then((dataOffice) => {
+                    NotifikasiController.addGlobal({
+                      deepLink: notifHandler.mobile.instruksi + op.id,
+                      type: "instruksi",
+                      title: "Instruksi",
+                      description: op.name_renpam,
+                      officer_id: AESDecrypt(dataOffice.id, {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      }),
+                      mobile: notifHandler.mobile.instruksi + op.id,
+                      web: notifHandler.mobile.instruksi + op.id,
+                      to: iterator.token_fcm,
+                    })
+                      .then((successData) => {
+                        console.log({ successData });
+                      })
+                      .catch((errorData) => {
+                        console.log({ errorData });
+                      });
+                  });
+                }
               });
+              // TokenTrackNotif
+
               RenpamAccount.create(fieldValueAccount);
             }
           }
