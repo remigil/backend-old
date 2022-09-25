@@ -13,6 +13,8 @@ const RenpamVip = require("../model/renpam_vip");
 const pagination = require("../lib/pagination-parser");
 const direction_route = require("../middleware/direction_route");
 const Officer = require("../model/officer");
+const NotifikasiController = require("./notification");
+const notifHandler = require("../middleware/notifHandler");
 
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
@@ -353,7 +355,7 @@ module.exports = class RenpamController {
       Renpam.create(fieldValue, {
         transaction: transaction,
       })
-        .then((op) => {
+        .then(async (op) => {
           if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
             for (let i = 0; i < fieldValue["accounts"].length; i++) {
               fieldValueAccount = {};
@@ -368,6 +370,18 @@ module.exports = class RenpamController {
                   parseMode: "string",
                 }
               );
+              await NotifikasiController.addGlobal({
+                deepLink: notifHandler.mobile.instruksi + op.id,
+                type: "instruksi",
+                title: "Instruksi",
+                description: op.name_renpam,
+                officer_id: AESDecrypt(fieldValue["accounts"][i], {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+                mobile: notifHandler.mobile.instruksi + op.id,
+                web: notifHandler.mobile.instruksi + op.id,
+              });
               RenpamAccount.create(fieldValueAccount);
             }
           }
@@ -383,11 +397,13 @@ module.exports = class RenpamController {
                 isSafeUrl: true,
                 parseMode: "string",
               });
+
               RenpamVip.create(fieldValueVip);
             }
           }
 
-          transaction.commit();
+          await transaction.commit();
+
           response(res, true, "Succeed", fieldValueVip);
         })
         .catch((err) => {
