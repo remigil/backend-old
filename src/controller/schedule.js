@@ -26,7 +26,6 @@ const field = {
 };
 const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
-                
                 ${select}
               FROM renpam r
               INNER JOIN renpam_account ra ON ra.renpam_id=r.id
@@ -379,6 +378,39 @@ module.exports = class ScheduleController {
           account_id: req.auth.uid,
         })
       );
+      result_renpam = result_renpam.map((renpam) => ({
+        ...renpam,
+        route: renpam.route
+          ? renpam.route.map(
+              (route) => route.latLng?.lng + "," + route.latLng?.lat
+            )
+          : "",
+        route_alternatif_1: renpam.route_alternatif_1
+          ? renpam.route_alternatif_1.map(
+              (route) => route.latLng?.lng + "," + route.latLng?.lat
+            )
+          : "",
+        route_alternatif_2: renpam.route_alternatif_2
+          ? renpam.route_alternatif_2.map(
+              (route) => route.latLng?.lng + "," + route.latLng?.lat
+            )
+          : "",
+        address_route_1: renpam.route
+          ? renpam.route.map((route) => ({
+              address: route.name,
+            }))
+          : [],
+        address_route_2: renpam.route_alternatif_1
+          ? renpam.route_alternatif_1.map((route) => ({
+              address: route.name,
+            }))
+          : [],
+        address_route_3: renpam.route_alternatif_2
+          ? renpam.route_alternatif_2.map((route) => ({
+              address: route.name,
+            }))
+          : [],
+      }));
       response(res, true, "Succeed", result_renpam);
     } catch (e) {
       response(res, false, "Failed", e.message);
