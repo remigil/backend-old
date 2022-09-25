@@ -12,6 +12,7 @@ const codeReport = require("../middleware/codeReport");
 const Officer = require("../model/officer");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
+const TokenTrackNotif = require("../model/token_track_notif");
 const fieldData = {
   code: null,
   type: null,
@@ -180,6 +181,11 @@ module.exports = class PanicButtonController {
         transaction: transaction,
       });
       await transaction.commit();
+      let token_fcm = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user: req.auth.nrp_user,
+        },
+      });
       await NotifikasiController.addGlobal({
         deepLink: notifHandler.mobile.panic_button + op.id,
         type: "panic_button",
@@ -188,9 +194,11 @@ module.exports = class PanicButtonController {
         officer_id: id_officer,
         mobile: notifHandler.mobile.panic_button + op.id,
         web: notifHandler.mobile.panic_button + op.id,
+        to: token_fcm.token_fcm,
       });
       response(res, true, "Succeed", op);
     } catch (e) {
+      console.log({ e });
       await transaction.rollback();
       response(res, false, "Failed", e.message);
     }

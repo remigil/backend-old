@@ -100,7 +100,7 @@ module.exports = class NotifikasiController {
     const transaction = await db.transaction();
     try {
       //   "eldsqKJHTFeHj1oW0byUtg:APA91bHq0vnBdPOICdAwFEupkQPHWgCJxjZnTCDxBdB-vOKdRGI86Pdat7G9CiEDIaUZslQqgpmUmhB5fSrUSAcDBt55muH_x_9uKox46AfS1xzFOd6WSo9JrezwxlaM78rLmVL2N_TZ"
-      let dataProcess = await axios({
+      await axios({
         url: "https://fcm.googleapis.com/fcm/send",
         method: "POST",
         headers: {
@@ -120,16 +120,22 @@ module.exports = class NotifikasiController {
           },
         },
       });
-      console.log({ dataProcess });
+      //   console.log({ dataProcess });
+
+      const creteNotif = await Notifikasi.create(
+        {
+          type: data.type,
+          title: data.title,
+          description: data.description,
+          officer_id: data.officer_id,
+          mobile: data.mobile,
+          web: data.web,
+        },
+        {
+          transaction,
+        }
+      );
       await transaction.commit();
-      const creteNotif = await Notifikasi.create({
-        type: data.type,
-        title: data.title,
-        description: data.description,
-        officer_id: data.officer_id,
-        mobile: data.mobile,
-        web: data.web,
-      });
       return {
         // notif: dataProcess.data,
         notifDatabase: creteNotif,

@@ -14,6 +14,7 @@ const Panic_button = require("../model/report");
 const Account = require("../model/account");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
+const TokenTrackNotif = require("../model/token_track_notif");
 const fieldData = {
   code: null,
   type: null,
@@ -253,6 +254,12 @@ module.exports = class ReportController {
       });
 
       await transaction.commit();
+
+      let token_fcm = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user: req.auth.nrp_user,
+        },
+      });
       await NotifikasiController.addGlobal({
         deepLink: notifHandler.mobile.laporan + op.id,
         type: "laporan",
@@ -261,6 +268,7 @@ module.exports = class ReportController {
         officer_id: id_officer,
         mobile: notifHandler.mobile.laporan + op.id,
         web: notifHandler.mobile.laporan + op.id,
+        to: token_fcm.token_fcm,
       });
       response(res, true, "Succeed", op);
     } catch (e) {
