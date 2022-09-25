@@ -11,6 +11,7 @@ const collection = {
   photo_officer: String, //[foto petugas]
   name_account: String,
   name_officer: String,
+  rank_officer: String,
   name_team: String, // [ketua tim]
   vip: String, // [nama vip]
   nrp_user: String,
