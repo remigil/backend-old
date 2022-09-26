@@ -124,6 +124,8 @@ module.exports = class ScheduleController {
             WHEN r.type_renpam = 1 THEN 'Patroli' 
             WHEN r.type_renpam = 2 THEN 'Pengawalan' 
             WHEN r.type_renpam = 3 THEN 'Penjagaan'
+            WHEN r.type_renpam = 4 THEN 'Pengaturan'
+            WHEN r.type_renpam = 5 THEN 'Penutupan'
             ELSE 'Patroli' END AS title_renpam_type,
             r.direction_route,
             r.direction_route_alter1,
@@ -347,8 +349,10 @@ module.exports = class ScheduleController {
           CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
           CASE 
           WHEN r.type_renpam = 1 THEN 'Patroli' 
-          WHEN r.type_renpam = 2 THEN 'Pengawalan' 
-          WHEN r.type_renpam = 3 THEN 'Penjagaan'
+            WHEN r.type_renpam = 2 THEN 'Pengawalan' 
+            WHEN r.type_renpam = 3 THEN 'Penjagaan'
+            WHEN r.type_renpam = 4 THEN 'Pengaturan'
+            WHEN r.type_renpam = 5 THEN 'Penutupan'
           ELSE 'Patroli' END AS title_renpam_type,
           r.direction_route,
           r.direction_route_alter1,
