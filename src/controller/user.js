@@ -23,9 +23,13 @@ module.exports = class UserController {
         attributes: {
           exclude: ["role_id"],
         },
+        // include: {
+        //   model: UserRole,
+        //   // attributes: ["id"],
+        // },
         include: {
           model: UserRole,
-          attributes: ["id", "name"],
+          as: "user_role",
         },
         where: {
           id: AESDecrypt(req.auth.uid, {

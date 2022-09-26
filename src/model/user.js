@@ -62,7 +62,11 @@ User.init(
     sequelize: db,
   }
 );
-User.hasOne(UserRole, { foreignKey: "id" });
+User.hasOne(UserRole, {
+  foreignKey: "id",
+  as: "user_role",
+  sourceKey: "role_id",
+});
 (async () => {
   User.sync({ alter: true });
 })();
