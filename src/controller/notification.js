@@ -99,6 +99,64 @@ module.exports = class NotifikasiController {
   ) => {
     const transaction = await db.transaction();
     try {
+      let mapNotif = data.officer_id?.map((officer_id) => ({
+        type: data.type,
+        title: data.title,
+        description: data.description,
+        officer_id: officer_id,
+        mobile: data.mobile,
+        web: data.web,
+      }));
+      await axios({
+        url: "https://fcm.googleapis.com/fcm/send",
+        method: "POST",
+        headers: {
+          Authorization:
+            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+          "Content-Type": "application/json",
+        },
+        data: {
+          registration_ids: data.to,
+          notification: {
+            body: data.description,
+            title: data.title,
+          },
+          data: {
+            deepLink: data.mobile,
+            webLink: data.web,
+          },
+        },
+      });
+
+      const creteNotif = await Notifikasi.bulkCreate(mapNotif, {
+        transaction,
+      });
+      await transaction.commit();
+      return {
+        // notif: dataProcess.data,
+        notifDatabase: [],
+      };
+    } catch (e) {
+      console.log({ e });
+      await transaction.rollback();
+      return e;
+      //   response(res, false, "Failed", e.message);
+    }
+  };
+  static singleGlobal = async (
+    data = {
+      deepLink,
+      type,
+      title,
+      description,
+      officer_id,
+      mobile,
+      web,
+      to,
+    }
+  ) => {
+    const transaction = await db.transaction();
+    try {
       //   "eldsqKJHTFeHj1oW0byUtg:APA91bHq0vnBdPOICdAwFEupkQPHWgCJxjZnTCDxBdB-vOKdRGI86Pdat7G9CiEDIaUZslQqgpmUmhB5fSrUSAcDBt55muH_x_9uKox46AfS1xzFOd6WSo9JrezwxlaM78rLmVL2N_TZ"
       await axios({
         url: "https://fcm.googleapis.com/fcm/send",

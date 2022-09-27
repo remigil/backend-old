@@ -255,25 +255,48 @@ module.exports = class ReportController {
 
       await transaction.commit();
 
-      let token_fcm = await TokenTrackNotif.findOne({
+      let token_fcm = await TokenTrackNotif.findAll({
         where: {
-          nrp_user: req.auth.nrp_user,
+          token_fcm: {
+            [Op.ne]: null,
+          },
         },
       });
-      await NotifikasiController.addGlobal({
+      let officer_id = token_fcm.map((officer) => officer.nrp_user);
+
+      let getIdOfficer = await Officer.findAll({
+        where: {
+          nrp_officer: {
+            [Op.in]: officer_id,
+          },
+        },
+      });
+      getIdOfficer = getIdOfficer.map((officer) => {
+        return AESDecrypt(officer.id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        });
+      });
+      token_fcm = token_fcm.map((token) => token.token_fcm);
+      NotifikasiController.addGlobal({
         deepLink: notifHandler.mobile.laporan + op.id,
         type: "laporan",
         title: "Laporan",
         description: req.body.description,
-        officer_id: id_officer,
+        officer_id: getIdOfficer,
         mobile: notifHandler.mobile.laporan + op.id,
         web: notifHandler.mobile.laporan + op.id,
-        to: token_fcm.token_fcm,
-      });
+        to: token_fcm,
+      })
+        .then((succ) => {
+          console.log({ succ });
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
-      console.log({ e });
       response(res, false, "Failed", e.message);
     }
   };
