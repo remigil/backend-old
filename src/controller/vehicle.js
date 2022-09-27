@@ -107,6 +107,7 @@ module.exports = class VehicleController {
       await Vehicle.create(
         {
           no_vehicle: req.body.no_vehicle,
+          back_number_vehicle: req.body.back_number_vehicle,
           type_vehicle: req.body?.type_vehicle,
           brand_vehicle: req.body?.brand_vehicle,
           fuel_vehicle: req.body?.fuel_vehicle,
@@ -127,6 +128,7 @@ module.exports = class VehicleController {
       await Vehicle.update(
         {
           no_vehicle: req.body.no_vehicle,
+          back_number_vehicle: req.body.back_number_vehicle,
           type_vehicle: req.body?.type_vehicle,
           brand_vehicle: req.body?.brand_vehicle,
           fuel_vehicle: req.body?.fuel_vehicle,

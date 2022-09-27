@@ -18,6 +18,7 @@ const collection = {
   handphone: String,
   no_vehicle: String, // [plat nomor]
   type_vehicle: String, // ["motor"]
+  fuel_vehicle: String,
 };
 const DocumentSchema = mongoose.Schema(collection, {
   timestamps: { createdAt: "created_at", updatedAt: "updated_at" },

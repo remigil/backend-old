@@ -21,6 +21,9 @@ Vehicle.init(
     no_vehicle: {
       type: Sequelize.STRING(100),
     },
+    back_number_vehicle: {
+      type: Sequelize.STRING(100),
+    },
     type_vehicle: {
       type: Sequelize.STRING(255),
     },
