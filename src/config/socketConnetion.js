@@ -139,6 +139,8 @@ const socketInstace = (server) => {
           // type_vehicle: null, // ["motor"]
           no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
           type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
 
           date: moment().format("YYYY-MM-DD"),
         },
