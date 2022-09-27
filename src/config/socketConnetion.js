@@ -109,7 +109,17 @@ const socketInstace = (server) => {
           id: parseInt(dataAccount?.leader_team),
         },
       });
-      console.log({ dataAccount });
+      let noTelpon = dataOfficer?.phone_officer;
+      let noDepan = noTelpon.substring(0, 2);
+      if (noDepan === "62") {
+        noTelpon = noTelpon;
+      } else if (noDepan === "08") {
+        noTelpon = "62" + noTelpon.substring(1);
+      } else if (noDepan === "+6") {
+        noTelpon = noTelpon.substring(1);
+      } else {
+        noTelpon = noTelpon;
+      }
       let sendTracking = await TrackG20.findOneAndUpdate(
         {
           latitude: coordinate.lat,
@@ -135,7 +145,7 @@ const socketInstace = (server) => {
           // vip: dataAccount.vips.name_vip, // [nama vip]
           nrp_user: dataOfficer.nrp_officer,
           // handphone: dataOfficer?.phone_officer,
-          handphone: "62" + dataOfficer?.phone_officer.substring(1),
+          handphone: noTelpon,
           // no_vehicle: null, // [plat nomor]
           // type_vehicle: null, // ["motor"]
           no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
