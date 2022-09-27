@@ -202,55 +202,59 @@ module.exports = class PanicButtonController {
       });
       await transaction.commit();
 
-      let token_fcm = await TokenTrackNotif.findAll({
+      TokenTrackNotif.findAll({
         where: {
           token_fcm: {
             [Op.ne]: null,
           },
         },
-      });
-      let officer_id = token_fcm.map((officer) => officer.nrp_user);
+      }).then(async (token_fcm) => {
+        let officer_id = token_fcm.map((officer) => officer.nrp_user);
 
-      let getIdOfficer = await Officer.findAll({
-        where: {
-          nrp_officer: {
-            [Op.in]: officer_id,
+        let getIdOfficer = await Officer.findAll({
+          where: {
+            nrp_officer: {
+              [Op.in]: officer_id,
+            },
           },
-        },
-      });
-      getIdOfficer = getIdOfficer.map((officer) => {
-        return AESDecrypt(officer.id, {
-          isSafeUrl: true,
-          parseMode: "string",
         });
-      });
-      token_fcm = token_fcm.map((token) => token.token_fcm);
-      NotifikasiController.addGlobal({
-        deepLink: notifHandler.mobile.laporan + op.id,
-        type: "laporan",
-        title: "Laporan",
-        description: req.body.description,
-        officer_id: getIdOfficer,
-        mobile: notifHandler.mobile.laporan + op.id,
-        web: notifHandler.mobile.laporan + op.id,
-        to: token_fcm,
-      })
-        .then((succ) => {
-          console.log({ succ });
+        getIdOfficer = getIdOfficer.map((officer) => {
+          return AESDecrypt(officer.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          });
+        });
+        token_fcm = token_fcm.map((token) => token.token_fcm);
+        NotifikasiController.addGlobal({
+          deepLink: notifHandler.mobile.laporan + op.id,
+          type: "laporan",
+          title: "Laporan",
+          description: req.body.description,
+          officer_id: getIdOfficer,
+          mobile: notifHandler.mobile.laporan + op.id,
+          web: notifHandler.mobile.laporan + op.id,
+          to: token_fcm,
         })
-        .catch((err) => {
-          console.log({ err });
-        });
-      await NotifikasiController.addGlobal({
-        deepLink: notifHandler.mobile.panic_button + op.id,
-        type: "panic_button",
-        title: "Panic Button",
-        description: req.body.description,
-        officer_id: id_officer,
-        mobile: notifHandler.mobile.panic_button + op.id,
-        web: notifHandler.mobile.panic_button + op.id,
-        to: token_fcm.token_fcm,
+          .then((succ) => {
+            console.log({ succ });
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+        NotifikasiController.addGlobal({
+          deepLink: notifHandler.mobile.panic_button + op.id,
+          type: "panic_button",
+          title: "Panic Button",
+          description: req.body.description,
+          officer_id: id_officer,
+          mobile: notifHandler.mobile.panic_button + op.id,
+          web: notifHandler.mobile.panic_button + op.id,
+          to: token_fcm.token_fcm,
+        })
+          .then(() => {})
+          .catch(() => {});
       });
+
       response(res, true, "Succeed", fieldValueData);
     } catch (e) {
       console.log({ e });
