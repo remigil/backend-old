@@ -15,6 +15,7 @@ const Account = require("../model/account");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
+const { TrackG20 } = require("../model/tracking/g20");
 const fieldData = {
   code: null,
   type: null,
@@ -203,7 +204,9 @@ module.exports = class ReportController {
 
     try {
       let fieldValueData = {};
-      Object.keys(fieldData).forEach((key) => {
+
+      for (const key of Object.keys(fieldData)) {
+        // console.log({ key });
         if (req.body[key]) {
           if (key == "foto") {
             let path = req.body.foto.filepath;
@@ -218,14 +221,28 @@ module.exports = class ReportController {
             );
             fieldValueData[key] = fileName;
           } else if (key == "coordinate") {
-            fieldValueData[key] = JSON.parse(req.body[key]);
+            let latlonData = JSON.parse(req.body[key]);
+
+            if (latlonData.latitude == "" || latlonData.longitude == "") {
+              let aa = await TrackG20.findOne({
+                nrp_user: req.auth.nrp_user,
+              })
+                .sort({ updated_at: -1 })
+                .limit(1);
+              latlonData = {
+                latitude: parseFloat(aa.latitude),
+                longitude: parseFloat(aa.longitude),
+              };
+            }
+            console.log(latlonData);
+            fieldValueData[key] = latlonData;
           } else {
             fieldValueData[key] = req.body[key];
           }
         } else {
           fieldValueData[key] = null;
         }
-      });
+      }
       fieldValueData["officer_id"] = AESDecrypt(req.auth.officer, {
         isSafeUrl: true,
         parseMode: "string",

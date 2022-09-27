@@ -13,6 +13,7 @@ const Officer = require("../model/officer");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
+const { TrackG20 } = require("../model/tracking/g20");
 const fieldData = {
   code: null,
   type: null,
@@ -34,6 +35,9 @@ const getCodeReport = async ({ monthYear, type }) => {
 module.exports = class PanicButtonController {
   static get = async (req, res) => {
     try {
+      // console.log(req.auth.nrp_user);
+
+      console.log({ aa });
       const {
         length = 10,
         start = 0,
@@ -130,7 +134,8 @@ module.exports = class PanicButtonController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-      Object.keys(fieldData).forEach((key) => {
+      for (const key of Object.keys(fieldData)) {
+        // console.log({ key });
         if (req.body[key]) {
           if (key == "foto") {
             let path = req.body.foto.filepath;
@@ -145,14 +150,29 @@ module.exports = class PanicButtonController {
             );
             fieldValueData[key] = fileName;
           } else if (key == "coordinate") {
-            fieldValueData[key] = JSON.parse(req.body[key]);
+            let latlonData = JSON.parse(req.body[key]);
+
+            if (latlonData.latitude == "" || latlonData.longitude == "") {
+              let aa = await TrackG20.findOne({
+                nrp_user: req.auth.nrp_user,
+              })
+                .sort({ updated_at: -1 })
+                .limit(1);
+              latlonData = {
+                latitude: parseFloat(aa.latitude),
+                longitude: parseFloat(aa.longitude),
+              };
+            }
+            console.log(latlonData);
+            fieldValueData[key] = latlonData;
           } else {
             fieldValueData[key] = req.body[key];
           }
         } else {
           fieldValueData[key] = null;
         }
-      });
+      }
+
       fieldValueData["officer_id"] = AESDecrypt(req.auth.officer, {
         isSafeUrl: true,
         parseMode: "string",
@@ -181,11 +201,7 @@ module.exports = class PanicButtonController {
         transaction: transaction,
       });
       await transaction.commit();
-      // let token_fcm = await TokenTrackNotif.findOne({
-      //   where: {
-      //     nrp_user: req.auth.nrp_user,
-      //   },
-      // });
+
       let token_fcm = await TokenTrackNotif.findAll({
         where: {
           token_fcm: {
@@ -225,17 +241,17 @@ module.exports = class PanicButtonController {
         .catch((err) => {
           console.log({ err });
         });
-      // await NotifikasiController.addGlobal({
-      //   deepLink: notifHandler.mobile.panic_button + op.id,
-      //   type: "panic_button",
-      //   title: "Panic Button",
-      //   description: req.body.description,
-      //   officer_id: id_officer,
-      //   mobile: notifHandler.mobile.panic_button + op.id,
-      //   web: notifHandler.mobile.panic_button + op.id,
-      //   to: token_fcm.token_fcm,
-      // });
-      response(res, true, "Succeed", op);
+      await NotifikasiController.addGlobal({
+        deepLink: notifHandler.mobile.panic_button + op.id,
+        type: "panic_button",
+        title: "Panic Button",
+        description: req.body.description,
+        officer_id: id_officer,
+        mobile: notifHandler.mobile.panic_button + op.id,
+        web: notifHandler.mobile.panic_button + op.id,
+        to: token_fcm.token_fcm,
+      });
+      response(res, true, "Succeed", fieldValueData);
     } catch (e) {
       console.log({ e });
       await transaction.rollback();
