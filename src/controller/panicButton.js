@@ -35,9 +35,6 @@ const getCodeReport = async ({ monthYear, type }) => {
 module.exports = class PanicButtonController {
   static get = async (req, res) => {
     try {
-      // console.log(req.auth.nrp_user);
-
-      console.log({ aa });
       const {
         length = 10,
         start = 0,
@@ -57,10 +54,10 @@ module.exports = class PanicButtonController {
       }
       // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
       getData.order = [
-        // [
-        //   order != null ? order : "id",
-        //   orderDirection != null ? orderDirection : "asc",
-        // ],
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
       ];
       if (search != null) {
         let whereBuilder = [];
