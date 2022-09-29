@@ -66,12 +66,6 @@ const fieldData = {
           model: Account,
         },
       ],
-      where: {
-        officer_id: AESDecrypt(req.auth.officer, {
-          isSafeUrl: true,
-          parseMode: "string",
-        }),
-      },
     });
   },
   fasum: async ({ type, coordinate, radius }) => {
