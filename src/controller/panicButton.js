@@ -14,6 +14,7 @@ const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
+const Account = require("../model/account");
 const fieldData = {
   code: null,
   type: null,
@@ -35,9 +36,6 @@ const getCodeReport = async ({ monthYear, type }) => {
 module.exports = class PanicButtonController {
   static get = async (req, res) => {
     try {
-      // console.log(req.auth.nrp_user);
-
-      console.log({ aa });
       const {
         length = 10,
         start = 0,
@@ -57,10 +55,10 @@ module.exports = class PanicButtonController {
       }
       // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
       getData.order = [
-        // [
-        //   order != null ? order : "id",
-        //   orderDirection != null ? orderDirection : "asc",
-        // ],
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "desc",
+        ],
       ];
       if (search != null) {
         let whereBuilder = [];
@@ -98,6 +96,15 @@ module.exports = class PanicButtonController {
           ...filters,
         };
       }
+      getData.include = [
+        {
+          model: Officer,
+        },
+        {
+          model: Account,
+          required: false,
+        },
+      ];
       const data = await PanicButton.findAll(getData);
       const count = await PanicButton.count({
         where: getData?.where,

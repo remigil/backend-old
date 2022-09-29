@@ -6,6 +6,7 @@ const { AESEncrypt } = require("../lib/encryption");
 const Officer = require("./officer");
 const TrxAccountOfficer = require("./trx_account_officer");
 const Account = require("./account");
+const codeReport = require("../middleware/codeReport");
 const Model = Sequelize.Model;
 
 class Panic_button extends Model {}
@@ -48,6 +49,9 @@ Panic_button.init(
     // 1= Kriminal, 2=Kecelakaan, 3=bencana alam, 4=kemacetan
     categori: {
       type: Sequelize.INTEGER,
+      get() {
+        return codeReport(this.getDataValue("categori"), "type");
+      },
     },
     status: {
       type: Sequelize.INTEGER,
