@@ -58,7 +58,7 @@ module.exports = class ReportController {
       getData.order = [
         [
           order != null ? order : "id",
-          orderDirection != null ? orderDirection : "asc",
+          orderDirection != null ? orderDirection : "desc",
         ],
       ];
       if (search != null) {

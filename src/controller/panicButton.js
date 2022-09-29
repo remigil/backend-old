@@ -57,7 +57,7 @@ module.exports = class PanicButtonController {
       getData.order = [
         [
           order != null ? order : "id",
-          orderDirection != null ? orderDirection : "asc",
+          orderDirection != null ? orderDirection : "desc",
         ],
       ];
       if (search != null) {
