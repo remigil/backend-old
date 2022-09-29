@@ -7,7 +7,7 @@ const db = require("../config/database");
 const pagination = require("../lib/pagination-parser");
 const { default: axios } = require("axios");
 const TokenTrackNotif = require("../model/token_track_notif");
-
+const moment = require("moment");
 const fieldData = Object.keys(Notifikasi.getAttributes());
 module.exports = class NotifikasiController {
   static get = async (req, res) => {
@@ -80,6 +80,101 @@ module.exports = class NotifikasiController {
         data,
         recordsFiltered: count,
         recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getMobile = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = null,
+        orderDirection = "asc",
+      } = req.query;
+      const modelAttr = Object.keys(Notifikasi.getAttributes());
+      let getData = { where: null };
+      // if (serverSide?.toLowerCase() === "true") {
+      //   const resPage = pagination.getPagination(length, start);
+      //   getData.limit = resPage.limit;
+      //   getData.offset = resPage.offset;
+      // }
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      getData.limit = resPage.limit;
+      getData.offset = resPage.offset;
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getData.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+      const filters = [];
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            if (fKey == "created_at") {
+              filters[fKey] = {
+                [Op.between]: [
+                  moment(filterSearch[index]).startOf("day"),
+                  moment(filterSearch[index]).endOf("day"),
+                ],
+              };
+            } else {
+              filters[fKey] = filterSearch[index];
+            }
+          }
+        });
+      }
+      filters["officer_id"] = AESDecrypt(req.auth.officer, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      console.log(filters);
+      getData.where = {
+        ...getData.where,
+        ...filters,
+      };
+      // console.log({ getData });
+      const data = await Notifikasi.findAndCountAll(getData);
+
+      response(res, true, "Succeed", {
+        page,
+        limit,
+        total: data.count,
+        total_page: Math.ceil(parseInt(data.count) / parseInt(resPage.limit)),
+        ...data,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
