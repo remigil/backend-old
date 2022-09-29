@@ -44,6 +44,9 @@ User.init(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    token_notif: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {

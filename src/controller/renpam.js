@@ -648,6 +648,109 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static instruksiKakor = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      let fieldValueVip = {};
+      let fieldValueAccount = {};
+
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "accounts") {
+            fieldValue[val] = JSON.parse(req.body[val]);
+          } else {
+            fieldValue["note_kakor"] = req.body["note_kakor"];
+          }
+        }
+      });
+
+      Renpam.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      })
+        .then(async (op) => {
+          if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
+            for (let i = 0; i < fieldValue["accounts"].length; i++) {
+              fieldValueAccount = {};
+              fieldValueAccount["renpam_id"] = AESDecrypt(req.params.id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueAccount["account_id"] = AESDecrypt(
+                fieldValue["accounts"][i],
+                {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }
+              );
+
+              Renpam.findOne({
+                where: {
+                  id: AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              }).then((dataRenpam) => {
+                TokenTrackNotif.findAll({
+                  where: {
+                    team_id: AESDecrypt(fieldValue["accounts"][i], {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                }).then((dataTrack) => {
+                  for (const iterator of dataTrack) {
+                    Officer.findOne({
+                      where: {
+                        nrp_officer: iterator.nrp_user,
+                      },
+                    }).then(async (dataOffice) => {
+                      NotifikasiController.singleGlobal({
+                        deepLink: notifHandler.mobile.instruksi + req.params.id,
+                        type: "instruksi",
+                        title: `Instruksi Kakor - ${dataRenpam["name_renpam"]}`,
+                        description: `${req.body["note_kakor"]}`,
+                        officer_id: AESDecrypt(dataOffice.id, {
+                          isSafeUrl: true,
+                          parseMode: "string",
+                        }),
+                        mobile: notifHandler.mobile.instruksi + req.params.id,
+                        web: notifHandler.web.instruksi + req.params.id,
+                        to: iterator.token_fcm,
+                      })
+                        .then((successData) => {
+                          console.log({ successData });
+                        })
+                        .catch((errorData) => {
+                          console.log({ errorData });
+                        });
+                    });
+                  }
+                });
+              });
+            }
+          }
+
+          await transaction.commit();
+
+          response(res, true, "Succeed", null);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
