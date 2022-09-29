@@ -1,4 +1,4 @@
-module.exports = (n) => {
+module.exports = (n, params = "code") => {
   let Kategori = {
     1: {
       type: "Tindakan Kriminal",
@@ -26,5 +26,5 @@ module.exports = (n) => {
     },
   };
 
-  return Kategori[n].code;
+  return Kategori[n][params];
 };
