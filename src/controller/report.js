@@ -142,7 +142,7 @@ module.exports = class ReportController {
   static getLaporanById = async (req, res) => {
     try {
       const [data] = await db.query(
-        `SELECT r.*, a.name_account, o.name_officer FROM report r 
+        `SELECT r.*, a.name_account, o.name_officer, o.phone_officer FROM report r 
         
         INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
         INNER JOIN officer o ON r.officer_id=o.id
