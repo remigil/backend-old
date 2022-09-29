@@ -224,30 +224,20 @@ module.exports = class NotifikasiController {
         url: "https://fcm.googleapis.com/fcm/send",
         method: "POST",
         headers: {
-          Authorization:
-            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+          Authorization: "key=AIzaSyCD0yzgSLiF7_vOgyKP_m8uaONbDc7woo8",
           "Content-Type": "application/json",
         },
         data: {
-          to: "eldsqKJHTFeHj1oW0byUtg:APA91bHq0vnBdPOICdAwFEupkQPHWgCJxjZnTCDxBdB-vOKdRGI86Pdat7G9CiEDIaUZslQqgpmUmhB5fSrUSAcDBt55muH_x_9uKox46AfS1xzFOd6WSo9JrezwxlaM78rLmVL2N_TZ",
-          collapse_key: "type_a",
           notification: {
-            body: "Body of Your Notification",
-            title: "Title of Your Notification",
-          },
-          data: {
-            body: "Body of Your Notification in Data",
-            title: "Title of Your Notification in Title",
-            key_1: "Value for key_1",
-            key_2: "Value for key_2",
-            deepLink:
-              "korlantasg20://halaman/drawer/laporan/utama/{oke bismillah}",
+            title: "FCM Message",
+            body: "This is an FCM Message",
           },
         },
+        to: "fesB3EIOuPY:APA91bFosgJh89lWGJffJfD3jIGDM8YV-UG6mgvRdL8JTIl9EZ31q_FZ3-ohhhLZRNRIQwq_C2GQw6F0HZq2KvsDW6lBY7V6uQIMSrOfrx0J53L6Cq8w4cfCv2UmoDhwy5HkJESu--Jn",
       });
       //   await transaction.commit();
-      console.log({ data });
-      response(res, true, "Succeed", data.data);
+      // console.log({ data });
+      response(res, true, "Succeed", data);
     } catch (e) {
       //   await transaction.rollback();
       response(res, false, "Failed", e.message);

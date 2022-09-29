@@ -12,6 +12,7 @@ const fieldData = {
   email: null,
   role_id: null,
   password: null,
+  token_notif: null,
 };
 module.exports = class UserController {
   static getLoggedUser = async (req, res) => {
