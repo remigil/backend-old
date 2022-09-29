@@ -14,6 +14,7 @@ const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
+const Account = require("../model/account");
 const fieldData = {
   code: null,
   type: null,
@@ -95,6 +96,15 @@ module.exports = class PanicButtonController {
           ...filters,
         };
       }
+      getData.include = [
+        {
+          model: Officer,
+        },
+        {
+          model: Account,
+          required: false,
+        },
+      ];
       const data = await PanicButton.findAll(getData);
       const count = await PanicButton.count({
         where: getData?.where,

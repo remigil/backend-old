@@ -97,6 +97,15 @@ module.exports = class ReportController {
           ...filters,
         };
       }
+      getData.include = [
+        {
+          model: Officer,
+        },
+        {
+          model: Account,
+          required: false,
+        },
+      ];
       const data = await PanicButton.findAll(getData);
       const count = await PanicButton.count({
         where: getData?.where,
