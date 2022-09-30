@@ -134,7 +134,7 @@ module.exports = class ReportController {
         
         INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
         INNER JOIN officer o ON r.officer_id=o.id
-        INNER JOIN account a ON a.id=tao.account_id
+        LEFT JOIN account a ON a.id=tao.account_id
         WHERE to_char(r.created_at, 'YYYY-MM-DD')='${moment().format(
           "YYYY-MM-DD"
         )}' AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
