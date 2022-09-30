@@ -1,4 +1,4 @@
-const { AESDecrypt } = require("../lib/encryption");
+const { AESDecrypt, AESEncrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const PanicButton = require("../model/report");
 const db = require("../config/database");
@@ -109,8 +109,19 @@ module.exports = class PanicButtonController {
       const count = await PanicButton.count({
         where: getData?.where,
       });
+      // response(res, true, "Succeed", {
+      //   data,
+      //   recordsFiltered: count,
+      //   recordsTotal: count,
+      // });
       response(res, true, "Succeed", {
-        data,
+        data: data.map((ee) => ({
+          ...ee.dataValues,
+          id: AESEncrypt(String(ee.dataValues.id), {
+            isSafeUrl: true,
+          }),
+          categori: codeReport(ee.dataValues.categori, "type"),
+        })),
         recordsFiltered: count,
         recordsTotal: count,
       });
