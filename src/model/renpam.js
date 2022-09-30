@@ -35,6 +35,10 @@ Renpam.init(
       // type [1: patroli, 2: pengawalan, 3: penjagaan, 4:]
       type: Sequelize.INTEGER,
     },
+    category_renpam: {
+      // type [1: operasi, 2: harian]
+      type: Sequelize.INTEGER,
+    },
     total_vehicle: {
       type: Sequelize.INTEGER,
     },

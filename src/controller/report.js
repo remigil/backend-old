@@ -148,18 +148,49 @@ module.exports = class ReportController {
   };
   static getLaporanById = async (req, res) => {
     try {
-      const [data] = await db.query(
-        `SELECT r.*, a.name_account, o.name_officer, o.phone_officer FROM report r 
-        
-        INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
-        INNER JOIN officer o ON r.officer_id=o.id
-        INNER JOIN account a ON a.id=tao.account_id
-        WHERE r.id=${AESDecrypt(req.params.id, {
-          isSafeUrl: true,
-          parseMode: "string",
-        })} AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
-      );
-      response(res, true, "Succeed", data);
+      // const [data] = await db.query(
+      //   `SELECT r.*, a.name_account, o.name_officer, o.phone_officer FROM report r
+
+      //   INNER JOIN trx_account_officer tao ON r.officer_id=tao.officer_id
+      //   INNER JOIN officer o ON r.officer_id=o.id
+      //   INNER JOIN account a ON a.id=tao.account_id
+      //   WHERE r.id=${AESDecrypt(req.params.id, {
+      //     isSafeUrl: true,
+      //     parseMode: "string",
+      //   })} AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
+      // );
+      let getData = { where: null };
+      getData.include = [
+        {
+          model: Officer,
+        },
+        {
+          model: Account,
+          required: false,
+        },
+      ];
+      const data = await PanicButton.findOne(getData);
+      const ini = {
+        id: data.id,
+        code: data.code,
+        type: data.type,
+        foto: data.foto,
+        categori: codeReport(data.categori, "type"),
+        // categori_name: codeReport(data.categori, "type"),
+        status: data.status,
+        officer_id: data.officer_id,
+        coordinate: data.coordinate,
+        description: data.description,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        deleted_at: data.deleted_at,
+        officer: data.officer,
+        accounts: data.accounts,
+      };
+
+      response(res, true, "Succeed", {
+        data: ini,
+      });
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
