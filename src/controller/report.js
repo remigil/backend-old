@@ -159,6 +159,7 @@ module.exports = class ReportController {
       //     parseMode: "string",
       //   })} AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
       // );
+      // response(res, true, "Succeed", data);
 
       let getData = { where: null };
       getData.include = [
@@ -181,6 +182,8 @@ module.exports = class ReportController {
           // categori_name: codeReport(data.categori, "type"),
           status: data.status,
           officer_id: data.officer_id,
+          name_officer: data.officer.name_officer,
+          phone_officer: data.officer.phone_officer,
           coordinate: data.coordinate,
           description: data.description,
           created_at: data.created_at,
@@ -190,10 +193,7 @@ module.exports = class ReportController {
           accounts: data.accounts,
         },
       ];
-
-      response(res, true, "Succeed", {
-        data: ini,
-      });
+      response(res, true, "Succeed", ini);
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
