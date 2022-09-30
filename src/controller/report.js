@@ -159,6 +159,7 @@ module.exports = class ReportController {
       //     parseMode: "string",
       //   })} AND r.deleted_at is null AND a.deleted_at is null ORDER BY updated_at DESC`
       // );
+
       let getData = { where: null };
       getData.include = [
         {
@@ -170,23 +171,25 @@ module.exports = class ReportController {
         },
       ];
       const data = await PanicButton.findOne(getData);
-      const ini = {
-        id: data.id,
-        code: data.code,
-        type: data.type,
-        foto: data.foto,
-        categori: codeReport(data.categori, "type"),
-        // categori_name: codeReport(data.categori, "type"),
-        status: data.status,
-        officer_id: data.officer_id,
-        coordinate: data.coordinate,
-        description: data.description,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-        deleted_at: data.deleted_at,
-        officer: data.officer,
-        accounts: data.accounts,
-      };
+      const ini = [
+        {
+          id: data.id,
+          code: data.code,
+          type: data.type,
+          foto: data.foto,
+          categori: codeReport(data.categori, "type"),
+          // categori_name: codeReport(data.categori, "type"),
+          status: data.status,
+          officer_id: data.officer_id,
+          coordinate: data.coordinate,
+          description: data.description,
+          created_at: data.created_at,
+          updated_at: data.updated_at,
+          deleted_at: data.deleted_at,
+          officer: data.officer,
+          accounts: data.accounts,
+        },
+      ];
 
       response(res, true, "Succeed", {
         data: ini,
