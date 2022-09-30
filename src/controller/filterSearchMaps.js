@@ -120,6 +120,7 @@ module.exports = class FilterSearchController {
             } else if (value == "titik_laporan") {
               console.log("kesini");
               tampung[value] = true;
+
               tampungArr.push(fieldData[value](req));
             } else {
               tampung[value] = true;

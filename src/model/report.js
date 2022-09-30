@@ -49,9 +49,9 @@ Panic_button.init(
     // 1= Kriminal, 2=Kecelakaan, 3=bencana alam, 4=kemacetan
     categori: {
       type: Sequelize.INTEGER,
-      get() {
-        return codeReport(this.getDataValue("categori"), "type");
-      },
+      // get() {
+      //   return codeReport(this.getDataValue("categori"), "type");
+      // },
     },
     status: {
       type: Sequelize.INTEGER,

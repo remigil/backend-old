@@ -161,7 +161,6 @@ module.exports = class NotifikasiController {
         isSafeUrl: true,
         parseMode: "string",
       });
-      console.log(filters);
       getData.where = {
         ...getData.where,
         ...filters,
