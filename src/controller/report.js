@@ -179,6 +179,7 @@ module.exports = class ReportController {
           type: data.type,
           foto: data.foto,
           categori: codeReport(data.categori, "type"),
+          categoriId: data.categori,
           // categori_name: codeReport(data.categori, "type"),
           status: data.status,
           officer_id: data.officer_id,
