@@ -26,6 +26,7 @@ const fieldData = {
   schedule_id: null,
   name_renpam: null,
   type_renpam: null,
+  category_renpam: null,
   total_vehicle: null,
   title_start: null,
   title_end: null,

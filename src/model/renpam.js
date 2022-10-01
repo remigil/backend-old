@@ -6,6 +6,8 @@ const { AESEncrypt } = require("../lib/encryption");
 const Schedule = require("./schedule");
 const Account = require("./account");
 const Vip = require("./vip");
+const Officer = require("./officer");
+// const Trx_account_officer = require("./trx_account_officer");
 
 const Model = Sequelize.Model;
 
@@ -164,6 +166,7 @@ Renpam.belongsToMany(Account, {
   foreignKey: "renpam_id",
   otherKey: "account_id",
 });
+
 Renpam.belongsToMany(Vip, {
   as: "vips",
   through: "renpam_vip",
