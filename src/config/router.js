@@ -187,5 +187,10 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/notifikasi")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/contact-general",
+  authMiddleware.jwtAuth,
+  require("../router/contact_general")
+);
 
 module.exports = router;
