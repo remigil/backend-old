@@ -65,7 +65,9 @@ Panic_button.init(
     description: {
       type: Sequelize.TEXT,
     },
-
+    address: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {
