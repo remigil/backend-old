@@ -267,6 +267,8 @@ module.exports = class NotifikasiController {
                 notification: {
                   body: req.body?.description,
                   title: req.body?.title,
+                  click_action:
+                    notifHandler.web.panic_button + req.body.id_panic_button,
                 },
                 data: {
                   deepLink:
@@ -295,27 +297,55 @@ module.exports = class NotifikasiController {
   static addSingleOnWeb = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await axios({
-        url: "https://fcm.googleapis.com/fcm/send",
-        method: "POST",
-        headers: {
-          Authorization:
-            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
-          "Content-Type": "application/json",
-        },
-        data: {
-          to: req.body?.to,
-          notification: {
-            body: req.body?.description,
-            title: req.body?.title,
+      if (req.body.type == "panic_button") {
+        await axios({
+          url: "https://fcm.googleapis.com/fcm/send",
+          method: "POST",
+          headers: {
+            Authorization:
+              "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+            "Content-Type": "application/json",
           },
           data: {
-            deepLink:
-              notifHandler.mobile.panic_button + req.body?.id_panic_button,
-            webLink: notifHandler.web.panic_button + req.body?.id_panic_button,
+            to: req.body.to,
+            notification: {
+              body: req.body.description,
+              title: req.body.title,
+              click_action:
+                notifHandler.web.panic_button + req.body.id_panic_button,
+            },
+            data: {
+              deepLink:
+                notifHandler.mobile.panic_button + req.body.id_panic_button,
+              webLink: notifHandler.web.panic_button + req.body.id_panic_button,
+            },
           },
-        },
-      });
+        });
+      } else if (req.body.type == "laporan") {
+        await axios({
+          url: "https://fcm.googleapis.com/fcm/send",
+          method: "POST",
+          headers: {
+            Authorization:
+              "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+            "Content-Type": "application/json",
+          },
+          data: {
+            to: req.body.to,
+            notification: {
+              body: req.body.description,
+              title: req.body.title,
+              click_action:
+                notifHandler.web.panic_button + req.body.id_panic_button,
+            },
+            data: {
+              deepLink:
+                notifHandler.mobile.panic_button + req.body.id_panic_button,
+              webLink: notifHandler.web.panic_button + req.body.id_panic_button,
+            },
+          },
+        });
+      }
 
       return response(res, true, "Succeed", null);
     } catch (e) {
