@@ -12,7 +12,7 @@ const fieldData = {
   regulation_name: null,
   fileReg: null,
   year: null,
-}
+};
 
 module.exports = class Regulation_docController {
   static get = async (req, res) => {
@@ -106,31 +106,31 @@ module.exports = class Regulation_docController {
     const transaction = await db.transaction();
     var fileReg = "";
     try {
-        let fieldValueData = {};
-        Object.keys(fieldData).forEach((key) => {
-          if(req.body[key]){
-            if(key == "fileReg"){
-              let path = req.body.fileReg.filepath;
-              let file = req.body.fileReg;
-              let fileName = file.originalFilename;
-              fs.renameSync(
-                path,
-                "./public/uploads/regulation_doc/" + fileName,
-                function (err) {
-                  if (err) throw err;
-                }
-              );
-              fieldValueData[key] = fileName;
-            }else{
-              fieldValueData[key] = req.body[key];
-            }
-          }else{
-            fieldValueData[key] = null;
+      let fieldValueData = {};
+      Object.keys(fieldData).forEach((key) => {
+        if (req.body[key]) {
+          if (key == "fileReg") {
+            let path = req.body.fileReg.filepath;
+            let file = req.body.fileReg;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/regulation_doc/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValueData[key] = fileName;
+          } else {
+            fieldValueData[key] = req.body[key];
           }
-        });
+        } else {
+          fieldValueData[key] = null;
+        }
+      });
       let op = await Regulation_doc.create(fieldValueData, {
-          transaction: transaction,
-        });
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", op);
     } catch (e) {
@@ -164,15 +164,15 @@ module.exports = class Regulation_docController {
           fieldValueData[key] = null;
         }
       });
-          await Regulation_doc.update(fieldValueData, {
-          where: {
-            id: AESDecrypt(req.params.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          transaction: transaction,
-        });
+      await Regulation_doc.update(fieldValueData, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
