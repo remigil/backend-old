@@ -5,8 +5,11 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
 const pagination = require("../lib/pagination-parser");
+const notifHandler = require("../middleware/notifHandler");
 const { default: axios } = require("axios");
 const TokenTrackNotif = require("../model/token_track_notif");
+
+const User = require("../model/user");
 const moment = require("moment");
 const fieldData = Object.keys(Notifikasi.getAttributes());
 module.exports = class NotifikasiController {
@@ -237,6 +240,92 @@ module.exports = class NotifikasiController {
       //   response(res, false, "Failed", e.message);
     }
   };
+
+  static addGlobalOnWeb = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      User.findAll({
+        where: {
+          token_notif: {
+            [Op.ne]: null,
+          },
+        },
+      })
+        .then(async (ress) => {
+          // console.log({ succ });
+          for (let i = 0; i < ress.length; i++) {
+            axios({
+              url: "https://fcm.googleapis.com/fcm/send",
+              method: "POST",
+              headers: {
+                Authorization:
+                  "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+                "Content-Type": "application/json",
+              },
+              data: {
+                to: ress[i]["token_notif"],
+                notification: {
+                  body: req.body?.description,
+                  title: req.body?.title,
+                },
+                data: {
+                  deepLink:
+                    notifHandler.mobile.panic_button +
+                    req.body?.id_panic_button,
+                  webLink:
+                    notifHandler.web.panic_button + req.body?.id_panic_button,
+                },
+              },
+            });
+          }
+
+          return response(res, true, "Succeed", null);
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
+    } catch (e) {
+      console.log({ e });
+      await transaction.rollback();
+      return e;
+      //   response(res, false, "Failed", e.message);
+    }
+  };
+
+  static addSingleOnWeb = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      await axios({
+        url: "https://fcm.googleapis.com/fcm/send",
+        method: "POST",
+        headers: {
+          Authorization:
+            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+          "Content-Type": "application/json",
+        },
+        data: {
+          to: req.body?.to,
+          notification: {
+            body: req.body?.description,
+            title: req.body?.title,
+          },
+          data: {
+            deepLink:
+              notifHandler.mobile.panic_button + req.body?.id_panic_button,
+            webLink: notifHandler.web.panic_button + req.body?.id_panic_button,
+          },
+        },
+      });
+
+      return response(res, true, "Succeed", null);
+    } catch (e) {
+      console.log({ e });
+      await transaction.rollback();
+      return e;
+      //   response(res, false, "Failed", e.message);
+    }
+  };
+
   static singleGlobal = async (
     data = {
       deepLink,

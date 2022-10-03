@@ -10,6 +10,18 @@ router.post(
   formValidation,
   NotifikasiController.add
 );
+router.post(
+  "/notifToGlobalWeb",
+  //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  NotifikasiController.addGlobalOnWeb
+);
+router.post(
+  "/notifToSingleWeb",
+  //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  NotifikasiController.addSingleOnWeb
+);
 router.put("/edit/:id", NotifikasiController.edit);
 router.delete(
   "/delete",
