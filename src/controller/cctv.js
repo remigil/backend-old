@@ -21,6 +21,7 @@ const fieldData = {
   password_cctv: null,
   lat_cctv: null,
   lng_cctv: null,
+  status_cctv: null,
 };
 module.exports = class CctvController {
   static get = async (req, res) => {

@@ -16,7 +16,7 @@ router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  CctvController.delete
+  CctvController.hardDelete
 );
 
 module.exports = router;
