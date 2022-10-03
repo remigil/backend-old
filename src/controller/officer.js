@@ -196,34 +196,48 @@ module.exports = class OfficerController {
     const transaction = await db.transaction();
     var photo_officer = "";
     try {
-      let fieldValueData = {};
-      Object.keys(fieldData).forEach((key) => {
-        if (req.body[key]) {
-          if (key == "photo_officer") {
-            let path = req.body.photo_officer.filepath;
-            let file = req.body.photo_officer;
-            let fileName = file.originalFilename;
-            fs.renameSync(
-              path,
-              "./public/uploads/officer/" + fileName,
-              function (err) {
-                if (err) throw err;
-              }
-            );
-            fieldValueData[key] = fileName;
+      const data = Officer.findOne({
+        where: {
+          nrp_officer: req.body.nrp_officer,
+        },
+      })
+        .then(async (ress) => {
+          if (ress) {
+            return response(res, false, "Failed", "NRP Sudah Di Gunakan");
           } else {
-            fieldValueData[key] = req.body[key];
-          }
-        } else {
-          fieldValueData[key] = null;
-        }
-      });
+            let fieldValueData = {};
+            Object.keys(fieldData).forEach((key) => {
+              if (req.body[key]) {
+                if (key == "photo_officer") {
+                  let path = req.body.photo_officer.filepath;
+                  let file = req.body.photo_officer;
+                  let fileName = file.originalFilename;
+                  fs.renameSync(
+                    path,
+                    "./public/uploads/officer/" + fileName,
+                    function (err) {
+                      if (err) throw err;
+                    }
+                  );
+                  fieldValueData[key] = fileName;
+                } else {
+                  fieldValueData[key] = req.body[key];
+                }
+              } else {
+                fieldValueData[key] = null;
+              }
+            });
 
-      let op = await Officer.create(fieldValueData, {
-        transaction: transaction,
-      });
-      await transaction.commit();
-      response(res, true, "Succeed", op);
+            let op = await Officer.create(fieldValueData, {
+              transaction: transaction,
+            });
+            await transaction.commit();
+            response(res, true, "Succeed", op);
+          }
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
