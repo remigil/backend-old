@@ -16,7 +16,9 @@ const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
 const Account = require("../model/account");
 const { Client } = require("@googlemaps/google-maps-services-js");
+const User = require("../model/user");
 const googleMapClient = new Client();
+const { default: axios } = require("axios");
 const fieldData = {
   code: null,
   type: null,
@@ -26,6 +28,17 @@ const fieldData = {
   status: null,
   coordinate: null,
   description: null,
+  officer_id: null,
+};
+const fieldDataPeringatan = {
+  code: null,
+  type: null,
+  // foto: null,
+  // subject: null,
+  // categori: null,
+  // status: null,
+  coordinate: null,
+  // description: null,
   officer_id: null,
 };
 const getCodeReport = async ({ monthYear, type }) => {
@@ -320,21 +333,9 @@ module.exports = class PanicButtonController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-      for (const key of Object.keys(fieldData)) {
+      for (const key of Object.keys(fieldDataPeringatan)) {
         if (req.body[key]) {
-          if (key == "foto") {
-            let path = req.body.foto.filepath;
-            let file = req.body.foto;
-            let fileName = file.originalFilename;
-            fs.renameSync(
-              path,
-              "./public/uploads/panic_button/" + fileName,
-              function (err) {
-                if (err) throw err;
-              }
-            );
-            fieldValueData[key] = fileName;
-          } else if (key == "coordinate") {
+          if (key == "coordinate") {
             let latlonData = JSON.parse(req.body[key]);
 
             if (latlonData.latitude == "" || latlonData.longitude == "") {
@@ -348,7 +349,6 @@ module.exports = class PanicButtonController {
                 longitude: parseFloat(aa.longitude),
               };
             }
-            console.log(latlonData);
             fieldValueData[key] = latlonData;
           } else {
             fieldValueData[key] = req.body[key];
@@ -363,87 +363,70 @@ module.exports = class PanicButtonController {
         parseMode: "string",
       });
       fieldValueData["type"] = "PNC";
-      let kode = await getCodeReport({
-        monthYear: moment().format("MMYY"),
-        type: "PNC",
+      let address = new Promise((resolve, reject) => {
+        googleMapClient
+          .reverseGeocode({
+            params: {
+              key: process.env.GOOGLE_MAPS_API_KEY,
+              latlng: {
+                latitude: fieldValueData["coordinate"].latitude,
+                longitude: fieldValueData["coordinate"].longitude,
+              },
+              result_type: [
+                "administrative_area_level_1",
+                "administrative_area_level_2",
+                "administrative_area_level_3",
+                "administrative_area_level_4",
+                "administrative_area_level_5",
+                "administrative_area_level_6",
+                "administrative_area_level_7",
+              ],
+            },
+          })
+          .then(async (resGeocode) => {
+            const compondeCode = resGeocode.data.plus_code.compound_code;
+            resolve(compondeCode);
+          });
       });
-      let typeCode = codeReport(req.body.categori);
-      let id_officer = AESDecrypt(req.auth.officer, {
-        isSafeUrl: true,
-        parseMode: "string",
-      });
-      let officerGetPolres = await Officer.findOne({
-        where: {
-          id: id_officer,
-        },
-      });
-      let getCode = `PNC/${moment().format("MMYY")}/${kode}/P/${typeCode}/${
-        officerGetPolres?.nrp_officer
-      }`;
-      fieldValueData["code"] = getCode;
-      console.log({ fieldValueData });
+      fieldValueData["address"] = await address;
       let op = await PanicButton.create(fieldValueData, {
         transaction: transaction,
       });
       await transaction.commit();
-
-      TokenTrackNotif.findAll({
+      User.findAll({
         where: {
-          token_fcm: {
+          token_notif: {
             [Op.ne]: null,
           },
         },
-      }).then(async (token_fcm) => {
-        let officer_id = token_fcm.map((officer) => officer.nrp_user);
-
-        let getIdOfficer = await Officer.findAll({
-          where: {
-            nrp_officer: {
-              [Op.in]: officer_id,
+      }).then(async (ress) => {
+        for (let i = 0; i < ress.length; i++) {
+          await axios({
+            url: "https://fcm.googleapis.com/fcm/send",
+            method: "POST",
+            headers: {
+              Authorization:
+                "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+              "Content-Type": "application/json",
             },
-          },
-        });
-        getIdOfficer = getIdOfficer.map((officer) => {
-          return AESDecrypt(officer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
+            data: {
+              to: ress[i]["token_notif"],
+              notification: {
+                body: await address,
+                title: "Panic button",
+                click_action: notifHandler.web.panic_button + op.id,
+              },
+              data: {
+                webLink: notifHandler.web.panic_button + op.id,
+              },
+            },
           });
-        });
-        token_fcm = token_fcm.map((token) => token.token_fcm);
-        NotifikasiController.addGlobal({
-          deepLink: notifHandler.mobile.laporan + op.id,
-          type: "laporan",
-          title: "Laporan",
-          description: req.body.description,
-          officer_id: getIdOfficer,
-          mobile: notifHandler.mobile.laporan + op.id,
-          web: notifHandler.mobile.laporan + op.id,
-          to: token_fcm,
-        })
-          .then((succ) => {
-            console.log({ succ });
-          })
-          .catch((err) => {
-            console.log({ err });
-          });
-        NotifikasiController.addGlobal({
-          deepLink: notifHandler.mobile.panic_button + op.id,
-          type: "panic_button",
-          title: "Panic Button",
-          description: req.body.description,
-          officer_id: id_officer,
-          mobile: notifHandler.mobile.panic_button + op.id,
-          web: notifHandler.mobile.panic_button + op.id,
-          to: token_fcm.token_fcm,
-        })
-          .then(() => {})
-          .catch(() => {});
+        }
       });
-
-      response(res, true, "Succeed", fieldValueData);
+      response(res, true, "Succeed", op);
     } catch (e) {
       console.log({ e });
-      await transaction.rollback();
+      // await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };

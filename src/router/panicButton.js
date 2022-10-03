@@ -4,6 +4,11 @@ const PanicButtonController = require("../controller/panicButton");
 const formValidation = require("../middleware/form_validation");
 router.get("/", PanicButtonController.get);
 router.post("/add", formValidation, PanicButtonController.add);
+router.post(
+  "/addPeringatan",
+  formValidation,
+  PanicButtonController.addPeringatan
+);
 router.put("/edit/:id", PanicButtonController.edit);
 router.delete(
   "/delete",
