@@ -211,7 +211,7 @@ module.exports = class PanicButtonController {
         },
       });
       let getCode = `PNC/${moment().format("MMYY")}/${kode}/P/${typeCode}/${
-        officerGetPolres.polres_id
+        officerGetPolres?.nrp_officer
       }`;
       fieldValueData["code"] = getCode;
       console.log({ fieldValueData });
