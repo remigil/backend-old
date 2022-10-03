@@ -193,4 +193,10 @@ router.use(
   require("../router/contact_general")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/regulation_doc",
+  authMiddleware.jwtAuth,
+  require("../router/regulation_doc")
+);
+
 module.exports = router;
