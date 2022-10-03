@@ -72,6 +72,11 @@ module.exports = class Regulation_docController {
           ...filters,
         };
       }
+      getDataRules.where = {
+        deleted_at: {
+          [Op.is]: null,
+        },
+      };
       const data = await Regulation_doc.findAll(getDataRules);
       const count = await Regulation_doc.count({
         where: getDataRules?.where,
