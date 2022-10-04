@@ -431,6 +431,8 @@ module.exports = class ScheduleController {
         filterSearch = [],
         order = null,
         orderDirection = "asc",
+        start_date = null,
+        end_date = null,
       } = req.query;
       const modelAttr = Object.keys(Schedule.getAttributes());
       let getData = { where: null };
@@ -446,6 +448,43 @@ module.exports = class ScheduleController {
           orderDirection != null ? orderDirection : "asc",
         ],
       ];
+
+      let date_ob = new Date();
+      if (start_date != null && end_date != null) {
+        // console.log("tgl");
+        getData.where = {
+          date_schedule: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      } else if (start_date == null && end_date != null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getData.where = {
+          date_schedule: {
+            [Op.between]: [date_ob, end_date],
+          },
+        };
+      } else if (start_date != null && end_date == null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        getData.where = {
+          date_schedule: {
+            [Op.between]: [start_date, date_ob],
+          },
+        };
+      }
+
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
