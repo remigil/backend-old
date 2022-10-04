@@ -3,6 +3,8 @@ const { body, param } = require("express-validator");
 const UserController = require("../controller/user");
 const authMiddleware = require("../middleware/authentication");
 const form_validation = require("../middleware/form_validation");
+
+router.get("/", UserController.get);
 router.get(
   "/logged-user",
   authMiddleware.jwtAuth,

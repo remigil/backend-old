@@ -482,6 +482,11 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
+      getData.where = {
+        deleted_at: {
+          [Op.is]: null,
+        },
+      };
       const dataRes = await Schedule.findAll(getData);
       const count = await Schedule.count({
         where: getData?.where,

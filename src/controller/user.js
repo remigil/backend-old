@@ -15,6 +15,26 @@ const fieldData = {
   token_notif: null,
 };
 module.exports = class UserController {
+  static get = async (req, res) => {
+    response(
+      res,
+      true,
+      "Succeed",
+      await User.findAll({
+        attributes: {
+          exclude: ["role_id"],
+        },
+        // include: {
+        //   model: UserRole,
+        //   // attributes: ["id"],
+        // },
+        include: {
+          model: UserRole,
+          as: "user_role",
+        },
+      })
+    );
+  };
   static getLoggedUser = async (req, res) => {
     response(
       res,
@@ -123,7 +143,14 @@ module.exports = class UserController {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "polres_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await User.update(fieldValue, {
