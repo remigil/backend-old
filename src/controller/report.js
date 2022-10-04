@@ -173,6 +173,12 @@ module.exports = class ReportController {
           required: false,
         },
       ];
+      getData.where = {
+        id: AESDecrypt(req.params.id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        }),
+      };
       const data = await PanicButton.findOne(getData);
       const ini = [
         {
