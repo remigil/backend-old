@@ -456,6 +456,9 @@ module.exports = class ScheduleController {
           date_schedule: {
             [Op.between]: [start_date, end_date],
           },
+          deleted_at: {
+            [Op.is]: null,
+          },
         };
       } else if (start_date == null && end_date != null) {
         var date = (
@@ -470,6 +473,9 @@ module.exports = class ScheduleController {
           date_schedule: {
             [Op.between]: [date_ob, end_date],
           },
+          deleted_at: {
+            [Op.is]: null,
+          },
         };
       } else if (start_date != null && end_date == null) {
         var date = (
@@ -481,6 +487,15 @@ module.exports = class ScheduleController {
         getData.where = {
           date_schedule: {
             [Op.between]: [start_date, date_ob],
+          },
+          deleted_at: {
+            [Op.is]: null,
+          },
+        };
+      } else {
+        getData.where = {
+          deleted_at: {
+            [Op.is]: null,
           },
         };
       }
@@ -521,11 +536,7 @@ module.exports = class ScheduleController {
           ...filters,
         };
       }
-      getData.where = {
-        deleted_at: {
-          [Op.is]: null,
-        },
-      };
+
       const dataRes = await Schedule.findAll(getData);
       const count = await Schedule.count({
         where: getData?.where,
@@ -542,18 +553,6 @@ module.exports = class ScheduleController {
             }),
           },
         });
-
-        // operation_id: null,
-        // activity: null,
-        // id_vip: null,
-        // id_account: null,
-        // date_schedule: null,
-        // start_time: null,
-        // end_time: null,
-        // address_schedule: null,
-        // coordinate_schedule: null,
-        // status_schedule: 0,
-        // photo_schedule: null,
 
         dummyData = {};
         dummyData["id"] = dataRes[i]["id"];
