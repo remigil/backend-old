@@ -4,6 +4,7 @@ const NotifikasiController = require("../controller/notification");
 const formValidation = require("../middleware/form_validation");
 router.get("/", NotifikasiController.get);
 router.get("/mobile", NotifikasiController.getMobile);
+router.get("/countNotif", NotifikasiController.countNotifikasi);
 router.post(
   "/add",
   //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
