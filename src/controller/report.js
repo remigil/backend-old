@@ -16,6 +16,8 @@ const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
+const { Client } = require("@googlemaps/google-maps-services-js");
+const googleMapClient = new Client();
 const fieldData = {
   code: null,
   type: null,
@@ -285,7 +287,7 @@ module.exports = class ReportController {
                 longitude: parseFloat(aa.longitude),
               };
             }
-            console.log(latlonData);
+
             fieldValueData[key] = latlonData;
           } else {
             fieldValueData[key] = req.body[key];
@@ -320,7 +322,6 @@ module.exports = class ReportController {
       let op = await PanicButton.create(fieldValueData, {
         transaction: transaction,
       });
-
       await transaction.commit();
       TokenTrackNotif.findAll({
         where: {
@@ -364,17 +365,45 @@ module.exports = class ReportController {
             });
         })
         .catch(() => {});
-      // let token_fcm = await TokenTrackNotif.findAll({
-      //   where: {
-      //     token_fcm: {
-      //       [Op.ne]: null,
-      //     },
-      //   },
-      // });
+      googleMapClient
+        .reverseGeocode({
+          params: {
+            key: process.env.GOOGLE_MAPS_API_KEY,
+            latlng: {
+              latitude: fieldValueData["coordinate"].latitude,
+              longitude: fieldValueData["coordinate"].longitude,
+            },
+            result_type: [
+              "administrative_area_level_1",
+              "administrative_area_level_2",
+              "administrative_area_level_3",
+              "administrative_area_level_4",
+              "administrative_area_level_5",
+              "administrative_area_level_6",
+              "administrative_area_level_7",
+            ],
+          },
+        })
+        .then(async (resGeocode) => {
+          const compondeCode = resGeocode.data.plus_code.compound_code;
+          await PanicButton.update(
+            {
+              address: compondeCode,
+            },
+            {
+              where: {
+                id: AESDecrypt(op.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            }
+          );
+        });
 
       response(res, true, "Succeed", op);
     } catch (e) {
-      await transaction.rollback();
+      // await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };

@@ -15,6 +15,10 @@ const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
 const Account = require("../model/account");
+const { Client } = require("@googlemaps/google-maps-services-js");
+const User = require("../model/user");
+const googleMapClient = new Client();
+const { default: axios } = require("axios");
 const fieldData = {
   code: null,
   type: null,
@@ -24,6 +28,17 @@ const fieldData = {
   status: null,
   coordinate: null,
   description: null,
+  officer_id: null,
+};
+const fieldDataPeringatan = {
+  code: null,
+  type: null,
+  // foto: null,
+  // subject: null,
+  // categori: null,
+  // status: null,
+  coordinate: null,
+  // description: null,
   officer_id: null,
 };
 const getCodeReport = async ({ monthYear, type }) => {
@@ -272,11 +287,146 @@ module.exports = class PanicButtonController {
           .then(() => {})
           .catch(() => {});
       });
-
+      googleMapClient
+        .reverseGeocode({
+          params: {
+            key: process.env.GOOGLE_MAPS_API_KEY,
+            latlng: {
+              latitude: fieldValueData["coordinate"].latitude,
+              longitude: fieldValueData["coordinate"].longitude,
+            },
+            result_type: [
+              "administrative_area_level_1",
+              "administrative_area_level_2",
+              "administrative_area_level_3",
+              "administrative_area_level_4",
+              "administrative_area_level_5",
+              "administrative_area_level_6",
+              "administrative_area_level_7",
+            ],
+          },
+        })
+        .then(async (resGeocode) => {
+          const compondeCode = resGeocode.data.plus_code.compound_code;
+          await PanicButton.update(
+            {
+              address: compondeCode,
+            },
+            {
+              where: {
+                id: AESDecrypt(op.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            }
+          );
+        });
       response(res, true, "Succeed", fieldValueData);
     } catch (e) {
       console.log({ e });
       await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static addPeringatan = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValueData = {};
+      for (const key of Object.keys(fieldDataPeringatan)) {
+        if (req.body[key]) {
+          if (key == "coordinate") {
+            let latlonData = JSON.parse(req.body[key]);
+
+            if (latlonData.latitude == "" || latlonData.longitude == "") {
+              let aa = await TrackG20.findOne({
+                nrp_user: req.auth.nrp_user,
+              })
+                .sort({ updated_at: -1 })
+                .limit(1);
+              latlonData = {
+                latitude: parseFloat(aa.latitude),
+                longitude: parseFloat(aa.longitude),
+              };
+            }
+            fieldValueData[key] = latlonData;
+          } else {
+            fieldValueData[key] = req.body[key];
+          }
+        } else {
+          fieldValueData[key] = null;
+        }
+      }
+
+      fieldValueData["officer_id"] = AESDecrypt(req.auth.officer, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      fieldValueData["type"] = "PNC";
+      let address = new Promise((resolve, reject) => {
+        googleMapClient
+          .reverseGeocode({
+            params: {
+              key: process.env.GOOGLE_MAPS_API_KEY,
+              latlng: {
+                latitude: fieldValueData["coordinate"].latitude,
+                longitude: fieldValueData["coordinate"].longitude,
+              },
+              result_type: [
+                "administrative_area_level_1",
+                "administrative_area_level_2",
+                "administrative_area_level_3",
+                "administrative_area_level_4",
+                "administrative_area_level_5",
+                "administrative_area_level_6",
+                "administrative_area_level_7",
+              ],
+            },
+          })
+          .then(async (resGeocode) => {
+            const compondeCode = resGeocode.data.plus_code.compound_code;
+            resolve(compondeCode);
+          });
+      });
+      fieldValueData["address"] = await address;
+      let op = await PanicButton.create(fieldValueData, {
+        transaction: transaction,
+      });
+      await transaction.commit();
+      User.findAll({
+        where: {
+          token_notif: {
+            [Op.ne]: null,
+          },
+        },
+      }).then(async (ress) => {
+        for (let i = 0; i < ress.length; i++) {
+          await axios({
+            url: "https://fcm.googleapis.com/fcm/send",
+            method: "POST",
+            headers: {
+              Authorization:
+                "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+              "Content-Type": "application/json",
+            },
+            data: {
+              to: ress[i]["token_notif"],
+              notification: {
+                body: await address,
+                title: "Panic button",
+                click_action: notifHandler.web.panic_button + op.id,
+              },
+              data: {
+                webLink: notifHandler.web.panic_button + op.id,
+              },
+            },
+          });
+        }
+      });
+      response(res, true, "Succeed", op);
+    } catch (e) {
+      console.log({ e });
+      // await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };
