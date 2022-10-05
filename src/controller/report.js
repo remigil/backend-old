@@ -329,48 +329,7 @@ module.exports = class ReportController {
         transaction: transaction,
       });
       await transaction.commit();
-      TokenTrackNotif.findAll({
-        where: {
-          token_fcm: {
-            [Op.ne]: null,
-          },
-        },
-      })
-        .then(async (token_fcm) => {
-          let officer_id = token_fcm.map((officer) => officer.nrp_user);
 
-          let getIdOfficer = await Officer.findAll({
-            where: {
-              nrp_officer: {
-                [Op.in]: officer_id,
-              },
-            },
-          });
-          getIdOfficer = getIdOfficer.map((officer) => {
-            return AESDecrypt(officer.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            });
-          });
-          token_fcm = token_fcm.map((token) => token.token_fcm);
-          NotifikasiController.addGlobal({
-            deepLink: notifHandler.mobile.laporan + op.id,
-            type: "laporan",
-            title: "Laporan",
-            description: req.body.description,
-            officer_id: getIdOfficer,
-            mobile: notifHandler.mobile.laporan + op.id,
-            web: notifHandler.mobile.laporan + op.id,
-            to: token_fcm,
-          })
-            .then((succ) => {
-              console.log({ succ });
-            })
-            .catch((err) => {
-              console.log({ err });
-            });
-        })
-        .catch(() => {});
       googleMapClient
         .reverseGeocode({
           params: {
@@ -392,6 +351,49 @@ module.exports = class ReportController {
         })
         .then(async (resGeocode) => {
           const compondeCode = resGeocode.data.plus_code.compound_code;
+          TokenTrackNotif.findAll({
+            where: {
+              token_fcm: {
+                [Op.ne]: null,
+              },
+            },
+          })
+            .then(async (token_fcm) => {
+              let officer_id = token_fcm.map((officer) => officer.nrp_user);
+
+              let getIdOfficer = await Officer.findAll({
+                where: {
+                  nrp_officer: {
+                    [Op.in]: officer_id,
+                  },
+                },
+              });
+              getIdOfficer = getIdOfficer.map((officer) => {
+                return AESDecrypt(officer.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                });
+              });
+              token_fcm = token_fcm.map((token) => token.token_fcm);
+              NotifikasiController.addGlobal({
+                deepLink: notifHandler.mobile.laporan + op.id,
+                type: "laporan",
+                title: compondeCode,
+                description: req.body.description,
+                officer_id: getIdOfficer,
+                mobile: notifHandler.mobile.laporan + op.id,
+                web: notifHandler.mobile.laporan + op.id,
+                to: token_fcm,
+              })
+                .then((succ) => {
+                  console.log({ succ });
+                })
+                .catch((err) => {
+                  console.log({ err });
+                });
+            })
+            .catch(() => {});
+
           await PanicButton.update(
             {
               address: compondeCode,
