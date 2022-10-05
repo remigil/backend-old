@@ -194,6 +194,7 @@ module.exports = class NotifikasiController {
       response(res, false, "Failed", e.message);
     }
   };
+
   static addGlobal = async (
     data = {
       deepLink,

@@ -401,7 +401,7 @@ module.exports = class PanicButtonController {
         },
       }).then(async (ress) => {
         for (let i = 0; i < ress.length; i++) {
-          await axios({
+          axios({
             url: "https://fcm.googleapis.com/fcm/send",
             method: "POST",
             headers: {
@@ -420,7 +420,13 @@ module.exports = class PanicButtonController {
                 webLink: notifHandler.web.panic_button + op.id,
               },
             },
-          });
+          })
+            .then((succ) => {
+              console.log({ succ: succ.data });
+            })
+            .catch((err) => {
+              console.log({ err });
+            });
         }
       });
       response(res, true, "Succeed", op);
