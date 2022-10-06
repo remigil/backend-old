@@ -20,6 +20,14 @@ module.exports = (n, params = "code") => {
       type: "Bencana Alam",
       code: "B",
     },
+    5: {
+      type: "Pengaturan",
+      code: "TUR",
+    },
+    6: {
+      type: "Pengawalan",
+      code: "WAL",
+    },
     999: {
       type: "Lainnya",
       code: "LN",
