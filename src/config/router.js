@@ -199,4 +199,10 @@ router.use(
   require("../router/regulation_doc")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/icon",
+  authMiddleware.jwtAuth,
+  require("../router/icon")
+);
+
 module.exports = router;
