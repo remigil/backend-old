@@ -359,6 +359,20 @@ module.exports = class ReportController {
             },
           })
             .then(async (token_fcm) => {
+              await PanicButton.update(
+                {
+                  address: compondeCode,
+                },
+                {
+                  where: {
+                    id: AESDecrypt(op.id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                }
+              );
+
               let officer_id = token_fcm.map((officer) => officer.nrp_user);
 
               let getIdOfficer = await Officer.findAll({
@@ -393,20 +407,6 @@ module.exports = class ReportController {
                 });
             })
             .catch(() => {});
-
-          await PanicButton.update(
-            {
-              address: compondeCode,
-            },
-            {
-              where: {
-                id: AESDecrypt(op.id, {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
-              },
-            }
-          );
         });
 
       response(res, true, "Succeed", op);
