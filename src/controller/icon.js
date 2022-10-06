@@ -118,48 +118,34 @@ module.exports = class IconController {
     const transaction = await db.transaction();
     var photo_Icon = "";
     try {
-      const data = Icon.findOne({
-        where: {
-          nrp_Icon: req.body.nrp_Icon,
-        },
-      })
-        .then(async (ress) => {
-          if (ress) {
-            return response(res, false, "Failed", "NRP Sudah Di Gunakan");
-          } else {
-            let fieldValueData = {};
-            Object.keys(fieldData).forEach((key) => {
-              if (req.body[key]) {
-                if (key == "photo_icon") {
-                  let path = req.body.photo_icon.filepath;
-                  let file = req.body.photo_icon;
-                  let fileName = file.originalFilename;
-                  fs.renameSync(
-                    path,
-                    "./public/uploads/icon/" + fileName,
-                    function (err) {
-                      if (err) throw err;
-                    }
-                  );
-                  fieldValueData[key] = fileName;
-                } else {
-                  fieldValueData[key] = req.body[key];
-                }
-              } else {
-                fieldValueData[key] = null;
+      let fieldValueData = {};
+      Object.keys(fieldData).forEach((key) => {
+        if (req.body[key]) {
+          if (key == "photo_icon") {
+            let path = req.body.photo_icon.filepath;
+            let file = req.body.photo_icon;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/icon/" + fileName,
+              function (err) {
+                if (err) throw err;
               }
-            });
-
-            let op = await Icon.create(fieldValueData, {
-              transaction: transaction,
-            });
-            await transaction.commit();
-            response(res, true, "Succeed", op);
+            );
+            fieldValueData[key] = fileName;
+          } else {
+            fieldValueData[key] = req.body[key];
           }
-        })
-        .catch((err) => {
-          console.log({ err });
-        });
+        } else {
+          fieldValueData[key] = null;
+        }
+      });
+
+      let op = await Icon.create(fieldValueData, {
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
