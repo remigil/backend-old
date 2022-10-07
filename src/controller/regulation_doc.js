@@ -6,6 +6,7 @@ const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
 const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
+const { getPagination } = require("../lib/pagination-parser");
 
 const fieldData = {
   regulation_category: null,
@@ -85,6 +86,39 @@ module.exports = class Regulation_docController {
         data,
         recordsFiltered: count,
         recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getMobile = async (req, res) => {
+    try {
+      const { order = 0, orderDirection = "asc" } = req.query;
+
+      let getData = { where: null };
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = getPagination(limit, page);
+      getData.limit = parseInt(resPage.limit);
+      getData.offset = resPage.offset;
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "desc",
+        ],
+      ];
+
+      getData.where = {
+        ...getData.where,
+      };
+      const data = await Regulation_doc.findAndCountAll(getData);
+
+      response(res, true, "Succeed", {
+        page,
+        limit: parseInt(limit),
+        total: data.count,
+        total_page: Math.ceil(parseInt(data.count) / parseInt(resPage.limit)),
+        ...data,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);

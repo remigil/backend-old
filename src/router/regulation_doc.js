@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const Regulation_docController = require("../controller/regulation_doc");
 const formValidation = require("../middleware/form_validation");
 router.get("/", Regulation_docController.get);
+router.get("/mobile", Regulation_docController.getMobile);
 router.get("/getId/:id", Regulation_docController.getId);
 router.post(
   "/add",
