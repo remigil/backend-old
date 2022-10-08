@@ -45,6 +45,8 @@ const fieldData = {
   status_renpam: 0,
   choose_rute: 0,
   note_kakor: null,
+  start_datetime_renpam: null,
+  end_datetime_renpam: null,
 };
 const queryGlobal = ({ select, join, condition }) => {
   let query = `SELECT 

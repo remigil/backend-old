@@ -126,6 +126,12 @@ Renpam.init(
     start_time: {
       type: Sequelize.TIME,
     },
+    start_datetime_renpam: {
+      type: Sequelize.DATE,
+    },
+    end_datetime_renpam: {
+      type: Sequelize.DATE,
+    },
     end_time: {
       type: Sequelize.TIME,
     },
