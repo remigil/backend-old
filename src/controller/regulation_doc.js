@@ -93,7 +93,7 @@ module.exports = class Regulation_docController {
   };
   static getMobile = async (req, res) => {
     try {
-      const { order = 0, orderDirection = "asc" } = req.query;
+      const { order = 0, orderDirection = "asc", search, kategori } = req.query;
 
       let getData = { where: null };
       let { limit, page } = req.query;
@@ -107,10 +107,34 @@ module.exports = class Regulation_docController {
           orderDirection != null ? orderDirection : "desc",
         ],
       ];
-
+      let whereBuilder = [];
+      if (search != null) {
+        const modelAttr = Object.keys(Regulation_doc.getAttributes());
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+      }
+      if (kategori) {
+        getData.where = {
+          regulation_category: kategori,
+        };
+      }
       getData.where = {
         ...getData.where,
+        [Op.or]: whereBuilder,
+        // whereBuilder,
       };
+
       const data = await Regulation_doc.findAndCountAll(getData);
 
       response(res, true, "Succeed", {
