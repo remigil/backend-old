@@ -90,14 +90,18 @@ module.exports = class NotifikasiController {
   };
 
   static countNotifikasi = async (req, res) => {
-    const count = await Notifikasi.count({
-      where: {
-        is_read: 0,
-      },
-    });
-    response(res, true, "Succeed", {
-      total_data: count,
-    });
+    try {
+      const count = await Notifikasi.count({
+        where: {
+          is_read: 0,
+        },
+      });
+      response(res, true, "Succeed", {
+        total_data: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
   };
 
   static getMobile = async (req, res) => {

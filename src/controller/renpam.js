@@ -48,19 +48,7 @@ const fieldData = {
   start_datetime_renpam: null,
   end_datetime_renpam: null,
 };
-const queryGlobal = ({ select, join, condition }) => {
-  let query = `SELECT 
-                ${select}
-              FROM renpam r
-              INNER JOIN renpam_account ra ON ra.renpam_id=r.id
-              ${join}
-              WHERE 1=1
-              
-              ${condition ? condition : ""}
-            `;
 
-  return query;
-};
 module.exports = class RenpamController {
   static get = async (req, res) => {
     try {
