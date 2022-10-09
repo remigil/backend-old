@@ -93,9 +93,9 @@ module.exports = class Regulation_docController {
   };
   static getMobile = async (req, res) => {
     try {
-      const { order = 0, orderDirection = "asc", search, kategori } = req.query;
+      const { order, orderDirection = "asc", search, kategori } = req.query;
 
-      let getData = { where: null };
+      let getData = { where: {} };
       let { limit, page } = req.query;
       page = page ? parseInt(page) : 1;
       const resPage = getPagination(limit, page);
@@ -125,19 +125,15 @@ module.exports = class Regulation_docController {
         });
         getData.where = {
           [Op.or]: whereBuilder,
-          // whereBuilder,
         };
       }
+
       if (kategori != undefined) {
         getData.where = {
           ...getData.where,
           regulation_category: kategori,
         };
       }
-      // getData.where = {
-      //   ...getData.where,
-      //   // whereBuilder,
-      // };
 
       const data = await Regulation_doc.findAndCountAll(getData);
 
