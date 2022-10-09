@@ -645,7 +645,7 @@ module.exports = class RenpamController {
       let renpam = await Renpam.update(
         {
           start_datetime_renpam: moment(req.body.start_datetime_renpam).format(
-            "YYYY-MM-DD HH:MM:SS Z"
+            "YYYY-MM-DD HH:mm:ss Z"
           ),
         },
         {
