@@ -102,70 +102,74 @@ const socketInstace = (server) => {
       // io.emit("message", message);
     });
     socket.on("trackingUser", async function (coordinate) {
-      const { username, password, user_nrp, type, dataAccount, dataOfficer } =
-        socket.handshake.query;
-      let officerData = await Officer.findOne({
-        where: {
-          id: parseInt(dataAccount?.leader_team),
-        },
-      });
-      let noTelpon = dataOfficer?.phone_officer;
-      let noDepan = noTelpon.substring(0, 2);
-      if (noDepan === "62") {
-        noTelpon = noTelpon;
-      } else if (noDepan === "08") {
-        noTelpon = "62" + noTelpon.substring(1);
-      } else if (noDepan === "+6") {
-        noTelpon = noTelpon.substring(1);
-      } else {
-        noTelpon = noTelpon;
-      }
-      let sendTracking = await TrackG20.findOneAndUpdate(
-        {
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          date: moment().format("YYYY-MM-DD"),
-        },
-        {
-          id_user: AESDecrypt(dataAccount.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          name_account: dataAccount.dataValues.name_account,
-          id_officer: AESDecrypt(dataOfficer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          // name_team: dataAccount?.leader_team, // [ketua tim]
-          name_team: officerData.dataValues.name_officer, // [ketua tim]
-          name_officer: dataOfficer.name_officer,
-          rank_officer: dataOfficer.rank_officer,
-          // vip: dataAccount.vips.name_vip, // [nama vip]
-          nrp_user: dataOfficer.nrp_officer,
-          // handphone: dataOfficer?.phone_officer,
-          handphone: noTelpon,
-          photo_officer_telp_biasa: "+" + noTelpon,
-          // no_vehicle: null, // [plat nomor]
-          // type_vehicle: null, // ["motor"]
-          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-
-          date: moment().format("YYYY-MM-DD"),
-        },
-        {
-          new: true,
-          upsert: true,
-          rawResult: true, // Return the raw result from the MongoDB driver
+      try {
+        const { username, password, user_nrp, type, dataAccount, dataOfficer } =
+          socket.handshake.query;
+        let officerData = await Officer.findOne({
+          where: {
+            id: parseInt(dataAccount?.leader_team),
+          },
+        });
+        let noTelpon = dataOfficer?.phone_officer;
+        let noDepan = noTelpon.substring(0, 2);
+        if (noDepan === "62") {
+          noTelpon = noTelpon;
+        } else if (noDepan === "08") {
+          noTelpon = "62" + noTelpon.substring(1);
+        } else if (noDepan === "+6") {
+          noTelpon = noTelpon.substring(1);
+        } else {
+          noTelpon = noTelpon;
         }
-      );
-      // console.log({ sendTracking });
-      io.emit("sendToAdmin", sendTracking.value);
+        let sendTracking = await TrackG20.findOneAndUpdate(
+          {
+            latitude: coordinate.lat,
+            longitude: coordinate.lon,
+            date: moment().format("YYYY-MM-DD"),
+          },
+          {
+            id_user: AESDecrypt(dataAccount.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+            latitude: coordinate.lat,
+            longitude: coordinate.lon,
+            name_account: dataAccount.dataValues.name_account,
+            id_officer: AESDecrypt(dataOfficer.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+            // name_team: dataAccount?.leader_team, // [ketua tim]
+            name_team: officerData.dataValues.name_officer, // [ketua tim]
+            name_officer: dataOfficer.name_officer,
+            rank_officer: dataOfficer.rank_officer,
+            // vip: dataAccount.vips.name_vip, // [nama vip]
+            nrp_user: dataOfficer.nrp_officer,
+            // handphone: dataOfficer?.phone_officer,
+            handphone: noTelpon,
+            photo_officer_telp_biasa: "+" + noTelpon,
+            // no_vehicle: null, // [plat nomor]
+            // type_vehicle: null, // ["motor"]
+            no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+            type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+            fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+            back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
 
-      io.emit("sendToAdminMobile", sendTracking.value);
+            date: moment().format("YYYY-MM-DD"),
+          },
+          {
+            new: true,
+            upsert: true,
+            rawResult: true, // Return the raw result from the MongoDB driver
+          }
+        );
+        // console.log({ sendTracking });
+        io.emit("sendToAdmin", sendTracking.value);
+
+        io.emit("sendToAdminMobile", sendTracking.value);
+      } catch (error) {
+        console.log(error.message);
+      }
     });
   });
 };
