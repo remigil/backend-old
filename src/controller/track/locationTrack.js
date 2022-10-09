@@ -5,16 +5,24 @@ const { TrackG20 } = require("../../model/tracking/g20");
 module.exports = class LocationTrackController {
   static get = async (req, res) => {
     try {
-      const { date } = req.query;
+      const { date, name_officer = null } = req.query;
       const today = moment(date);
       const endDateToday = moment(today).endOf("day").toDate();
 
-      const getTrack = await TrackG20.find({
-        date: {
+      let getData = { where: null };
+      if (name_officer != null) {
+        getData.name_officer = name_officer;
+        getData.date = {
           $gte: today,
           $lte: endDateToday,
-        },
-      }).sort({ updated_at: -1 });
+        };
+      } else {
+        getData.date = {
+          $gte: today,
+          $lte: endDateToday,
+        };
+      }
+      const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
 
       let track = getTrack.reduce((group, product) => {
         const { nrp_user } = product;
