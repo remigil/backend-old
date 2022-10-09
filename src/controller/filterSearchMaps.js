@@ -15,6 +15,7 @@ const { TrackG20 } = require("../model/tracking/g20");
 const Cctv = require("../model/cctv");
 const Polres = require("../model/polres");
 const Fasum = require("../model/fasum");
+const CategoryFasum = require("../model/category_fasum");
 const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
 
@@ -67,6 +68,25 @@ const fieldData = {
           required: false,
         },
       ],
+      where: {
+        type: "LAP",
+      },
+    });
+  },
+  titik_panicButton: async (req) => {
+    return await Panic_button.findAll({
+      include: [
+        {
+          model: Officer,
+        },
+        {
+          model: Account,
+          required: false,
+        },
+      ],
+      where: {
+        type: "PNC",
+      },
     });
   },
   fasum: async ({ type, coordinate, radius }) => {
@@ -80,6 +100,20 @@ const fieldData = {
       tampung_nearby.push(...nearby.data.results);
     }
     return tampung_nearby;
+  },
+  fasum_khusus: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 9,
+      },
+    });
   },
   troublespot: null,
   jadwal_kegiatan: async () => {
@@ -118,9 +152,13 @@ module.exports = class FilterSearchController {
               tampung[value] = true;
               tampungArr.push(aaa);
             } else if (value == "titik_laporan") {
-              console.log("kesini");
               tampung[value] = true;
-
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "titik_panicButton") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "fasum_khusus") {
+              tampung[value] = true;
               tampungArr.push(fieldData[value](req));
             } else {
               tampung[value] = true;
