@@ -639,6 +639,29 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+  static editOnMobile = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let renpam = await Renpam.update(
+        {
+          start_datetime_renpam: moment(req.body.start_datetime_renpam).format(
+            "YYYY-MM-DD HH:MM:SS Z"
+          ),
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+          transaction: transaction,
+        }
+      );
+      await transaction.commit();
+      response(res, true, "Success", renpam);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
 
   static instruksiKakor = async (req, res) => {
     const transaction = await db.transaction();

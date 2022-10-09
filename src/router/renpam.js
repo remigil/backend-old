@@ -13,6 +13,7 @@ router.post(
 router.put("/edit/:id", RenpamController.edit);
 router.put("/instruksiKakor/:id", RenpamController.instruksiKakor);
 router.put("/editMobile/:id", formValidation, RenpamController.editMobile);
+router.put("/editOnMobile/:id", formValidation, RenpamController.editOnMobile);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
