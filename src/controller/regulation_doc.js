@@ -123,17 +123,21 @@ module.exports = class Regulation_docController {
             )
           );
         });
-      }
-      if (kategori) {
         getData.where = {
+          [Op.or]: whereBuilder,
+          // whereBuilder,
+        };
+      }
+      if (kategori != undefined) {
+        getData.where = {
+          ...getData.where,
           regulation_category: kategori,
         };
       }
-      getData.where = {
-        ...getData.where,
-        [Op.or]: whereBuilder,
-        // whereBuilder,
-      };
+      // getData.where = {
+      //   ...getData.where,
+      //   // whereBuilder,
+      // };
 
       const data = await Regulation_doc.findAndCountAll(getData);
 
