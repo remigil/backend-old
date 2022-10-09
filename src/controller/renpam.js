@@ -624,6 +624,9 @@ module.exports = class RenpamController {
           end_time: req.body.end_time,
           choose_rute: req.body.choose_rute,
           end_coordinate_renpam: JSON.parse(req.body.end_coordinate_renpam),
+          end_datetime_renpam: moment(req.body.start_datetime_renpam).format(
+            "YYYY-MM-DD HH:mm:ss Z"
+          ),
         },
         {
           where: {
