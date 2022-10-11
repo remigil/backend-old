@@ -269,10 +269,13 @@ module.exports = class AccountController {
           ) {
             for (let i = 0; i < fieldValue["officers"].length; i++) {
               fieldValueOfficer = {};
-              fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
-                isSafeUrl: true,
-                parseMode: "string",
-              });
+              fieldValueOfficer["account_id"] = AESDecrypt(
+                createAccount["id"],
+                {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }
+              );
               fieldValueOfficer["officer_id"] = AESDecrypt(
                 fieldValue["officers"][i],
                 {
