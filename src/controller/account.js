@@ -258,48 +258,43 @@ module.exports = class AccountController {
             }
           }
         });
-        await Account.create(fieldValue, { transaction: transaction })
-          .then((ress) => {
-            if (
-              fieldValue["officers"] ||
-              fieldValue["officers"].length > 0 ||
-              fieldValue["officers"].length != null
-            ) {
-              for (let i = 0; i < fieldValue["officers"].length; i++) {
-                fieldValueOfficer = {};
-                fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
+        const createAccount = await Account.create(fieldValue, {
+          transaction: transaction,
+        });
+        if (createAccount) {
+          if (
+            fieldValue["officers"] ||
+            fieldValue["officers"].length > 0 ||
+            fieldValue["officers"].length != null
+          ) {
+            for (let i = 0; i < fieldValue["officers"].length; i++) {
+              fieldValueOfficer = {};
+              fieldValueOfficer["account_id"] = AESDecrypt(ress["id"], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+              fieldValueOfficer["officer_id"] = AESDecrypt(
+                fieldValue["officers"][i],
+                {
                   isSafeUrl: true,
                   parseMode: "string",
-                });
-                fieldValueOfficer["officer_id"] = AESDecrypt(
-                  fieldValue["officers"][i],
+                }
+              );
+              if (fieldValue["vehicles"] || fieldValue["vehicles"].length > 0) {
+                fieldValueOfficer["vehicle_id"] = AESDecrypt(
+                  fieldValue["vehicles"][i],
                   {
                     isSafeUrl: true,
                     parseMode: "string",
                   }
                 );
-                if (
-                  fieldValue["vehicles"] ||
-                  fieldValue["vehicles"].length > 0
-                ) {
-                  fieldValueOfficer["vehicle_id"] = AESDecrypt(
-                    fieldValue["vehicles"][i],
-                    {
-                      isSafeUrl: true,
-                      parseMode: "string",
-                    }
-                  );
-                }
-                AccountProfile.create(fieldValueOfficer);
               }
+              AccountProfile.create(fieldValueOfficer);
             }
-            transaction.commit();
-            response(res, true, "Succeed", null);
-          })
-          .catch((err) => {
-            console.log(err);
-            response(res, false, "Failed", err);
-          });
+          }
+        }
+        await transaction.commit();
+        response(res, true, "Succeed", null);
       }
     } catch (e) {
       await transaction.rollback();
