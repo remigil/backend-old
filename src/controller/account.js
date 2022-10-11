@@ -298,6 +298,7 @@ module.exports = class AccountController {
           })
           .catch((err) => {
             console.log(err);
+            response(res, false, "Failed", err);
           });
       }
     } catch (e) {
