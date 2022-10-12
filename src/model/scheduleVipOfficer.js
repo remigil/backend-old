@@ -52,6 +52,8 @@ ScheduleVipOfficer.init(
 //   foreignKey: "id",
 // });
 (async () => {
-  ScheduleVipOfficer.sync({ alter: true });
+  ScheduleVipOfficer.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = ScheduleVipOfficer;

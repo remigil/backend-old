@@ -46,6 +46,8 @@ OperationProfilePolres.init(
   }
 );
 (async () => {
-  OperationProfilePolres.sync({ alter: true });
+  OperationProfilePolres.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = OperationProfilePolres;

@@ -56,6 +56,8 @@ Vehicle.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Vehicle.sync({ alter: true });
+  Vehicle.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Vehicle;

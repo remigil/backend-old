@@ -76,6 +76,8 @@ Fasum.hasOne(CategoryFasum, {
   sourceKey: "fasum_type",
 });
 (async () => {
-  Fasum.sync({ alter: true });
+  Fasum.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Fasum;

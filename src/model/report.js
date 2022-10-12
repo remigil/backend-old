@@ -116,6 +116,8 @@ Panic_button.belongsToMany(Account, {
 //   sourceKey: "officer_id",
 // });
 (async () => {
-  Panic_button.sync({ alter: true });
+  Panic_button.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Panic_button;

@@ -67,6 +67,8 @@ Notification.init(
 );
 
 (async () => {
-  Notification.sync({ alter: true });
+  Notification.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Notification;

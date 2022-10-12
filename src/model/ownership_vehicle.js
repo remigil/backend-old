@@ -46,6 +46,8 @@ OwnershipVehicle.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  OwnershipVehicle.sync({ alter: true });
+  OwnershipVehicle.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = OwnershipVehicle;

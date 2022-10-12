@@ -44,7 +44,9 @@ UserRole.init(
 );
 
 (async () => {
-  UserRole.sync({ alter: true });
+  UserRole.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 
 module.exports = UserRole;

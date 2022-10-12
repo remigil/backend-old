@@ -77,6 +77,8 @@ Schedule.hasMany(Renpam, {
   as: "renpams",
 });
 (async () => {
-  Schedule.sync({ alter: true });
+  Schedule.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Schedule;

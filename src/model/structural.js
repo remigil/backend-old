@@ -44,6 +44,8 @@ Structural.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Structural.sync({ alter: true });
+  Structural.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Structural;

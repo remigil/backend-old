@@ -48,6 +48,8 @@ CategoryFasum.init(
   }
 );
 (async () => {
-  CategoryFasum.sync({ alter: true });
+  CategoryFasum.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = CategoryFasum;

@@ -47,6 +47,8 @@ Country.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Country.sync({ alter: true });
+  Country.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Country;

@@ -48,6 +48,8 @@ OperationProfilePolda.init(
 );
 
 (async () => {
-  OperationProfilePolda.sync({ alter: true });
+  OperationProfilePolda.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = OperationProfilePolda;

@@ -55,6 +55,8 @@ Icon.init(
 );
 
 (async () => {
-  Icon.sync({ alter: true });
+  Icon.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Icon;

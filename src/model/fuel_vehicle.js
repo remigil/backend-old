@@ -46,6 +46,8 @@ FuelVehicle.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  FuelVehicle.sync({ alter: true });
+  FuelVehicle.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = FuelVehicle;

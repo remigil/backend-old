@@ -46,6 +46,8 @@ RenpamAccount.init(
   }
 );
 (async () => {
-  RenpamAccount.sync({ alter: true });
+  RenpamAccount.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = RenpamAccount;

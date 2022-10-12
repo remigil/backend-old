@@ -44,6 +44,8 @@ Position.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  Position.sync({ alter: true });
+  Position.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Position;

@@ -84,6 +84,8 @@ Officer.hasOne(Polda, {
 });
 
 (async () => {
-  Officer.sync({ alter: true });
+  Officer.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Officer;

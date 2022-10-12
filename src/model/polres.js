@@ -78,6 +78,8 @@ Polres.init(
 );
 // Polres.hasMany(Account, { foreignKey: "id" });
 (async () => {
-  Polres.sync({ alter: false });
+  Polres.sync({ alter: false }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Polres;

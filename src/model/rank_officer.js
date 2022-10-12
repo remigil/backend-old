@@ -46,6 +46,8 @@ RankOfficer.init(
 );
 // User.hasOne(UserRole, { foreignKey: "id" });
 (async () => {
-  RankOfficer.sync({ alter: true });
+  RankOfficer.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = RankOfficer;

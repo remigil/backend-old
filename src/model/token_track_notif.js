@@ -63,6 +63,8 @@ TokenTrackNotif.init(
 //   sourceKey: "nrp_user",
 // });
 (async () => {
-  TokenTrackNotif.sync({ alter: true });
+  TokenTrackNotif.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = TokenTrackNotif;

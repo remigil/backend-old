@@ -76,6 +76,8 @@ Cctv.init(
   }
 );
 (async () => {
-  Cctv.sync({ alter: true });
+  Cctv.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Cctv;

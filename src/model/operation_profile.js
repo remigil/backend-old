@@ -77,6 +77,8 @@ OperationProfile.belongsToMany(Polda, {
 //   otherKey: "polres_id", // replaces `categoryId`
 // });
 (async () => {
-  OperationProfile.sync({ alter: true });
+  OperationProfile.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = OperationProfile;

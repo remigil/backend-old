@@ -51,6 +51,8 @@ ContactGeneral.init(
   }
 );
 (async () => {
-  ContactGeneral.sync({ alter: true });
+  ContactGeneral.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = ContactGeneral;

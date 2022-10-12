@@ -49,6 +49,8 @@ TrxAccountOfficer.init(
   }
 );
 (async () => {
-  TrxAccountOfficer.sync({ alter: true });
+  TrxAccountOfficer.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = TrxAccountOfficer;

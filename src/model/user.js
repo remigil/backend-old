@@ -71,6 +71,8 @@ User.hasOne(UserRole, {
   sourceKey: "role_id",
 });
 (async () => {
-  User.sync({ alter: true });
+  User.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = User;

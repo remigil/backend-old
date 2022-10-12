@@ -40,6 +40,8 @@ Polda.init(
   }
 );
 (async () => {
-  Polda.sync({ alter: false });
+  Polda.sync({ alter: false }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Polda;

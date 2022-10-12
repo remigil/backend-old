@@ -52,6 +52,8 @@ Vip.init(
   }
 );
 (async () => {
-  Vip.sync({ alter: true });
+  Vip.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Vip;

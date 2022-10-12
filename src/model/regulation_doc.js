@@ -34,13 +34,15 @@ Regulation_doc.init(
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: {
-      deleted_at: null
-    } },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
         where: {
-          deleted_at: null
+          deleted_at: null,
         },
       },
     },
@@ -53,6 +55,8 @@ Regulation_doc.init(
   }
 );
 (async () => {
-  Regulation_doc.sync({ alter: true });
+  Regulation_doc.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Regulation_doc;

@@ -181,6 +181,8 @@ Renpam.belongsToMany(Vip, {
 });
 
 (async () => {
-  Renpam.sync({ alter: true });
+  Renpam.sync({ alter: true }).catch((err) => {
+    console.log({ err });
+  });
 })();
 module.exports = Renpam;
