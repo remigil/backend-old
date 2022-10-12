@@ -25,7 +25,7 @@ const fieldData = {
     const today = moment().format("YYYY-MM-DD");
     const endDateToday = moment(today).endOf("day").toDate();
 
-    const getTrack = TrackG20.find({
+    const getTrack = await TrackG20.find({
       date: {
         $gte: today,
         $lte: endDateToday,
@@ -52,13 +52,13 @@ const fieldData = {
     return valueData;
   },
   polres: async () => {
-    return Polres.findAll();
+    return await Polres.findAll();
   },
   cctv: async () => {
-    return Cctv.findAll();
+    return await Cctv.findAll();
   },
   titik_laporan: async (req) => {
-    return Panic_button.findAll({
+    return await Panic_button.findAll({
       include: [
         {
           model: Officer,
@@ -74,7 +74,7 @@ const fieldData = {
     });
   },
   titik_panicButton: async (req) => {
-    return Panic_button.findAll({
+    return await Panic_button.findAll({
       include: [
         {
           model: Officer,
@@ -92,7 +92,7 @@ const fieldData = {
   fasum: async ({ type, coordinate, radius }) => {
     let tampung_nearby = [];
     for (const iterator of type.split(",")) {
-      let nearby = nearByPlacesGoogle({
+      let nearby = await nearByPlacesGoogle({
         type: iterator,
         radius: radius,
         coordinate: coordinate,
@@ -102,7 +102,7 @@ const fieldData = {
     return tampung_nearby;
   },
   fasum_khusus: async (req) => {
-    return Fasum.findAll({
+    return await Fasum.findAll({
       include: [
         {
           model: CategoryFasum,
@@ -117,7 +117,7 @@ const fieldData = {
   },
   troublespot: null,
   jadwal_kegiatan: async () => {
-    return Schedule.findAll();
+    return await Schedule.findAll();
   },
   operasi: null,
 };

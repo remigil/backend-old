@@ -6,6 +6,9 @@ const moment = require("moment");
 const TokenTrackNotif = require("../model/token_track_notif");
 const Officer = require("../model/officer");
 const Account = require("../model/account");
+const fs = require("fs");
+const { default: readXlsxFile } = require("read-excel-file/node");
+const { replace } = require("lodash");
 
 class Authentication {
   static login = async (req, res) => {
@@ -89,15 +92,6 @@ class Authentication {
             false,
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
-          // await TokenTrackNotif.create({
-          //   nrp_user: nrp_user,
-          //   device_user: device_user,
-          //   polda_id: account.officers[0].polda_id,
-          //   team_id: AESDecrypt(account.id, {
-          //     isSafeUrl: true,
-          //     parseMode: "string",
-          //   }),
-          // });
         }
         const accessToken = JWTEncrypt({
           uid: account.id,
@@ -120,6 +114,146 @@ class Authentication {
       }
     } catch (error) {
       response(res, false, "Login failed, please try again!", error.message);
+    }
+  };
+  static testCaseloginMobile = async (req, res) => {
+    try {
+      let path = req.body.file.filepath;
+      let file = req.body.file;
+      let fileName = file.originalFilename;
+      // fs.renameSync(path, "./public/upload/" + fileName, function (err) {
+      //   if (err) response(res, false, "Error", err.message);
+      // });
+      let readExcell = await readXlsxFile(
+        "./public/upload/Untitled spreadsheet.xlsx"
+      );
+      let listAccount = [];
+      let index = 0;
+      for (const iterator of readExcell) {
+        if (index == 0) {
+          if (
+            iterator[0] != "nrp" &&
+            iterator[1] != "account" &&
+            iterator[2] != "pasword"
+          ) {
+            return response(res, false, "Format Tidak Sesuai", { iterator });
+          }
+        } else {
+          listAccount.push({
+            nrp_user: iterator[0],
+            team: iterator[1],
+            password: iterator[2],
+            device_user: "TestCase" + index,
+          });
+        }
+        index++;
+      }
+      let indicatorLoginBerhasil = [];
+      let indicatorLoginGagal = [];
+      for (const iterator of listAccount) {
+        let account = await Account.findOne({
+          where: {
+            name_account: replace(iterator.team, " ", ""),
+          },
+          include: [
+            {
+              model: Officer,
+              as: "officers",
+              required: true,
+              where: {
+                nrp_officer: replace(iterator.nrp_user, " ", ""),
+              },
+            },
+          ],
+        });
+        // console.log({ account });
+        if (account == null) {
+          indicatorLoginGagal.push({
+            nrp_user: replace(iterator.nrp_user, " ", ""),
+            account_tidak_ditemukan: true,
+          });
+        } else {
+          let chcekDeviceUser = await TokenTrackNotif.findOne({
+            where: {
+              device_user: iterator.device_user,
+            },
+          });
+          let nrpDeviceUser = await TokenTrackNotif.findOne({
+            where: {
+              nrp_user: replace(iterator.nrp_user, " ", ""),
+            },
+          });
+
+          if (
+            bcrypt.compareSync(
+              replace(iterator.password, " ", ""),
+              account?.password
+            )
+          ) {
+            if (
+              chcekDeviceUser &&
+              chcekDeviceUser.nrp_user != replace(iterator.nrp_user, " ", "")
+            ) {
+              indicatorLoginGagal.push({
+                nrp_user: replace(iterator.nrp_user, " ", ""),
+                device_user: iterator.device_user,
+                polda_id: account.officers[0].polda_id,
+                team_id: AESDecrypt(account.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+                device_sudah_ada: true,
+              });
+            } else if (!chcekDeviceUser && !nrpDeviceUser) {
+              indicatorLoginBerhasil.push({
+                nrp_user: replace(iterator.nrp_user, " ", ""),
+                device_user: iterator.device_user,
+                polda_id: account.officers[0].polda_id,
+                team_id: AESDecrypt(account.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              });
+            } else if (
+              !chcekDeviceUser &&
+              nrpDeviceUser.nrp_user == replace(iterator.nrp_user, " ", "")
+            ) {
+              indicatorLoginGagal.push({
+                nrp_user: iterator.nrp_user,
+                device_user: iterator.device_user,
+                polda_id: account.officers[0].polda_id,
+                team_id: AESDecrypt(account.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+                device_sudah_ada: true,
+              });
+            }
+          } else {
+            indicatorLoginGagal.push({
+              nrp_user: iterator.nrp_user,
+              device_user: iterator.device_user,
+              polda_id: account.officers[0].polda_id,
+              team_id: AESDecrypt(account.id, {
+                isSafeUrl: true,
+                parseMode: "string",
+              }),
+              password_salah: true,
+            });
+          }
+        }
+      }
+
+      response(res, true, "Login succeed", {
+        indicatorLoginBerhasil,
+        indicatorLoginGagal,
+      });
+    } catch (error) {
+      console.log({ error });
+      return res.json({
+        error,
+      });
+      // response(res, false, "Login failed, please try again!", error.message);
     }
   };
   static validateLogin = async (req, res) => {
