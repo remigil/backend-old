@@ -121,12 +121,10 @@ class Authentication {
       let path = req.body.file.filepath;
       let file = req.body.file;
       let fileName = file.originalFilename;
-      // fs.renameSync(path, "./public/upload/" + fileName, function (err) {
-      //   if (err) response(res, false, "Error", err.message);
-      // });
-      let readExcell = await readXlsxFile(
-        "./public/upload/Untitled spreadsheet.xlsx"
-      );
+      fs.renameSync(path, "./public/upload/" + fileName, function (err) {
+        if (err) response(res, false, "Error", err.message);
+      });
+      let readExcell = await readXlsxFile("./public/upload/" + fileName);
       let listAccount = [];
       let index = 0;
       for (const iterator of readExcell) {
@@ -166,7 +164,6 @@ class Authentication {
             },
           ],
         });
-        // console.log({ account });
         if (account == null) {
           indicatorLoginGagal.push({
             nrp_user: replace(iterator.nrp_user, " ", ""),
@@ -196,23 +193,12 @@ class Authentication {
             ) {
               indicatorLoginGagal.push({
                 nrp_user: replace(iterator.nrp_user, " ", ""),
-                device_user: iterator.device_user,
-                polda_id: account.officers[0].polda_id,
-                team_id: AESDecrypt(account.id, {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
+
                 device_sudah_ada: true,
               });
             } else if (!chcekDeviceUser && !nrpDeviceUser) {
               indicatorLoginBerhasil.push({
                 nrp_user: replace(iterator.nrp_user, " ", ""),
-                device_user: iterator.device_user,
-                polda_id: account.officers[0].polda_id,
-                team_id: AESDecrypt(account.id, {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
               });
             } else if (
               !chcekDeviceUser &&
@@ -220,16 +206,21 @@ class Authentication {
             ) {
               indicatorLoginGagal.push({
                 nrp_user: iterator.nrp_user,
-                device_user: iterator.device_user,
-                polda_id: account.officers[0].polda_id,
-                team_id: AESDecrypt(account.id, {
-                  isSafeUrl: true,
-                  parseMode: "string",
-                }),
+
                 device_sudah_ada: true,
               });
             }
           } else {
+            await Account.update(
+              {
+                password: "g20",
+              },
+              {
+                where: {
+                  name_account: replace(iterator.team, " ", ""),
+                },
+              }
+            );
             indicatorLoginGagal.push({
               nrp_user: iterator.nrp_user,
               device_user: iterator.device_user,
