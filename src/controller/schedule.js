@@ -11,7 +11,7 @@ const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
 const TrxAccountOfficer = require("../model/trx_account_officer");
 const Officer = require("../model/officer");
-
+const moment = require("moment");
 const field = {
   activity: null,
   id_vip: null,
@@ -121,6 +121,7 @@ module.exports = class ScheduleController {
             r.title_start as title_end,
             r.title_end as title_start,
             r.note_kakor,
+            
             CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
             CASE 
             WHEN r.type_renpam = 1 THEN 'Patroli' 
@@ -154,39 +155,103 @@ module.exports = class ScheduleController {
             account_id: req.auth.uid,
           })
         );
-        result_renpam = result_renpam.map((renpam) => ({
-          ...renpam,
-          route: renpam.route
-            ? renpam.route.map(
-                (route) => route.latLng?.lng + "," + route.latLng?.lat
-              )
-            : "",
-          route_alternatif_1: renpam.route_alternatif_1
-            ? renpam.route_alternatif_1.map(
-                (route) => route.latLng?.lng + "," + route.latLng?.lat
-              )
-            : "",
-          route_alternatif_2: renpam.route_alternatif_2
-            ? renpam.route_alternatif_2.map(
-                (route) => route.latLng?.lng + "," + route.latLng?.lat
-              )
-            : "",
-          address_route_1: renpam.route
-            ? renpam.route.map((route) => ({
-                address: route.name,
-              }))
-            : [],
-          address_route_2: renpam.route_alternatif_1
-            ? renpam.route_alternatif_1.map((route) => ({
-                address: route.name,
-              }))
-            : [],
-          address_route_3: renpam.route_alternatif_2
-            ? renpam.route_alternatif_2.map((route) => ({
-                address: route.name,
-              }))
-            : [],
-        }));
+        result_renpam = result_renpam.map((renpam) => {
+          let selesaiRenpam = {
+            estimasi_time: renpam.estimasi_time,
+
+            estimasi_time_alter1: renpam.estimasi_time_alter1,
+            estimasi_time_alter2: renpam.estimasi_time_alter2,
+            estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
+            estimasi_time_umum: renpam.estimasi_time_umum,
+          };
+
+          if (renpam.renpam_status === "sudah") {
+            selesaiRenpam = {
+              estimasi_time:
+                moment(renpam.end_datetime_renpam).diff(
+                  renpam.start_datetime_renpam,
+                  "minutes"
+                ) + " Menit",
+              estimasi_time_alter1: renpam.estimasi_time_alter1,
+              estimasi_time_alter2: renpam.estimasi_time_alter2,
+              estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
+              estimasi_time_umum: renpam.estimasi_time_umum,
+            };
+          }
+          console.log(
+            { selesaiRenpam, status: renpam.renpam_status }
+            //   // moment(`${renpam.date} ${renpam.end_datetime_renpam}`),
+            //   renpam.end_datetime_renpam
+            //   // `${renpam.date} ${renpam.start_datetime_renpam}`
+          );
+          return {
+            ...renpam,
+            ...selesaiRenpam,
+            route: renpam.route
+              ? renpam.route.map(
+                  (route) => route.latLng?.lng + "," + route.latLng?.lat
+                )
+              : "",
+            route_alternatif_1: renpam.route_alternatif_1
+              ? renpam.route_alternatif_1.map(
+                  (route) => route.latLng?.lng + "," + route.latLng?.lat
+                )
+              : "",
+            route_alternatif_2: renpam.route_alternatif_2
+              ? renpam.route_alternatif_2.map(
+                  (route) => route.latLng?.lng + "," + route.latLng?.lat
+                )
+              : "",
+            address_route_1: renpam.route
+              ? renpam.route.map((route) => ({
+                  address: route.name,
+                }))
+              : [],
+            address_route_2: renpam.route_alternatif_1
+              ? renpam.route_alternatif_1.map((route) => ({
+                  address: route.name,
+                }))
+              : [],
+            address_route_3: renpam.route_alternatif_2
+              ? renpam.route_alternatif_2.map((route) => ({
+                  address: route.name,
+                }))
+              : [],
+          };
+        });
+        // result_renpam = result_renpam.map((renpam) => ({
+        //   ...renpam,
+        //   route: renpam.route
+        //     ? renpam.route.map(
+        //         (route) => route.latLng?.lng + "," + route.latLng?.lat
+        //       )
+        //     : "",
+        //   route_alternatif_1: renpam.route_alternatif_1
+        //     ? renpam.route_alternatif_1.map(
+        //         (route) => route.latLng?.lng + "," + route.latLng?.lat
+        //       )
+        //     : "",
+        //   route_alternatif_2: renpam.route_alternatif_2
+        //     ? renpam.route_alternatif_2.map(
+        //         (route) => route.latLng?.lng + "," + route.latLng?.lat
+        //       )
+        //     : "",
+        //   address_route_1: renpam.route
+        //     ? renpam.route.map((route) => ({
+        //         address: route.name,
+        //       }))
+        //     : [],
+        //   address_route_2: renpam.route_alternatif_1
+        //     ? renpam.route_alternatif_1.map((route) => ({
+        //         address: route.name,
+        //       }))
+        //     : [],
+        //   address_route_3: renpam.route_alternatif_2
+        //     ? renpam.route_alternatif_2.map((route) => ({
+        //         address: route.name,
+        //       }))
+        //     : [],
+        // }));
 
         renpamData.push({
           tanggal: iterator.date,
@@ -325,6 +390,7 @@ module.exports = class ScheduleController {
         type ? { [type]: jumlah_data[type] } : jumlah_data
       );
     } catch (e) {
+      console.log({ e });
       response(res, false, "Failed", e.message);
     }
   };
@@ -349,6 +415,7 @@ module.exports = class ScheduleController {
             r.title_end as title_start,
           r.start_datetime_renpam,
           r.end_datetime_renpam,
+          r.choose_route,
           
           r.note_kakor,
           CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
@@ -387,39 +454,64 @@ module.exports = class ScheduleController {
           account_id: req.auth.uid,
         })
       );
-      result_renpam = result_renpam.map((renpam) => ({
-        ...renpam,
-        route: renpam.route
-          ? renpam.route.map(
-              (route) => route.latLng?.lng + "," + route.latLng?.lat
-            )
-          : "",
-        route_alternatif_1: renpam.route_alternatif_1
-          ? renpam.route_alternatif_1.map(
-              (route) => route.latLng?.lng + "," + route.latLng?.lat
-            )
-          : "",
-        route_alternatif_2: renpam.route_alternatif_2
-          ? renpam.route_alternatif_2.map(
-              (route) => route.latLng?.lng + "," + route.latLng?.lat
-            )
-          : "",
-        address_route_1: renpam.route
-          ? renpam.route.map((route) => ({
-              address: route.name,
-            }))
-          : [],
-        address_route_2: renpam.route_alternatif_1
-          ? renpam.route_alternatif_1.map((route) => ({
-              address: route.name,
-            }))
-          : [],
-        address_route_3: renpam.route_alternatif_2
-          ? renpam.route_alternatif_2.map((route) => ({
-              address: route.name,
-            }))
-          : [],
-      }));
+      result_renpam = result_renpam.map((renpam) => {
+        let selesaiRenpam = {
+          // estimasi_time: renpam.estimasi_time,
+          estimasi_time: moment(`${r.date} ${renpam.end_datetime_renpam}`).diff(
+            `${r.date} ${renpam.start_datetime_renpam}`,
+            "minute"
+          ),
+          estimasi_time_alter1: renpam.estimasi_time_alter1,
+          estimasi_time_alter2: renpam.estimasi_time_alter2,
+          estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
+          estimasi_time_umum: renpam.estimasi_time_umum,
+        };
+
+        if (renpam.renpam_status == "sudah") {
+          selesaiRenpam = {
+            estimasi_time: renpam.estimasi_time,
+            estimasi_time_alter1: renpam.estimasi_time_alter1,
+            estimasi_time_alter2: renpam.estimasi_time_alter2,
+            estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
+            estimasi_time_umum: renpam.estimasi_time_umum,
+          };
+        }
+        console.log({ selesaiRenpam });
+        return {
+          ...renpam,
+          ...selesaiRenpam,
+          route: renpam.route
+            ? renpam.route.map(
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
+              )
+            : "",
+          route_alternatif_1: renpam.route_alternatif_1
+            ? renpam.route_alternatif_1.map(
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
+              )
+            : "",
+          route_alternatif_2: renpam.route_alternatif_2
+            ? renpam.route_alternatif_2.map(
+                (route) => route.latLng?.lng + "," + route.latLng?.lat
+              )
+            : "",
+          address_route_1: renpam.route
+            ? renpam.route.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+          address_route_2: renpam.route_alternatif_1
+            ? renpam.route_alternatif_1.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+          address_route_3: renpam.route_alternatif_2
+            ? renpam.route_alternatif_2.map((route) => ({
+                address: route.name,
+              }))
+            : [],
+        };
+      });
       response(res, true, "Succeed", result_renpam);
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -586,6 +678,7 @@ module.exports = class ScheduleController {
         // test: JSON.parse(adaw),
       });
     } catch (e) {
+      console.log({ e });
       response(res, false, "Failed", e.message);
     }
   };
