@@ -18,5 +18,11 @@ router.post(
   formValidation,
   Authentication.loginMobile
 );
+router.post(
+  "/test-excel-login-mobile",
+
+  formValidation,
+  Authentication.testCaseloginMobile
+);
 router.post("/validate_login", Authentication.validateLogin);
 module.exports = router;
