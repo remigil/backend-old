@@ -118,8 +118,8 @@ module.exports = class ScheduleController {
             r.date,
             r.start_time as renpam_start_time,
             r.end_time as renpam_end_time,
-            r.title_start,
-            r.title_end,
+            r.title_start as title_end,
+            r.title_end as title_start,
             r.note_kakor,
             CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
             CASE 
@@ -345,10 +345,11 @@ module.exports = class ScheduleController {
           r.date,
           r.start_time as renpam_start_time,
           r.end_time as renpam_end_time,
-          r.title_start,
+          r.title_start as title_end,
+            r.title_end as title_start,
           r.start_datetime_renpam,
           r.end_datetime_renpam,
-          r.title_end,
+          
           r.note_kakor,
           CASE WHEN (r.status_renpam is NULL OR r.status_renpam = 0) THEN 'belum' ELSE 'sudah' END renpam_status,
           CASE 
