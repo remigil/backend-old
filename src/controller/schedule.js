@@ -456,11 +456,8 @@ module.exports = class ScheduleController {
       );
       result_renpam = result_renpam.map((renpam) => {
         let selesaiRenpam = {
-          // estimasi_time: renpam.estimasi_time,
-          estimasi_time: moment(`${r.date} ${renpam.end_datetime_renpam}`).diff(
-            `${r.date} ${renpam.start_datetime_renpam}`,
-            "minute"
-          ),
+          estimasi_time: renpam.estimasi_time,
+
           estimasi_time_alter1: renpam.estimasi_time_alter1,
           estimasi_time_alter2: renpam.estimasi_time_alter2,
           estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
@@ -469,7 +466,10 @@ module.exports = class ScheduleController {
 
         if (renpam.renpam_status == "sudah") {
           selesaiRenpam = {
-            estimasi_time: renpam.estimasi_time,
+            estimasi_time: moment(`${renpam.end_datetime_renpam}`).diff(
+              `${renpam.start_datetime_renpam}`,
+              "minute"
+            ),
             estimasi_time_alter1: renpam.estimasi_time_alter1,
             estimasi_time_alter2: renpam.estimasi_time_alter2,
             estimasi_time_masyarakat: renpam.estimasi_time_masyarakat,
