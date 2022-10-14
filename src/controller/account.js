@@ -403,7 +403,9 @@ module.exports = class AccountController {
                       }
                     );
                   }
-                  AccountProfile.create(fieldValueOfficer);
+                  await AccountProfile.create(fieldValueOfficer, {
+                    transaction
+                  });
                 })
                 .catch((err) => {
                   console.log(err);
