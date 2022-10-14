@@ -412,7 +412,7 @@ module.exports = class RenpamController {
               });
               // TokenTrackNotif
 
-              RenpamAccount.create(fieldValueAccount);
+              await RenpamAccount.create(fieldValueAccount);
             }
           }
 
@@ -428,7 +428,7 @@ module.exports = class RenpamController {
                 parseMode: "string",
               });
 
-              RenpamVip.create(fieldValueVip);
+              await RenpamVip.create(fieldValueVip);
             }
           }
 
@@ -474,22 +474,22 @@ module.exports = class RenpamController {
         }
       });
 
-      const dataRenAc = RenpamAccount.findOne({
-        where: {
-          renpam_id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-      const dataRenVip = RenpamAccount.findOne({
-        where: {
-          renpam_id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
+      // const dataRenAc =  RenpamAccount.findOne({
+      //   where: {
+      //     renpam_id: AESDecrypt(req.params.id, {
+      //       isSafeUrl: true,
+      //       parseMode: "string",
+      //     }),
+      //   },
+      // });
+      // const dataRenVip = RenpamAccount.findOne({
+      //   where: {
+      //     renpam_id: AESDecrypt(req.params.id, {
+      //       isSafeUrl: true,
+      //       parseMode: "string",
+      //     }),
+      //   },
+      // });
 
       if (req.body.route) {
         let test = await direction_route(JSON.parse(req.body.route));
@@ -550,7 +550,7 @@ module.exports = class RenpamController {
         },
         transaction: transaction,
       })
-        .then((op) => {
+        .then(async (op) => {
           // console.log(fieldValue);
           if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
             for (let i = 0; i < fieldValue["accounts"].length; i++) {
@@ -568,12 +568,12 @@ module.exports = class RenpamController {
               );
 
               // if (dataRenAc && dataRenVip) {
-              RenpamAccount.destroy({
+              await RenpamAccount.destroy({
                 where: {
                   renpam_id: fieldValueAccount["renpam_id"],
                 },
               });
-              RenpamAccount.create(fieldValueAccount);
+              await RenpamAccount.create(fieldValueAccount);
               // }
             }
           }
@@ -591,7 +591,7 @@ module.exports = class RenpamController {
               });
 
               // if (dataRenAc && dataRenVip) {
-              RenpamVip.destroy({
+              await RenpamVip.destroy({
                 where: {
                   renpam_id: AESDecrypt(req.params.id, {
                     isSafeUrl: true,
@@ -599,7 +599,7 @@ module.exports = class RenpamController {
                   }),
                 },
               });
-              RenpamVip.create(fieldValueVip);
+              await RenpamVip.create(fieldValueVip);
               // }
             }
           }

@@ -271,7 +271,7 @@ module.exports = class NotifikasiController {
         .then(async (ress) => {
           // console.log({ succ });
           for (let i = 0; i < ress.length; i++) {
-            axios({
+            await axios({
               url: "https://fcm.googleapis.com/fcm/send",
               method: "POST",
               headers: {

@@ -350,16 +350,21 @@ module.exports = class AccountController {
         }
       });
 
-      await Account.update(fieldValue, {
-        where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+      await Account.update(
+        fieldValue,
+        {
+          where: {
+            id: AESDecrypt(req.params.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
         },
-        transaction: transaction,
-      })
-        .then((op) => {
+        {
+          transaction,
+        }
+      )
+        .then(async (op) => {
           if (fieldValue["officers"] || fieldValue["officers"].length > 0) {
             for (let i = 0; i < fieldValue["officers"].length; i++) {
               var officer_id = AESDecrypt(fieldValue["officers"][i], {
@@ -412,7 +417,7 @@ module.exports = class AccountController {
                 });
             }
 
-            transaction.commit();
+            await transaction.commit();
             response(res, true, "Succeed", null);
           }
         })
@@ -427,15 +432,19 @@ module.exports = class AccountController {
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Account.destroy({
-        where: {
-          id: AESDecrypt(req.body.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+      await Account.destroy(
+        {
+          where: {
+            id: AESDecrypt(req.body.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
         },
-        transaction: transaction,
-      });
+        {
+          transaction: transaction,
+        }
+      );
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

@@ -269,15 +269,21 @@ module.exports = class OfficerController {
         }
       });
 
-      await Officer.update(fieldValueData, {
-        where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+      await Officer.update(
+        fieldValueData,
+        {
+          where: {
+            id: AESDecrypt(req.params.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+          // transaction: transaction,
         },
-        transaction: transaction,
-      });
+        {
+          transaction,
+        }
+      );
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
