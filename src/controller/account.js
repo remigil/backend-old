@@ -377,7 +377,7 @@ module.exports = class AccountController {
                   officer_id: officer_id,
                 },
               })
-                .then((op) => {
+                .then(async (op) => {
                   fieldValueOfficer = {};
                   fieldValueOfficer["account_id"] = AESDecrypt(req.params.id, {
                     isSafeUrl: true,
@@ -404,7 +404,7 @@ module.exports = class AccountController {
                     );
                   }
                   await AccountProfile.create(fieldValueOfficer, {
-                    transaction
+                    transaction,
                   });
                 })
                 .catch((err) => {
