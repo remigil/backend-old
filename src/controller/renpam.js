@@ -403,6 +403,50 @@ module.exports = class RenpamController {
       });
       let mapDataWithDate = renpamData;
       response(res, true, "Succeed", {
+        limit: resPage.limit,
+        page: page,
+        total: renpamData.count,
+        total_page: renpamData.rows.length,
+        ...renpamData,
+      });
+    } catch (e) {
+      response(res, false, e.message, e);
+    }
+  };
+  static listInstruksiToday = async (req, res) => {
+    try {
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      let renpamData = await Renpam.findAndCountAll({
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: true,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+
+        order: [["date", "DESC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+        where: {
+          date: moment().format("YYYY-MM-DD"),
+        },
+      });
+      let mapDataWithDate = renpamData;
+      response(res, true, "Succeed", {
         // limit: resPage.limit,
         // page: page,
         // total: renpamData.count,
