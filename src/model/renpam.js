@@ -68,33 +68,23 @@ Renpam.init(
     direction_route: {
       type: Sequelize.JSON,
     },
-    direction_route_text: {
-      type: Sequelize.JSONB,
-    },
+
     direction_route_alter1: {
       type: Sequelize.JSON,
     },
-    direction_route_alter1_text: {
-      type: Sequelize.JSONB,
-    },
+
     direction_route_alter2: {
       type: Sequelize.JSON,
     },
-    direction_route_alter2_text: {
-      type: Sequelize.JSONB,
-    },
+
     direction_route_masyarakat: {
       type: Sequelize.JSON,
     },
-    direction_route_masyarakat_text: {
-      type: Sequelize.JSONB,
-    },
+
     direction_route_umum: {
       type: Sequelize.JSON,
     },
-    direction_route_umum_text: {
-      type: Sequelize.JSONB,
-    },
+
     estimasi: {
       type: Sequelize.STRING(20),
     },
