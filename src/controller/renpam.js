@@ -187,6 +187,153 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getMobile = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = null,
+        orderDirection = "asc",
+        start_date = null,
+        end_date = null,
+      } = req.query;
+      // return response(res, false, "Failed", start_date);
+      const modelAttr = Object.keys(Renpam.getAttributes());
+      let getDataRules = { where: null };
+      if (serverSide?.toLowerCase() === "true") {
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
+      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
+
+      let date_ob = new Date();
+      if (start_date != null && end_date != null) {
+        // console.log("tgl");
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      } else if (start_date == null && end_date != null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [date_ob, end_date],
+          },
+        };
+      } else if (start_date != null && end_date == null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, date_ob],
+          },
+        };
+      }
+
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getDataRules.where = {
+          ...getDataRules.where,
+          ...filters,
+        };
+      }
+      const data = await Renpam.findAndCountAll({
+        ...getDataRules,
+        attributes: {
+          exclude: [
+            "direction_route",
+            "direction_route_alter1",
+            "direction_route_alter2",
+            "direction_route_masyarakat",
+            "direction_route_umum",
+          ],
+        },
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: false,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+        distinct: true,
+      });
+      // const count = await Renpam.count({
+      //   where: getDataRules?.where,
+      // });
+      response(res, true, "Succeed", {
+        data,
+        // recordsFiltered: count,
+        // recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 
   static getId = async (req, res) => {
     try {
@@ -226,12 +373,6 @@ module.exports = class RenpamController {
 
   static listInstruksi = async (req, res) => {
     try {
-      // console.log(
-      //   AESDecrypt(req.auth.officer, {
-      //     isSafeUrl: true,
-      //     parseMode: "string",
-      //   })
-      // );
       let { limit, page } = req.query;
       page = page ? parseInt(page) : 1;
       const resPage = pagination.getPagination(limit, page);
@@ -246,21 +387,6 @@ module.exports = class RenpamController {
             model: Account,
             as: "accounts",
             required: true,
-            include: [
-              {
-                model: Officer,
-                as: "officers",
-                where: {
-                  id: AESDecrypt(req.auth.officer, {
-                    isSafeUrl: true,
-                    parseMode: "string",
-                  }),
-                },
-              },
-            ],
-            // where:{
-
-            // }
           },
           {
             model: Vip,
@@ -277,14 +403,14 @@ module.exports = class RenpamController {
       });
       let mapDataWithDate = renpamData;
       response(res, true, "Succeed", {
-        limit: resPage.limit,
-        page: page,
-        total: renpamData.count,
-        total_page: renpamData.rows.length,
+        // limit: resPage.limit,
+        // page: page,
+        // total: renpamData.count,
+        // total_page: renpamData.rows.length,
         ...renpamData,
       });
     } catch (e) {
-      response(res, false, "Failed", e.message);
+      response(res, false, e.message, e);
     }
   };
 
