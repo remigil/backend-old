@@ -32,7 +32,7 @@ Schedule.init(
     date_schedule: {
       type: Sequelize.DATEONLY,
     },
-    category_schedule: {
+    id_category_schedule: {
       type: Sequelize.INTEGER,
     },
     start_time: {
