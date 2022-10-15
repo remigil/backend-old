@@ -602,17 +602,76 @@ module.exports = class ScheduleController {
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
-          whereBuilder.push(
-            Sequelize.where(
-              Sequelize.fn(
-                "lower",
-                Sequelize.cast(Sequelize.col(key), "varchar")
-              ),
-              {
-                [Op.like]: `%${search.toLowerCase()}%`,
-              }
-            )
-          );
+          if (key == "id") {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(Sequelize.col("schedule.id"), "varchar")
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          } else if (key == "created_at") {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(
+                    Sequelize.col("schedule.created_at"),
+                    "varchar"
+                  )
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          } else if (key == "updated_at") {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(
+                    Sequelize.col("schedule.updated_at"),
+                    "varchar"
+                  )
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          } else if (key == "deleted_at") {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(
+                    Sequelize.col("schedule.deleted_at"),
+                    "varchar"
+                  )
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          } else {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(Sequelize.col(key), "varchar")
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          }
         });
         getData.where = {
           [Op.or]: whereBuilder,
@@ -638,14 +697,15 @@ module.exports = class ScheduleController {
 
       const dataRes = await Schedule.findAll({
         ...getData,
-        // include: [
-        //   {
-        //     model: CategorySchedule,
-
-        //     foreignKey: "id_category_schedule",
-        //     required: false,
-        //   },
-        // ],
+        include: [
+          {
+            model: CategorySchedule,
+            as: "category_schedule",
+            foreignKey: "id_category_schedule",
+            // attributes: ["name_category_schedule", "status_category_schedule"],
+            required: false,
+          },
+        ],
       });
       const count = await Schedule.count({
         where: getData?.where,

@@ -78,7 +78,7 @@ Schedule.init(
 
 Schedule.hasOne(CategorySchedule, {
   foreignKey: "id",
-  // as: "leader",
+  as: "category_schedule",
   sourceKey: "id_category_schedule",
 });
 Schedule.hasMany(Renpam, {
