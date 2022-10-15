@@ -44,6 +44,9 @@ Renpam.init(
     total_vehicle: {
       type: Sequelize.INTEGER,
     },
+    order_renpam: {
+      type: Sequelize.INTEGER,
+    },
     title_start: {
       type: Sequelize.TEXT,
     },
