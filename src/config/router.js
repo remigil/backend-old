@@ -51,6 +51,12 @@ router.use(
   require("../router/schedule")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/category_schedule",
+  authMiddleware.jwtAuth,
+  require("../router/category_schedule")
+);
+
 // MASTER DATA
 router.use(
   "/v" + process.env.APP_VERSION + "/position",

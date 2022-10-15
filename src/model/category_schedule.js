@@ -3,12 +3,10 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
-const Renpam = require("./renpam");
-
 const Model = Sequelize.Model;
 
-class Schedule extends Model {}
-Schedule.init(
+class CategorySchedule extends Model {}
+CategorySchedule.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -20,68 +18,38 @@ Schedule.init(
         });
       },
     },
-    operation_id: {
-      type: Sequelize.INTEGER,
-    },
-    activity: {
+    name_category_schedule: {
       type: Sequelize.STRING(255),
     },
-    photo_schedule: {
+    description_category_schedule: {
       type: Sequelize.TEXT,
     },
-    date_schedule: {
-      type: Sequelize.DATEONLY,
-    },
-    category_schedule: {
-      type: Sequelize.INTEGER,
-    },
-    start_time: {
-      type: Sequelize.TIME,
-    },
-    end_time: {
-      type: Sequelize.TIME,
-    },
-    address_schedule: {
-      type: Sequelize.TEXT,
-    },
-    coordinate_schedule: {
-      type: Sequelize.TEXT,
-    },
-    status_schedule: {
+    status_category_schedule: {
       type: Sequelize.INTEGER,
     },
     ...StructureTimestamp,
   },
   {
     defaultScope: {
-      where: {
-        deleted_at: null,
-      },
+      where: Sequelize.literal("category_schedule.deleted_at is null"),
     },
     scopes: {
       deleted: {
-        where: {
-          deleted_at: null,
-        },
+        where: Sequelize.literal("category_schedule.deleted_at is null"),
       },
     },
     // indexes: [{ fields: ["role_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "schedule",
-    modelName: "schedule",
+    tableName: "category_schedule",
+    modelName: "category_schedule",
     sequelize: db,
   }
 );
-Schedule.hasMany(Renpam, {
-  foreignKey: "schedule_id",
-  sourceKey: "id",
-  as: "renpams",
-});
 (async () => {
-  Schedule.sync({ alter: true }).catch((err) => {
+  CategorySchedule.sync({ alter: true }).catch((err) => {
     console.log({ err });
   });
 })();
-module.exports = Schedule;
+module.exports = CategorySchedule;
