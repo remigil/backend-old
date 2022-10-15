@@ -29,6 +29,7 @@ const fieldData = {
   type_renpam: null,
   category_renpam: null,
   total_vehicle: null,
+  order_renpam: null,
   title_start: null,
   title_end: null,
   route: null,
