@@ -389,6 +389,14 @@ module.exports = class RenpamController {
             model: Account,
             as: "accounts",
             required: true,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
           },
           {
             model: Vip,
@@ -417,7 +425,9 @@ module.exports = class RenpamController {
         limit: resPage.limit,
         page: page,
         total: mapDataWithDate.count,
-        total_page: mapDataWithDate.rows.length,
+        total_page: Math.ceil(
+          parseInt(mapDataWithDate.count) / parseInt(resPage.limit)
+        ),
         rows: datanya,
       });
     } catch (e) {
@@ -440,6 +450,14 @@ module.exports = class RenpamController {
             model: Account,
             as: "accounts",
             required: true,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
           },
           {
             model: Vip,
