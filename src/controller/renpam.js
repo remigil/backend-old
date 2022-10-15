@@ -356,6 +356,14 @@ module.exports = class RenpamController {
             model: Account,
             as: "accounts",
             required: false,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
           },
           {
             model: Vip,
@@ -377,6 +385,7 @@ module.exports = class RenpamController {
     try {
       let { limit, page } = req.query;
       page = page ? parseInt(page) : 1;
+      // console.log(req.auth);
       const resPage = pagination.getPagination(limit, page);
       let renpamData = await Renpam.findAndCountAll({
         include: [
@@ -389,6 +398,14 @@ module.exports = class RenpamController {
             model: Account,
             as: "accounts",
             required: true,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
           },
           {
             model: Vip,
