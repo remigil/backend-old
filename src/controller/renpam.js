@@ -402,7 +402,7 @@ module.exports = class RenpamController {
         offset: resPage.offset,
       });
       let mapDataWithDate = renpamData;
-      delete mapDataWithDate.count;
+      // delete mapDataWithDate.count;
 
       let date = groupBy(mapDataWithDate.rows, (list) => list.date);
       let datanya = [];
