@@ -11,6 +11,7 @@ const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
 const TrxAccountOfficer = require("../model/trx_account_officer");
 const Officer = require("../model/officer");
+const CategorySchedule = require("../model/category_schedule");
 const moment = require("moment");
 const field = {
   activity: null,
@@ -23,6 +24,7 @@ const field = {
   coordinate_schedule: null,
   status_schedule: 0,
   photo_schedule: null,
+  id_category_schedule: null,
 };
 const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
@@ -634,7 +636,17 @@ module.exports = class ScheduleController {
         };
       }
 
-      const dataRes = await Schedule.findAll(getData);
+      const dataRes = await Schedule.findAll({
+        ...getData,
+        include: [
+          {
+            model: CategorySchedule,
+
+            foreignKey: "id_category_schedule",
+            required: false,
+          },
+        ],
+      });
       const count = await Schedule.count({
         where: getData?.where,
       });
@@ -662,6 +674,8 @@ module.exports = class ScheduleController {
         dummyData["address_schedule"] = dataRes[i]["address_schedule"];
         dummyData["coordinate_schedule"] = dataRes[i]["coordinate_schedule"];
         dummyData["status_schedule"] = dataRes[i]["status_schedule"];
+        dummyData["id_category_schedule"] = dataRes[i]["id_category_schedule"];
+        dummyData["category_schedule"] = dataRes[i]["category_schedule"];
         dummyData["renpams"] = dataRenpam;
 
         dummyData["created_at"] = dataRes[i]["created_at"];
@@ -692,6 +706,14 @@ module.exports = class ScheduleController {
             parseMode: "string",
           }),
         },
+        include: [
+          {
+            model: CategorySchedule,
+
+            foreignKey: "id_category_schedule",
+            required: false,
+          },
+        ],
       });
 
       response(res, true, "Succeed", {
@@ -734,6 +756,14 @@ module.exports = class ScheduleController {
               );
             }
             fieldValue[val] = dataIdVip.toString();
+          } else if (val == "id_category_schedule") {
+            fieldValue["id_category_schedule"] = AESDecrypt(
+              req.body["id_category_schedule"],
+              {
+                isSafeUrl: true,
+                parseMode: "string",
+              }
+            );
           } else if (val == "photo_schedule") {
             let path = req.body.photo_schedule.filepath;
             let file = req.body.photo_schedule;
@@ -789,6 +819,26 @@ module.exports = class ScheduleController {
               );
             }
             fieldValue[val] = dataIdVip.toString();
+          } else if (val == "id_category_schedule") {
+            fieldValue["id_category_schedule"] = AESDecrypt(
+              req.body["id_category_schedule"],
+              {
+                isSafeUrl: true,
+                parseMode: "string",
+              }
+            );
+          } else if (val == "photo_schedule") {
+            let path = req.body.photo_schedule.filepath;
+            let file = req.body.photo_schedule;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/schedule/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
           }
         }
       });

@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Renpam = require("./renpam");
+const CategorySchedule = require("./category_schedule");
 
 const Model = Sequelize.Model;
 
@@ -74,6 +75,12 @@ Schedule.init(
     sequelize: db,
   }
 );
+
+Schedule.hasOne(CategorySchedule, {
+  foreignKey: "id",
+  // as: "leader",
+  sourceKey: "id_category_schedule",
+});
 Schedule.hasMany(Renpam, {
   foreignKey: "schedule_id",
   sourceKey: "id",
