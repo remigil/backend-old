@@ -31,7 +31,7 @@ Renpam.init(
       type: Sequelize.INTEGER,
     },
     name_renpam: {
-      type: Sequelize.STRING(50),
+      type: Sequelize.STRING(200),
     },
     type_renpam: {
       // type [1: patroli, 2: pengawalan, 3: penjagaan, 4:]
@@ -68,17 +68,32 @@ Renpam.init(
     direction_route: {
       type: Sequelize.JSON,
     },
+    direction_route_text: {
+      type: Sequelize.JSONB,
+    },
     direction_route_alter1: {
       type: Sequelize.JSON,
+    },
+    direction_route_alter1_text: {
+      type: Sequelize.JSONB,
     },
     direction_route_alter2: {
       type: Sequelize.JSON,
     },
+    direction_route_alter2_text: {
+      type: Sequelize.JSONB,
+    },
     direction_route_masyarakat: {
       type: Sequelize.JSON,
     },
+    direction_route_masyarakat_text: {
+      type: Sequelize.JSONB,
+    },
     direction_route_umum: {
       type: Sequelize.JSON,
+    },
+    direction_route_umum_text: {
+      type: Sequelize.JSONB,
     },
     estimasi: {
       type: Sequelize.STRING(20),
