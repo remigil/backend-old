@@ -17,6 +17,7 @@ const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const moment = require("moment");
+const { groupBy } = require("lodash");
 Renpam.hasOne(Schedule, {
   foreignKey: "id", // replaces `productId`
   sourceKey: "schedule_id",
@@ -394,12 +395,65 @@ module.exports = class RenpamController {
             required: false,
           },
         ],
-        // raw: true,
-        // nest: true,
+
         order: [["date", "DESC"]],
         distinct: true,
         limit: resPage.limit,
         offset: resPage.offset,
+      });
+      let mapDataWithDate = renpamData;
+      // delete mapDataWithDate.count;
+
+      let date = groupBy(mapDataWithDate.rows, (list) => list.date);
+      let datanya = [];
+      Object.keys(date).forEach((listDate) => {
+        datanya.push({
+          date: listDate,
+          data: date[listDate],
+        });
+      });
+      response(res, true, "Succeed", {
+        limit: resPage.limit,
+        page: page,
+        total: mapDataWithDate.count,
+        total_page: mapDataWithDate.rows.length,
+        rows: datanya,
+      });
+    } catch (e) {
+      response(res, false, e.message, e);
+    }
+  };
+  static listInstruksiToday = async (req, res) => {
+    try {
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      let renpamData = await Renpam.findAndCountAll({
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: true,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+
+        order: [["date", "DESC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+        where: {
+          date: moment().format("YYYY-MM-DD"),
+        },
       });
       let mapDataWithDate = renpamData;
       response(res, true, "Succeed", {
