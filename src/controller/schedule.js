@@ -638,14 +638,14 @@ module.exports = class ScheduleController {
 
       const dataRes = await Schedule.findAll({
         ...getData,
-        include: [
-          {
-            model: CategorySchedule,
+        // include: [
+        //   {
+        //     model: CategorySchedule,
 
-            foreignKey: "id_category_schedule",
-            required: false,
-          },
-        ],
+        //     foreignKey: "id_category_schedule",
+        //     required: false,
+        //   },
+        // ],
       });
       const count = await Schedule.count({
         where: getData?.where,
