@@ -12,6 +12,12 @@ router.post(
   NotifikasiController.add
 );
 router.post(
+  "/send-zoom",
+  //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  NotifikasiController.zoomSend
+);
+router.post(
   "/notifToGlobalWeb",
   //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
   formValidation,

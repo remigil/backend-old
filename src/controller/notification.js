@@ -11,6 +11,7 @@ const TokenTrackNotif = require("../model/token_track_notif");
 
 const User = require("../model/user");
 const moment = require("moment");
+const Officer = require("../model/officer");
 const fieldData = Object.keys(Notifikasi.getAttributes());
 module.exports = class NotifikasiController {
   static get = async (req, res) => {
@@ -88,7 +89,64 @@ module.exports = class NotifikasiController {
       response(res, false, "Failed", e.message);
     }
   };
-
+  static zoomSend = async (req, res) => {
+    try {
+      const { officer_id, link } = req.body;
+      await Notifikasi.create({
+        title: "Zoom Meet K3I G20 Korlantas",
+        description: "Berikut Link Zoom",
+        mobile: link,
+        type: "zoom",
+        is_read: 0,
+        officer_id: AESDecrypt(officer_id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        }),
+      });
+      const getNrpOfficer = await Officer.findOne({
+        where: {
+          id: AESDecrypt(officer_id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      const getTokenFirebase = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user: getNrpOfficer.nrp_officer,
+        },
+      });
+      axios({
+        url: "https://fcm.googleapis.com/fcm/send",
+        method: "POST",
+        headers: {
+          Authorization:
+            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+          "Content-Type": "application/json",
+        },
+        data: {
+          registration_ids: [getTokenFirebase.token_fcm],
+          notification: {
+            body: "Zoom Meet K3I G20 Korlantas",
+            title: "Zoom Meet K3I G20 Korlantas",
+          },
+          data: {
+            deepLink: link,
+            webLink: link,
+          },
+        },
+      })
+        .then((e) => {
+          console.log({ data: e.data });
+        })
+        .catch((e) => {
+          console.log({ e });
+        });
+      response(res, true, "Success", null);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static countNotifikasi = async (req, res) => {
     try {
       const count = await Notifikasi.count({
