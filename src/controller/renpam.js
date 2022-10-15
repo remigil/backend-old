@@ -373,12 +373,6 @@ module.exports = class RenpamController {
 
   static listInstruksi = async (req, res) => {
     try {
-      // console.log(
-      //   AESDecrypt(req.auth.officer, {
-      //     isSafeUrl: true,
-      //     parseMode: "string",
-      //   })
-      // );
       let { limit, page } = req.query;
       page = page ? parseInt(page) : 1;
       const resPage = pagination.getPagination(limit, page);
