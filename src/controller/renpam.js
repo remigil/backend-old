@@ -463,6 +463,36 @@ module.exports = class RenpamController {
             }
             return {
               ...aa.dataValues,
+              route: aa.dataValues.route
+                ? aa.dataValues.route.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_1: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_2: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              address_route_1: aa.dataValues.route
+                ? aa.dataValues.route.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_2: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_3: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
               renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
               ...title_renpam_type,
               schedule: aa.dataValues.schedule
@@ -573,6 +603,36 @@ module.exports = class RenpamController {
             }
             return {
               ...aa.dataValues,
+              route: aa.dataValues.route
+                ? aa.dataValues.route.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_1: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_2: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              address_route_1: aa.dataValues.route
+                ? aa.dataValues.route.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_2: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_3: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
               renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
               ...title_renpam_type,
               schedule: aa.dataValues.schedule
@@ -689,6 +749,36 @@ module.exports = class RenpamController {
             }
             return {
               ...aa.dataValues,
+              route: aa.dataValues.route
+                ? aa.dataValues.route.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_1: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_2: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              address_route_1: aa.dataValues.route
+                ? aa.dataValues.route.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_2: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_3: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
               renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
               ...title_renpam_type,
               schedule: aa.dataValues.schedule
@@ -803,6 +893,36 @@ module.exports = class RenpamController {
             }
             return {
               ...aa.dataValues,
+              route: aa.dataValues.route
+                ? aa.dataValues.route.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_1: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              route_alternatif_2: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map(
+                    (route) => route.latLng?.lng + "," + route.latLng?.lat
+                  )
+                : "",
+              address_route_1: aa.dataValues.route
+                ? aa.dataValues.route.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_2: aa.dataValues.route_alternatif_1
+                ? aa.dataValues.route_alternatif_1.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
+              address_route_3: aa.dataValues.route_alternatif_2
+                ? aa.dataValues.route_alternatif_2.map((route) => ({
+                    address: route.name,
+                  }))
+                : [],
               renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
               ...title_renpam_type,
               schedule: aa.dataValues.schedule
