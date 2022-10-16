@@ -721,6 +721,18 @@ module.exports = class ScheduleController {
               parseMode: "string",
             }),
           },
+          include: [
+            {
+              model: Account,
+              as: "accounts",
+              required: false,
+            },
+            {
+              model: Vip,
+              as: "vips",
+              required: false,
+            },
+          ],
         });
 
         dummyData = {};
