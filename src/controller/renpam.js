@@ -415,10 +415,61 @@ module.exports = class RenpamController {
 
       let date = groupBy(mapDataWithDate.rows, (list) => list.date);
       let datanya = [];
+      // Object.keys(date).forEach((listDate) => {
+      //   datanya.push({
+      //     date: listDate,
+      //     data: date[listDate],
+      //   });
+      // });
       Object.keys(date).forEach((listDate) => {
         datanya.push({
           date: listDate,
-          data: date[listDate],
+          data: date[listDate].map((aa) => {
+            let title_renpam_type = {
+              title_renpam_type: "Patroli",
+            };
+            switch (aa.dataValues.type_renpam) {
+              case 1:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+              case 2:
+                title_renpam_type = {
+                  title_renpam_type: "Pengawalan",
+                };
+                break;
+              case 3:
+                title_renpam_type = {
+                  title_renpam_type: "Penjagaan",
+                };
+                break;
+              case 4:
+                title_renpam_type = {
+                  title_renpam_type: "Pengaturan",
+                };
+                break;
+              case 5:
+                title_renpam_type = {
+                  title_renpam_type: "Penutupan",
+                };
+                break;
+
+              default:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+            }
+            return {
+              ...aa.dataValues,
+              renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
+              ...title_renpam_type,
+              schedule: aa.dataValues.schedule
+                ? aa.dataValues.schedule?.dataValues
+                : {},
+            };
+          }),
         });
       });
       response(res, true, "Succeed", {
@@ -483,7 +534,52 @@ module.exports = class RenpamController {
       Object.keys(date).forEach((listDate) => {
         datanya.push({
           date: listDate,
-          data: date[listDate],
+          data: date[listDate].map((aa) => {
+            let title_renpam_type = {
+              title_renpam_type: "Patroli",
+            };
+            switch (aa.dataValues.type_renpam) {
+              case 1:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+              case 2:
+                title_renpam_type = {
+                  title_renpam_type: "Pengawalan",
+                };
+                break;
+              case 3:
+                title_renpam_type = {
+                  title_renpam_type: "Penjagaan",
+                };
+                break;
+              case 4:
+                title_renpam_type = {
+                  title_renpam_type: "Pengaturan",
+                };
+                break;
+              case 5:
+                title_renpam_type = {
+                  title_renpam_type: "Penutupan",
+                };
+                break;
+
+              default:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+            }
+            return {
+              ...aa.dataValues,
+              renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
+              ...title_renpam_type,
+              schedule: aa.dataValues.schedule
+                ? aa.dataValues.schedule?.dataValues
+                : {},
+            };
+          }),
         });
       });
       response(res, true, "Succeed", {
@@ -545,10 +641,61 @@ module.exports = class RenpamController {
 
       let date = groupBy(mapDataWithDate.rows, (list) => list.date);
       let datanya = [];
+      // Object.keys(date).forEach((listDate) => {
+      //   datanya.push({
+      //     date: listDate,
+      //     data: date[listDate],
+      //   });
+      // });
       Object.keys(date).forEach((listDate) => {
         datanya.push({
           date: listDate,
-          data: date[listDate],
+          data: date[listDate].map((aa) => {
+            let title_renpam_type = {
+              title_renpam_type: "Patroli",
+            };
+            switch (aa.dataValues.type_renpam) {
+              case 1:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+              case 2:
+                title_renpam_type = {
+                  title_renpam_type: "Pengawalan",
+                };
+                break;
+              case 3:
+                title_renpam_type = {
+                  title_renpam_type: "Penjagaan",
+                };
+                break;
+              case 4:
+                title_renpam_type = {
+                  title_renpam_type: "Pengaturan",
+                };
+                break;
+              case 5:
+                title_renpam_type = {
+                  title_renpam_type: "Penutupan",
+                };
+                break;
+
+              default:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+            }
+            return {
+              ...aa.dataValues,
+              renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
+              ...title_renpam_type,
+              schedule: aa.dataValues.schedule
+                ? aa.dataValues.schedule?.dataValues
+                : {},
+            };
+          }),
         });
       });
       response(res, true, "Succeed", {
@@ -595,22 +742,84 @@ module.exports = class RenpamController {
             required: false,
           },
         ],
-
-        order: [["date", "DESC"]],
-        distinct: true,
-        limit: resPage.limit,
-        offset: resPage.offset,
         where: {
           date: moment().format("YYYY-MM-DD"),
         },
+        order: [["date", "ASC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
       });
       let mapDataWithDate = renpamData;
+      // delete mapDataWithDate.count;
+
+      let date = groupBy(mapDataWithDate.rows, (list) => list.date);
+      let datanya = [];
+      // Object.keys(date).forEach((listDate) => {
+      //   datanya.push({
+      //     date: listDate,
+      //     data: date[listDate],
+      //   });
+      // });
+      Object.keys(date).forEach((listDate) => {
+        datanya.push({
+          date: listDate,
+          data: date[listDate].map((aa) => {
+            let title_renpam_type = {
+              title_renpam_type: "Patroli",
+            };
+            switch (aa.dataValues.type_renpam) {
+              case 1:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+              case 2:
+                title_renpam_type = {
+                  title_renpam_type: "Pengawalan",
+                };
+                break;
+              case 3:
+                title_renpam_type = {
+                  title_renpam_type: "Penjagaan",
+                };
+                break;
+              case 4:
+                title_renpam_type = {
+                  title_renpam_type: "Pengaturan",
+                };
+                break;
+              case 5:
+                title_renpam_type = {
+                  title_renpam_type: "Penutupan",
+                };
+                break;
+
+              default:
+                title_renpam_type = {
+                  title_renpam_type: "Patroli",
+                };
+                break;
+            }
+            return {
+              ...aa.dataValues,
+              renpam_status: aa.dataValues.status_renpam ? "sudah" : "belum",
+              ...title_renpam_type,
+              schedule: aa.dataValues.schedule
+                ? aa.dataValues.schedule?.dataValues
+                : {},
+            };
+          }),
+        });
+      });
       response(res, true, "Succeed", {
-        // limit: resPage.limit,
-        // page: page,
-        // total: renpamData.count,
-        // total_page: renpamData.rows.length,
-        ...renpamData,
+        limit: resPage.limit,
+        page: page,
+        total: mapDataWithDate.count,
+        total_page: Math.ceil(
+          parseInt(mapDataWithDate.count) / parseInt(resPage.limit)
+        ),
+        rows: datanya,
       });
     } catch (e) {
       response(res, false, e.message, e);
