@@ -643,6 +643,7 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {

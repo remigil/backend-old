@@ -12,11 +12,11 @@ CategorySchedule.init(
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      get() {
-        return AESEncrypt(String(this.getDataValue("id")), {
-          isSafeUrl: true,
-        });
-      },
+      // get() {
+      //   return AESEncrypt(String(this.getDataValue("id")), {
+      //     isSafeUrl: true,
+      //   });
+      // },
     },
     name_category_schedule: {
       type: Sequelize.STRING(255),

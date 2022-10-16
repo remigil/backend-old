@@ -18,6 +18,13 @@ router.post(
   NotifikasiController.zoomSend
 );
 router.post(
+  "/send-zoom-noencrypt",
+  //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  NotifikasiController.zoomSendNoEncrypt
+);
+
+router.post(
   "/notifToGlobalWeb",
   //   body("name_fuelVehicle").notEmpty().isLength({ min: 3 }),
   formValidation,

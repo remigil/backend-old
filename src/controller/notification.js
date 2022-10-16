@@ -138,11 +138,66 @@ module.exports = class NotifikasiController {
       })
         .then((e) => {
           console.log({ data: e.data });
+          response(res, true, "Success", e.data);
         })
         .catch((e) => {
           console.log({ e });
+          response(res, false, "Failed", e);
         });
-      response(res, true, "Success", null);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static zoomSendNoEncrypt = async (req, res) => {
+    try {
+      const { officer_id, link } = req.body;
+      await Notifikasi.create({
+        title: "Zoom Meet K3I G20 Korlantas",
+        description: "Berikut Link Zoom",
+        mobile: link,
+        type: "zoom",
+        is_read: 0,
+        officer_id: officer_id,
+      });
+      const getNrpOfficer = await Officer.findOne({
+        where: {
+          id: officer_id,
+        },
+      });
+      const getTokenFirebase = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user: getNrpOfficer.nrp_officer,
+        },
+      });
+      axios({
+        url: "https://fcm.googleapis.com/fcm/send",
+        method: "POST",
+        headers: {
+          Authorization:
+            "key=AAAAbpmRKpI:APA91bFQeeeQOxnL211jLnBoHzbOp0WcVJvOT3eu98U5DL11d7EJl83eBAks5VH3Om3zwgCOR1dVD2xyT4oUHdMYA4Yf64sSE4pubJejWM-nQA227CpfJeWHjp8IS8Fx9qUyxdVRH7_K",
+          "Content-Type": "application/json",
+        },
+        data: {
+          registration_ids: [getTokenFirebase.token_fcm],
+          notification: {
+            body: "Zoom Meet K3I G20 Korlantas",
+            title: "Zoom Meet K3I G20 Korlantas",
+          },
+          data: {
+            deepLink: link,
+            webLink: link,
+          },
+        },
+      })
+        .then((e) => {
+          console.log({ data: e.data });
+          response(res, true, "Success", e.data);
+        })
+        .catch((e) => {
+          console.log({ e });
+          response(res, false, "Failed", e);
+        });
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
