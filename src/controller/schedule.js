@@ -829,13 +829,8 @@ module.exports = class ScheduleController {
             }
             fieldValue[val] = dataIdVip.toString();
           } else if (val == "id_category_schedule") {
-            fieldValue["id_category_schedule"] = AESDecrypt(
-              req.body["id_category_schedule"],
-              {
-                isSafeUrl: true,
-                parseMode: "string",
-              }
-            );
+            fieldValue["id_category_schedule"] =
+              req.body["id_category_schedule"];
           } else if (val == "photo_schedule") {
             let path = req.body.photo_schedule.filepath;
             let file = req.body.photo_schedule;
@@ -892,13 +887,8 @@ module.exports = class ScheduleController {
             }
             fieldValue[val] = dataIdVip.toString();
           } else if (val == "id_category_schedule") {
-            fieldValue["id_category_schedule"] = AESDecrypt(
-              req.body["id_category_schedule"],
-              {
-                isSafeUrl: true,
-                parseMode: "string",
-              }
-            );
+            fieldValue["id_category_schedule"] =
+              req.body["id_category_schedule"];
           } else if (val == "photo_schedule") {
             let path = req.body.photo_schedule.filepath;
             let file = req.body.photo_schedule;
