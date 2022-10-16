@@ -1241,7 +1241,7 @@ module.exports = class RenpamController {
                     },
                   }).then(async (dataOffice) => {
                     NotifikasiController.singleGlobal({
-                      deepLink: notifHandler.mobile.instruksi + op.id,
+                      deepLink: notifHandler.mobile.instruksi + req.params.id,
                       type: "instruksi",
                       title: "Edit Instruksi",
                       description: op.name_renpam,
@@ -1249,8 +1249,8 @@ module.exports = class RenpamController {
                         isSafeUrl: true,
                         parseMode: "string",
                       }),
-                      mobile: notifHandler.mobile.instruksi + op.id,
-                      web: notifHandler.mobile.instruksi + op.id,
+                      mobile: notifHandler.mobile.instruksi + req.params.id,
+                      web: notifHandler.mobile.instruksi + req.params.id,
                       to: iterator.token_fcm,
                     })
                       .then((successData) => {
