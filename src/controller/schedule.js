@@ -781,7 +781,7 @@ module.exports = class ScheduleController {
         include: [
           {
             model: CategorySchedule,
-
+            as: "category_schedule",
             foreignKey: "id_category_schedule",
             required: false,
           },
