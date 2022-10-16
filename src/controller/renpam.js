@@ -434,6 +434,136 @@ module.exports = class RenpamController {
       response(res, false, e.message, e);
     }
   };
+  static listInstruksiRiwayat = async (req, res) => {
+    try {
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      let renpamData = await Renpam.findAndCountAll({
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: true,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+        where: {
+          date: {
+            [Op.lt]: moment().format("YYYY-MM-DD"),
+          },
+        },
+        order: [["date", "DESC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+      });
+      let mapDataWithDate = renpamData;
+      // delete mapDataWithDate.count;
+
+      let date = groupBy(mapDataWithDate.rows, (list) => list.date);
+      let datanya = [];
+      Object.keys(date).forEach((listDate) => {
+        datanya.push({
+          date: listDate,
+          data: date[listDate],
+        });
+      });
+      response(res, true, "Succeed", {
+        limit: resPage.limit,
+        page: page,
+        total: mapDataWithDate.count,
+        total_page: Math.ceil(
+          parseInt(mapDataWithDate.count) / parseInt(resPage.limit)
+        ),
+        rows: datanya,
+      });
+    } catch (e) {
+      response(res, false, e.message, e);
+    }
+  };
+  static listAgenda = async (req, res) => {
+    try {
+      let { limit, page } = req.query;
+      page = page ? parseInt(page) : 1;
+      const resPage = pagination.getPagination(limit, page);
+      let renpamData = await Renpam.findAndCountAll({
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: true,
+            through: {
+              where: {
+                account_id: AESDecrypt(req.auth.uid, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            },
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+        where: {
+          date: {
+            [Op.gte]: moment().format("YYYY-MM-DD"),
+          },
+        },
+        order: [["date", "ASC"]],
+        distinct: true,
+        limit: resPage.limit,
+        offset: resPage.offset,
+      });
+      let mapDataWithDate = renpamData;
+      // delete mapDataWithDate.count;
+
+      let date = groupBy(mapDataWithDate.rows, (list) => list.date);
+      let datanya = [];
+      Object.keys(date).forEach((listDate) => {
+        datanya.push({
+          date: listDate,
+          data: date[listDate],
+        });
+      });
+      response(res, true, "Succeed", {
+        limit: resPage.limit,
+        page: page,
+        total: mapDataWithDate.count,
+        total_page: Math.ceil(
+          parseInt(mapDataWithDate.count) / parseInt(resPage.limit)
+        ),
+        rows: datanya,
+      });
+    } catch (e) {
+      response(res, false, e.message, e);
+    }
+  };
   static listInstruksiToday = async (req, res) => {
     try {
       let { limit, page } = req.query;
