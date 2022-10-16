@@ -1226,42 +1226,42 @@ module.exports = class RenpamController {
                 }
               );
 
-              TokenTrackNotif.findAll({
-                where: {
-                  team_id: AESDecrypt(fieldValue["accounts"][i], {
-                    isSafeUrl: true,
-                    parseMode: "string",
-                  }),
-                },
-              }).then((dataTrack) => {
-                for (const iterator of dataTrack) {
-                  Officer.findOne({
-                    where: {
-                      nrp_officer: iterator.nrp_user,
-                    },
-                  }).then(async (dataOffice) => {
-                    NotifikasiController.singleGlobal({
-                      deepLink: notifHandler.mobile.instruksi + op.id,
-                      type: "instruksi",
-                      title: "Edit Instruksi",
-                      description: op.name_renpam,
-                      officer_id: AESDecrypt(dataOffice.id, {
-                        isSafeUrl: true,
-                        parseMode: "string",
-                      }),
-                      mobile: notifHandler.mobile.instruksi + op.id,
-                      web: notifHandler.mobile.instruksi + op.id,
-                      to: iterator.token_fcm,
-                    })
-                      .then((successData) => {
-                        console.log({ successData });
-                      })
-                      .catch((errorData) => {
-                        console.log({ errorData });
-                      });
-                  });
-                }
-              });
+              // TokenTrackNotif.findAll({
+              //   where: {
+              //     team_id: AESDecrypt(fieldValue["accounts"][i], {
+              //       isSafeUrl: true,
+              //       parseMode: "string",
+              //     }),
+              //   },
+              // }).then((dataTrack) => {
+              //   for (const iterator of dataTrack) {
+              //     Officer.findOne({
+              //       where: {
+              //         nrp_officer: iterator.nrp_user,
+              //       },
+              //     }).then(async (dataOffice) => {
+              //       NotifikasiController.singleGlobal({
+              //         deepLink: notifHandler.mobile.instruksi + op.id,
+              //         type: "instruksi",
+              //         title: "Edit Instruksi",
+              //         description: op.name_renpam,
+              //         officer_id: AESDecrypt(dataOffice.id, {
+              //           isSafeUrl: true,
+              //           parseMode: "string",
+              //         }),
+              //         mobile: notifHandler.mobile.instruksi + op.id,
+              //         web: notifHandler.mobile.instruksi + op.id,
+              //         to: iterator.token_fcm,
+              //       })
+              //         .then((successData) => {
+              //           console.log({ successData });
+              //         })
+              //         .catch((errorData) => {
+              //           console.log({ errorData });
+              //         });
+              //     });
+              //   }
+              // });
 
               // if (dataRenAc && dataRenVip) {
               await RenpamAccount.destroy({
@@ -1298,6 +1298,15 @@ module.exports = class RenpamController {
               await RenpamVip.create(fieldValueVip);
               // }
             }
+          } else {
+            await RenpamVip.destroy({
+              where: {
+                renpam_id: AESDecrypt(req.params.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            });
           }
 
           transaction.commit();
