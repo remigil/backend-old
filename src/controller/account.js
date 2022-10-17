@@ -305,7 +305,7 @@ module.exports = class AccountController {
     }
   };
   static edit = async (req, res) => {
-    const transaction = await db.transaction();
+    // const transaction = await db.transaction();
     try {
       // let fieldValue = {};
       // Object.keys(field_account).forEach((val, key) => {
@@ -350,7 +350,7 @@ module.exports = class AccountController {
         }
       });
 
-      await Account.update(
+      Account.update(
         fieldValue,
         {
           where: {
@@ -359,10 +359,10 @@ module.exports = class AccountController {
               parseMode: "string",
             }),
           },
-        },
-        {
-          transaction,
         }
+        // {
+        //   transaction,
+        // }
       )
         .then(async (op) => {
           if (fieldValue["officers"] || fieldValue["officers"].length > 0) {
@@ -408,24 +408,26 @@ module.exports = class AccountController {
                       }
                     );
                   }
-                  await AccountProfile.create(fieldValueOfficer, {
-                    transaction,
-                  });
+                  console.log({ fieldValueOfficer });
+                  await AccountProfile.create(fieldValueOfficer);
+                  // await transaction.commit();
                 })
-                .catch((err) => {
+                .catch(async (err) => {
+                  // await transaction.rollback();
                   console.log(err);
                 });
             }
 
-            await transaction.commit();
+            // await transaction.commit();
             response(res, true, "Succeed", null);
           }
         })
-        .catch((err) => {
+        .catch(async (err) => {
           console.log(err);
+          // await transaction.rollback();
         });
     } catch (e) {
-      await transaction.rollback();
+      // await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };

@@ -14,86 +14,90 @@ const socketInstace = (server) => {
     cors: {},
   }).use(async function (socket, next) {
     // authenticate jwt for socket connection
-    const { username, password, user_nrp, type } = socket.handshake.query;
-    if (type == "Admin") {
-      const user = await User.findOne({
-        where: {
-          username: username,
-          status_verifikasi: 1,
-        },
-      });
-      if (user) {
-        if (bcrypt.compareSync(password, user.password)) {
-          next();
-        } else {
-          next(new Error("Authentication error"));
-        }
-      } else {
-        next(new Error("Authentication error"));
-      }
-    } else if (type == "Officier") {
-      try {
-        if (socket.handshake.query && socket.handshake.query.user_nrp) {
-          let dataAccount = await Account.findOne({
-            include: [
-              {
-                model: Vehicle,
-                as: "vehicle",
-                foreignKey: "id_vehicle",
-                required: false,
-              },
-              {
-                model: Officer,
-                as: "officers",
-                required: true,
-                where: {
-                  nrp_officer: socket.handshake.query.user_nrp,
-                },
-              },
-              // {
-              //   model: Officer,
-              //   as: "leader_team",
-              //   required: false,
-              // },
-            ],
-            where: {
-              name_account: username,
-            },
-          });
-          let dataOfficer = await Officer.findOne({
-            where: {
-              nrp_officer: user_nrp,
-            },
-          });
-          socket.handshake.query["dataAccount"] = dataAccount;
-          socket.handshake.query["dataOfficer"] = dataOfficer;
-          if (dataAccount) {
-            if (bcrypt.compareSync(password, dataAccount.password)) {
-              const aaaaa = await TokenTrackNotif.update(
-                {
-                  token_track: socket.id,
-                },
-                {
-                  where: {
-                    team_id: AESDecrypt(dataAccount.id, {
-                      isSafeUrl: true,
-                      parseMode: "string",
-                    }),
-                    nrp_user: user_nrp,
-                  },
-                }
-              );
-              next();
-            } else {
-              return next(new Error("Authentication error"));
-            }
+    try {
+      const { username, password, user_nrp, type } = socket.handshake.query;
+      if (type == "Admin") {
+        const user = await User.findOne({
+          where: {
+            username: username,
+            status_verifikasi: 1,
+          },
+        });
+        if (user) {
+          if (bcrypt.compareSync(password, user.password)) {
+            next();
+          } else {
+            next(new Error("Authentication error"));
           }
         } else {
           next(new Error("Authentication error"));
         }
-      } catch (error) {
-        next(new Error("Authentication error"));
+      } else if (type == "Officier") {
+        try {
+          if (socket.handshake.query && socket.handshake.query.user_nrp) {
+            let dataAccount = await Account.findOne({
+              include: [
+                {
+                  model: Vehicle,
+                  as: "vehicle",
+                  foreignKey: "id_vehicle",
+                  required: false,
+                },
+                {
+                  model: Officer,
+                  as: "officers",
+                  required: true,
+                  where: {
+                    nrp_officer: socket.handshake.query.user_nrp,
+                  },
+                },
+                // {
+                //   model: Officer,
+                //   as: "leader_team",
+                //   required: false,
+                // },
+              ],
+              where: {
+                name_account: username,
+              },
+            });
+            let dataOfficer = await Officer.findOne({
+              where: {
+                nrp_officer: user_nrp,
+              },
+            });
+            socket.handshake.query["dataAccount"] = dataAccount;
+            socket.handshake.query["dataOfficer"] = dataOfficer;
+            if (dataAccount) {
+              if (bcrypt.compareSync(password, dataAccount.password)) {
+                const aaaaa = await TokenTrackNotif.update(
+                  {
+                    token_track: socket.id,
+                  },
+                  {
+                    where: {
+                      team_id: AESDecrypt(dataAccount.id, {
+                        isSafeUrl: true,
+                        parseMode: "string",
+                      }),
+                      nrp_user: user_nrp,
+                    },
+                  }
+                );
+                next();
+              } else {
+                return next(new Error("Authentication error"));
+              }
+            }
+          } else {
+            next(new Error("Authentication error"));
+          }
+        } catch (error) {
+          next(new Error("Authentication error"));
+        }
       }
+    } catch (error) {
+      console.log({ error });
     }
   });
   io.on("connection", async (socket) => {
