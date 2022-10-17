@@ -16,7 +16,7 @@ const socketInstace = (server) => {
   // })
   const io = new Server(server, {
     cors: "*",
-    path: "/api/",
+    // path: "/api/",
   }).use(async function (socket, next) {
     // authenticate jwt for socket connection
     try {
