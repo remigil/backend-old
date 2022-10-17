@@ -15,11 +15,11 @@ if (process.env.ENV_SSL === "production") {
     key: fs.readFileSync("/etc/ssl/k3ig20korlantas.id/private.key"),
     cert: fs.readFileSync("/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt"),
     // ca: fs.readFileSync('./test_ca.crt'),
-    // requestCert: false,
-    // rejectUnauthorized: false,
+    requestCert: false,
+    rejectUnauthorized: false,
   };
 }
-const server = http.createServer(options, app);
+const server = http.createServer(app);
 dotenv.config();
 const port = process.env.APP_PORT;
 process.env.TZ = "Etc/Greenwich"; //locked to GMT
