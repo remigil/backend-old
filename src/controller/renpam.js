@@ -1400,7 +1400,7 @@ module.exports = class RenpamController {
           if (val == "accounts") {
             fieldValue[val] = JSON.parse(req.body[val]);
           } else {
-            fieldValue["note_kakor"] = req.body["note_kakor"];
+            fieldValue[val] = req.body[val];
           }
         }
       });
@@ -1457,7 +1457,7 @@ module.exports = class RenpamController {
                           deepLink:
                             notifHandler.mobile.instruksi + req.params.id,
                           type: "instruksi",
-                          title: `Instruksi Kakor - ${dataRenpam["name_renpam"]}`,
+                          title: `Catatan Uraian Kegiatan - ${dataRenpam["name_renpam"]}`,
                           description: `${req.body["note_kakor"]}`,
                           officer_id: AESDecrypt(dataOffice.id, {
                             isSafeUrl: true,
