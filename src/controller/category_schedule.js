@@ -95,10 +95,7 @@ module.exports = class CategoryScheduleController {
     try {
       const data = await CategorySchedule.findOne({
         where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+          id: req.params.id,
         },
       });
       response(res, true, "Succeed", {
