@@ -715,6 +715,15 @@ module.exports = class ScheduleController {
       var dummyData = {};
       for (let i = 0; i < dataRes.length; i++) {
         const dataRenpam = await Renpam.findAll({
+          attributes: {
+            exclude: [
+              "direction_route",
+              "direction_route_alter1",
+              "direction_route_alter2",
+              "direction_route_masyarakat",
+              "direction_route_umum",
+            ],
+          },
           where: {
             schedule_id: AESDecrypt(dataRes[i]["id"], {
               isSafeUrl: true,
