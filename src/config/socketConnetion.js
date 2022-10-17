@@ -9,9 +9,14 @@ const Vip = require("../model/vip");
 const Officer = require("../model/officer");
 const bcrypt = require("bcrypt");
 const User = require("../model/user");
+const { Server } = require("socket.io");
 const socketInstace = (server) => {
-  const io = require("socket.io")(server, {
-    cors: {},
+  // const io = require("socket.io")(server, {
+
+  // })
+  const io = new Server(server, {
+    cors: "*",
+    path: "/api/",
   }).use(async function (socket, next) {
     // authenticate jwt for socket connection
     try {
