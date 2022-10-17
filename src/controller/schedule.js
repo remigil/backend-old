@@ -711,6 +711,7 @@ module.exports = class ScheduleController {
         where: getData?.where,
       });
 
+      // console.log();
       var data = [];
       var dummyData = {};
       for (let i = 0; i < dataRes.length; i++) {
