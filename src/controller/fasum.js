@@ -134,7 +134,21 @@ module.exports = class FasumController {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "fasum_logo") {
+            let path = req.body.fasum_logo.filepath;
+            let file = req.body.fasum_logo;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await Fasum.create(fieldValue, { transaction: transaction });
@@ -210,7 +224,19 @@ module.exports = class FasumController {
     try {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
-        if (req.body[val]) {
+        if (val == "fasum_logo") {
+          let path = req.body.fasum_logo.filepath;
+          let file = req.body.fasum_logo;
+          let fileName = file.originalFilename;
+          fs.renameSync(
+            path,
+            "./public/uploads/fasum_khusus/" + fileName,
+            function (err) {
+              if (err) throw err;
+            }
+          );
+          fieldValue[val] = fileName;
+        } else {
           fieldValue[val] = req.body[val];
         }
       });

@@ -6,7 +6,7 @@ router.get("/", FasumController.get);
 router.get("/getId/:id", FasumController.getId);
 router.post(
   "/add",
-  body("name_fasum").notEmpty().isLength({ min: 3 }),
+  body("fasum_name").notEmpty().isLength({ min: 3 }),
   formValidation,
   FasumController.add
 );
@@ -16,7 +16,7 @@ router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  FasumController.delete
+  FasumController.hardDelete
 );
 
 module.exports = router;
