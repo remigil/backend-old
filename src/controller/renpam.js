@@ -1210,8 +1210,15 @@ module.exports = class RenpamController {
         transaction: transaction,
       })
         .then(async (op) => {
-          // console.log(fieldValue);
           if (fieldValue["accounts"] && fieldValue["accounts"].length > 0) {
+            await RenpamAccount.destroy({
+              where: {
+                renpam_id: AESDecrypt(req.params.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            });
             for (let i = 0; i < fieldValue["accounts"].length; i++) {
               fieldValueAccount = {};
               fieldValueAccount["renpam_id"] = AESDecrypt(req.params.id, {
@@ -1240,41 +1247,58 @@ module.exports = class RenpamController {
                       nrp_officer: iterator.nrp_user,
                     },
                   }).then(async (dataOffice) => {
-                    NotifikasiController.singleGlobal({
-                      deepLink: notifHandler.mobile.instruksi + req.params.id,
-                      type: "instruksi",
-                      title: "Edit Instruksi",
-                      description: op.name_renpam,
-                      officer_id: AESDecrypt(dataOffice.id, {
-                        isSafeUrl: true,
-                        parseMode: "string",
-                      }),
-                      mobile: notifHandler.mobile.instruksi + req.params.id,
-                      web: notifHandler.mobile.instruksi + req.params.id,
-                      to: iterator.token_fcm,
-                    })
-                      .then((successData) => {
-                        console.log({ successData });
+                    if (dataOffice) {
+                      NotifikasiController.singleGlobal({
+                        deepLink: notifHandler.mobile.instruksi + req.params.id,
+                        type: "instruksi",
+                        title: "Edit Instruksi",
+                        description: op.name_renpam,
+                        officer_id: AESDecrypt(dataOffice.id, {
+                          isSafeUrl: true,
+                          parseMode: "string",
+                        }),
+                        mobile: notifHandler.mobile.instruksi + req.params.id,
+                        web: notifHandler.mobile.instruksi + req.params.id,
+                        to: iterator.token_fcm,
                       })
-                      .catch((errorData) => {
-                        console.log({ errorData });
-                      });
+                        .then((successData) => {
+                          console.log({ successData });
+                        })
+                        .catch((errorData) => {
+                          console.log({ errorData });
+                        });
+                    } else {
+                      console.log("tidak ada token User");
+                    }
                   });
                 }
               });
 
               // if (dataRenAc && dataRenVip) {
-              await RenpamAccount.destroy({
-                where: {
-                  renpam_id: fieldValueAccount["renpam_id"],
-                },
-              });
+
               await RenpamAccount.create(fieldValueAccount);
               // }
             }
+          } else {
+            await RenpamAccount.destroy({
+              where: {
+                renpam_id: AESDecrypt(req.params.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            });
           }
 
           if (fieldValue["vips"] && fieldValue["vips"].length > 0) {
+            await RenpamVip.destroy({
+              where: {
+                renpam_id: AESDecrypt(req.params.id, {
+                  isSafeUrl: true,
+                  parseMode: "string",
+                }),
+              },
+            });
             for (let i = 0; i < fieldValue["vips"].length; i++) {
               fieldValueVip = {};
               fieldValueVip["renpam_id"] = AESDecrypt(req.params.id, {
@@ -1287,14 +1311,7 @@ module.exports = class RenpamController {
               });
 
               // if (dataRenAc && dataRenVip) {
-              await RenpamVip.destroy({
-                where: {
-                  renpam_id: AESDecrypt(req.params.id, {
-                    isSafeUrl: true,
-                    parseMode: "string",
-                  }),
-                },
-              });
+
               await RenpamVip.create(fieldValueVip);
               // }
             }
