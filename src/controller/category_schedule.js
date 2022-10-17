@@ -200,10 +200,7 @@ module.exports = class CategoryScheduleController {
       });
       await CategorySchedule.update(fieldValue, {
         where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+          id: req.params.id,
         },
         transaction: transaction,
       });
@@ -221,10 +218,7 @@ module.exports = class CategoryScheduleController {
       fieldValue["deleted_at"] = new Date();
       await CategorySchedule.update(fieldValue, {
         where: {
-          id: AESDecrypt(req.body.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+          id: req.body.id,
         },
         transaction: transaction,
       });
@@ -240,10 +234,7 @@ module.exports = class CategoryScheduleController {
     try {
       await CategorySchedule.destroy({
         where: {
-          id: AESDecrypt(req.body.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+          id: req.body.id,
         },
         transaction: transaction,
       });
