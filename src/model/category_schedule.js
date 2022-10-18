@@ -27,6 +27,9 @@ CategorySchedule.init(
     status_category_schedule: {
       type: Sequelize.INTEGER,
     },
+    order_category_schedule: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {

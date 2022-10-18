@@ -13,6 +13,7 @@ const fieldData = {
   name_category_schedule: null,
   description_category_schedule: null,
   status_category_schedule: 0,
+  order_category_schedule: 0,
 };
 module.exports = class CategoryScheduleController {
   static get = async (req, res) => {
