@@ -114,14 +114,17 @@ module.exports = class ReportController {
       });
 
       response(res, true, "Succeed", {
-        // data: data.map((ee) => ({
-        //   ...ee.dataValues,
-        //   id: AESEncrypt(String(ee.dataValues.id), {
-        //     isSafeUrl: true,
-        //   }),
-        //   // categori: codeReport(ee.dataValues.categori, "type"),
-        // })),
-        data: data,
+        data: data.map((ee) => ({
+          ...ee.dataValues,
+          id: AESEncrypt(String(ee.dataValues.id), {
+            isSafeUrl: true,
+          }),
+          categori: codeReport(
+            ee.dataValues.categori != null ? ee.dataValues.categori : "999",
+            "type"
+          ),
+        })),
+        // data: data,
         recordsFiltered: count,
         recordsTotal: count,
       });
@@ -187,7 +190,10 @@ module.exports = class ReportController {
           code: data.code,
           type: data.type,
           foto: data.foto,
-          categori: codeReport(data.categori, "type"),
+          categori: codeReport(
+            data.categori != null ? data.categori : "999",
+            "type"
+          ),
           categoriId: data.categori,
           // categori_name: codeReport(data.categori, "type"),
           status: data.status,
