@@ -12,15 +12,17 @@ module.exports = class LocationTrackController {
       let getData = { where: null };
       if (name_officer != null) {
         getData.name_officer = name_officer;
-        getData.date = {
-          $gte: today,
-          $lte: endDateToday,
-        };
+        // getData.date = {
+        //   $gte: today,
+        //   $lte: endDateToday,
+        // };
+        getData.date = today;
       } else {
-        getData.date = {
-          $gte: today,
-          $lte: endDateToday,
-        };
+        getData.date = today;
+        // getData.date = {
+        //   $gte: today,
+        //   $lte: endDateToday,
+        // };
       }
       const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
 
