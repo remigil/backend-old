@@ -13,17 +13,17 @@ const fs = require("fs");
 let options = {};
 if (process.env.ENV_SSL === "production") {
   options = {
-    key: fs.readFileSync("/etc/ssl/k3ig20korlantas.id/private.key"),
-    cert: fs.readFileSync("/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt"),
+    key: fs.readFileSync("./etc/ssl/k3ig20korlantas.id/private.key"),
+    cert: fs.readFileSync(
+      "./etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt"
+    ),
     // ca: fs.readFileSync('./test_ca.crt'),
     // requestCert: false,
     // rejectUnauthorized: false,
   };
 }
 const server = http.createServer(app);
-// const serverHttps = https.createServer({
-
-// },app);
+const serverHttps = https.createServer(options, app);
 dotenv.config();
 const port = process.env.APP_PORT;
 process.env.TZ = "Etc/Greenwich"; //locked to GMT
@@ -35,11 +35,15 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
   });
 }
 app.use(express.static(path.join(__dirname, "./public")));
-socketInstace(server);
+// socketInstace(server);
+socketInstace(serverHttps);
 
 middlewareGlobal.beforeRouter(app);
 app.use(router);
 middlewareGlobal.afterRouter(app);
 server.listen(port, () => {
+  console.log("[SERVER]", `Start at ${moment()} on Port ${port}`);
+});
+serverHttps.listen(port, () => {
   console.log("[SERVER]", `Start at ${moment()} on Port ${port}`);
 });
