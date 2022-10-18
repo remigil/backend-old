@@ -114,13 +114,14 @@ module.exports = class ReportController {
       });
 
       response(res, true, "Succeed", {
-        data: data.map((ee) => ({
-          ...ee.dataValues,
-          id: AESEncrypt(String(ee.dataValues.id), {
-            isSafeUrl: true,
-          }),
-          categori: codeReport(ee.dataValues.categori, "type"),
-        })),
+        // data: data.map((ee) => ({
+        //   ...ee.dataValues,
+        //   id: AESEncrypt(String(ee.dataValues.id), {
+        //     isSafeUrl: true,
+        //   }),
+        //   // categori: codeReport(ee.dataValues.categori, "type"),
+        // })),
+        data: data,
         recordsFiltered: count,
         recordsTotal: count,
       });
