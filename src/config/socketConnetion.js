@@ -226,6 +226,7 @@ const socketInstace = (server) => {
           fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
           back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
           date: moment().format("YYYY-MM-DD"),
+          dateOnly: moment().format("YYYY-MM-DD"),
         });
         console.log({
           id_user: AESDecrypt(dataAccount.id, {
@@ -258,6 +259,7 @@ const socketInstace = (server) => {
           back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
 
           date: moment().format("YYYY-MM-DD"),
+          dateOnly: moment().format("YYYY-MM-DD"),
         });
         await TrackG20.create(
           // {
@@ -296,6 +298,7 @@ const socketInstace = (server) => {
             back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
 
             date: moment().format("YYYY-MM-DD"),
+            dateOnly: moment().format("YYYY-MM-DD"),
           }
           // {
           //   new: true,

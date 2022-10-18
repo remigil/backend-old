@@ -8,6 +8,7 @@ const collection = {
   longitude: Number,
   id_officer: Number,
   date: Date,
+  dateOnly: Date,
   photo_officer: String, //[foto petugas]
   photo_officer_telp_biasa: String, //[foto petugas]
   name_account: String,
