@@ -21,8 +21,9 @@ if (process.env.ENV_SSL === "production") {
   };
 }
 const server = http.createServer(app);
-const serverHttps = https.createServer(options, app);
+// const serverHttps = https.createServer({
 
+// },app);
 dotenv.config();
 const port = process.env.APP_PORT;
 process.env.TZ = "Etc/Greenwich"; //locked to GMT
@@ -35,14 +36,10 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
 }
 app.use(express.static(path.join(__dirname, "./public")));
 socketInstace(server);
-socketInstace(serverHttps);
 
 middlewareGlobal.beforeRouter(app);
 app.use(router);
 middlewareGlobal.afterRouter(app);
 server.listen(port, () => {
   console.log("[SERVER]", `Start at ${moment()} on Port ${port}`);
-});
-serverHttps.listen(3005, () => {
-  console.log("[SERVER SOCKET IO]", `Start at ${moment()} on Port ${3005}`);
 });
