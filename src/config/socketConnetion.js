@@ -93,13 +93,16 @@ const socketInstace = (server) => {
                 );
                 next();
               } else {
+                console.log("error 1");
                 return next(new Error("Authentication error"));
               }
             }
           } else {
+            console.log("error 2");
             next(new Error("Authentication error"));
           }
         } catch (error) {
+          console.log("error 3");
           next(new Error("Authentication error"));
         }
       }
