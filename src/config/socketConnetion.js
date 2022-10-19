@@ -121,7 +121,8 @@ const socketInstace = (server) => {
     socket.on("trackingUser", async function (coordinate) {
       try {
         // console.log(io.to(socket.id).emit("event", data);)
-        // console.log({ userClient });
+        // console.log({ userClient })
+        console.log("okeeee");
         io.emit("trackme", "testoke");
         const { username, password, user_nrp, type, dataAccount, dataOfficer } =
           socket.handshake.query;
