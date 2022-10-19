@@ -229,7 +229,7 @@ const socketInstace = (server) => {
           date: moment().format("YYYY-MM-DD"),
           dateOnly: moment().format("YYYY-MM-DD"),
         });
-        socket.broadcast.emit("sendToAdmin", {
+        socket.emit("sendToAdmin", {
           id_user: AESDecrypt(dataAccount.id, {
             isSafeUrl: true,
             parseMode: "string",
@@ -254,7 +254,7 @@ const socketInstace = (server) => {
           back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
           date: moment().format("YYYY-MM-DD"),
         });
-        socket.broadcast.emit("sendToAdminMobile", {
+        socket.emit("sendToAdminMobile", {
           id_user: AESDecrypt(dataAccount.id, {
             isSafeUrl: true,
             parseMode: "string",
