@@ -121,7 +121,7 @@ const socketInstace = (server) => {
     socket.on("trackingUser", async function (coordinate) {
       try {
         // console.log(io.to(socket.id).emit("event", data);)
-        console.log({ userClient });
+        // console.log({ userClient });
         const { username, password, user_nrp, type, dataAccount, dataOfficer } =
           socket.handshake.query;
         let officerData = await Officer.findOne({
@@ -282,6 +282,7 @@ const socketInstace = (server) => {
           date: moment().format("YYYY-MM-DD"),
         });
         userClient.forEach((e) => {
+          console.log({ client: e });
           io.to(e).emit("sendToAdminMobile", {
             id_user: AESDecrypt(dataAccount.id, {
               isSafeUrl: true,
