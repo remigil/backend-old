@@ -467,6 +467,7 @@ const socketInstace = (server) => {
         );
         io.emit("sendToAdmin", sendTracking);
         io.emit("trackme", sendTracking);
+        io.emit("trackweb", sendTracking);
 
         io.emit("sendToAdminMobile", sendTracking);
       } catch (error) {
