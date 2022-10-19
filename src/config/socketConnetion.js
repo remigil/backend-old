@@ -110,17 +110,18 @@ const socketInstace = (server) => {
       console.log({ error });
     }
   });
-
+  let userClient = [];
   io.on("connection", async (socket) => {
     io.emit("message", "test");
-    console.log({ socket });
+    // console.log({ socket });
+    userClient.push(socket.id);
     socket.on("message", function (message) {
       // io.emit("message", message);
     });
     socket.on("trackingUser", async function (coordinate) {
       try {
         // console.log(io.to(socket.id).emit("event", data);)
-
+        console.log({ userClient });
         const { username, password, user_nrp, type, dataAccount, dataOfficer } =
           socket.handshake.query;
         let officerData = await Officer.findOne({
@@ -139,7 +140,6 @@ const socketInstace = (server) => {
         } else {
           noTelpon = noTelpon;
         }
-        console.log("cek");
         // let sendTracking = await TrackG20.create({
         //   //           id_user: AESDecrypt(dataAccount.id, {
         //   //       isSafeUrl: true,
@@ -437,9 +437,9 @@ const socketInstace = (server) => {
           // }
         );
       } catch (error) {
-        io.emit("sendToAdmin", error);
+        // io.emit("sendToAdmin", error);
 
-        io.emit("sendToAdminMobile", error);
+        // io.emit("sendToAdminMobile", error);
         console.log(error.message);
       }
     });
