@@ -17,6 +17,7 @@ const field_account = {
 
   leader_team: null,
   id_vehicle: null,
+  id_vip: null,
   id_account: null,
   officers: null,
   vehicles: null,

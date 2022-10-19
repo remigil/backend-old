@@ -35,6 +35,9 @@ Account.init(
     id_vehicle: {
       type: Sequelize.INTEGER,
     },
+    id_vip: {
+      type: Sequelize.INTEGER,
+    },
     password: {
       type: Sequelize.TEXT,
       set(value) {
