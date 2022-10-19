@@ -477,7 +477,9 @@ const socketInstace = (server) => {
         // io.emit("sendToAdmin", error);
 
         // io.emit("sendToAdminMobile", error);
-        console.log(error.message);
+        console.log({
+          errorbukan: error.message,
+        });
       }
     });
   });
