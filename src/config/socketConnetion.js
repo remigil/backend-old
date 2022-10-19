@@ -140,6 +140,7 @@ const socketInstace = (server) => {
         } else {
           noTelpon = noTelpon;
         }
+        io.emit("trackme", "testoke");
         // let sendTracking = await TrackG20.create({
         //   //           id_user: AESDecrypt(dataAccount.id, {
         //   //       isSafeUrl: true,
@@ -466,7 +467,7 @@ const socketInstace = (server) => {
           // }
         );
         io.emit("sendToAdmin", sendTracking);
-        io.emit("trackme", sendTracking);
+
         io.emit("trackweb", sendTracking);
 
         io.emit("sendToAdminMobile", sendTracking);
