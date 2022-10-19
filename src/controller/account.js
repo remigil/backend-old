@@ -201,6 +201,12 @@ module.exports = class AccountController {
       const data = await Account.findOne({
         include: [
           {
+            model: Vip,
+            as: "vips",
+            foreignKey: "id_vip",
+            required: false,
+          },
+          {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
