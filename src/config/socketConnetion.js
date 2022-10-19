@@ -16,7 +16,7 @@ const socketInstace = (server) => {
   // })
   // const io = new Server(server, {
   const io = require("socket.io")(server, {
-    cors: "*",
+    // cors: "*",
     //pingTimeout: 60000,
     // path: "/api/",
   }).use(async function (socket, next) {
