@@ -122,6 +122,7 @@ const socketInstace = (server) => {
       try {
         // console.log(io.to(socket.id).emit("event", data);)
         // console.log({ userClient });
+        io.emit("trackme", "testoke");
         const { username, password, user_nrp, type, dataAccount, dataOfficer } =
           socket.handshake.query;
         let officerData = await Officer.findOne({
@@ -140,7 +141,7 @@ const socketInstace = (server) => {
         } else {
           noTelpon = noTelpon;
         }
-        io.emit("trackme", "testoke");
+
         // let sendTracking = await TrackG20.create({
         //   //           id_user: AESDecrypt(dataAccount.id, {
         //   //       isSafeUrl: true,
