@@ -110,16 +110,17 @@ const socketInstace = (server) => {
       console.log({ error });
     }
   });
+
   io.on("connection", async (socket) => {
     io.emit("message", "test");
-
+    console.log({ socket });
     socket.on("message", function (message) {
       // io.emit("message", message);
     });
     socket.on("trackingUser", async function (coordinate) {
       try {
         // console.log(io.to(socket.id).emit("event", data);)
-        console.log(socket.id);
+
         const { username, password, user_nrp, type, dataAccount, dataOfficer } =
           socket.handshake.query;
         let officerData = await Officer.findOne({
