@@ -282,8 +282,7 @@ const socketInstace = (server) => {
           date: moment().format("YYYY-MM-DD"),
         });
         userClient.forEach((e) => {
-          console.log({ client: e });
-          io.to(e).emit("sendToAdminMobile", {
+          let aa = io.to(e).emit("sendToAdminMobile", {
             id_user: AESDecrypt(dataAccount.id, {
               isSafeUrl: true,
               parseMode: "string",
@@ -309,6 +308,7 @@ const socketInstace = (server) => {
             date: moment().format("YYYY-MM-DD"),
             dateOnly: moment().format("YYYY-MM-DD"),
           });
+          console.log({ client: e, success: aa });
         });
         // io.emit("sendToAdminMobile", {
         //   id_user: AESDecrypt(dataAccount.id, {
