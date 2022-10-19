@@ -15,11 +15,7 @@ const socketInstace = (server) => {
 
   // })
   // const io = new Server(server, {
-  const io = require("socket.io")(server, {
-    cors: "*",
-    //pingTimeout: 60000,
-    // path: "/api/",
-  });
+  const io = require("socket.io")(server);
   // .use(async function (socket, next) {
   //   // authenticate jwt for socket connection
   //   console.log("connected");
