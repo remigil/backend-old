@@ -75,6 +75,11 @@ Account.init(
   }
 );
 
+Account.hasOne(Vip, {
+  foreignKey: "id",
+  as: "vips",
+  sourceKey: "id_vip",
+});
 Account.hasOne(Vehicle, {
   foreignKey: "id",
   as: "vehicle",

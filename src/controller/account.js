@@ -98,6 +98,12 @@ module.exports = class AccountController {
         ...getDataRules,
         include: [
           {
+            model: Vip,
+            as: "vips",
+            foreignKey: "id_vip",
+            required: false,
+          },
+          {
             model: Vehicle,
             as: "vehicle",
             foreignKey: "id_vehicle",
