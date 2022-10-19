@@ -390,39 +390,44 @@ const socketInstace = (server) => {
         //   date: moment().format("YYYY-MM-DD"),
         //   dateOnly: moment().format("YYYY-MM-DD"),
         // });
-        // console.log({
-        //   id_user: AESDecrypt(dataAccount.id, {
-        //     isSafeUrl: true,
-        //     parseMode: "string",
-        //   }),
-        //   latitude: coordinate.lat,
-        //   longitude: coordinate.lon,
-        //   name_account: dataAccount.dataValues.name_account,
-        //   id_officer: AESDecrypt(dataOfficer.id, {
-        //     isSafeUrl: true,
-        //     parseMode: "string",
-        //   }),
-        //   // name_team: dataAccount?.leader_team, // [ketua tim]
-        //   name_team: officerData.dataValues.name_officer, // [ketua tim]
-        //   name_officer: dataOfficer.name_officer,
+        let sendTrackingData = {
+          id_user: AESDecrypt(dataAccount.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          latitude: coordinate.lat,
+          longitude: coordinate.lon,
+          name_account: dataAccount.dataValues.name_account,
+          id_officer: AESDecrypt(dataOfficer.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+          // name_team: dataAccount?.leader_team, // [ketua tim]
+          name_team: officerData.dataValues.name_officer, // [ketua tim]
+          name_officer: dataOfficer.name_officer,
 
-        //   photo_officer: dataOfficer.photo_officer,
-        //   rank_officer: dataOfficer.rank_officer,
-        //   // vip: dataAccount.vips.name_vip, // [nama vip]
-        //   nrp_user: dataOfficer.nrp_officer,
-        //   // handphone: dataOfficer?.phone_officer,
-        //   handphone: noTelpon,
-        //   photo_officer_telp_biasa: "+" + noTelpon,
-        //   // no_vehicle: null, // [plat nomor]
-        //   // type_vehicle: null, // ["motor"]
-        //   no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-        //   type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-        //   fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-        //   back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+          photo_officer: dataOfficer.photo_officer,
+          rank_officer: dataOfficer.rank_officer,
+          // vip: dataAccount.vips.name_vip, // [nama vip]
+          nrp_user: dataOfficer.nrp_officer,
+          // handphone: dataOfficer?.phone_officer,
+          handphone: noTelpon,
+          photo_officer_telp_biasa: "+" + noTelpon,
+          // no_vehicle: null, // [plat nomor]
+          // type_vehicle: null, // ["motor"]
+          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
 
-        //   date: moment().format("YYYY-MM-DD"),
-        //   dateOnly: moment().format("YYYY-MM-DD"),
-        // });
+          date: moment().format("YYYY-MM-DD"),
+          dateOnly: moment().format("YYYY-MM-DD"),
+        };
+        io.emit("sendToAdmin", sendTrackingData);
+
+        io.emit("trackweb", sendTrackingData);
+
+        io.emit("sendToAdminMobile", sendTrackingData);
         let sendTracking = await TrackG20.create(
           // {
           //   latitude: coordinate.lat,
