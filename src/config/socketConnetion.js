@@ -178,138 +178,138 @@ const socketInstace = (server) => {
         // let get = await TrackG20.findOne();
         // console.log({ get });
 
-        socket.broadcast.emit("sendToAdminMobile", {
-          id_user: AESDecrypt(dataAccount.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          name_account: dataAccount.dataValues.name_account,
-          id_officer: AESDecrypt(dataOfficer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          name_team: officerData.dataValues.name_officer, // [ketua tim]
-          name_officer: dataOfficer.name_officer,
-          photo_officer: dataOfficer.photo_officer,
-          rank_officer: dataOfficer.rank_officer,
-          nrp_user: dataOfficer.nrp_officer,
-          handphone: noTelpon,
-          photo_officer_telp_biasa: "+" + noTelpon,
-          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-          date: moment().format("YYYY-MM-DD"),
-          dateOnly: moment().format("YYYY-MM-DD"),
-        });
-        socket.broadcast.emit("sendToAdminMobileNew", {
-          id_user: AESDecrypt(dataAccount.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          name_account: dataAccount.dataValues.name_account,
-          id_officer: AESDecrypt(dataOfficer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          name_team: officerData.dataValues.name_officer, // [ketua tim]
-          name_officer: dataOfficer.name_officer,
-          photo_officer: dataOfficer.photo_officer,
-          rank_officer: dataOfficer.rank_officer,
-          nrp_user: dataOfficer.nrp_officer,
-          handphone: noTelpon,
-          photo_officer_telp_biasa: "+" + noTelpon,
-          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-          date: moment().format("YYYY-MM-DD"),
-          dateOnly: moment().format("YYYY-MM-DD"),
-        });
-        io.emit("sendToAdminMobileNew2", {
-          id_user: AESDecrypt(dataAccount.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          name_account: dataAccount.dataValues.name_account,
-          id_officer: AESDecrypt(dataOfficer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          name_team: officerData.dataValues.name_officer, // [ketua tim]
-          name_officer: dataOfficer.name_officer,
-          photo_officer: dataOfficer.photo_officer,
-          rank_officer: dataOfficer.rank_officer,
-          nrp_user: dataOfficer.nrp_officer,
-          handphone: noTelpon,
-          photo_officer_telp_biasa: "+" + noTelpon,
-          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-          date: moment().format("YYYY-MM-DD"),
-          dateOnly: moment().format("YYYY-MM-DD"),
-        });
-        socket.broadcast.emit("sendToAdmin", {
-          id_user: AESDecrypt(dataAccount.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          latitude: coordinate.lat,
-          longitude: coordinate.lon,
-          name_account: dataAccount.dataValues.name_account,
-          id_officer: AESDecrypt(dataOfficer.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-          name_team: officerData.dataValues.name_officer, // [ketua tim]
-          name_officer: dataOfficer.name_officer,
-          photo_officer: dataOfficer.photo_officer,
-          rank_officer: dataOfficer.rank_officer,
-          nrp_user: dataOfficer.nrp_officer,
-          handphone: noTelpon,
-          photo_officer_telp_biasa: "+" + noTelpon,
-          no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-          type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-          fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-          back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-          date: moment().format("YYYY-MM-DD"),
-        });
-        userClient.forEach((e) => {
-          let aa = io.to(e).emit("sendToAdminMobile", {
-            id_user: AESDecrypt(dataAccount.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-            latitude: coordinate.lat,
-            longitude: coordinate.lon,
-            name_account: dataAccount.dataValues.name_account,
-            id_officer: AESDecrypt(dataOfficer.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-            name_team: officerData.dataValues.name_officer, // [ketua tim]
-            name_officer: dataOfficer.name_officer,
-            photo_officer: dataOfficer.photo_officer,
-            rank_officer: dataOfficer.rank_officer,
-            nrp_user: dataOfficer.nrp_officer,
-            handphone: noTelpon,
-            photo_officer_telp_biasa: "+" + noTelpon,
-            no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
-            type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
-            fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
-            back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
-            date: moment().format("YYYY-MM-DD"),
-            dateOnly: moment().format("YYYY-MM-DD"),
-          });
-          console.log({ client: e, success: aa });
-        });
+        // socket.broadcast.emit("sendToAdminMobile", {
+        //   id_user: AESDecrypt(dataAccount.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   latitude: coordinate.lat,
+        //   longitude: coordinate.lon,
+        //   name_account: dataAccount.dataValues.name_account,
+        //   id_officer: AESDecrypt(dataOfficer.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   name_team: officerData.dataValues.name_officer, // [ketua tim]
+        //   name_officer: dataOfficer.name_officer,
+        //   photo_officer: dataOfficer.photo_officer,
+        //   rank_officer: dataOfficer.rank_officer,
+        //   nrp_user: dataOfficer.nrp_officer,
+        //   handphone: noTelpon,
+        //   photo_officer_telp_biasa: "+" + noTelpon,
+        //   no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+        //   type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+        //   fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+        //   back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+        //   date: moment().format("YYYY-MM-DD"),
+        //   dateOnly: moment().format("YYYY-MM-DD"),
+        // });
+        // socket.broadcast.emit("sendToAdminMobileNew", {
+        //   id_user: AESDecrypt(dataAccount.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   latitude: coordinate.lat,
+        //   longitude: coordinate.lon,
+        //   name_account: dataAccount.dataValues.name_account,
+        //   id_officer: AESDecrypt(dataOfficer.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   name_team: officerData.dataValues.name_officer, // [ketua tim]
+        //   name_officer: dataOfficer.name_officer,
+        //   photo_officer: dataOfficer.photo_officer,
+        //   rank_officer: dataOfficer.rank_officer,
+        //   nrp_user: dataOfficer.nrp_officer,
+        //   handphone: noTelpon,
+        //   photo_officer_telp_biasa: "+" + noTelpon,
+        //   no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+        //   type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+        //   fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+        //   back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+        //   date: moment().format("YYYY-MM-DD"),
+        //   dateOnly: moment().format("YYYY-MM-DD"),
+        // });
+        // io.emit("sendToAdminMobileNew2", {
+        //   id_user: AESDecrypt(dataAccount.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   latitude: coordinate.lat,
+        //   longitude: coordinate.lon,
+        //   name_account: dataAccount.dataValues.name_account,
+        //   id_officer: AESDecrypt(dataOfficer.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   name_team: officerData.dataValues.name_officer, // [ketua tim]
+        //   name_officer: dataOfficer.name_officer,
+        //   photo_officer: dataOfficer.photo_officer,
+        //   rank_officer: dataOfficer.rank_officer,
+        //   nrp_user: dataOfficer.nrp_officer,
+        //   handphone: noTelpon,
+        //   photo_officer_telp_biasa: "+" + noTelpon,
+        //   no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+        //   type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+        //   fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+        //   back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+        //   date: moment().format("YYYY-MM-DD"),
+        //   dateOnly: moment().format("YYYY-MM-DD"),
+        // });
+        // socket.broadcast.emit("sendToAdmin", {
+        //   id_user: AESDecrypt(dataAccount.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   latitude: coordinate.lat,
+        //   longitude: coordinate.lon,
+        //   name_account: dataAccount.dataValues.name_account,
+        //   id_officer: AESDecrypt(dataOfficer.id, {
+        //     isSafeUrl: true,
+        //     parseMode: "string",
+        //   }),
+        //   name_team: officerData.dataValues.name_officer, // [ketua tim]
+        //   name_officer: dataOfficer.name_officer,
+        //   photo_officer: dataOfficer.photo_officer,
+        //   rank_officer: dataOfficer.rank_officer,
+        //   nrp_user: dataOfficer.nrp_officer,
+        //   handphone: noTelpon,
+        //   photo_officer_telp_biasa: "+" + noTelpon,
+        //   no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+        //   type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+        //   fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+        //   back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+        //   date: moment().format("YYYY-MM-DD"),
+        // });
+        // userClient.forEach((e) => {
+        //   let aa = io.to(e).emit("sendToAdminMobile", {
+        //     id_user: AESDecrypt(dataAccount.id, {
+        //       isSafeUrl: true,
+        //       parseMode: "string",
+        //     }),
+        //     latitude: coordinate.lat,
+        //     longitude: coordinate.lon,
+        //     name_account: dataAccount.dataValues.name_account,
+        //     id_officer: AESDecrypt(dataOfficer.id, {
+        //       isSafeUrl: true,
+        //       parseMode: "string",
+        //     }),
+        //     name_team: officerData.dataValues.name_officer, // [ketua tim]
+        //     name_officer: dataOfficer.name_officer,
+        //     photo_officer: dataOfficer.photo_officer,
+        //     rank_officer: dataOfficer.rank_officer,
+        //     nrp_user: dataOfficer.nrp_officer,
+        //     handphone: noTelpon,
+        //     photo_officer_telp_biasa: "+" + noTelpon,
+        //     no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
+        //     type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
+        //     fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
+        //     back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
+        //     date: moment().format("YYYY-MM-DD"),
+        //     dateOnly: moment().format("YYYY-MM-DD"),
+        //   });
+        //   console.log({ client: e, success: aa });
+        // });
         // io.emit("sendToAdminMobile", {
         //   id_user: AESDecrypt(dataAccount.id, {
         //     isSafeUrl: true,
@@ -420,7 +420,7 @@ const socketInstace = (server) => {
         //   date: moment().format("YYYY-MM-DD"),
         //   dateOnly: moment().format("YYYY-MM-DD"),
         // });
-        await TrackG20.create(
+        let sendTracking = await TrackG20.create(
           // {
           //   latitude: coordinate.lat,
           //   longitude: coordinate.lon,
@@ -465,6 +465,10 @@ const socketInstace = (server) => {
           //   rawResult: true, // Return the raw result from the MongoDB driver
           // }
         );
+        io.emit("sendToAdmin", sendTracking);
+        io.emit("trackme", sendTracking);
+
+        io.emit("sendToAdminMobile", sendTracking);
       } catch (error) {
         // io.emit("sendToAdmin", error);
 
