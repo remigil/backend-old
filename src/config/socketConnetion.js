@@ -162,11 +162,8 @@ const socketInstace = (server) => {
         nrp_user: dataOfficer.nrp_officer,
         handphone: noTelpon,
         photo_officer_telp_biasa: "+" + noTelpon,
-        country_arrival_vip:
-          dataAccount.vips != null
-            ? dataAccount.vehicle.country_arrival_vip
-            : "-", // Delegasi
-        name_vip: dataAccount.vips != null ? dataAccount.vehicle.name_vip : "-", // Delegasi VIP
+        name_country:
+          dataAccount.country != null ? dataAccount.country.name_country : "-", // Delegasi
 
         no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
         type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
