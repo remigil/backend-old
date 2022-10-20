@@ -17,7 +17,7 @@ const field_account = {
 
   leader_team: null,
   id_vehicle: null,
-  id_vip: null,
+  id_country: null,
   id_account: null,
   officers: null,
   vehicles: null,
@@ -259,7 +259,11 @@ module.exports = class AccountController {
         let fieldValueOfficer = {};
         Object.keys(field_account).forEach((val, key) => {
           if (req.body[val]) {
-            if (val == "id_vehicle" || val == "leader_team") {
+            if (
+              val == "id_vehicle" ||
+              val == "id_country" ||
+              val == "leader_team"
+            ) {
               fieldValue[val] = AESDecrypt(req.body[val], {
                 isSafeUrl: true,
                 parseMode: "string",
@@ -350,7 +354,11 @@ module.exports = class AccountController {
       let fieldValueOfficer = {};
       Object.keys(field_account).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "id_vehicle" || val == "leader_team") {
+          if (
+            val == "id_vehicle" ||
+            val == "id_country" ||
+            val == "leader_team"
+          ) {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
@@ -378,7 +386,7 @@ module.exports = class AccountController {
         // }
       )
         .then(async (op) => {
-          if (fieldValue["officers"] || fieldValue["officers"].length > 0) {
+          if (fieldValue["officers"]) {
             for (let i = 0; i < fieldValue["officers"].length; i++) {
               var officer_id = AESDecrypt(fieldValue["officers"][i], {
                 isSafeUrl: true,
@@ -432,6 +440,8 @@ module.exports = class AccountController {
             }
 
             // await transaction.commit();
+            response(res, true, "Succeed", null);
+          } else {
             response(res, true, "Succeed", null);
           }
         })
