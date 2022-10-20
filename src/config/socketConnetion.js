@@ -46,12 +46,12 @@ const socketInstace = (server) => {
           if (socket.handshake.query && socket.handshake.query.user_nrp) {
             let dataAccount = await Account.findOne({
               include: [
-                {
-                  model: Country,
-                  // as: "countrys",
-                  foreignKey: "id_country",
-                  required: false,
-                },
+                // {
+                //   model: Country,
+                //   // as: "countrys",
+                //   foreignKey: "id_country",
+                //   required: false,
+                // },
                 {
                   model: Vehicle,
                   as: "vehicle",
@@ -162,8 +162,7 @@ const socketInstace = (server) => {
         nrp_user: dataOfficer.nrp_officer,
         handphone: noTelpon,
         photo_officer_telp_biasa: "+" + noTelpon,
-        name_country:
-          dataAccount.country != null ? dataAccount.country.name_country : "-", // Delegasi
+        // name_country: dataAccount.country != null ? dataAccount.country.name_country : "-", // Delegasi
 
         no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
         type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
