@@ -104,7 +104,7 @@ Account.belongsToMany(Vehicle, {
   otherKey: "vehicle_id",
 });
 (async () => {
-  Account.sync({ alter: true }).catch((err) => {
+  Account.sync({ alter: false }).catch((err) => {
     console.log({ err });
   });
 })();
