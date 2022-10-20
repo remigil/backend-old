@@ -2,7 +2,7 @@ const db = require("../config/database");
 const response = require("../lib/response");
 const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
-const Vip = require("../model/vip");
+const Country = require("../model/country");
 const Polres = require("../model/polres");
 const AccountProfile = require("../model/trx_account_officer");
 
@@ -98,9 +98,9 @@ module.exports = class AccountController {
         ...getDataRules,
         include: [
           {
-            model: Vip,
-            as: "vips",
-            foreignKey: "id_vip",
+            model: Country,
+            // as: "countrys",
+            foreignKey: "id_country",
             required: false,
           },
           {
@@ -201,9 +201,9 @@ module.exports = class AccountController {
       const data = await Account.findOne({
         include: [
           {
-            model: Vip,
-            as: "vips",
-            foreignKey: "id_vip",
+            model: Country,
+            // as: "countrys",
+            foreignKey: "id_country",
             required: false,
           },
           {

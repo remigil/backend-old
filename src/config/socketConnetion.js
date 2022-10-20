@@ -6,6 +6,7 @@ const LocationTrackController = require("../controller/track/locationTrack");
 const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const Vip = require("../model/vip");
+const Country = require("../model/country");
 const Officer = require("../model/officer");
 const bcrypt = require("bcrypt");
 const User = require("../model/user");
@@ -46,9 +47,9 @@ const socketInstace = (server) => {
             let dataAccount = await Account.findOne({
               include: [
                 {
-                  model: Vip,
-                  as: "vips",
-                  foreignKey: "id_vip",
+                  model: Country,
+                  // as: "countrys",
+                  foreignKey: "id_country",
                   required: false,
                 },
                 {

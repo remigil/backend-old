@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Vehicle = require("./vehicle");
-const Vip = require("./vip");
+const Country = require("./country");
 const Officer = require("./officer");
 const Trx_account_officer = require("./trx_account_officer");
 const Model = Sequelize.Model;
@@ -35,7 +35,7 @@ Account.init(
     id_vehicle: {
       type: Sequelize.INTEGER,
     },
-    id_vip: {
+    id_country: {
       type: Sequelize.INTEGER,
     },
     password: {
@@ -75,10 +75,10 @@ Account.init(
   }
 );
 
-Account.hasOne(Vip, {
+Account.hasOne(Country, {
   foreignKey: "id",
-  as: "vips",
-  sourceKey: "id_vip",
+  // as: "countrys",
+  sourceKey: "id_country",
 });
 Account.hasOne(Vehicle, {
   foreignKey: "id",
@@ -104,7 +104,7 @@ Account.belongsToMany(Vehicle, {
   otherKey: "vehicle_id",
 });
 (async () => {
-  Account.sync({ alter: true }).catch((err) => {
+  Account.sync({ alter: false }).catch((err) => {
     console.log({ err });
   });
 })();

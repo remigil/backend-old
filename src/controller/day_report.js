@@ -1,6 +1,5 @@
 const { AESDecrypt, AESEncrypt } = require("../lib/encryption");
 const response = require("../lib/response");
-const PanicButton = require("../model/report");
 const db = require("../config/database");
 const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
@@ -20,15 +19,27 @@ const { TrackG20 } = require("../model/tracking/g20");
 const { Client } = require("@googlemaps/google-maps-services-js");
 const googleMapClient = new Client();
 const fieldData = {
-  code: null,
-  type: null,
-  foto: null,
-  subject: null,
-  categori: null,
-  status: null,
-  coordinate: null,
-  description: null,
-  officer_id: null,
+  t_officer_registered: 0,
+  t_officer_registered_car: 0,
+  t_officer_registered_bike: 0,
+  t_officer_registered_not_driving: 0,
+
+  t_officer_active: 0,
+  t_officer_active_car: 0,
+  t_officer_active_bike: 0,
+  t_officer_active_not_driving: 0,
+
+  t_report_kriminal: 0,
+  t_report_lalu_lintas: 0,
+  t_report_kemacetan: 0,
+  t_report_bencanaalam: 0,
+  t_report_pengaturan: 0,
+  t_report_pengawalan: 0,
+  t_report_lainnya: 0,
+
+  t_schedule_done: 0,
+  t_rengiat_done: 0,
+  t_rengiat_failed: 0,
 };
 module.exports = class ReportController {
   static get = async (req, res) => {
@@ -43,7 +54,7 @@ module.exports = class ReportController {
         order = null,
         orderDirection = "asc",
       } = req.query;
-      const modelAttr = Object.keys(PanicButton.getAttributes());
+      const modelAttr = Object.keys(DayReport.getAttributes());
       let getData = { where: null };
       if (serverSide?.toLowerCase() === "true") {
         const resPage = pagination.getPagination(length, start);
@@ -102,8 +113,8 @@ module.exports = class ReportController {
       //     required: false,
       //   },
       // ];
-      const data = await PanicButton.findAll(getData);
-      const count = await PanicButton.count({
+      const data = await DayReport.findAll(getData);
+      const count = await DayReport.count({
         where: getData?.where,
       });
 
@@ -129,7 +140,7 @@ module.exports = class ReportController {
   };
   static getId = async (req, res) => {
     try {
-      const data = await PanicButton.findOne({
+      const data = await DayReport.findOne({
         where: {
           id: AESDecrypt(req.params.id, {
             isSafeUrl: true,
@@ -144,14 +155,29 @@ module.exports = class ReportController {
       response(res, false, "Failed", e.message);
     }
   };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
-
     try {
-      await transaction.commit();
-      response(res, true, "Succeed", op);
+      let fieldValue = {};
+      const countOfficerRegistered = await Officer.count({
+        where: {
+          s,
+        },
+      });
+      const countOfficerActive = await Officer.count({
+        where: getData?.where,
+      });
+      // Object.keys(fieldData).forEach((val, key) => {
+      //   if (req.body[val]) {
+      //     fieldValue[val] = req.body[val];
+      //   }
+      // });
+      // await DayReport.create(fieldValue, { transaction: transaction });
+      // await transaction.commit();
+      response(res, true, "Succeed", fieldValue);
     } catch (e) {
-      // await transaction.rollback();
+      await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };
@@ -159,6 +185,22 @@ module.exports = class ReportController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
+      let fieldValue = {};
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          fieldValue[val] = req.body[val];
+        }
+      });
+
+      await DayReport.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
