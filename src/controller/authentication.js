@@ -9,6 +9,7 @@ const Account = require("../model/account");
 const fs = require("fs");
 const { default: readXlsxFile } = require("read-excel-file/node");
 const { replace } = require("lodash");
+const ReportLogin = require("../model/reportLogin");
 
 class Authentication {
   static login = async (req, res) => {
@@ -93,6 +94,10 @@ class Authentication {
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
         }
+        await ReportLogin.create({
+          nrp_user,
+          login_time: new Date(),
+        });
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,
