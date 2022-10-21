@@ -80,6 +80,10 @@ Day_report.init(
       type: Sequelize.STRING(20),
     },
 
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+
     ...StructureTimestamp,
   },
   {
