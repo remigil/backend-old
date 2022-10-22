@@ -102,6 +102,13 @@ router.use(
   require("../router/cctv")
 );
 
+// bodycam
+router.use(
+  "/v" + process.env.APP_VERSION + "/bodycam",
+  authMiddleware.jwtAuth,
+  require("../router/bodycam")
+);
+
 // FASUM
 router.use(
   "/v" + process.env.APP_VERSION + "/category_fasum",
