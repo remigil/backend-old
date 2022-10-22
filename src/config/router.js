@@ -224,4 +224,10 @@ router.use(
   require("../router/icon")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/logout",
+  // authMiddleware.jwtAuth,
+  require("../router/report_login")
+);
+
 module.exports = router;
