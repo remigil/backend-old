@@ -18,6 +18,8 @@ const TokenTrackNotif = require("../model/token_track_notif");
 const DayReport = require("../model/day_report");
 const { TrackG20 } = require("../model/tracking/g20");
 const { Client } = require("@googlemaps/google-maps-services-js");
+const cron = require("node-cron");
+
 const googleMapClient = new Client();
 const fieldData = {
   t_officer_registered: 0,
@@ -194,156 +196,170 @@ module.exports = class ReportController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
-      var starDate = moment().startOf("day").toDate();
-      var endDate = moment().endOf("day").toDate();
+      var cronJobDay = cron.schedule("0 0 */6 * * *", async () => {
+        console.log("scheduler Day Laporan");
+        var starDate = moment().startOf("day").toDate();
+        var endDate = moment().endOf("day").toDate();
 
-      const countOfficerRegisteredAll = await Officer.count({
-        where: {
-          created_at: {
-            [Op.between]: [
-              moment().startOf("year"),
-              moment().subtract(1, "days").endOf("day").toDate(),
-            ],
-          },
-        },
-      });
-
-      const countReportKriminal = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 1,
-        },
-      });
-      const countReportLaluLintas = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 2,
-        },
-      });
-      const countReportKemacetan = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 4,
-        },
-      });
-      const countReportBencanaAlam = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 3,
-        },
-      });
-      const countReportPengaturan = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 5,
-        },
-      });
-      const countReportPengawalan = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 6,
-        },
-      });
-      const countReportLainnya = await Report.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          categori: 999,
-        },
-      });
-
-      const countSchedule = await Schedule.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          end_time: {
-            [Op.not]: null,
-          },
-        },
-      });
-
-      const countRenpamDone = await Renpam.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          end_time: {
-            [Op.not]: null,
-          },
-        },
-      });
-      const countRenpamFailed = await Renpam.count({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-          end_time: {
-            [Op.is]: null,
-          },
-        },
-      });
-
-      fieldValue["t_officer_registered"] = 0;
-      fieldValue["t_officer_registered_car"] = 0;
-      fieldValue["t_officer_registered_bike"] = 0;
-      fieldValue["t_officer_registered_not_driving"] = 0;
-
-      fieldValue["t_officer_active"] = 0;
-      fieldValue["t_officer_active_car"] = 0;
-      fieldValue["t_officer_active_bike"] = 0;
-      fieldValue["t_officer_active_not_driving"] = 0;
-
-      fieldValue["t_report_kriminal"] = countReportKriminal;
-      fieldValue["t_report_lalu_lintas"] = countReportLaluLintas;
-      fieldValue["t_report_kemacetan"] = countReportKemacetan;
-      fieldValue["t_report_bencanaalam"] = countReportBencanaAlam;
-      fieldValue["t_report_pengaturan"] = countReportPengaturan;
-      fieldValue["t_report_pengawalan"] = countReportPengawalan;
-      fieldValue["t_report_lainnya"] = countReportLainnya;
-
-      fieldValue["t_schedule_done"] = countSchedule;
-      fieldValue["t_rengiat_done"] = countRenpamDone;
-      fieldValue["t_rengiat_failed"] = countRenpamFailed;
-
-      const cekDataReportDay = await DayReport.findOne({
-        where: {
-          created_at: {
-            [Op.between]: [starDate, endDate],
-          },
-        },
-      });
-
-      if (!cekDataReportDay) {
-        await DayReport.create(fieldValue, { transaction: transaction });
-        // console.log("ga ada data");
-      } else {
-        await DayReport.update(fieldValue, {
+        const countOfficerRegisteredAll = await Officer.count({
           where: {
-            id: AESDecrypt(cekDataReportDay["id"], {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
+            created_at: {
+              [Op.between]: [
+                moment().startOf("year"),
+                moment().subtract(1, "days").endOf("day").toDate(),
+              ],
+            },
           },
-          transaction: transaction,
         });
-        // console.log(`${cekDataReportDay["id"]}`);
-      }
 
-      await transaction.commit();
+        const countReportKriminal = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 1,
+          },
+        });
+        const countReportLaluLintas = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 2,
+          },
+        });
+        const countReportKemacetan = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 4,
+          },
+        });
+        const countReportBencanaAlam = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 3,
+          },
+        });
+        const countReportPengaturan = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 5,
+          },
+        });
+        const countReportPengawalan = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 6,
+          },
+        });
+        const countReportLainnya = await Report.count({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+            categori: 999,
+          },
+        });
+
+        const countSchedule = await Schedule.count({
+          where: {
+            date_schedule: {
+              [Op.between]: [
+                moment().format("YYYY-MM-DD"),
+                moment().format("YYYY-MM-DD"),
+              ],
+            },
+            end_time: {
+              [Op.not]: null,
+            },
+          },
+        });
+
+        const countRenpamDone = await Renpam.count({
+          where: {
+            end_time: {
+              [Op.not]: null,
+            },
+            date: {
+              [Op.between]: [
+                moment().format("YYYY-MM-DD"),
+                moment().format("YYYY-MM-DD"),
+              ],
+            },
+          },
+        });
+        const countRenpamFailed = await Renpam.count({
+          where: {
+            end_time: {
+              [Op.is]: null,
+            },
+            date: {
+              [Op.between]: [
+                moment().format("YYYY-MM-DD"),
+                moment().format("YYYY-MM-DD"),
+              ],
+            },
+          },
+        });
+
+        // fieldValue["t_officer_registered"] = 0;
+        // fieldValue["t_officer_registered_car"] = 0;
+        // fieldValue["t_officer_registered_bike"] = 0;
+        // fieldValue["t_officer_registered_not_driving"] = 0;
+
+        // fieldValue["t_officer_active"] = 0;
+        // fieldValue["t_officer_active_car"] = 0;
+        // fieldValue["t_officer_active_bike"] = 0;
+        // fieldValue["t_officer_active_not_driving"] = 0;
+
+        fieldValue["t_report_kriminal"] = countReportKriminal;
+        fieldValue["t_report_lalu_lintas"] = countReportLaluLintas;
+        fieldValue["t_report_kemacetan"] = countReportKemacetan;
+        fieldValue["t_report_bencanaalam"] = countReportBencanaAlam;
+        fieldValue["t_report_pengaturan"] = countReportPengaturan;
+        fieldValue["t_report_pengawalan"] = countReportPengawalan;
+        fieldValue["t_report_lainnya"] = countReportLainnya;
+
+        fieldValue["t_schedule_done"] = countSchedule;
+        fieldValue["t_rengiat_done"] = countRenpamDone;
+        fieldValue["t_rengiat_failed"] = countRenpamFailed;
+
+        fieldValue["date"] = moment().format("YYYY-MM-DD");
+
+        const cekDataReportDay = await DayReport.findOne({
+          where: {
+            created_at: {
+              [Op.between]: [starDate, endDate],
+            },
+          },
+        });
+
+        if (!cekDataReportDay) {
+          await DayReport.create(fieldValue, { transaction: transaction });
+        } else {
+          await DayReport.update(fieldValue, {
+            where: {
+              id: AESDecrypt(cekDataReportDay["id"], {
+                isSafeUrl: true,
+                parseMode: "string",
+              }),
+            },
+            transaction: transaction,
+          });
+        }
+
+        await transaction.commit();
+      });
+      cronJobDay.start();
+
       response(res, true, "Succeed", fieldValue);
     } catch (e) {
       await transaction.rollback();
@@ -367,6 +383,30 @@ module.exports = class ReportController {
             isSafeUrl: true,
             parseMode: "string",
           }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static editByDate = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          fieldValue[val] = req.body[val];
+        }
+      });
+
+      await DayReport.update(fieldValue, {
+        where: {
+          date: req.params.date,
         },
         transaction: transaction,
       });

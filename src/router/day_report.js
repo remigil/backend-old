@@ -11,6 +11,7 @@ router.post(
   DayReportController.add
 );
 router.put("/edit/:id", DayReportController.edit);
+router.put("/byEdit/:date", DayReportController.editByDate);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
