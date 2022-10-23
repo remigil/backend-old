@@ -39,10 +39,12 @@ const fieldData = {
   t_report_pengaturan: 0,
   t_report_pengawalan: 0,
   t_report_lainnya: 0,
+  t_report: 0,
 
   t_schedule_done: 0,
   t_rengiat_done: 0,
   t_rengiat_failed: 0,
+  t_rengiat: 0,
 
   date: null,
 };
@@ -327,10 +329,19 @@ module.exports = class ReportController {
         fieldValue["t_report_pengaturan"] = countReportPengaturan;
         fieldValue["t_report_pengawalan"] = countReportPengawalan;
         fieldValue["t_report_lainnya"] = countReportLainnya;
+        fieldValue["t_report"] =
+          countReportKriminal +
+          countReportLaluLintas +
+          countReportKemacetan +
+          countReportBencanaAlam +
+          countReportPengaturan +
+          countReportPengawalan +
+          countReportLainnya;
 
         fieldValue["t_schedule_done"] = countSchedule;
         fieldValue["t_rengiat_done"] = countRenpamDone;
         fieldValue["t_rengiat_failed"] = countRenpamFailed;
+        fieldValue["t_rengiat"] = countRenpamDone + countRenpamFailed;
 
         fieldValue["date"] = moment().format("YYYY-MM-DD");
 

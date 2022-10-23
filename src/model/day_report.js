@@ -69,6 +69,9 @@ Day_report.init(
     t_report_lainnya: {
       type: Sequelize.STRING(20),
     },
+    t_report: {
+      type: Sequelize.STRING(20),
+    },
 
     t_schedule_done: {
       type: Sequelize.STRING(20),
@@ -77,6 +80,9 @@ Day_report.init(
       type: Sequelize.STRING(20),
     },
     t_rengiat_failed: {
+      type: Sequelize.STRING(20),
+    },
+    t_rengiat: {
       type: Sequelize.STRING(20),
     },
 
