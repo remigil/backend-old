@@ -7,6 +7,7 @@ const { AESDecrypt } = require("../lib/encryption");
 const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 const { getPagination } = require("../lib/pagination-parser");
+const pagination = require("../lib/pagination-parser");
 
 const fieldData = {
   regulation_category: null,
@@ -31,8 +32,9 @@ module.exports = class Regulation_docController {
       const modelAttr = Object.keys(Regulation_doc.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
       if (order <= modelAttr.length) {
         getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
