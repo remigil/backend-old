@@ -14,7 +14,7 @@ const collection = {
   name_account: String,
   name_officer: String,
   rank_officer: String,
-  name_country: String,
+  name_country: String, //bendera
   name_team: String, // [ketua tim]
   vip: String, // [nama vip]
   nrp_user: String,
