@@ -16,7 +16,7 @@ router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
   formValidation,
-  Regulation_docController.delete
+  Regulation_docController.hardDelete
 );
 router.delete(
   "/hardDelete",
