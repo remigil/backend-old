@@ -36,9 +36,12 @@ module.exports = class Regulation_docController {
         getDataRules.limit = resPage.limit;
         getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
@@ -75,11 +78,11 @@ module.exports = class Regulation_docController {
           ...filters,
         };
       }
-      getDataRules.where = {
-        deleted_at: {
-          [Op.is]: null,
-        },
-      };
+      // getDataRules.where = {
+      //   deleted_at: {
+      //     [Op.is]: null,
+      //   },
+      // };
       const data = await Regulation_doc.findAll(getDataRules);
       const count = await Regulation_doc.count({
         where: getDataRules?.where,
