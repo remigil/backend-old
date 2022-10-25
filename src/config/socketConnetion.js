@@ -22,7 +22,7 @@ const socketInstace = (server) => {
     // path: "/api/",
   }).use(async function (socket, next) {
     // authenticate jwt for socket connection
-    console.log("connected");
+
     try {
       const { username, password, user_nrp, type } = socket.handshake.query;
       if (type == "Admin") {
@@ -101,16 +101,13 @@ const socketInstace = (server) => {
                 );
                 next();
               } else {
-                console.log("error 1");
                 return next(new Error("Authentication error"));
               }
             }
           } else {
-            console.log("error 2");
             next(new Error("Authentication error"));
           }
         } catch (error) {
-          console.log("error 3");
           next(new Error("Authentication error"));
         }
       }
