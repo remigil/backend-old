@@ -65,6 +65,7 @@ module.exports = class RenpamController {
         orderDirection = "asc",
         start_date = null,
         end_date = null,
+        schedule_id = "notNull", //null or notNull
       } = req.query;
       // return response(res, false, "Failed", start_date);
       const modelAttr = Object.keys(Renpam.getAttributes());
@@ -116,6 +117,15 @@ module.exports = class RenpamController {
         getDataRules.where = {
           date: {
             [Op.between]: [start_date, date_ob],
+          },
+        };
+      }
+
+      // null or notNull
+      if (schedule_id == "null") {
+        getDataRules.where = {
+          schedule_id: {
+            [Op.is]: null,
           },
         };
       }
