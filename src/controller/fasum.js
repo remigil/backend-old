@@ -22,6 +22,7 @@ const fieldData = {
   fasum_open_time: null,
   fasum_close_time: null,
   fasum_status: 0,
+  fasum_radius: 0,
 };
 module.exports = class FasumController {
   static get = async (req, res) => {

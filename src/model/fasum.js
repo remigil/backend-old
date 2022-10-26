@@ -53,6 +53,9 @@ Fasum.init(
     fasum_status: {
       type: Sequelize.INTEGER,
     },
+    fasum_radius: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
