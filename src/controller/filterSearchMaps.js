@@ -115,6 +115,20 @@ const fieldData = {
       },
     });
   },
+  cluster: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 10,
+      },
+    });
+  },
   troublespot: null,
   jadwal_kegiatan: async () => {
     return await Schedule.findAll();
@@ -158,6 +172,9 @@ module.exports = class FilterSearchController {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
             } else if (value == "fasum_khusus") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "cluster") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
             } else {
