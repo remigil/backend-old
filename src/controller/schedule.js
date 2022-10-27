@@ -759,6 +759,7 @@ module.exports = class ScheduleController {
         dummyData["status_schedule"] = dataRes[i]["status_schedule"];
         dummyData["id_category_schedule"] = dataRes[i]["id_category_schedule"];
         dummyData["category_schedule"] = dataRes[i]["category_schedule"];
+        dummyData["file_schedule"] = dataRes[i]["file_schedule"];
         dummyData["renpams"] = dataRenpam;
 
         dummyData["created_at"] = dataRes[i]["created_at"];
@@ -854,7 +855,7 @@ module.exports = class ScheduleController {
               }
             );
             fieldValue[val] = fileName;
-          } else if (val == "file_schedule") {
+          } else if (req.body.file_schedule) {
             let path = req.body.file_schedule.filepath;
             let file = req.body.file_schedule;
             let fileName = file.originalFilename;
