@@ -51,6 +51,85 @@ const fieldData = {
   //   });
   //   return valueData;
   // },
+  turjawali: async () => {
+    const today = moment().format("YYYY-MM-DD");
+    const endDateToday = moment(today).endOf("day").toDate();
+    console.log({ today });
+    // const getTrack = await TrackG20.find({
+    // date: {
+    //   $gte: today,
+    //   $lte: endDateToday,
+    // },
+    // }).sort({ updated_at: -1 });
+    let getTrack = await TrackG20.aggregate(
+      [
+        {
+          $match: {
+            dateOnly: today,
+            // date: {
+            //   // $gte: today,
+            //   // $lte: endDateToday,
+            // },
+          },
+        },
+        {
+          $group: {
+            _id: "$nrp_user",
+            max_date: {
+              $max: "$updated_at",
+            },
+            // latitude: "$latitude",
+            records: {
+              $push: "$$ROOT",
+            },
+          },
+        },
+        {
+          $project: {
+            nrp_user: {
+              $filter: {
+                input: "$records",
+                as: "records",
+                cond: {
+                  $eq: ["$$records.updated_at", "$max_date"],
+                },
+              },
+            },
+          },
+        },
+        {
+          $replaceRoot: {
+            newRoot: {
+              results: "$nrp_user",
+            },
+          },
+        },
+      ],
+      {
+        allowDiskUse: true,
+      }
+    );
+    getTrack = getTrack.map((datanya) => datanya.results[0]);
+
+    // let track = getTrack.reduce((group, product) => {
+    //   const { nrp_user } = product;
+    //   group[nrp_user] = group[nrp_user] ?? [];
+    //   group[nrp_user].push(product);
+    //   return group;
+    // }, {});
+
+    // let valueData = [];
+    // Object.keys(track).forEach((val, key) => {
+    //   valueData.push(
+    //     track[val].sort(function (a, b) {
+    //       var dateA = new Date(a.date_prop).getTime();
+    //       var dateB = new Date(b.date_prop).getTime();
+    //       return dateA < dateB ? -1 : 1;
+    //     })[0]
+    //   );
+    // });
+    return getTrack;
+  },
   polres: async () => {
     return await Polres.findAll();
   },
