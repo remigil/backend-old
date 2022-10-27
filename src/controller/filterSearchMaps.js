@@ -21,36 +21,36 @@ const Panic_button = require("../model/report");
 
 const googleMapClient = new Client();
 const fieldData = {
-  turjawali: async () => {
-    const today = moment().format("YYYY-MM-DD");
-    const endDateToday = moment(today).endOf("day").toDate();
+  // turjawali: async () => {
+  //   const today = moment().format("YYYY-MM-DD");
+  //   const endDateToday = moment(today).endOf("day").toDate();
 
-    const getTrack = await TrackG20.find({
-      date: {
-        $gte: today,
-        $lte: endDateToday,
-      },
-    }).sort({ updated_at: -1 });
+  //   const getTrack = await TrackG20.find({
+  //     date: {
+  //       $gte: today,
+  //       $lte: endDateToday,
+  //     },
+  //   }).sort({ updated_at: -1 });
 
-    let track = getTrack.reduce((group, product) => {
-      const { nrp_user } = product;
-      group[nrp_user] = group[nrp_user] ?? [];
-      group[nrp_user].push(product);
-      return group;
-    }, {});
+  //   let track = getTrack.reduce((group, product) => {
+  //     const { nrp_user } = product;
+  //     group[nrp_user] = group[nrp_user] ?? [];
+  //     group[nrp_user].push(product);
+  //     return group;
+  //   }, {});
 
-    let valueData = [];
-    Object.keys(track).forEach((val, key) => {
-      valueData.push(
-        track[val].sort(function (a, b) {
-          var dateA = new Date(a.date_prop).getTime();
-          var dateB = new Date(b.date_prop).getTime();
-          return dateA < dateB ? -1 : 1;
-        })[0]
-      );
-    });
-    return valueData;
-  },
+  //   let valueData = [];
+  //   Object.keys(track).forEach((val, key) => {
+  //     valueData.push(
+  //       track[val].sort(function (a, b) {
+  //         var dateA = new Date(a.date_prop).getTime();
+  //         var dateB = new Date(b.date_prop).getTime();
+  //         return dateA < dateB ? -1 : 1;
+  //       })[0]
+  //     );
+  //   });
+  //   return valueData;
+  // },
   polres: async () => {
     return await Polres.findAll();
   },
