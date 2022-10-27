@@ -129,7 +129,7 @@ const socketInstace = (server) => {
         },
       });
       let noTelpon = dataOfficer?.phone_officer;
-      let noDepan = noTelpon.substring(0, 2);
+      let noDepan = noTelpon ? noTelpon.substring(0, 2) : "";
       if (noDepan === "62") {
         noTelpon = noTelpon;
       } else if (noDepan === "08") {

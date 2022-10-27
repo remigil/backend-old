@@ -13,13 +13,17 @@ const fs = require("fs");
 let options = {};
 if (process.env.ENV_SSL === "production") {
   options = {
-    key: fs.readFileSync("/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt","utf-8"),
+    key: fs.readFileSync(
+      "/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt",
+      "utf-8"
+    ),
     cert: fs.readFileSync(
-      "/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt","utf-8"
+      "/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt",
+      "utf-8"
     ),
     // ca: fs.readFileSync('./test_ca.crt'),
     // requestCert: false,
-//     rejectUnauthorized: false,
+    //     rejectUnauthorized: false,
   };
 }
 //console.log(options)
@@ -37,7 +41,7 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
 }
 app.use(express.static(path.join(__dirname, "./public")));
 // socketInstace(server);
-socketInstace(server);
+// socketInstace(server);
 
 middlewareGlobal.beforeRouter(app);
 app.use(router);
