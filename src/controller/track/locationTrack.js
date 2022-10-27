@@ -8,7 +8,7 @@ module.exports = class LocationTrackController {
       const { date, name_officer = null } = req.query;
       const today = moment(date).format("YYYY-MM-DD");
       const endDateToday = moment(today).endOf("day").toDate();
-      // console.log("cek");
+      console.log({ today });
       let getData = { where: null };
       if (name_officer != null) {
         getData.name_officer = name_officer;
