@@ -51,6 +51,9 @@ Schedule.init(
     status_schedule: {
       type: Sequelize.INTEGER,
     },
+    file_schedule: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {

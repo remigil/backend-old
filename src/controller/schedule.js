@@ -25,6 +25,7 @@ const field = {
   status_schedule: 0,
   photo_schedule: null,
   id_category_schedule: null,
+  file_schedule: null,
 };
 const queryGlobal = ({ select, join, condition, account_id }) => {
   let query = `SELECT 
@@ -853,6 +854,18 @@ module.exports = class ScheduleController {
               }
             );
             fieldValue[val] = fileName;
+          } else if (val == "file_schedule") {
+            let path = req.body.file_schedule.filepath;
+            let file = req.body.file_schedule;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/schedule/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
           }
         }
       });
@@ -902,6 +915,18 @@ module.exports = class ScheduleController {
           } else if (val == "photo_schedule") {
             let path = req.body.photo_schedule.filepath;
             let file = req.body.photo_schedule;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/schedule/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else if (val == "file_schedule") {
+            let path = req.body.file_schedule.filepath;
+            let file = req.body.file_schedule;
             let fileName = file.originalFilename;
             fs.renameSync(
               path,
