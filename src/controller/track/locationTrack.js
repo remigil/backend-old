@@ -24,26 +24,89 @@ module.exports = class LocationTrackController {
         //   $lte: endDateToday,
         // };
       }
-      const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
+      // const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
 
-      let track = getTrack.reduce((group, product) => {
-        const { nrp_user } = product;
-        group[nrp_user] = group[nrp_user] ?? [];
-        group[nrp_user].push(product);
-        return group;
-      }, {});
+      let getTrack = await TrackG20.aggregate(
+        [
+          {
+            $match: {
+              dateOnly: date,
+            },
+          },
+          {
+            $group: {
+              _id: "$nrp_user",
+              max_date: {
+                $max: "$updated_at",
+              },
+              // latitude: "$latitude",
+              records: {
+                $push: "$$ROOT",
+              },
+            },
+          },
+          {
+            $project: {
+              nrp_user: {
+                $filter: {
+                  input: "$records",
+                  as: "records",
+                  cond: {
+                    $eq: ["$$records.updated_at", "$max_date"],
+                  },
+                },
+              },
+            },
+          },
+          {
+            $replaceRoot: {
+              newRoot: {
+                results: "$nrp_user",
+              },
+            },
+          },
+        ],
+        {
+          allowDiskUse: true,
+        }
+      );
+      getTrack = getTrack.map((datanya) => datanya.results[0]);
+      // const getTrack = await TrackG20.aggregate(
+      //   [
+      //     {
+      //       $match: {
+      //         dateOnly: date,
+      //       },
+      //     },
+      //     {
+      //       $sort: {
+      //         updated_at: -1,
+      //       },
+      //     },
+      //   ],
+      //   {
+      //     allowDiskUse: true,
+      //   }
+      // );
 
-      let valueData = [];
-      Object.keys(track).forEach((val, key) => {
-        valueData.push(
-          track[val].sort(function (a, b) {
-            var dateA = new Date(a.date_prop).getTime();
-            var dateB = new Date(b.date_prop).getTime();
-            return dateA < dateB ? -1 : 1;
-          })[0]
-        );
-      });
-      response(res, true, "Succeed", valueData);
+      // let track = getTrack.reduce((group, product) => {
+      //   const { nrp_user } = product;
+      //   group[nrp_user] = group[nrp_user] ?? [];
+      //   group[nrp_user].push(product);
+      //   return group;
+      // }, {});
+
+      // let valueData = [];
+      // Object.keys(track).forEach((val, key) => {
+      //   valueData.push(
+      //     track[val].sort(function (a, b) {
+      //       var dateA = new Date(a.date_prop).getTime();
+      //       var dateB = new Date(b.date_prop).getTime();
+      //       return dateA < dateB ? -1 : 1;
+      //     })[0]
+      //   );
+      // });
+      response(res, true, "Succeed", getTrack);
     } catch (e) {
       response(res, false, "Failed", e.message);
     }
