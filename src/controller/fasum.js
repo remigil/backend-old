@@ -225,7 +225,7 @@ module.exports = class FasumController {
     try {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
-        if (val == "fasum_logo") {
+        if (req.body.fasum_logo) {
           let path = req.body.fasum_logo.filepath;
           let file = req.body.fasum_logo;
           let fileName = file.originalFilename;
