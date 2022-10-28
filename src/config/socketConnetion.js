@@ -181,7 +181,7 @@ const socketInstace = (server) => {
       socket.broadcast.emit("sendToAdmin", dataOfficerOke);
 
       await TrackG20.create(dataOfficerOke);
-      const sendToBranchSocket = ioClient("http://103.163.139.100:3005/", {
+      const sendToBranchSocket = ioClient("http://192.168.8.60:3011/", {
         transports: ["websocket"],
         // socketRef.current = io('http://10.10.7.40:3001/', {
         path: "/socket.io",
@@ -190,10 +190,10 @@ const socketInstace = (server) => {
         },
       });
 
-      sendToBranchSocket.emit("sendToAdminMobile", dataOfficerOke);
-      sendToBranchSocket.emit("sendToAdminMobileNew", dataOfficerOke);
-      sendToBranchSocket.emit("sendToAdminMobileNew2", dataOfficerOke);
-      sendToBranchSocket.emit("sendToAdmin", dataOfficerOke);
+      sendToBranchSocket.emit("dariAPKLama", dataOfficerOke);
+      // sendToBranchSocket.emit("sendToAdminMobileNew", dataOfficerOke);
+      // sendToBranchSocket.emit("sendToAdminMobileNew2", dataOfficerOke);
+      // sendToBranchSocket.emit("sendToAdmin", dataOfficerOke);
     });
   });
 };
