@@ -11,6 +11,7 @@ const Officer = require("../model/officer");
 const bcrypt = require("bcrypt");
 const User = require("../model/user");
 const { Server } = require("socket.io");
+const { io: ioClient } = require("socket.io-client");
 const socketInstace = (server) => {
   // const io = require("socket.io")(server, {
 
@@ -110,6 +111,8 @@ const socketInstace = (server) => {
         } catch (error) {
           next(new Error("Authentication error"));
         }
+      } else {
+        next();
       }
       // else {
       //   next();
@@ -178,6 +181,19 @@ const socketInstace = (server) => {
       socket.broadcast.emit("sendToAdmin", dataOfficerOke);
 
       await TrackG20.create(dataOfficerOke);
+      const sendToBranchSocket = ioClient("http://103.163.139.100:3005/", {
+        transports: ["websocket"],
+        // socketRef.current = io('http://10.10.7.40:3001/', {
+        path: "/socket.io",
+        query: {
+          type: "socket",
+        },
+      });
+
+      sendToBranchSocket.emit("sendToAdminMobile", dataOfficerOke);
+      sendToBranchSocket.emit("sendToAdminMobileNew", dataOfficerOke);
+      sendToBranchSocket.emit("sendToAdminMobileNew2", dataOfficerOke);
+      sendToBranchSocket.emit("sendToAdmin", dataOfficerOke);
     });
   });
 };
