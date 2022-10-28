@@ -229,5 +229,10 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/report_login")
 );
+router.use(
+  "/anev-daily",
+  // authMiddleware.jwtAuth,
+  require("../router/anev")
+);
 
 module.exports = router;
