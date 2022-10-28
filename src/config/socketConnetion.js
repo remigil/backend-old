@@ -181,7 +181,7 @@ const socketInstace = (server) => {
       socket.broadcast.emit("sendToAdmin", dataOfficerOke);
 
       await TrackG20.create(dataOfficerOke);
-      const sendToBranchSocket = ioClient("http://192.168.8.60:3011/", {
+      const sendToBranchSocket = ioClient("http://103.163.139.100:3005/", {
         transports: ["websocket"],
         // socketRef.current = io('http://10.10.7.40:3001/', {
         path: "/socket.io",
