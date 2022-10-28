@@ -30,7 +30,7 @@ module.exports = class LocationTrackController {
         [
           {
             $match: {
-              dateOnly: date,
+              dateOnly: today,
             },
           },
           {

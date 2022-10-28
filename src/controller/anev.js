@@ -13,6 +13,8 @@ const ReportLogin = require("../model/reportLogin");
 
 module.exports = class Anev {
   static daily = (req, res) => {
-    return res.render("template/daily");
+    moment.locale("id");
+    const date = moment().format("LL");
+    return res.render("template/daily", { date });
   };
 };
