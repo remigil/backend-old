@@ -1056,25 +1056,27 @@ module.exports = class RenpamController {
                       nrp_officer: iterator.nrp_user,
                     },
                   }).then(async (dataOffice) => {
-                    NotifikasiController.singleGlobal({
-                      deepLink: notifHandler.mobile.instruksi + op.id,
-                      type: "instruksi",
-                      title: "Instruksi",
-                      description: op.name_renpam,
-                      officer_id: AESDecrypt(dataOffice.id, {
-                        isSafeUrl: true,
-                        parseMode: "string",
-                      }),
-                      mobile: notifHandler.mobile.instruksi + op.id,
-                      web: notifHandler.mobile.instruksi + op.id,
-                      to: iterator.token_fcm,
-                    })
-                      .then((successData) => {
-                        console.log({ successData });
+                    if (dataOffice) {
+                      NotifikasiController.singleGlobal({
+                        deepLink: notifHandler.mobile.instruksi + op.id,
+                        type: "instruksi",
+                        title: "Instruksi",
+                        description: op.name_renpam,
+                        officer_id: AESDecrypt(dataOffice.id, {
+                          isSafeUrl: true,
+                          parseMode: "string",
+                        }),
+                        mobile: notifHandler.mobile.instruksi + op.id,
+                        web: notifHandler.mobile.instruksi + op.id,
+                        to: iterator.token_fcm,
                       })
-                      .catch((errorData) => {
-                        console.log({ errorData });
-                      });
+                        .then((successData) => {
+                          console.log({ successData });
+                        })
+                        .catch((errorData) => {
+                          console.log({ errorData });
+                        });
+                    }
                   });
                 }
               });
