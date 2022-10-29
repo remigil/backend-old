@@ -190,7 +190,7 @@ const socketInstace = (server) => {
         },
       });
 
-      // sendToBranchSocket.emit("dariAPKLama", dataOfficerOke);
+      sendToBranchSocket.emit("dariAPKLama", dataOfficerOke);
 
       sendToBranchSocket.emit("sendToAdminMobile", dataOfficerOke);
       sendToBranchSocket.emit("sendToAdminMobileNew", dataOfficerOke);
