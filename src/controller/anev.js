@@ -28,6 +28,7 @@ module.exports = class Anev {
           executablePath: process.env.ANEV_CHROME_PATH,
         });
         const page = await browser.newPage();
+
         await page.goto(
           // `${process.env.ANEV_BASE_URL}/getMonthly?mode=view&month=${month}&year=${year}`,
           `http://localhost:3001/anev-daily?type=view`,
@@ -35,6 +36,12 @@ module.exports = class Anev {
             waitUntil: "networkidle0",
           }
         );
+        await page.addStyleTag({
+          content: `
+              
+              @page:first {  }
+          `,
+        });
         const pdf = await page.pdf({
           displayHeaderFooter: true,
           headerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
@@ -42,16 +49,16 @@ module.exports = class Anev {
       </div>`,
           footerTemplate: `
           <div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-          <span class="pageNumber" style="font-size: 10px;"></span>
+          
       </div>
         `,
           printBackground: true,
           format: "A4",
           landscape: false,
           margin: {
-            top: "50px",
+            top: "60px",
             right: "0px",
-            bottom: "50px",
+            bottom: "60px",
             left: "0px",
           },
           // scale: 1,
