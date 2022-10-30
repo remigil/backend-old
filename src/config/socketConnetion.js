@@ -154,6 +154,7 @@ const socketInstace = (server) => {
         }),
         latitude: coordinate.lat,
         longitude: coordinate.lon,
+        pam_officer: officerData.dataValues.pam_officer, // [ketua tim]
         name_account: dataAccount.dataValues.name_account,
         id_officer: AESDecrypt(dataOfficer.id, {
           isSafeUrl: true,

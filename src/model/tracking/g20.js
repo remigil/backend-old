@@ -9,6 +9,7 @@ const collection = {
   id_officer: Number,
   date: Date,
   dateOnly: String,
+  pam_officer: String, //[foto petugas]
   photo_officer: String, //[foto petugas]
   photo_officer_telp_biasa: String, //[foto petugas]
   name_account: String,
