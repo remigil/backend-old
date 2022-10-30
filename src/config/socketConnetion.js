@@ -12,6 +12,10 @@ const bcrypt = require("bcrypt");
 const User = require("../model/user");
 const { Server } = require("socket.io");
 const { io: ioClient } = require("socket.io-client");
+const dateParse = (date) => {
+  const aaa = moment.tz(date, "Etc/GMT-5");
+  return aaa.format("YYYY-MM-DD");
+};
 const socketInstace = (server) => {
   // const io = require("socket.io")(server, {
 
@@ -170,7 +174,8 @@ const socketInstace = (server) => {
         fuel_vehicle: dataAccount.vehicle.fuel_vehicle, //
         back_number_vehicle: dataAccount.vehicle.back_number_vehicle, //
         date: moment().format("YYYY-MM-DD"),
-        dateOnly: moment().format("YYYY-MM-DD"),
+        // dateOnly: moment().format("YYYY-MM-DD"),
+        dateOnly: dateParse(moment()),
       };
 
       io.emit("trackme", dataOfficerOke);
