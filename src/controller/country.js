@@ -5,6 +5,7 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const db = require("../config/database");
 const pagination = require("../lib/pagination-parser");
+const fs = require("fs");
 
 const fieldData = {
   name_country: null,
