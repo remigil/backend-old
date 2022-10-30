@@ -843,13 +843,489 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData: [
-                                {id: 1, title:"HELM SNI", angka: "" }, {id: 2, title:"MELAWAN ARUS", angka: "" }, {id:
-                                3,title:"GUN HP SAAT BERKENDARA", angka: "" }, {id: 4, title:"PENGARUH ALKOHOL",
-                                angka: "" }, {id: 4, title:"MELEBIHI BATAS KECEPATAN", angka: "" }, {id: 4,
-                                title:"PENGEDARA DIBAWAH UMUR", angka: "" }, {id: 4, title:"LAIN-LAIN", angka: ""
-                                }],titleBottom:`Tabel jumlah Pelanggar R.2 Pada Pelaksanaan Operasi Puri Agung 2022`});
-                                %>
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                pelanggaran_roda_2,titleBottom:`Tabel jumlah Pelanggar R.2 Pada Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>c.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Pelanggar Roda Empat ( R.4 )</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                pelanggaran_roda_4,titleBottom:`Tabel jumlah Pelanggar R.4 Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>d.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Barang Bukti yang disita</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                barang_bukti,titleBottom:`Tabel jumlah Barang Bukti yang disita Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>e.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Kendaraan yang Akibat Pelanggaran</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                ranmor,titleBottom:`Tabel jumlah ranmor yag terlibat, Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>f.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Profesi Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                profesi_pelanggar,titleBottom:`Tabel jumlah ranmor yag terlibat Pelanggaran Pelaksanaan
+                                Operasi Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>g.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Usia Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                usia_pelanggaran,titleBottom:`Tabel jumlah Usia Pelanggar Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>h.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan SIM Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                sim_pelanggar,titleBottom:`Tabel jumlah SIM Pelanggar pada Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>i.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Lokasi Pelanggaran</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                lokasi_pelanggar,titleBottom:`Tabel jumlah Lokasi Pelanggar pada Pelaksanaan Operasi
+                                Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>j.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Jenis Jalan</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                jenis_jalan,titleBottom:`Tabel jumlah Jenis Jalan pada Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+
+
+                </table>
+
+
+                <table class="tablesData">
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <p style="font-weight: bold;">3.</p>
+                            </div>
+
+                        </td>
+                        <td>
+                            <p style="font-weight: bold;text-transform: uppercase;">KECELAKAAN LALU LINTAS</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="tableChild" style="width: 100%;">
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>a.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Jumlah Angka Kecelakaan Lalu-Lintas</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                kecelakaan,titleBottom:`Tabel jumlah angka kecelakaan lalu-lintas pada Pelaksanaan Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>b.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Jumlah Angka Kecelakaan Berdasarkan Usia Korban</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                kecelakaan_berd_usia,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>c.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Jumlah Angka Kecelakaan Berdasarkan Profesi Korban</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                profesi_korban,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>d.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Jumlah Angka Kecelakaan Berdasarkan Pendidikan Korban</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                kecelakaan_berd_pendidikan,titleBottom:`Tabel jumlah Barang Bukti yang disita
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>e.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Jumlah Angka Kecelakaan Berdasarkan Jenis Kendaraan</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                kecelakaan_berd_kendaraan,titleBottom:`Tabel jumlah ranmor yag terlibat, Pelaksanaan
+                                Operasi Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>f.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Profesi Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                profesi_pelanggar,titleBottom:`Tabel jumlah ranmor yag terlibat Pelanggaran Pelaksanaan
+                                Operasi Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>g.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Usia Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                usia_pelanggaran,titleBottom:`Tabel jumlah Usia Pelanggar Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>h.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan SIM Pelanggar</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                sim_pelanggar,titleBottom:`Tabel jumlah SIM Pelanggar pada Pelaksanaan Operasi Puri
+                                Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>i.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Lokasi Pelanggaran</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                lokasi_pelanggar,titleBottom:`Tabel jumlah Lokasi Pelanggar pada Pelaksanaan Operasi
+                                Puri Agung 2022`}); %>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>j.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>Berdasarkan Jenis Jalan</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
+                                jenis_jalan,titleBottom:`Tabel jumlah Jenis Jalan pada Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
+                        </td>
+
+
+                    </tr>
+
+
+                </table>
+
+
+
+                <table class="tablesData">
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <p style="font-weight: bold;">III.</p>
+                            </div>
+
+                        </td>
+                        <td>
+                            <p style="font-weight: bold;text-transform: uppercase;">ANALISA DAN EVALUASI</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="tableChild" style="width: 100%;">
+                    <tr>
+                        <td style="width: 30px;">
+                            <div>
+                                <b>1.</b>
+                            </div>
+
+                        </td>
+                        <td>
+                            <b>GIAT DIKMAS LANTAS</b>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="2">
+                            <table style="width: 100%;margin-left: 3.5%;">
+                                <tr>
+                                    <td style="width: 30px;">
+                                        <div>
+                                            <b>a.</b>
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <b>Kegiatan Penyuluhan</b>
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <%- include('../pages/daily/table/child-template', {header:["NO", "Uraian" , "Angka"
+                                ],bodyData: [{id: 1, title:"Spanduk", angka: "" },{id: 2, title:"Leaflet", angka: ""
+                                },{id: 3, title:"Sticker", angka: "" },{id: 4, title:"Bilboard", angka: ""
+                                },],titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri Agung 2022`}); %>
+
+                                <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada
+                                    pelaksanaan Operasi
+                                    Puri Agung 2022
+                                    pengamanan KTT
+                                    G20 kegiatan penyuluhan di
+                                    laksanakan sebanyak ……… kali yang naik sebenyak ……..% jika dibandingkan pada Operasi
+                                    Puri Agung 2021 periode yang sama yaitu sebanyak ……….., mengingat tingginya pengaruh
+                                    media khususnya media sosial terhadap masyarakat, maka penyuluhan dengan media
+                                    sosial jauh lebih tinggi disbanding dengan media penyuluhan yang lain.</p>
                         </td>
 
 
