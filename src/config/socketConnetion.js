@@ -169,6 +169,10 @@ const socketInstace = (server) => {
         photo_officer_telp_biasa: "+" + noTelpon,
         name_country:
           dataAccount.country != null ? dataAccount.country.name_country : "-", // Delegasi
+        photo_country:
+          dataAccount.country != null
+            ? `http://k3ig20korlantas.id:3001/uploads/country/${dataAccount.country.photo_country}`
+            : "-", // Foto Delegasi
 
         no_vehicle: dataAccount.vehicle.no_vehicle, // [plat nomor]
         type_vehicle: dataAccount.vehicle.type_vehicle, // ["motor"]
