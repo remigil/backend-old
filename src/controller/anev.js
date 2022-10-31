@@ -583,7 +583,7 @@ module.exports = class Anev {
           // `${process.env.ANEV_BASE_URL}/getMonthly?mode=view&month=${month}&year=${year}`,
           `http://k3ig20korlantas.id:3001/anev-daily?type=view`,
           {
-            waitUntil: "networkidle0",
+            waitUntil: "networkidle",
           }
         );
         await page.addStyleTag({
