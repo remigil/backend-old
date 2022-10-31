@@ -143,7 +143,86 @@ module.exports = class Anev {
             { id: 5, title: "RANSUS", angka: "" },
           ],
         };
-        return res.render("template/daily", { date, ...listTables });
+        const listTableBab3 = {
+          kegiatan_penyuluhan: [
+            {
+              id: 1,
+              title: "MEDIA CETAK",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            {
+              id: 2,
+              title: "MEDIA ELEKTRONIK",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            {
+              id: 3,
+              title: "MEDIA SOSIAL",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            { id: 4, title: "LAIN", h1: "", h1: "", angka: "", trend: "" },
+          ],
+          media_penyuluhan: [
+            { id: 1, title: "Spanduk", h1: "", h1: "", angka: "", trend: "" },
+            { id: 2, title: "Leaflet", h1: "", h1: "", angka: "", trend: "" },
+            { id: 3, title: "Sticker", h1: "", h1: "", angka: "", trend: "" },
+            { id: 4, title: "Bilboard", h1: "", h1: "", angka: "", trend: "" },
+          ],
+          kegiatan_lalu_lintas: [
+            {
+              id: 1,
+              title: "PENGATURAN",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            { id: 2, title: "PENJAGAAN", h1: "", h1: "", angka: "", trend: "" },
+            {
+              id: 3,
+              title: "PENGAWALAN",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            { id: 4, title: "PATROLI", h1: "", h1: "", angka: "", trend: "" },
+          ],
+          dakgar_lantas: [
+            {
+              id: 1,
+              title: "ETLE STATIS",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            { id: 2, title: "PENJAGAAN", h1: "", h1: "", angka: "", trend: "" },
+            {
+              id: 3,
+              title: "PENGAWALAN",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+            { id: 4, title: "PATROLI", h1: "", h1: "", angka: "", trend: "" },
+          ],
+        };
+        return res.render("template/daily", {
+          date,
+          ...listTables,
+          ...listTableBab3,
+        });
       }
 
       case "pdf-download":
