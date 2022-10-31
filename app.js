@@ -37,6 +37,7 @@ if (typeof staticFolder !== "undefined" && staticFolder?.length > 0) {
   });
 }
 app.use(express.static(path.join(__dirname, "./public")));
+app.use(express.static(path.join(__dirname, "./report")));
 socketInstace(server);
 // socketInstace(server);
 
