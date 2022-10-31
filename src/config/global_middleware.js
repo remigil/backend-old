@@ -6,7 +6,11 @@ const compression = require("compression");
 module.exports = {
   beforeRouter: (app) => {
     app.use(require("../middleware/fomidable"));
-    app.use(require("helmet")());
+    app.use(
+      require("helmet")({
+        contentSecurityPolicy: false,
+      })
+    );
     app.use(require("response-time")());
     if (process.env.APP_ENABLE_CORS === "true") {
       app.use(
