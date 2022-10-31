@@ -6,23 +6,10 @@ const dotenv = require("dotenv");
 const moment = require("moment");
 const path = require("path");
 const http = require("http");
-const https = require("https");
 const socketInstace = require("./src/config/socketConnetion");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-let options = {};
-if (process.env.ENV_SSL === "production") {
-  options = {
-    key: fs.readFileSync(
-      "/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt",
-      "utf-8"
-    ),
-    cert: fs.readFileSync(
-      "/etc/ssl/k3ig20korlantas.id/k3ig20korlantas_id.crt",
-      "utf-8"
-    ),
-  };
-}
+
 //console.log(options)
 const server = http.createServer(app);
 //const server = https.createServer(options,app);
