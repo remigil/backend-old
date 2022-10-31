@@ -20,6 +20,30 @@ module.exports = class Anev {
     switch (type) {
       case "view": {
         const listTables = {
+          lalu_lintas: [
+            { id: 1, title: "MEDIA CETAK", angka: "" },
+            { id: 2, title: "MEDIA ELEKTRONIK", angka: "" },
+            { id: 3, title: "MEDIA SOSIAL", angka: "" },
+            { id: 4, title: "LAIN", angka: "" },
+          ],
+          media_penyuluhan_1: [
+            { id: 1, title: "Spanduk", angka: "" },
+            { id: 2, title: "Leaflet", angka: "" },
+            { id: 3, title: "Sticker", angka: "" },
+            { id: 4, title: "Bilboard", angka: "" },
+          ],
+          kegiatan_lalu_lintas_1: [
+            { id: 1, title: "PENGATURAN", angka: "" },
+            { id: 2, title: "PENJAGAAN", angka: "" },
+            { id: 3, title: "PENGAWALAN", angka: "" },
+            { id: 4, title: "PATROLI", angka: "" },
+          ],
+          jenis_etle: [
+            { id: 1, title: "ETLE STATIS", angka: "" },
+            { id: 2, title: "ETLE MOBILE", angka: "" },
+            { id: 3, title: "TEGURAN", angka: "" },
+          ],
+
           pelanggaran_roda_2: [
             { id: 1, title: "HELM SNI", angka: "" },
             { id: 2, title: "MELAWAN ARUS", angka: "" },
@@ -206,16 +230,69 @@ module.exports = class Anev {
               angka: "",
               trend: "",
             },
-            { id: 2, title: "PENJAGAAN", h1: "", h1: "", angka: "", trend: "" },
             {
-              id: 3,
-              title: "PENGAWALAN",
+              id: 2,
+              title: "ETLE MOBILE",
               h1: "",
               h1: "",
               angka: "",
               trend: "",
             },
-            { id: 4, title: "PATROLI", h1: "", h1: "", angka: "", trend: "" },
+            {
+              id: 3,
+              title: "TEGURAN",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+            },
+          ],
+          jenis_ranmor: [
+            {
+              id: 1,
+              title: "SEPEDA MOTOR",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+              ket: "",
+            },
+            {
+              id: 2,
+              title: "MOBIL PENUMPANG",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+              ket: "",
+            },
+            {
+              id: 3,
+              title: "BUS",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+              ket: "",
+            },
+            {
+              id: 4,
+              title: "MOBIL BARANG",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+              ket: "",
+            },
+            {
+              id: 4,
+              title: "RANSUS",
+              h1: "",
+              h1: "",
+              angka: "",
+              trend: "",
+              ket: "",
+            },
           ],
         };
         return res.render("template/daily", {
