@@ -573,7 +573,7 @@ module.exports = class Anev {
 
         await page.goto(
           // `${process.env.ANEV_BASE_URL}/getMonthly?mode=view&month=${month}&year=${year}`,
-          `http://k3ig20korlantas.id:3001/anev-daily?type=view`,
+          `http://103.163.139.100:3010/anev-daily?type=view`,
           {
             waitUntil: "networkidle0",
           }
