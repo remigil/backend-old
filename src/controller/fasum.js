@@ -133,6 +133,7 @@ module.exports = class FasumController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
+      console.log(req.body);
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "fasum_logo") {
@@ -224,21 +225,24 @@ module.exports = class FasumController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
+      console.log(req.body);
       Object.keys(fieldData).forEach((val, key) => {
-        if (req.body.fasum_logo) {
-          let path = req.body.fasum_logo.filepath;
-          let file = req.body.fasum_logo;
-          let fileName = file.originalFilename;
-          fs.renameSync(
-            path,
-            "./public/uploads/fasum_khusus/" + fileName,
-            function (err) {
-              if (err) throw err;
-            }
-          );
-          fieldValue[val] = fileName;
-        } else {
-          fieldValue[val] = req.body[val];
+        if (req.body[val]) {
+          if (val == "fasum_logo") {
+            let path = req.body.fasum_logo.filepath;
+            let file = req.body.fasum_logo;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await Fasum.update(fieldValue, {
