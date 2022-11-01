@@ -368,6 +368,8 @@ module.exports = class AccountController {
           } else {
             fieldValue[val] = req.body[val];
           }
+        } else {
+          fieldValue["id_country"] = null;
         }
       });
 
