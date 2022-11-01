@@ -94,10 +94,7 @@ class Authentication {
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
         }
-        await ReportLogin.create({
-          nrp_user,
-          login_time: new Date(),
-        });
+
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,
