@@ -2,30 +2,27 @@ const moment = require("moment");
 const { AESDecrypt } = require("../../lib/encryption");
 const response = require("../../lib/response");
 const { TrackG20 } = require("../../model/tracking/g20");
+const dateParse = (date) => {
+  const aaa = moment.tz(date, "Etc/GMT-5");
+  return aaa.format("YYYY-MM-DD");
+};
 module.exports = class LocationTrackController {
   static get = async (req, res) => {
     try {
       const { date, name_officer = null } = req.query;
-      const today = moment().format("YYYY-MM-DD");
+      const today = dateParse(moment());
       const endDateToday = moment(today).endOf("day").toDate();
       console.log({ today });
       let getData = { where: null };
       if (name_officer != null) {
         getData.name_officer = name_officer;
-        // getData.date = {
-        //   $gte: today,
-        //   $lte: endDateToday,
-        // };
+
         getData.date = today;
       } else {
         getData.date = today;
-        // getData.date = {
-        //   $gte: today,
-        //   $lte: endDateToday,
-        // };
       }
       // const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
-
+      console.log({ today });
       let getTrack = await TrackG20.aggregate(
         [
           {

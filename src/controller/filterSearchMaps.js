@@ -18,58 +18,22 @@ const Fasum = require("../model/fasum");
 const CategoryFasum = require("../model/category_fasum");
 const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
-
+const dateParse = (date) => {
+  const aaa = moment.tz(date, "Etc/GMT-5");
+  return aaa.format("YYYY-MM-DD");
+};
 const googleMapClient = new Client();
 const fieldData = {
-  // turjawali: async () => {
-  //   const today = moment().format("YYYY-MM-DD");
-  //   const endDateToday = moment(today).endOf("day").toDate();
-
-  //   const getTrack = await TrackG20.find({
-  //     date: {
-  //       $gte: today,
-  //       $lte: endDateToday,
-  //     },
-  //   }).sort({ updated_at: -1 });
-
-  //   let track = getTrack.reduce((group, product) => {
-  //     const { nrp_user } = product;
-  //     group[nrp_user] = group[nrp_user] ?? [];
-  //     group[nrp_user].push(product);
-  //     return group;
-  //   }, {});
-
-  //   let valueData = [];
-  //   Object.keys(track).forEach((val, key) => {
-  //     valueData.push(
-  //       track[val].sort(function (a, b) {
-  //         var dateA = new Date(a.date_prop).getTime();
-  //         var dateB = new Date(b.date_prop).getTime();
-  //         return dateA < dateB ? -1 : 1;
-  //       })[0]
-  //     );
-  //   });
-  //   return valueData;
-  // },
   turjawali: async () => {
-    const today = moment().format("YYYY-MM-DD");
-    const endDateToday = moment(today).endOf("day").toDate();
+    const today = dateParse(moment());
+
     console.log({ today });
-    // const getTrack = await TrackG20.find({
-    // date: {
-    //   $gte: today,
-    //   $lte: endDateToday,
-    // },
-    // }).sort({ updated_at: -1 });
+
     let getTrack = await TrackG20.aggregate(
       [
         {
           $match: {
             dateOnly: today,
-            // date: {
-            //   // $gte: today,
-            //   // $lte: endDateToday,
-            // },
           },
         },
         {
@@ -111,23 +75,6 @@ const fieldData = {
     );
     getTrack = getTrack.map((datanya) => datanya.results[0]);
 
-    // let track = getTrack.reduce((group, product) => {
-    //   const { nrp_user } = product;
-    //   group[nrp_user] = group[nrp_user] ?? [];
-    //   group[nrp_user].push(product);
-    //   return group;
-    // }, {});
-
-    // let valueData = [];
-    // Object.keys(track).forEach((val, key) => {
-    //   valueData.push(
-    //     track[val].sort(function (a, b) {
-    //       var dateA = new Date(a.date_prop).getTime();
-    //       var dateB = new Date(b.date_prop).getTime();
-    //       return dateA < dateB ? -1 : 1;
-    //     })[0]
-    //   );
-    // });
     return getTrack;
   },
   polres: async () => {

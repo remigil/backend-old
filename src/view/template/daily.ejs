@@ -63,7 +63,7 @@
 <body style="color: black;">
 
     <%- include('../pages/daily/header/judul-samping.ejs'); %>
-        <%- include('../pages/daily/header/judul-utama.ejs', {date}); %>
+        <%- include('../pages/daily/header/judul-utama.ejs', {date,judul}); %>
             <%- include('../pages/daily/header/judul-samping.ejs'); %>
 
                 <div style="width: 100%;text-align: center;margin-top: 4%;">
@@ -728,8 +728,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                lalu_lintas,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri Agung
-                                2022`}); %>
+                                lalu_lintas,titleBottom:`Tabel jenis penyuluhan lalu lintas pada Pelaksanaan Operasi
+                                Puri Agung 2022`}); %>
                         </td>
 
 
@@ -749,8 +749,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                media_penyuluhan_1,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri
-                                Agung 2022`}); %>
+                                media_penyuluhan_1,titleBottom:`Tabel jenis media penyuluhan pada Pelaksanaan Operasi
+                                Puri Agung 2022`}); %>
                         </td>
 
 
@@ -778,8 +778,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka"
-                                ],bodyData:kegiatan_lalu_lintas_1,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan
-                                Operasi Puri Agung 2022`}); %>
+                                ],bodyData:kegiatan_lalu_lintas_1,titleBottom:`Tabel jenis kegiatan lalu lintas pada
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -903,7 +903,7 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                ranmor,titleBottom:`Tabel jumlah ranmor yag terlibat, Pelaksanaan Operasi Puri Agung
+                                ranmor,titleBottom:`Tabel jumlah ranmor yang terlibat, Pelaksanaan Operasi Puri Agung
                                 2022`}); %>
                         </td>
 
@@ -924,8 +924,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                profesi_pelanggar,titleBottom:`Tabel jumlah ranmor yag terlibat Pelanggaran Pelaksanaan
-                                Operasi Puri Agung 2022`}); %>
+                                profesi_pelanggar,titleBottom:`Tabel jumlah profesi yang terlibat Pelanggaran
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -990,7 +990,7 @@
 
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                lokasi_pelanggar,titleBottom:`Tabel jumlah Lokasi Pelanggar pada Pelaksanaan Operasi
+                                lokasi_pelanggar,titleBottom:`Tabel jumlah Lokasi Pelanggaran pada Pelaksanaan Operasi
                                 Puri Agung 2022`}); %>
                         </td>
 
@@ -1074,8 +1074,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                kecelakaan_berd_usia,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri
-                                Agung 2022`}); %>
+                                kecelakaan_berd_usia,titleBottom:`Tabel jumlah kecelakaan berdasarkan usia korban pada
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -1095,8 +1095,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                profesi_korban,titleBottom:`Tabel jenis penyuluhan pada Pelaksanaan Operasi Puri Agung
-                                2022`}); %>
+                                profesi_korban,titleBottom:`Tabel jumlah kecelakaan berdasarkan profesi korban pada
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -1116,8 +1116,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                kecelakaan_berd_pendidikan,titleBottom:`Tabel jumlah Barang Bukti yang disita
-                                Pelaksanaan Operasi Puri Agung 2022`}); %>
+                                kecelakaan_berd_pendidikan,titleBottom:`Tabel jumlah kecelakaan berdasarkan pendidikan
+                                korban Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -1137,7 +1137,7 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                kecelakaan_berd_kendaraan,titleBottom:`Tabel jumlah ranmor yag terlibat, Pelaksanaan
+                                kecelakaan_berd_kendaraan,titleBottom:`Tabel jumlah ranmor yang terlibat, Pelaksanaan
                                 Operasi Puri Agung 2022`}); %>
                         </td>
 
@@ -1158,8 +1158,8 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/template', {header:["NO", "Uraian" , "Angka" ],bodyData:
-                                profesi_pelanggar,titleBottom:`Tabel jumlah ranmor yag terlibat Pelanggaran Pelaksanaan
-                                Operasi Puri Agung 2022`}); %>
+                                profesi_pelanggar,titleBottom:`Tabel jumlah profesi yang terlibat Pelanggaran
+                                Pelaksanaan Operasi Puri Agung 2022`}); %>
                         </td>
 
 
@@ -1387,8 +1387,8 @@
                                 lalu-lintas lainnya, dalam bentuk angka terpaut sangat jauh dibawah kegiatan lalu lintas
                                 lainnya.</p>
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
-                                , 'Angka' , 'TREND' ],bodyData: kegiatan_lalu_lintas,titleBottom:`Tabel jenis media
-                                penyuluhan pada Pelaksanaan Operasi Puri Agung 2022`}); %>
+                                , 'Angka' , 'TREND' ],bodyData: kegiatan_lalu_lintas,titleBottom:`Tabel jenis kegiatan
+                                lalu lintas pada Pelaksanaan Operasi Puri Agung 2022`}); %>
 
 
                         </td>
@@ -1417,7 +1417,7 @@
                                 saat pelaksanaan Operasi Puri Agung 2022 Kebijakan PPKM sudah pada level 3 sehingga
                                 mobilitas masyarakat sudah di longgarkan dan adanya KTT G20 Bali. </p>
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
-                                , 'Angka' , 'TREND' ],bodyData: dakgar_lantas,titleBottom:`Tabel jenis media penyuluhan
+                                , 'Angka' , 'TREND' ],bodyData: dakgar_lantas,titleBottom:`Tabel jenis dakgar lantas
                                 pada Pelaksanaan Operasi Puri Agung 2022`}); %>
 
 
@@ -1531,7 +1531,7 @@
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
                                 , 'Angka' , 'TREND' ],bodyData: pelanggaran_roda_4_2,titleBottom:`Tabel jumlah Pelanggar
-                                R.2 Pada Pelaksanaan Operasi Puri Agung 2022 `}); %>
+                                R.4 Pada Pelaksanaan Operasi Puri Agung 2022 `}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada
                                     operasi Puri Agung tahun 2022 pelanggar dari pengendara Roda Empar ( R.4 ) sebanyak
@@ -1568,8 +1568,9 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
-                                , 'Angka' , 'TREND' ],bodyData: barang_bukti_disita,titleBottom:`Tabel jumlah Pelanggar
-                                R.2 Pada Pelaksanaan Operasi Puri Agung 2022 `}); %>
+                                , 'Angka' , 'TREND' ],bodyData: barang_bukti_disita,titleBottom:`Tabel jumlah dakgar
+                                lantas berdasarkan barang bukti yang disita Pada Pelaksanaan Operasi Puri Agung 2022
+                                `}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada
                                     operasi Puri Agung tahun 2022 pelanggar dari pengendara Roda Empar ( R.4 ) sebanyak
@@ -1605,7 +1606,7 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
-                                , 'Angka' , 'TREND' ],bodyData: usia_pelanggaran_1,titleBottom:`Tabel jumlah SIM
+                                , 'Angka' , 'TREND' ],bodyData: kecelakaan_berd_usia_1,titleBottom:`Tabel jumlah SIM
                                 Pelanggar pada Pelaksanaan Operasi Puri Agung 2022`}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada angka
@@ -1641,8 +1642,9 @@
                     <tr>
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
-                                , 'Angka' , 'TREND' ],bodyData: profesi_korban_1,titleBottom:`Tabel jumlah ranmor yag
-                                terlibat Pelanggaran Pelaksanaan Operasi Puri Agung 2022`}); %>
+                                , 'Angka' , 'TREND' ],bodyData: profesi_korban_1,titleBottom:`Tabel jumlah dakgar lantas
+                                berdasarkan profesi pelanggar yang terlibat Pelanggaran Pelaksanaan Operasi Puri Agung
+                                2022`}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada
                                     pergelaran operasi Puri Agung 22 pelanggar terbanyak adalah pengendara dengan
@@ -1725,7 +1727,7 @@
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
                                 , 'Angka' , 'TREND' ],bodyData: kecelakaan_berd_usia_1,titleBottom:`Tabel jumlah angka
-                                kecelakaan lalu-lintas pada Pelaksanaan Puri Agung 2022`}); %>
+                                kecelakaan berdasarkan usia korban pada Pelaksanaan Puri Agung 2022`}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada usia
                                     korban kecelakaan adalah pengendara dengan rentang usia 15-19 Tahun yang mana
@@ -1759,7 +1761,7 @@
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
                                 , 'Angka' , 'TREND' ],bodyData: profesi_pelanggar_1,titleBottom:`Tabel jumlah angka
-                                kecelakaan lalu-lintas pada Pelaksanaan Puri Agung 2022`}); %>
+                                kecelakaan profesi korban pada Pelaksanaan Puri Agung 2022`}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Sesuai
                                     dengan profesi pengendara di Indonesia, yang mana pengendara dengan profesi Karyawan
@@ -1795,7 +1797,7 @@
                         <td colspan="2">
                             <%- include('../pages/daily/table/child-template', {header:['NO', 'Uraian' , 'H1' , 'H2'
                                 , 'Angka' , 'TREND' ],bodyData: ranmor_1,titleBottom:`Tabel jumlah angka kecelakaan
-                                lalu-lintas pada Pelaksanaan Puri Agung 2022`}); %>
+                                berdasarkan kendaraan yang terlibat pada Pelaksanaan Puri Agung 2022`}); %>
 
                                 <p style="text-align: justify;width: 73%;margin-left: 4%;text-indent: 0.5in;">Pada
                                     operasi Puri Agung 2022 pengamanan G20 Bali, jenis kendaraan yang terlibat

@@ -556,10 +556,14 @@ module.exports = class Anev {
             { id: 5, title: "RANSUS", h1: "", h1: "", angka: "", trend: "" },
           ],
         };
+        const formatHeaderTable = {
+          judul: "PENGAMANAN KONFERENSI TINGKAT TINGGI (KTT) G20",
+        };
         return res.render("template/daily", {
           date,
           ...listTables,
           ...listTableBab3,
+          ...formatHeaderTable,
         });
       }
 
@@ -571,13 +575,9 @@ module.exports = class Anev {
         });
         const page = await browser.newPage();
 
-        await page.goto(
-          // `${process.env.ANEV_BASE_URL}/getMonthly?mode=view&month=${month}&year=${year}`,
-          `http://103.163.139.100:3001/anev-daily?type=view`,
-          {
-            waitUntil: "networkidle0",
-          }
-        );
+        await page.goto(`${process.env.ANEV_BASE_URL}?type=view`, {
+          waitUntil: "networkidle0",
+        });
         await page.addStyleTag({
           content: `
               
