@@ -10,6 +10,7 @@ const { Client } = require("@googlemaps/google-maps-services-js");
 const pagination = require("../lib/pagination-parser");
 const moment = require("moment");
 const { TrackG20 } = require("../model/tracking/g20");
+const Officer = require("../model/officer");
 const fieldData = {
   nrp_user: null,
   login_time: null,
@@ -75,6 +76,16 @@ module.exports = class ReportLoginController {
         },
         {
           status_login: 0,
+        }
+      );
+      await Officer.update(
+        {
+          status_login: 0,
+        },
+        {
+          where: {
+            nrp_officer: nrp_user,
+          },
         }
       );
       // console.log({ update, getTrack, nrp_user, _id: getTrack.id });

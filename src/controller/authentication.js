@@ -94,7 +94,16 @@ class Authentication {
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
         }
-
+        await Officer.update(
+          {
+            status_login: 1,
+          },
+          {
+            where: {
+              nrp_officer: nrp_user,
+            },
+          }
+        );
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,
