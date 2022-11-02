@@ -8,7 +8,8 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const { Client } = require("@googlemaps/google-maps-services-js");
 const pagination = require("../lib/pagination-parser");
-
+const moment = require("moment");
+const { TrackG20 } = require("../model/tracking/g20");
 const fieldData = {
   nrp_user: null,
   login_time: null,
@@ -94,7 +95,64 @@ module.exports = class ReportLoginController {
   //       response(res, false, "Failed", e.message);
   //     }
   //   };
-
+  static login = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      const { nrp_user } = req.body;
+      let op = await ReportLogin.create(
+        {
+          nrp_user,
+          login_time: moment(),
+        },
+        {
+          transaction: transaction,
+        }
+      );
+      await transaction.commit();
+      response(res, true, "Succeed", op);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static logout = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      const { nrp_user } = req.body;
+      // let op = await ReportLogin.update(
+      //   {
+      //     nrp_user,
+      //     logout_time: moment(),
+      //   },
+      //   {
+      //     where: {
+      //       nrp_user,
+      //       logout_time: null,
+      //     },
+      //   },
+      //   {
+      //     transaction: transaction,
+      //   }
+      // );
+      // await transaction.commit();
+      // response(res, true, "Succeed", op);
+      const getTrack = await TrackG20.findOne(
+        {
+          nrp_user,
+        },
+        null,
+        {
+          sort: {
+            created_at: -1,
+          },
+        }
+      );
+      response(res, true, "Succeed", getTrack);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {

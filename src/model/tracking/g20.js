@@ -7,6 +7,7 @@ const collection = {
   latitude: Number,
   longitude: Number,
   id_officer: Number,
+  status_login: Number,
   date: Date,
   dateOnly: String,
   pam_officer: String, //[foto petugas]
