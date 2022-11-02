@@ -1,6 +1,7 @@
 const formidable = require("formidable");
 const response = require("../lib/response");
 module.exports = (req, res, next) => {
+  // console.log(req);
   const form = formidable();
   form.parse(req, (err, fields, files) => {
     req.body = { ...fields, ...files };

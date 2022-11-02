@@ -359,8 +359,8 @@ ReportFinal.init(
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "report",
-    modelName: "report",
+    tableName: "report_daily",
+    modelName: "reportDaily",
     sequelize: db,
   }
 );
