@@ -30,6 +30,16 @@ module.exports = class ReportLoginController {
           transaction: transaction,
         }
       );
+      await Officer.update(
+        {
+          status_login: 1,
+        },
+        {
+          where: {
+            nrp_officer: nrp_user,
+          },
+        }
+      );
       await transaction.commit();
       response(res, true, "Succeed", op);
     } catch (e) {

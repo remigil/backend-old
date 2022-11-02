@@ -10,6 +10,7 @@ const fs = require("fs");
 const { default: readXlsxFile } = require("read-excel-file/node");
 const { replace } = require("lodash");
 const ReportLogin = require("../model/reportLogin");
+const { getPagination } = require("../lib/pagination-parser");
 
 class Authentication {
   static login = async (req, res) => {
@@ -94,16 +95,7 @@ class Authentication {
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
         }
-        await Officer.update(
-          {
-            status_login: 1,
-          },
-          {
-            where: {
-              nrp_officer: nrp_user,
-            },
-          }
-        );
+
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,
@@ -129,40 +121,48 @@ class Authentication {
   };
   static testCaseloginMobile = async (req, res) => {
     try {
-      let path = req.body.file.filepath;
-      let file = req.body.file;
-      let fileName = file.originalFilename;
-      fs.renameSync(path, "./public/upload/" + fileName, function (err) {
-        if (err) response(res, false, "Error", err.message);
-      });
-      let readExcell = await readXlsxFile("./public/upload/" + fileName);
-      let listAccount = [];
-      let index = 0;
-      for (const iterator of readExcell) {
-        if (index == 0) {
-          if (
-            iterator[0] != "nrp" &&
-            iterator[1] != "account" &&
-            iterator[2] != "pasword"
-          ) {
-            return response(res, false, "Format Tidak Sesuai", { iterator });
-          }
-        } else {
-          listAccount.push({
-            nrp_user: iterator[0],
-            team: iterator[1],
-            password: iterator[2],
-            device_user: "TestCase" + index,
-          });
-        }
-        index++;
-      }
+      // let path = req.body.file.filepath;
+      // let file = req.body.file;
+      // let fileName = file.originalFilename;
+      // fs.renameSync(path, "./public/upload/" + fileName, function (err) {
+      //   if (err) response(res, false, "Error", err.message);
+      // });
+      // let readExcell = await readXlsxFile("./public/upload/" + fileName);
+      // let listAccount = [];
+      // let index = 0;
+      // for (const iterator of readExcell) {
+      //   if (index == 0) {
+      //     if (
+      //       iterator[0] != "nrp" &&
+      //       iterator[1] != "account" &&
+      //       iterator[2] != "pasword"
+      //     ) {
+      //       return response(res, false, "Format Tidak Sesuai", { iterator });
+      //     }
+      //   } else {
+      //     listAccount.push({
+      //       nrp_user: iterator[0],
+      //       team: iterator[1],
+      //       password: iterator[2],
+      //       device_user: "TestCase" + index,
+      //     });
+      //   }
+      //   index++;
+      // }
       let indicatorLoginBerhasil = [];
       let indicatorLoginGagal = [];
-      for (const iterator of listAccount) {
+      const { limit, page } = req.query;
+      const resPage = getPagination(parseInt(limit), parseInt(page));
+      console.log({ resPage });
+      let dataOfficer = await Officer.findAndCountAll({
+        limit: resPage.limit,
+        offset: resPage.offset,
+      });
+
+      for (const iterator of dataOfficer.rows) {
         let account = await Account.findOne({
           where: {
-            name_account: replace(iterator.team, " ", ""),
+            name_account: replace(iterator.nrp_officer, " ", ""),
           },
           include: [
             {
@@ -170,68 +170,64 @@ class Authentication {
               as: "officers",
               required: true,
               where: {
-                nrp_officer: replace(iterator.nrp_user, " ", ""),
+                nrp_officer: replace(iterator.nrp_officer, " ", ""),
               },
             },
           ],
         });
         if (account == null) {
           indicatorLoginGagal.push({
-            nrp_user: replace(iterator.nrp_user, " ", ""),
+            nrp_user: replace(iterator.nrp_officer, " ", ""),
             account_tidak_ditemukan: true,
           });
         } else {
           let chcekDeviceUser = await TokenTrackNotif.findOne({
             where: {
-              device_user: iterator.device_user,
+              nrp_user: replace(iterator.nrp_officer, " ", ""),
+              // device_user: "test1234--63213827xxxx",
             },
           });
           let nrpDeviceUser = await TokenTrackNotif.findOne({
             where: {
-              nrp_user: replace(iterator.nrp_user, " ", ""),
+              nrp_user: replace(iterator.nrp_officer, " ", ""),
             },
           });
 
-          if (
-            bcrypt.compareSync(
-              replace(iterator.password, " ", ""),
-              account?.password
-            )
-          ) {
+          if (bcrypt.compareSync("g20", account?.password)) {
             if (
               chcekDeviceUser &&
-              chcekDeviceUser.nrp_user != replace(iterator.nrp_user, " ", "")
+              chcekDeviceUser.nrp_user != replace(iterator.nrp_officer, " ", "")
             ) {
               indicatorLoginGagal.push({
-                nrp_user: replace(iterator.nrp_user, " ", ""),
+                nrp_user: replace(iterator.nrp_officer, " ", ""),
 
                 device_sudah_ada: true,
               });
             } else if (!chcekDeviceUser && !nrpDeviceUser) {
               indicatorLoginBerhasil.push({
-                nrp_user: replace(iterator.nrp_user, " ", ""),
+                nrp_user: replace(iterator.nrp_officer, " ", ""),
               });
             } else if (
               !chcekDeviceUser &&
-              nrpDeviceUser.nrp_user == replace(iterator.nrp_user, " ", "")
+              nrpDeviceUser.nrp_user == replace(iterator.nrp_officer, " ", "")
             ) {
               indicatorLoginGagal.push({
-                nrp_user: iterator.nrp_user,
+                nrp_user: iterator.nrp_officer,
 
                 device_sudah_ada: true,
               });
             }
           } else {
-            await Account.update(
-              {
-                password: "g20",
-              },
-              {
-                where: {
-                  name_account: replace(iterator.team, " ", ""),
-                },
-              }
-            );
+            // await Account.update(
+            //   {
+            //     password: "g20",
+            //   },
+            //   {
+            //     where: {
+            //       name_account: replace(iterator.team, " ", ""),
+            //     },
+            //   }
+            // );
             indicatorLoginGagal.push({
               nrp_user: iterator.nrp_user,
               device_user: iterator.device_user,
@@ -249,6 +245,7 @@ class Authentication {
       response(res, true, "Login succeed", {
         indicatorLoginBerhasil,
         indicatorLoginGagal,
+        dataOfficer,
       });
     } catch (error) {
       console.log({ error });

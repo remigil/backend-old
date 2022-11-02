@@ -342,14 +342,20 @@ module.exports = class ScheduleController {
         }
       }
       // petugas data
-
+      // console.log(req.auth.uid);
       const idOfficer = AESDecrypt(req.auth.officer, {
         isSafeUrl: true,
         parseMode: "string",
       });
+      const idAccount = AESDecrypt(req.auth.uid, {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      // console.log(idAccount);
       let account_id = await TrxAccountOfficer.findOne({
         where: {
           officer_id: parseInt(idOfficer),
+          account_id: parseInt(idAccount),
         },
       });
 
