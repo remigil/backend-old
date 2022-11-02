@@ -147,6 +147,7 @@ const socketInstace = (server) => {
         noTelpon = noTelpon;
       }
       // console.log();
+
       const dataOfficerOke = {
         id_user: AESDecrypt(dataAccount.id, {
           isSafeUrl: true,
@@ -154,7 +155,11 @@ const socketInstace = (server) => {
         }),
         latitude: coordinate.lat,
         longitude: coordinate.lon,
-        status_login: 1,
+        status_login: coordinate?.status_login
+          ? 1
+          : coordinate.status_login == undefined
+          ? 1
+          : 0,
         pam_officer: officerData.dataValues.pam_officer, // [ketua tim]
         name_account: dataAccount.dataValues.name_account,
         id_officer: AESDecrypt(dataOfficer.id, {
@@ -183,7 +188,7 @@ const socketInstace = (server) => {
         // dateOnly: moment().format("YYYY-MM-DD"),
         dateOnly: dateParse(moment()),
       };
-
+      console.log({ dataOfficerOke });
       io.emit("trackme", dataOfficerOke);
 
       socket.broadcast.emit("sendToAdminMobile", dataOfficerOke);
