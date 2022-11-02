@@ -12,7 +12,7 @@ module.exports = class LocationTrackController {
       const { date, name_officer = null } = req.query;
       const today = dateParse(moment());
       const endDateToday = moment(today).endOf("day").toDate();
-      console.log({ today });
+      // console.log({ today });
       let getData = { where: null };
       if (name_officer != null) {
         getData.name_officer = name_officer;
@@ -22,7 +22,7 @@ module.exports = class LocationTrackController {
         getData.date = today;
       }
       // const getTrack = await TrackG20.find(getData).sort({ updated_at: -1 });
-      console.log({ today });
+      // console.log({ today });
       let getTrack = await TrackG20.aggregate(
         [
           {
@@ -108,6 +108,29 @@ module.exports = class LocationTrackController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getName = async (req, res) => {
+    try {
+      const { date, name_officer = null } = req.query;
+      const today = dateParse(moment());
+      const endDateToday = moment(today).endOf("day").toDate();
+
+      let getData = { where: null };
+      if (name_officer != null) {
+        getData.name_officer = name_officer;
+
+        getData.date = today;
+      } else {
+        getData.date = today;
+      }
+      const getTrack = await TrackG20.findOne(getData).sort({ updated_at: -1 });
+
+      response(res, true, "Succeed", getTrack);
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static sendToSocket = async () => {
     const today = moment(new Date()).format("YYYY-MM-DD");
     const endDateToday = moment(today).endOf("day").toDate();
