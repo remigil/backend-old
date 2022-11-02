@@ -16,85 +16,6 @@ const fieldData = {
   logout_time: null,
 };
 module.exports = class ReportLoginController {
-  //   static get = async (req, res) => {
-  //     try {
-  //       const {
-  //         length = 10,
-  //         start = 0,
-  //         serverSide = null,
-  //         search = null,
-  //         filter = [],
-  //         filterSearch = [],
-  //         order = null,
-  //         orderDirection = "asc",
-  //       } = req.query;
-  //       const modelAttr = Object.keys(ReportLogin.getAttributes());
-  //       let getData = { where: null };
-  //       if (serverSide?.toLowerCase() === "true") {
-  //         const resPage = pagination.getPagination(length, start);
-  //         getData.limit = resPage.limit;
-  //         getData.offset = resPage.offset;
-  //       }
-  //       getData.order = [
-  //         [
-  //           order != null ? order : "id",
-  //           orderDirection != null ? orderDirection : "asc",
-  //         ],
-  //       ];
-  //       if (search != null) {
-  //         let whereBuilder = [];
-  //         modelAttr.forEach((key) => {
-  //           whereBuilder.push(
-  //             Sequelize.where(
-  //               Sequelize.fn(
-  //                 "lower",
-  //                 Sequelize.cast(Sequelize.col(key), "varchar")
-  //               ),
-  //               {
-  //                 [Op.like]: `%${search.toLowerCase()}%`,
-  //               }
-  //             )
-  //           );
-  //         });
-  //         getData.where = {
-  //           [Op.or]: whereBuilder,
-  //         };
-  //       }
-  //       getData.where = {
-  //         deleted_at: {
-  //           [Op.is]: null,
-  //         },
-  //       };
-  //       if (
-  //         filter != null &&
-  //         filter.length > 0 &&
-  //         filterSearch != null &&
-  //         filterSearch.length > 0
-  //       ) {
-  //         const filters = [];
-  //         filter.forEach((fKey, index) => {
-  //           if (_.includes(modelAttr, fKey)) {
-  //             filters[fKey] = filterSearch[index];
-  //           }
-  //         });
-  //         getData.where = {
-  //           ...getData.where,
-  //           ...filters,
-  //         };
-  //       }
-  //       const data = await ReportLogin.findAll(getData);
-  //       const count = await ReportLogin.count({
-  //         where: getData?.where,
-  //       });
-  //       response(res, true, "Succeed", {
-  //         data,
-  //         recordsFiltered: count,
-  //         recordsTotal: count,
-  //       });
-  //     } catch (e) {
-  //       response(res, false, "Failed", e.message);
-  //     }
-  //   };
   static login = async (req, res) => {
     const transaction = await db.transaction();
     try {
@@ -119,23 +40,23 @@ module.exports = class ReportLoginController {
     const transaction = await db.transaction();
     try {
       const { nrp_user } = req.body;
-      // let op = await ReportLogin.update(
-      //   {
-      //     nrp_user,
-      //     logout_time: moment(),
-      //   },
-      //   {
-      //     where: {
-      //       nrp_user,
-      //       logout_time: null,
-      //     },
-      //   },
-      //   {
-      //     transaction: transaction,
-      //   }
-      // );
-      // await transaction.commit();
-      // response(res, true, "Succeed", op);
+      let op = await ReportLogin.update(
+        {
+          nrp_user,
+          logout_time: moment(),
+        },
+        {
+          where: {
+            nrp_user,
+            logout_time: null,
+          },
+        },
+        {
+          transaction: transaction,
+        }
+      );
+      await transaction.commit();
+
       const getTrack = await TrackG20.findOne(
         {
           nrp_user,
@@ -147,7 +68,19 @@ module.exports = class ReportLoginController {
           },
         }
       );
-      response(res, true, "Succeed", getTrack);
+      await TrackG20.updateOne(
+        {
+          nrp_user,
+          _id: getTrack.id,
+        },
+        {
+          $set: {
+            status_login: 0,
+          },
+        }
+      );
+      // response(res, true, "Succeed", { id: getTrack.id, updateLogoutTrack });
+      response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
