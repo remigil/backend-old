@@ -340,6 +340,9 @@ ReportFinal.init(
     kecelakaan_berd_kendaraan_5: {
       type: Sequelize.INTEGER,
     },
+    date: {
+      type: Sequelize.DATEONLY,
+    },
     ...StructureTimestamp,
   },
   {

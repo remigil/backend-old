@@ -46,6 +46,9 @@ Officer.init(
     status_officer: {
       type: Sequelize.INTEGER,
     },
+    status_login: {
+      type: Sequelize.INTEGER,
+    },
     polda_id: {
       type: Sequelize.INTEGER,
     },
