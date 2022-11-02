@@ -55,6 +55,9 @@ Officer.init(
     polres_id: {
       type: Sequelize.INTEGER,
     },
+    deviceId: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {
