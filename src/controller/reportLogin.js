@@ -68,19 +68,18 @@ module.exports = class ReportLoginController {
           },
         }
       );
-      await TrackG20.updateOne(
+      let update = await TrackG20.updateOne(
         {
           nrp_user,
           _id: getTrack.id,
         },
         {
-          $set: {
-            status_login: 0,
-          },
+          status_login: 0,
         }
       );
+      // console.log({ update, getTrack, nrp_user, _id: getTrack.id });
       // response(res, true, "Succeed", { id: getTrack.id, updateLogoutTrack });
-      response(res, true, "Succeed", op);
+      response(res, true, "Succeed", update);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
