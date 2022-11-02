@@ -11,6 +11,8 @@ const pagination = require("../lib/pagination-parser");
 const moment = require("moment");
 const { TrackG20 } = require("../model/tracking/g20");
 const Officer = require("../model/officer");
+const TokenTrackController = require("./token_track_notif");
+const TokenTrackNotif = require("../model/token_track_notif");
 const fieldData = {
   nrp_user: null,
   login_time: null,
@@ -30,9 +32,15 @@ module.exports = class ReportLoginController {
           transaction: transaction,
         }
       );
+      const getDeviceId = await TokenTrackNotif.findOne({
+        where: {
+          nrp_user,
+        },
+      });
       await Officer.update(
         {
           status_login: 1,
+          deviceId: getDeviceId.device_user,
         },
         {
           where: {
