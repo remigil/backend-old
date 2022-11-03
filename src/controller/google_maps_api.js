@@ -337,6 +337,17 @@ class GoogleAPIs {
       response(res, false, err.message, err, 500);
     }
   }
+  static testApi = async (req, res) => {
+    try {
+      // https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops
+      const getData = await axios({
+        url: `https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops`,
+      });
+      response(res, true, "Berhasil", getData.data, 200);
+    } catch (error) {
+      response(res, false, error.message, error, 400);
+    }
+  };
 }
 
 module.exports = GoogleAPIs;
