@@ -47,6 +47,13 @@ const fieldData = {
   t_rengiat_failed: 0,
   t_rengiat: 0,
 
+  t_accident: 0,
+  t_materialloss: 0,
+  t_md: 0,
+  t_lb: 0,
+  t_lr: 0,
+  t_korban: 0,
+
   date: null,
 };
 module.exports = class ReportController {
