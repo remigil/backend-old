@@ -13,6 +13,7 @@ module.exports = class Anev {
       // console.log(req);
       moment.locale("id");
       const date = moment().format("LL");
+
       switch (type) {
         case "view": {
           const datanya = AESDecrypt(data, {
@@ -20,7 +21,11 @@ module.exports = class Anev {
             parseMode: "string",
           });
           req.body = JSON.parse(datanya);
-
+          const getAnev = await ReportFinal.findOne({
+            where: {
+              date: moment().subtract("day", 1).format("YYYY-MM-DD"),
+            },
+          });
           const insertDb = {
             title: req.body.title,
             lalu_lintas_1: req.body.lalu_lintas[0].angka || 0,
@@ -146,264 +151,102 @@ module.exports = class Anev {
             kecelakaan_berd_kendaraan_5:
               req.body.kecelakaan_berd_kendaraan[4].angka || 0,
           };
-
           const listTableBab3 = {
-            kegiatan_penyuluhan: [
-              {
-                id: 1,
-                title: "MEDIA CETAK",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 2,
-                title: "MEDIA ELEKTRONIK",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "MEDIA SOSIAL",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 4, title: "LAIN", h1: "", h1: "", angka: "", trend: "" },
-            ],
-            media_penyuluhan: [
-              { id: 1, title: "Spanduk", h1: "", h1: "", angka: "", trend: "" },
-              { id: 2, title: "Leaflet", h1: "", h1: "", angka: "", trend: "" },
-              { id: 3, title: "Sticker", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 4,
-                title: "Bilboard",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            kegiatan_lalu_lintas: [
-              {
-                id: 1,
-                title: "PENGATURAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 2,
-                title: "PENJAGAAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "PENGAWALAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 4, title: "PATROLI", h1: "", h1: "", angka: "", trend: "" },
-            ],
-            dakgar_lantas: [
-              {
-                id: 1,
-                title: "ETLE STATIS",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 2,
-                title: "ETLE MOBILE",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "TEGURAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            jenis_ranmor: [
-              {
-                id: 1,
-                title: "SEPEDA MOTOR",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 2,
-                title: "MOBIL PENUMPANG",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 3,
-                title: "BUS",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 4,
-                title: "MOBIL BARANG",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 4,
-                title: "RANSUS",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-            ],
-            lantas_roda_dua: [
-              {
-                id: 1,
-                title: "HELM SNI",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 2,
-                title: "MELAWAN ARUS",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 3,
-                title: "GUN HP SAAT BERKENDARA",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 4,
-                title: "PENGARUH ALKOHOL",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 4,
-                title: "MELEBIHI BATAS KECEPATAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 5,
-                title: "PENGEDARA DIBAWAH UMUR",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-              {
-                id: 6,
-                title: "LAIN-LAIN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-                ket: "",
-              },
-            ],
-            pelanggaran_roda_4_2: [
-              {
-                id: 1,
-                title: "MELAWAN ARUS",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 2, title: "GUN HP", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 3,
-                title: "PENGARUH ALKOHOL",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "OVER SPEED",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "DIBAWAH UMUR",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: " SAFETY BELT",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "LAIN-LAIN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
+            kegiatan_penyuluhan: req.body.lalu_lintas.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["lalu_lintas_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+            media_penyuluhan: req.body.media_penyuluhan_1.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["media_penyuluhan_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+
+            kegiatan_lalu_lintas: req.body.kegiatan_lalu_lintas_1.map(
+              (data, index) => {
+                let h1 = getAnev
+                  ? parseInt(getAnev["kegiatan_lalin_" + (index + 1)])
+                  : 0;
+                let angka = parseInt(data.angka) - h1;
+                return {
+                  ...data,
+                  h1: h1,
+                  h2: parseInt(data.angka),
+                  angka: angka,
+                  trend: (angka / h1) * 100,
+                };
+              }
+            ),
+
+            dakgar_lantas: req.body.jenis_etle.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["jenis_etle_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+            jenis_ranmor: req.body.ranmor.map((data, index) => {
+              let h1 = getAnev ? parseInt(getAnev["ranmor_" + (index + 1)]) : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+            lantas_roda_dua: req.body.pelanggaran_roda_2.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["pelanggaran_roda_2_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+            pelanggaran_roda_4_2: req.body.pelanggaran_roda_4.map(
+              (data, index) => {
+                let h1 = getAnev
+                  ? parseInt(getAnev["pelanggaran_roda_4_" + (index + 1)])
+                  : 0;
+                let angka = parseInt(data.angka) - h1;
+                return {
+                  ...data,
+                  h1: h1,
+                  h2: parseInt(data.angka),
+                  angka: angka,
+                  trend: (angka / h1) * 100,
+                };
+              }
+            ),
             barang_bukti_disita: [
               { id: 1, title: "SIM", h1: "", h1: "", angka: "", trend: "" },
               { id: 2, title: "STNK", h1: "", h1: "", angka: "", trend: "" },
@@ -619,7 +462,30 @@ module.exports = class Anev {
             h2: "H" + parseInt(moment().format("DD")),
             h1: "H" + parseInt(moment().subtract(1, "d").format("DD")),
           };
-          await ReportFinal.create(insertDb);
+          const getAnevToday = await ReportFinal.findOne({
+            where: {
+              date: moment().format("YYYY-MM-DD"),
+            },
+          });
+          if (getAnevToday) {
+            // await ReportFinal.create(insertDb);
+            await ReportFinal.update(
+              {
+                ...insertDb,
+                date: moment().format("YYYY-MM-DD"),
+              },
+              {
+                where: {
+                  date: moment().format("YYYY-MM-DD"),
+                },
+              }
+            );
+          } else {
+            await ReportFinal.create({
+              ...insertDb,
+              date: moment().format("YYYY-MM-DD"),
+            });
+          }
 
           return res.render("template/daily", {
             date,
@@ -653,7 +519,7 @@ module.exports = class Anev {
           );
           await page.addStyleTag({
             content: `
-              
+
               @page:first {  }
           `,
           });
@@ -664,7 +530,7 @@ module.exports = class Anev {
       </div>`,
             footerTemplate: `
           <div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-          
+
       </div>
         `,
             printBackground: true,

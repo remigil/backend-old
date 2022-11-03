@@ -11,28 +11,49 @@
         </tr>
     </thead>
     <tbody>
-        <% bodyData.forEach(function(d){%>
-            <tr class="trTable">
-                <td class="tdCHild">
-                    <%- d.id%>
-                </td>
-                <td class="tdCHild" style="text-align: left !important;">
-                    <%- d.title%>
-                </td>
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-                <% })%>
+        <% let jumlahAwal=0;let h1S=0;let h2S=0;let angkaS=0;let trendS=0 %>
+            <% bodyData.forEach(function(d){%>
+                <tr class="trTable">
+                    <td class="tdCHild">
+                        <%- d.id%>
+                    </td>
+                    <td class="tdCHild" style="text-align: left !important;">
+                        <%- d.title%>
+                    </td>
+                    <td class="tdCHild">
+                        <% h1S +=parseInt(d.h1) %>
+                            <%- d.h1 %>
+                    </td>
+                    <td class="tdCHild">
+                        <% h2S +=d.h2 %>
+                            <%- d.h2 %>
+                    </td>
+                    <td class="tdCHild">
+                        <% angkaS +=d.angka %>
+                            <%- d.angka %>
+                    </td>
+                    <td class="tdCHild">
+                        <% trendS +=d.trend %>
+                            <%- d.trend %> %
+                    </td>
+                    <% })%>
 
-            <tr class="trTable">
-                <td colspan="2" style="text-align: right !important;">Jumlah</td>
+                <tr class="trTable">
+                    <td colspan="2" style="text-align: right !important;">Jumlah</td>
 
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-                <td class="tdCHild"></td>
-            </tr>
+                    <td class="tdCHild">
+                        <%- h1S %>
+                    </td>
+                    <td class="tdCHild">
+                        <%- h2S %>
+                    </td>
+                    <td class="tdCHild">
+                        <%- angkaS %>
+                    </td>
+                    <td class="tdCHild">
+                        <%- trendS %> %
+                    </td>
+                </tr>
     </tbody>
 </table>
 <p style="margin-left:18%;font-size: 13px;">
