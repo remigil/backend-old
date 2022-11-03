@@ -247,215 +247,135 @@ module.exports = class Anev {
                 };
               }
             ),
-            barang_bukti_disita: [
-              { id: 1, title: "SIM", h1: "", h1: "", angka: "", trend: "" },
-              { id: 2, title: "STNK", h1: "", h1: "", angka: "", trend: "" },
-              { id: 2, title: "RANMOR", h1: "", h1: "", angka: "", trend: "" },
-            ],
-            usia_pelanggaran_1: [
-              { id: 1, title: "A", h1: "", h1: "", angka: "", trend: "" },
-              { id: 2, title: "A UMUM", h1: "", h1: "", angka: "", trend: "" },
-              { id: 3, title: "B I", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 4,
-                title: "B I UMUM",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 5, title: "B II", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 6,
-                title: "B II UMUM",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 7, title: "C", h1: "", h1: "", angka: "", trend: "" },
-              { id: 8, title: "D", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 9,
-                title: "SIM INTERNASIONAL",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 10,
-                title: "TANPA SIM",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            profesi_korban_1: [
-              { id: 1, title: "PNS", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 2,
-                title: "KARYAWAN / SWASTA",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "PELAJAR / MAHASISWA",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "PENGEMUDI (SUPIR)",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 5, title: "TNI", h1: "", h1: "", angka: "", trend: "" },
-              { id: 6, title: "POLRI", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 7,
-                title: "LAIN - LAIN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            kecelakaan_1: [
-              {
-                id: 1,
-                title: "JUMLAH KEJADIAN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 2,
-                title: "KORBAN MD",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "KORBAN LB",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "KORBAN LR",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 5, title: "RUMAT", h1: "", h1: "", angka: "", trend: "" },
-            ],
-            kecelakaan_berd_usia_1: [
-              { id: 1, title: "0 - 4", h1: "", h1: "", angka: "", trend: "" },
-              { id: 2, title: "5 - 9", h1: "", h1: "", angka: "", trend: "" },
-              { id: 3, title: "10 - 14", h1: "", h1: "", angka: "", trend: "" },
-              { id: 4, title: "15 - 19", h1: "", h1: "", angka: "", trend: "" },
-              { id: 5, title: "21 - 24", h1: "", h1: "", angka: "", trend: "" },
-              { id: 6, title: "24 - 29", h1: "", h1: "", angka: "", trend: "" },
-              { id: 7, title: "30 - 34", h1: "", h1: "", angka: "", trend: "" },
-              { id: 8, title: "35 - 39", h1: "", h1: "", angka: "", trend: "" },
-              { id: 9, title: "40 - 44", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 10,
-                title: "45 - 49",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 11,
-                title: "50 - 54",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            profesi_pelanggar_1: [
-              { id: 1, title: "PNS", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 2,
-                title: "KARYAWAN / SWASTA",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 3,
-                title: "PELAJAR / MAHASISWA",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 4,
-                title: "PENGEMUDI (SUPIR)",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 5, title: "TNI", h1: "", h1: "", angka: "", trend: "" },
-              { id: 6, title: "POLRI", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 7,
-                title: "LAIN - LAIN",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-            ],
-            ranmor_1: [
-              {
-                id: 1,
-                title: "SEPEDA MOTOR",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              {
-                id: 2,
-                title: "MOBIL PENUMPANG",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 3, title: "BUS", h1: "", h1: "", angka: "", trend: "" },
-              {
-                id: 4,
-                title: "MOBIL BARANG",
-                h1: "",
-                h1: "",
-                angka: "",
-                trend: "",
-              },
-              { id: 5, title: "RANSUS", h1: "", h1: "", angka: "", trend: "" },
-            ],
+            barang_bukti_disita: req.body.barang_bukti.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["barang_bukti_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+
+            // usia_pelanggaran_1: req.body.sim_pelanggar.map((data, index) => {
+            //   let h1 = getAnev
+            //     ? parseInt(getAnev["sim_pelanggar_" + (index + 1)])
+            //     : 0;
+            //   let angka = parseInt(data.angka) - h1;
+            //   return {
+            //     ...data,
+            //     h1: h1,
+            //     h2: parseInt(data.angka),
+            //     angka: angka,
+            //     trend: (angka / h1) * 100,
+            //   };
+            // }),
+
+            profesi_korban_1: req.body.profesi_korban.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["profesi_korban_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+
+            kecelakaan_1: req.body.kecelakaan.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["kecelakaan_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+
+            kecelakaan_berd_usia_1: req.body.kecelakaan_berd_usia.map(
+              (data, index) => {
+                let h1 = getAnev
+                  ? parseInt(getAnev["kecelakaan_berd_usia_" + (index + 1)])
+                  : 0;
+                let angka = parseInt(data.angka) - h1;
+                return {
+                  ...data,
+                  h1: h1,
+                  h2: parseInt(data.angka),
+                  angka: angka,
+                  trend: (angka / h1) * 100,
+                };
+              }
+            ),
+
+            profesi_pelanggar_1: req.body.profesi_pelanggar.map(
+              (data, index) => {
+                let h1 = getAnev
+                  ? parseInt(getAnev["profesi_pelanggar_" + (index + 1)])
+                  : 0;
+                let angka = parseInt(data.angka) - h1;
+                return {
+                  ...data,
+                  h1: h1,
+                  h2: parseInt(data.angka),
+                  angka: angka,
+                  trend: (angka / h1) * 100,
+                };
+              }
+            ),
+
+            ranmor_1: req.body.kecelakaan_berd_kendaraan.map((data, index) => {
+              let h1 = getAnev
+                ? parseInt(getAnev["kecelakaan_berd_kendaraan_" + (index + 1)])
+                : 0;
+              let angka = parseInt(data.angka) - h1;
+              return {
+                ...data,
+                h1: h1,
+                h2: parseInt(data.angka),
+                angka: angka,
+                trend: (angka / h1) * 100,
+              };
+            }),
+            // ranmor_1: [
+            //   {
+            //     id: 1,
+            //     title: "SEPEDA MOTOR",
+            //     h1: "",
+            //     h1: "",
+            //     angka: "",
+            //     trend: "",
+            //   },
+            //   {
+            //     id: 2,
+            //     title: "MOBIL PENUMPANG",
+            //     h1: "",
+            //     h1: "",
+            //     angka: "",
+            //     trend: "",
+            //   },
+            //   { id: 3, title: "BUS", h1: "", h1: "", angka: "", trend: "" },
+            //   {
+            //     id: 4,
+            //     title: "MOBIL BARANG",
+            //     h1: "",
+            //     h1: "",
+            //     angka: "",
+            //     trend: "",
+            //   },
+            //   { id: 5, title: "RANSUS", h1: "", h1: "", angka: "", trend: "" },
+            // ],
           };
           const formatHeaderTable = {
             judul: req.body.title,
