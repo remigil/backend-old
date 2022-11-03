@@ -86,6 +86,25 @@ Day_report.init(
       type: Sequelize.STRING(20),
     },
 
+    t_accident: {
+      type: Sequelize.STRING(20),
+    },
+    t_materialloss: {
+      type: Sequelize.STRING(20),
+    },
+    t_md: {
+      type: Sequelize.STRING(20),
+    },
+    t_lb: {
+      type: Sequelize.STRING(20),
+    },
+    t_lr: {
+      type: Sequelize.STRING(20),
+    },
+    t_korban: {
+      type: Sequelize.STRING(20),
+    },
+
     date: {
       type: Sequelize.DATEONLY,
     },
