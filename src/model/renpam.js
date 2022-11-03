@@ -149,6 +149,9 @@ Renpam.init(
     note_kakor: {
       type: Sequelize.TEXT,
     },
+    warnaRoute_renpam: {
+      type: Sequelize.STRING(20),
+    },
     ...StructureTimestamp,
   },
   {

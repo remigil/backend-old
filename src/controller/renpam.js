@@ -49,6 +49,7 @@ const fieldData = {
   note_kakor: null,
   start_datetime_renpam: null,
   end_datetime_renpam: null,
+  warnaRoute_renpam: "red",
 };
 
 module.exports = class RenpamController {
