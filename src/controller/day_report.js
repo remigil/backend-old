@@ -220,25 +220,28 @@ module.exports = class ReportController {
         let aa = getDataMonth.find((e) => e.date === iterator);
         if (aa) {
           listData.push({
-            t_accident: parseInt(aa.t_accident),
-            t_md: parseInt(aa.t_md),
-            t_lb: parseInt(aa.t_lb),
-            t_lr: parseInt(aa.t_lr),
-            t_korban: parseInt(aa.t_korban),
+            name: iterator,
+            data: [
+              parseInt(aa.t_accident),
+              parseInt(aa.t_md),
+              parseInt(aa.t_lb),
+              parseInt(aa.t_lr),
+              parseInt(aa.t_korban),
+            ],
           });
           listDataMaterial.push({
-            t_materialloss: parseInt(aa.t_materialloss),
+            // t_materialloss: ,
+            name: iterator,
+            data: [parseInt(aa.t_materialloss)],
           });
         } else {
           listData.push({
-            t_accident: 0,
-            t_md: 0,
-            t_lb: 0,
-            t_lr: 0,
-            t_korban: 0,
+            name: iterator,
+            data: [0, 0, 0, 0, 0],
           });
           listDataMaterial.push({
-            t_materialloss: 0,
+            name: iterator,
+            data: [0],
           });
         }
       }
@@ -247,10 +250,8 @@ module.exports = class ReportController {
         false,
         "berhasil",
         {
-          data: {
-            irsms1: listData,
-            irsms2: listDataMaterial,
-          },
+          irsms1: listData,
+          irsms2: listDataMaterial,
           dateMonth: getDaysArray(
             moment(date).format("YYYY"),
             moment(date).format("MM")
