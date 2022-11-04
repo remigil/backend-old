@@ -9,10 +9,11 @@ const ReportFinal = require("../model/report_finally");
 module.exports = class Anev {
   static daily = async (req, res) => {
     try {
-      const { type, data } = req.query;
-      // console.log(req);
+      const { type, data, tanggal, mulaiOperasi } = req.query;
+
       moment.locale("id");
       const date = moment().format("LL");
+      let dateChoose = tanggal ? tanggal : moment().format("YYYY-MM-DD");
 
       switch (type) {
         case "view": {
@@ -20,10 +21,11 @@ module.exports = class Anev {
             isSafeUrl: true,
             parseMode: "string",
           });
+
           req.body = JSON.parse(datanya);
           const getAnev = await ReportFinal.findOne({
             where: {
-              date: moment().subtract("day", 1).format("YYYY-MM-DD"),
+              date: moment(dateChoose).subtract("day", 1).format("YYYY-MM-DD"),
             },
           });
           const insertDb = {
@@ -379,8 +381,11 @@ module.exports = class Anev {
           };
           const formatHeaderTable = {
             judul: req.body.title,
-            h2: "H" + parseInt(moment().format("DD")),
-            h1: "H" + parseInt(moment().subtract(1, "d").format("DD")),
+            h2: "H" + parseInt(mulaiOperasi),
+            h1: "H" + (parseInt(mulaiOperasi) - 1),
+            tanggalSkrg: dateChoose,
+            // h1:
+            //   "H" + parseInt(moment(dateChoose).subtract(1, "d").format("DD")),
           };
           const getAnevToday = await ReportFinal.findOne({
             where: {
@@ -392,23 +397,23 @@ module.exports = class Anev {
             await ReportFinal.update(
               {
                 ...insertDb,
-                date: moment().format("YYYY-MM-DD"),
+                date: moment(dateChoose).format("YYYY-MM-DD"),
               },
               {
                 where: {
-                  date: moment().format("YYYY-MM-DD"),
+                  date: moment(dateChoose).format("YYYY-MM-DD"),
                 },
               }
             );
           } else {
             await ReportFinal.create({
               ...insertDb,
-              date: moment().format("YYYY-MM-DD"),
+              date: moment(dateChoose).format("YYYY-MM-DD"),
             });
           }
 
           return res.render("template/daily", {
-            date,
+            date: moment(dateChoose).format("LL"),
             // ...listTables,
             ...req.body,
             ...listTableBab3,
@@ -424,9 +429,11 @@ module.exports = class Anev {
           });
 
           const page = await browser.newPage();
-
+          // + "&tanggal=" + dateChoose
           await page.goto(
-            `${process.env.ANEV_BASE_URL}?type=view&data=${AESEncrypt(
+            `${
+              process.env.ANEV_BASE_URL
+            }?type=view&mulaiOperasi=${mulaiOperasi}&tanggal=${dateChoose}&data=${AESEncrypt(
               JSON.stringify(req.body),
               {
                 isSafeUrl: true,
@@ -434,14 +441,13 @@ module.exports = class Anev {
             )}`,
             {
               waitUntil: "networkidle0",
-              // timeout: 0,
             }
           );
           await page.addStyleTag({
             content: `
-
-              @page:first {  }
-          `,
+              @page:first { 
+                margin-top: 0;
+               }`,
           });
           const pdf = await page.pdf({
             displayHeaderFooter: true,
@@ -464,7 +470,7 @@ module.exports = class Anev {
             },
             // scale: 1,
             path: `${path.resolve(
-              "./report/anev/monthly-" + moment().format("YYYY-MM-DD") + ".pdf"
+              "./report/anev/monthly-" + dateChoose + ".pdf"
             )}`,
           });
 

@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const DayReportController = require("../controller/day_report");
 const formValidation = require("../middleware/form_validation");
 router.get("/", DayReportController.get);
+router.get("/getDateMonth", DayReportController.getOneMonth);
 router.get("/getId/:id", DayReportController.getId);
 router.post(
   "/add",

@@ -56,6 +56,19 @@ const fieldData = {
 
   date: null,
 };
+
+let getDaysArray = function (year, month) {
+  let monthDate = moment(year + "-" + month, "YYYY-MM");
+  let daysInMonth = monthDate.daysInMonth();
+  let arrDays = [];
+  while (daysInMonth) {
+    let current = moment(year + "-" + month).date(daysInMonth);
+    arrDays.push(current.format("YYYY-MM-DD"));
+    daysInMonth--;
+  }
+
+  return arrDays;
+};
 module.exports = class ReportController {
   static get = async (req, res) => {
     try {
@@ -182,6 +195,71 @@ module.exports = class ReportController {
     } catch (e) {
       console.log(e);
       response(res, false, "Failed", e.message);
+    }
+  };
+  static getOneMonth = async (req, res) => {
+    try {
+      const { date } = req.query;
+      console.log({ date: moment(date).format("MM") });
+      const listDate = getDaysArray(
+        moment(date).format("YYYY"),
+        moment(date).format("MM")
+      ).reverse();
+      let [getDataMonth] = await db.query(
+        `SELECT a.* FROM day_report a where TO_CHAR(a.date, 'MM')='${moment(
+          date
+        ).format("MM")}' AND TO_CHAR(a.date, 'YYYY')='${moment(date).format(
+          "YYYY"
+        )}' ORDER BY a.created_at ASC`
+      );
+
+      let listData = [];
+      let listDataMaterial = [];
+
+      for (const iterator of listDate) {
+        let aa = getDataMonth.find((e) => e.date === iterator);
+        if (aa) {
+          listData.push({
+            t_accident: parseInt(aa.t_accident),
+            t_md: parseInt(aa.t_md),
+            t_lb: parseInt(aa.t_lb),
+            t_lr: parseInt(aa.t_lr),
+            t_korban: parseInt(aa.t_korban),
+          });
+          listDataMaterial.push({
+            t_materialloss: parseInt(aa.t_materialloss),
+          });
+        } else {
+          listData.push({
+            t_accident: 0,
+            t_md: 0,
+            t_lb: 0,
+            t_lr: 0,
+            t_korban: 0,
+          });
+          listDataMaterial.push({
+            t_materialloss: 0,
+          });
+        }
+      }
+      response(
+        res,
+        false,
+        "berhasil",
+        {
+          data: {
+            irsms1: listData,
+            irsms2: listDataMaterial,
+          },
+          dateMonth: getDaysArray(
+            moment(date).format("YYYY"),
+            moment(date).format("MM")
+          ).reverse(),
+        },
+        200
+      );
+    } catch (error) {
+      response(res, false, error.message, error, 400);
     }
   };
   static getId = async (req, res) => {

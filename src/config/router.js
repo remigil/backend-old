@@ -47,7 +47,7 @@ router.use(
 
 router.use(
   "/v" + process.env.APP_VERSION + "/day_report",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/day_report")
 );
 
