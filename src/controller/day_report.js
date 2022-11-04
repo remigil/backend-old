@@ -215,30 +215,35 @@ module.exports = class ReportController {
 
       let listData = [];
       let listDataMaterial = [];
-
+      let dataAccident = [];
+      let dataMd = [];
+      let dataLb = [];
+      let dataLr = [];
+      let dataKorban = [];
       for (const iterator of listDate) {
         let aa = getDataMonth.find((e) => e.date === iterator);
         if (aa) {
-          listData.push({
-            name: iterator,
-            data: [
-              parseInt(aa.t_accident),
-              parseInt(aa.t_md),
-              parseInt(aa.t_lb),
-              parseInt(aa.t_lr),
-              parseInt(aa.t_korban),
-            ],
-          });
+          dataAccident.push(parseInt(aa.t_accident));
+          dataMd.push(parseInt(aa.t_md));
+          dataLb.push(parseInt(aa.t_lb));
+          dataLr.push(parseInt(aa.t_lr));
+          dataKorban.push(parseInt(aa.t_korban));
+
           listDataMaterial.push({
             // t_materialloss: ,
             name: iterator,
             data: [parseInt(aa.t_materialloss)],
           });
         } else {
-          listData.push({
-            name: iterator,
-            data: [0, 0, 0, 0, 0],
-          });
+          // listData.push({
+          //   name: iterator,
+          //   data: [0, 0, 0, 0, 0],
+          // });
+          dataAccident.push(0);
+          dataMd.push(0);
+          dataLb.push(0);
+          dataLr.push(0);
+          dataKorban.push(0);
           listDataMaterial.push({
             name: iterator,
             data: [0],
@@ -250,7 +255,28 @@ module.exports = class ReportController {
         false,
         "berhasil",
         {
-          irsms1: listData,
+          irsms1: [
+            {
+              name: "Kecelakaan",
+              data: dataAccident,
+            },
+            {
+              name: "Meninggal Dunia",
+              data: dataMd,
+            },
+            {
+              name: "Luka Berat",
+              data: dataLb,
+            },
+            {
+              name: "Luka Ringan",
+              data: dataLr,
+            },
+            {
+              name: "Total Korban",
+              data: dataKorban,
+            },
+          ],
           irsms2: listDataMaterial,
           dateMonth: getDaysArray(
             moment(date).format("YYYY"),
