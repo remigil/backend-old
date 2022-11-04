@@ -4,6 +4,7 @@ const CountryController = require("../controller/country");
 const formValidation = require("../middleware/form_validation");
 router.get("/", CountryController.get);
 router.get("/getId/:id", CountryController.getId);
+router.get("/getIdNoEncrypt/:id", CountryController.getIdNoEncrypt);
 router.post(
   "/add",
   body("name_country").notEmpty().isLength({ min: 3 }),

@@ -107,6 +107,21 @@ module.exports = class CountryController {
     }
   };
 
+  static getIdNoEncrypt = async (req, res) => {
+    try {
+      const data = await Country.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
