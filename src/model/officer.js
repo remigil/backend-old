@@ -58,6 +58,9 @@ Officer.init(
     deviceId: {
       type: Sequelize.TEXT,
     },
+    replacementNrp_officer: {
+      type: Sequelize.STRING(255),
+    },
     ...StructureTimestamp,
   },
   {

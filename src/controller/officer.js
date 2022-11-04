@@ -23,6 +23,7 @@ const fieldData = {
   status_officer: null,
   polda_id: null,
   polres_id: null,
+  replacementNrp_officer: null,
 };
 module.exports = class OfficerController {
   static get = async (req, res) => {
