@@ -229,11 +229,7 @@ module.exports = class ReportController {
           dataLr.push(parseInt(aa.t_lr));
           dataKorban.push(parseInt(aa.t_korban));
 
-          listDataMaterial.push({
-            // t_materialloss: ,
-            name: iterator,
-            data: [parseInt(aa.t_materialloss)],
-          });
+          listDataMaterial.push(parseInt(aa.t_materialloss));
         } else {
           // listData.push({
           //   name: iterator,
@@ -244,10 +240,11 @@ module.exports = class ReportController {
           dataLb.push(0);
           dataLr.push(0);
           dataKorban.push(0);
-          listDataMaterial.push({
-            name: iterator,
-            data: [0],
-          });
+          listDataMaterial.push(0);
+          // listDataMaterial.push({
+          //   name: iterator,
+          //   data: [0],
+          // });
         }
       }
       response(
@@ -277,7 +274,12 @@ module.exports = class ReportController {
               data: dataKorban,
             },
           ],
-          irsms2: listDataMaterial,
+          irsms2: [
+            {
+              name: "Material Loss",
+              data: listDataMaterial,
+            },
+          ],
           dateMonth: getDaysArray(
             moment(date).format("YYYY"),
             moment(date).format("MM")
