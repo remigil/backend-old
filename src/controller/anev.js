@@ -6,6 +6,10 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const { AESDecrypt, AESEncrypt } = require("../lib/encryption");
 const ReportFinal = require("../model/report_finally");
+const Account = require("../model/account");
+const Country = require("../model/country");
+const Vehicle = require("../model/vehicle");
+const Officer = require("../model/officer");
 module.exports = class Anev {
   static daily = async (req, res) => {
     try {
@@ -486,5 +490,35 @@ module.exports = class Anev {
     } catch (error) {
       return response(res, false, error.message, error, 400);
     }
+  };
+  static testing = async (req, res) => {
+    let dataAccount = await Account.findOne({
+      include: [
+        {
+          model: Country,
+          // as: "countrys",
+          foreignKey: "id_country",
+          required: false,
+        },
+        {
+          model: Vehicle,
+          as: "vehicle",
+          foreignKey: "id_vehicle",
+          required: false,
+        },
+        {
+          model: Officer,
+          as: "officers",
+          required: true,
+          where: {
+            nrp_officer: "87050605",
+          },
+        },
+      ],
+      where: {
+        name_account: "87050605",
+      },
+    });
+    response(res, true, "berhasil", dataAccount);
   };
 };

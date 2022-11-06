@@ -108,6 +108,77 @@ module.exports = class LocationTrackController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getLogout = async (req, res) => {
+    try {
+      const { date, name_officer = null } = req.query;
+      const today = dateParse(moment());
+      const endDateToday = moment(today).endOf("day").toDate();
+
+      let getData = { where: null };
+      if (name_officer != null) {
+        getData.name_officer = name_officer;
+
+        getData.date = today;
+      } else {
+        getData.date = today;
+      }
+
+      let getTrack = await TrackG20.aggregate(
+        [
+          {
+            $match: {
+              dateOnly: today,
+              // status_login: 0,
+            },
+          },
+          {
+            $group: {
+              _id: "$nrp_user",
+              max_date: {
+                $max: "$updated_at",
+              },
+              records: {
+                $push: "$$ROOT",
+              },
+            },
+          },
+          {
+            $project: {
+              nrp_user: {
+                $filter: {
+                  input: "$records",
+                  as: "records",
+                  cond: {
+                    $eq: ["$$records.updated_at", "$max_date"],
+                  },
+                },
+              },
+            },
+          },
+          {
+            $replaceRoot: {
+              newRoot: {
+                results: "$nrp_user",
+              },
+            },
+          },
+        ],
+        {
+          allowDiskUse: true,
+        }
+      );
+      getTrack = getTrack.map((datanya) => datanya.results[0]);
+
+      response(
+        res,
+        true,
+        "Succeed",
+        getTrack.filter((datanya) => datanya.status_login == 0)
+      );
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 
   static getName = async (req, res) => {
     try {

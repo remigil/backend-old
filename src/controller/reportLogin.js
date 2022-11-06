@@ -13,6 +13,7 @@ const { TrackG20 } = require("../model/tracking/g20");
 const Officer = require("../model/officer");
 const TokenTrackController = require("./token_track_notif");
 const TokenTrackNotif = require("../model/token_track_notif");
+const HistoryLogout = require("../model/history_logout");
 const fieldData = {
   nrp_user: null,
   login_time: null,
@@ -32,6 +33,19 @@ module.exports = class ReportLoginController {
           transaction: transaction,
         }
       );
+      let getIdOfficer = await Officer.findOne({
+        where: {
+          nrp_officer: nrp_user,
+        },
+      });
+      await HistoryLogout.destroy({
+        where: {
+          officer_id: AESDecrypt(getIdOfficer.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
       const getDeviceId = await TokenTrackNotif.findOne({
         where: {
           nrp_user,
@@ -74,6 +88,7 @@ module.exports = class ReportLoginController {
           transaction: transaction,
         }
       );
+
       await transaction.commit();
 
       const getTrack = await TrackG20.findOne(
@@ -96,6 +111,7 @@ module.exports = class ReportLoginController {
           status_login: 0,
         }
       );
+
       await Officer.update(
         {
           status_login: 0,
@@ -106,12 +122,21 @@ module.exports = class ReportLoginController {
           },
         }
       );
-      // console.log({ update, getTrack, nrp_user, _id: getTrack.id });
-      // response(res, true, "Succeed", { id: getTrack.id, updateLogoutTrack });
+      await HistoryLogout.create({
+        officer_id: getTrack.id_officer,
+        date: getTrack.dateOnly,
+      });
       response(res, true, "Succeed", update);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
+    }
+  };
+  static historyLogout = async (req, res) => {
+    try {
+      response(res, true, "Berhasil", await HistoryLogout.findAll(), 200);
+    } catch (error) {
+      response(res, false, error.message, error, 400);
     }
   };
   static add = async (req, res) => {

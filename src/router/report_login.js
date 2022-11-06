@@ -7,6 +7,7 @@ const ReportLoginController = require("../controller/reportLogin");
 const formValidation = require("../middleware/form_validation");
 // router.get("/", ReportLoginController.get);
 
+router.get("/history-logout", ReportLoginController.historyLogout);
 router.post("/login", ReportLoginController.login);
 
 router.post("/logout", ReportLoginController.logout);
