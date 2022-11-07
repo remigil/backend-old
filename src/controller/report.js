@@ -102,6 +102,7 @@ module.exports = class ReportController {
       getData.include = [
         {
           model: Officer,
+          required: false,
         },
         {
           model: Account,
