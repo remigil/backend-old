@@ -75,7 +75,7 @@ module.exports = class ReportLoginController {
     }
   };
   static logout = async (req, res) => {
-    const transaction = await db.transaction();
+    // const transaction = await db.transaction();
     try {
       const { nrp_user } = req.body;
       let op = await ReportLogin.update(
@@ -88,13 +88,13 @@ module.exports = class ReportLoginController {
             nrp_user,
             logout_time: null,
           },
-        },
-        {
-          transaction: transaction,
         }
+        // {
+        //   transaction: transaction,
+        // }
       );
 
-      await transaction.commit();
+      // await transaction.commit();
 
       const getTrack = await TrackG20.findOne(
         {
@@ -133,7 +133,8 @@ module.exports = class ReportLoginController {
       });
       response(res, true, "Succeed", update);
     } catch (e) {
-      await transaction.rollback();
+      console.log({ e: e.message });
+      // await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };
