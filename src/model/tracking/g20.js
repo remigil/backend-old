@@ -26,6 +26,7 @@ const collection = {
   type_vehicle: String, // ["motor"]
   fuel_vehicle: String,
   back_number_vehicle: String,
+  bawa_penumpang: Number,
 };
 const DocumentSchema = mongoose.Schema(collection, {
   timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
