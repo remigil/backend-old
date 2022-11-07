@@ -19,6 +19,10 @@ const fieldData = {
   login_time: null,
   logout_time: null,
 };
+const dateParse = (date) => {
+  const aaa = moment.tz(date, "Etc/GMT-5");
+  return aaa.format("YYYY-MM-DD");
+};
 module.exports = class ReportLoginController {
   static login = async (req, res) => {
     const transaction = await db.transaction();
@@ -134,7 +138,17 @@ module.exports = class ReportLoginController {
   };
   static historyLogout = async (req, res) => {
     try {
-      response(res, true, "Berhasil", await HistoryLogout.findAll(), 200);
+      response(
+        res,
+        true,
+        "Berhasil",
+        await HistoryLogout.findAll({
+          where: {
+            date: dateParse(moment()),
+          },
+        }),
+        200
+      );
     } catch (error) {
       response(res, false, error.message, error, 400);
     }
