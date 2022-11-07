@@ -1,0 +1,231 @@
+const { AESDecrypt } = require("../lib/encryption");
+const response = require("../lib/response");
+const TrxHt = require("../model/trx_ht");
+const db = require("../config/database");
+const fs = require("fs");
+const { Op, Sequelize } = require("sequelize");
+const readXlsxFile = require("read-excel-file/node");
+const _ = require("lodash");
+
+const pagination = require("../lib/pagination-parser");
+
+const fieldData = {
+  no_lambung: null,
+  identitas_rt: null,
+  dari_pukul: null,
+  tujuan_pukul: null,
+  jumlah_kendaraan: null,
+  ket: null,
+};
+module.exports = class HtController {
+  static get = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = null,
+        orderDirection = "asc",
+      } = req.query;
+      const modelAttr = Object.keys(TrxHt.getAttributes());
+      let getData = { where: null };
+      if (serverSide?.toLowerCase() === "true") {
+        const resPage = pagination.getPagination(length, start);
+        getData.limit = resPage.limit;
+        getData.offset = resPage.offset;
+      }
+      getData.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getData.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getData.where = {
+          ...getData.where,
+          ...filters,
+        };
+      }
+      const data = await TrxHt.findAll({
+        ...getData,
+      });
+      const count = await TrxHt.count({
+        where: getData?.where,
+      });
+      response(res, true, "Succeed", {
+        data,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static getId = async (req, res) => {
+    try {
+      const data = await TrxHt.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static add = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      console.log(req.body);
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "fasum_logo") {
+            let path = req.body.fasum_logo.filepath;
+            let file = req.body.fasum_logo;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else {
+            fieldValue[val] = req.body[val];
+          }
+        } else {
+          fieldValue[val] = null;
+        }
+      });
+      await TrxHt.create(fieldValue, { transaction: transaction });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static edit = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      console.log(req.body);
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "fasum_logo") {
+            let path = req.body.fasum_logo.filepath;
+            let file = req.body.fasum_logo;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else {
+            fieldValue[val] = req.body[val];
+          }
+        }
+      });
+      await TrxHt.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static delete = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      fieldValue["deleted_at"] = new Date();
+      await TrxHt.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.body.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static hardDelete = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      await TrxHt.destroy({
+        where: {
+          id: AESDecrypt(req.body.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", null);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+};

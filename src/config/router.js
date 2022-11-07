@@ -239,5 +239,10 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/anev")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/ht",
+  // authMiddleware.jwtAuth,
+  require("../router/trxHt")
+);
 
 module.exports = router;
