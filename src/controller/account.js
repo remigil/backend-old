@@ -5,7 +5,7 @@ const Vehicle = require("../model/vehicle");
 const Country = require("../model/country");
 const Polres = require("../model/polres");
 const AccountProfile = require("../model/trx_account_officer");
-
+const _ = require("lodash");
 const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const Officer = require("../model/officer");
@@ -48,7 +48,9 @@ module.exports = class AccountController {
         getDataRules.limit = resPage.limit;
         getDataRules.offset = resPage.offset;
       }
-      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+
+      console.log({ a: filter, b: filterSearch });
+
       getDataRules.order = [
         [
           order != null ? order : "id",
