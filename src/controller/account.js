@@ -49,7 +49,7 @@ module.exports = class AccountController {
         getDataRules.offset = resPage.offset;
       }
 
-      console.log({ a: filter, b: filterSearch });
+      // console.log({ a: filter, b: filterSearch });
 
       getDataRules.order = [
         [
@@ -85,7 +85,14 @@ module.exports = class AccountController {
         const filters = [];
         filter.forEach((fKey, index) => {
           if (_.includes(modelAttr, fKey)) {
-            filters[fKey] = filterSearch[index];
+            if (fKey == "id_country") {
+              filters[fKey] = AESDecrypt(filterSearch[index], {
+                isSafeUrl: true,
+                parseMode: "string",
+              });
+            } else {
+              filters[fKey] = filterSearch[index];
+            }
           }
         });
         getDataRules.where = {
