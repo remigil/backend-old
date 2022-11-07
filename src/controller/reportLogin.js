@@ -14,6 +14,7 @@ const Officer = require("../model/officer");
 const TokenTrackController = require("./token_track_notif");
 const TokenTrackNotif = require("../model/token_track_notif");
 const HistoryLogout = require("../model/history_logout");
+
 const fieldData = {
   nrp_user: null,
   login_time: null,
