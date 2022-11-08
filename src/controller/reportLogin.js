@@ -43,6 +43,12 @@ module.exports = class ReportLoginController {
           nrp_officer: nrp_user,
         },
       });
+      console.log(
+        `login data --- for id officer: ${AESDecrypt(getIdOfficer.id, {
+          isSafeUrl: true,
+          parseMode: "string",
+        })}`
+      );
       await HistoryLogout.destroy({
         where: {
           officer_id: AESDecrypt(getIdOfficer.id, {
@@ -75,7 +81,6 @@ module.exports = class ReportLoginController {
     }
   };
   static logout = async (req, res) => {
-    // const transaction = await db.transaction();
     try {
       const { nrp_user } = req.body;
       let op = await ReportLogin.update(
@@ -89,12 +94,7 @@ module.exports = class ReportLoginController {
             logout_time: null,
           },
         }
-        // {
-        //   transaction: transaction,
-        // }
       );
-
-      // await transaction.commit();
 
       const getTrack = await TrackG20.findOne(
         {
@@ -127,15 +127,78 @@ module.exports = class ReportLoginController {
           },
         }
       );
-      await HistoryLogout.create({
-        officer_id: getTrack.id_officer,
-        date: getTrack.dateOnly,
+      console.log(`logout data --- for id officer: ${getTrack.id_officer}`);
+      const checkHistory = await HistoryLogout.findAll({
+        where: {
+          officer_id: getTrack.id_officer,
+          date: getTrack.dateOnly,
+        },
       });
+      if (!checkHistory.length) {
+        await HistoryLogout.create({
+          officer_id: getTrack.id_officer,
+          date: getTrack.dateOnly,
+        });
+      }
+
       response(res, true, "Succeed", update);
     } catch (e) {
       console.log({ e: e.message });
-      // await transaction.rollback();
       response(res, false, "Failed", e.message);
+    }
+  };
+  static logoutCreateHistori = async (req, res) => {
+    try {
+      const { nrp_user } = req.body;
+      const getTrack = await TrackG20.findOne(
+        {
+          nrp_user,
+          dateOnly: dateParse(moment()),
+        },
+        null,
+        {
+          sort: {
+            created_at: -1,
+          },
+        }
+      );
+      const checkData = await HistoryLogout.findAll({
+        where: {
+          officer_id: getTrack.id_officer,
+          date: getTrack.dateOnly,
+        },
+      });
+      if (!checkData.length) {
+        await HistoryLogout.create({
+          officer_id: getTrack.id_officer,
+          date: getTrack.dateOnly,
+        });
+      }
+
+      response(res, true, "Succeed", null);
+    } catch (error) {
+      response(res, false, error.message, error, 400);
+    }
+  };
+  static loginDeleteHistori = async (req, res) => {
+    try {
+      const { nrp_user } = req.body;
+      let getIdOfficer = await Officer.findOne({
+        where: {
+          nrp_officer: nrp_user,
+        },
+      });
+      await HistoryLogout.destroy({
+        where: {
+          officer_id: AESDecrypt(getIdOfficer.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", null);
+    } catch (error) {
+      response(res, false, error.message, error, 400);
     }
   };
   static historyLogout = async (req, res) => {

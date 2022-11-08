@@ -9,6 +9,11 @@ const formValidation = require("../middleware/form_validation");
 
 router.get("/history-logout", ReportLoginController.historyLogout);
 router.post("/login", ReportLoginController.login);
+router.post(
+  "/logout-create-histori",
+  ReportLoginController.logoutCreateHistori
+);
+router.post("/login-delete-histori", ReportLoginController.loginDeleteHistori);
 
 router.post("/logout", ReportLoginController.logout);
 router.post("/:id", ReportLoginController.edit);
