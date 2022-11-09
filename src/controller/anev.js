@@ -485,9 +485,9 @@ module.exports = class Anev {
 
           await browser.close();
 
-          res.contentType("application/pdf");
-          return res.status(200).send(pdf);
-
+          // res.contentType("application/pdf");
+          // return res.status(200).send(pdf);
+          response(res, true, "berhasil", null);
         default: {
           return response(res, false, "Input Not Valid", null, 400);
         }
