@@ -343,6 +343,13 @@ ReportFinal.init(
     date: {
       type: Sequelize.DATEONLY,
     },
+    filename: {
+      type: Sequelize.TEXT,
+    },
+    mulaiOperasi: {
+      type: Sequelize.INTEGER,
+    },
+
     ...StructureTimestamp,
   },
   {

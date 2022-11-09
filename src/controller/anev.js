@@ -13,7 +13,7 @@ const Officer = require("../model/officer");
 module.exports = class Anev {
   static daily = async (req, res) => {
     try {
-      const { type, data, tanggal, mulaiOperasi } = req.query;
+      const { type, data, tanggal, mulaiOperasi, filename } = req.query;
 
       moment.locale("id");
       const date = moment().format("LL");
@@ -25,7 +25,6 @@ module.exports = class Anev {
             isSafeUrl: true,
             parseMode: "string",
           });
-
           req.body = JSON.parse(datanya);
           const getAnev = await ReportFinal.findOne({
             where: {
@@ -388,20 +387,25 @@ module.exports = class Anev {
             h2: "H" + parseInt(mulaiOperasi),
             h1: "H" + (parseInt(mulaiOperasi) - 1),
             tanggalSkrg: dateChoose,
-            // h1:
-            //   "H" + parseInt(moment(dateChoose).subtract(1, "d").format("DD")),
           };
           const getAnevToday = await ReportFinal.findOne({
             where: {
-              date: moment().format("YYYY-MM-DD"),
+              date: moment(dateChoose).format("YYYY-MM-DD"),
             },
           });
           if (getAnevToday) {
-            // await ReportFinal.create(insertDb);
+            console.log({
+              ...insertDb,
+              date: moment(dateChoose).format("YYYY-MM-DD"),
+              mulaiOperasi: parseInt(mulaiOperasi),
+              filename,
+            });
             await ReportFinal.update(
               {
                 ...insertDb,
                 date: moment(dateChoose).format("YYYY-MM-DD"),
+                mulaiOperasi: parseInt(mulaiOperasi),
+                filename,
               },
               {
                 where: {
@@ -413,12 +417,13 @@ module.exports = class Anev {
             await ReportFinal.create({
               ...insertDb,
               date: moment(dateChoose).format("YYYY-MM-DD"),
+              mulaiOperasi: parseInt(mulaiOperasi),
+              filename,
             });
           }
 
           return res.render("template/daily", {
             date: moment(dateChoose).format("LL"),
-            // ...listTables,
             ...req.body,
             ...listTableBab3,
             ...formatHeaderTable,
@@ -442,7 +447,7 @@ module.exports = class Anev {
               {
                 isSafeUrl: true,
               }
-            )}`,
+            )}&filename=monthly-${dateChoose}.pdf`,
             {
               waitUntil: "networkidle0",
             }
