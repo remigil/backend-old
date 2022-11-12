@@ -444,12 +444,14 @@ module.exports = class ReportController {
           return e.name == "BALI" && e.tgl_kejadian != null;
         });
 
-        fieldValue["t_accident"] = filterIrsms[0]["total_accident"];
-        fieldValue["t_materialloss"] = filterIrsms[0]["total_materialloss"];
-        fieldValue["t_md"] = filterIrsms[0]["total_md"];
-        fieldValue["t_lb"] = filterIrsms[0]["total_lb"];
-        fieldValue["t_lr"] = filterIrsms[0]["total_lr"];
-        fieldValue["t_korban"] = filterIrsms[0]["total_korban"];
+        if (filterIrsms.length > 0) {
+          fieldValue["t_accident"] = filterIrsms[0]["total_accident"];
+          fieldValue["t_materialloss"] = filterIrsms[0]["total_materialloss"];
+          fieldValue["t_md"] = filterIrsms[0]["total_md"];
+          fieldValue["t_lb"] = filterIrsms[0]["total_lb"];
+          fieldValue["t_lr"] = filterIrsms[0]["total_lr"];
+          fieldValue["t_korban"] = filterIrsms[0]["total_korban"];
+        }
 
         fieldValue["t_report_kriminal"] = countReportKriminal;
         fieldValue["t_report_lalu_lintas"] = countReportLaluLintas;
@@ -642,12 +644,14 @@ module.exports = class ReportController {
         return e.name == "BALI" && e.tgl_kejadian != null;
       });
 
-      fieldValue["t_accident"] = filterIrsms[0]["total_accident"];
-      fieldValue["t_materialloss"] = filterIrsms[0]["total_materialloss"];
-      fieldValue["t_md"] = filterIrsms[0]["total_md"];
-      fieldValue["t_lb"] = filterIrsms[0]["total_lb"];
-      fieldValue["t_lr"] = filterIrsms[0]["total_lr"];
-      fieldValue["t_korban"] = filterIrsms[0]["total_korban"];
+      if (filterIrsms.length > 0) {
+        fieldValue["t_accident"] = filterIrsms[0]["total_accident"];
+        fieldValue["t_materialloss"] = filterIrsms[0]["total_materialloss"];
+        fieldValue["t_md"] = filterIrsms[0]["total_md"];
+        fieldValue["t_lb"] = filterIrsms[0]["total_lb"];
+        fieldValue["t_lr"] = filterIrsms[0]["total_lr"];
+        fieldValue["t_korban"] = filterIrsms[0]["total_korban"];
+      }
 
       fieldValue["t_report_kriminal"] = countReportKriminal;
       fieldValue["t_report_lalu_lintas"] = countReportLaluLintas;
