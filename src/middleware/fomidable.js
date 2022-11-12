@@ -1,6 +1,6 @@
 const formidable = require("formidable");
 const response = require("../lib/response");
-const imageExt = ["png", "jpg", "jpeg", "xls", "xlsx", "csv", "pdf"];
+const imageExt = ["png", "jpg", "jpeg", "xls", "xlsx", "csv", "pdf", "svg"];
 module.exports = (req, res, next) => {
   const form = formidable();
   form.parse(req, (err, fields, files) => {
