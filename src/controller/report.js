@@ -291,24 +291,17 @@ module.exports = class ReportController {
                 if (err) throw err;
               }
             );
-
-            await sharp("./public/uploads/laporan/" + fileName)
-              .jpeg({ quality: 50 })
-              .toFile(
-                "./public/uploads/laporan/" +
-                  AESEncrypt(fileName1, {
-                    isSafeUrl: true,
-                  }) +
-                  "." +
-                  fileName2
-              );
-
-            fieldValueData[key] =
+            let fileNameExist =
               AESEncrypt(fileName1, {
                 isSafeUrl: true,
               }) +
               "." +
               fileName2;
+            await sharp("./public/uploads/laporan/" + fileName)
+              .jpeg({ quality: 50 })
+              .toFile("./public/uploads/laporan/" + fileNameExist);
+
+            fieldValueData[key] = fileNameExist;
           } else if (key == "coordinate") {
             let latlonData = JSON.parse(req.body[key]);
 
