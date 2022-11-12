@@ -11,6 +11,12 @@ router.post(
   formValidation,
   DayReportController.add
 );
+router.post(
+  "/addManual",
+  // body("name_position").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  DayReportController.addManual
+);
 router.put("/edit/:id", DayReportController.edit);
 router.put("/byEdit/:date", DayReportController.editByDate);
 router.delete(

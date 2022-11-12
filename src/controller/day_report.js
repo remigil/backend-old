@@ -507,6 +507,201 @@ module.exports = class ReportController {
     }
   };
 
+  static addManual = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+
+      console.log("scheduler Day Laporan");
+      var starDate = moment().startOf("day").toDate();
+      var endDate = moment().endOf("day").toDate();
+
+      const countOfficerRegisteredAll = await Officer.count({
+        where: {
+          created_at: {
+            [Op.between]: [
+              moment().startOf("year"),
+              moment().subtract(1, "days").endOf("day").toDate(),
+            ],
+          },
+        },
+      });
+
+      const countReportKriminal = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 1,
+        },
+      });
+      const countReportLaluLintas = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 2,
+        },
+      });
+      const countReportKemacetan = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 4,
+        },
+      });
+      const countReportBencanaAlam = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 3,
+        },
+      });
+      const countReportPengaturan = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 5,
+        },
+      });
+      const countReportPengawalan = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 6,
+        },
+      });
+      const countReportLainnya = await Report.count({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+          categori: 999,
+        },
+      });
+
+      const countSchedule = await Schedule.count({
+        where: {
+          date_schedule: {
+            [Op.between]: [
+              moment().format("YYYY-MM-DD"),
+              moment().format("YYYY-MM-DD"),
+            ],
+          },
+          end_time: {
+            [Op.not]: null,
+          },
+        },
+      });
+
+      const countRenpamDone = await Renpam.count({
+        where: {
+          end_time: {
+            [Op.not]: null,
+          },
+          date: {
+            [Op.between]: [
+              moment().format("YYYY-MM-DD"),
+              moment().format("YYYY-MM-DD"),
+            ],
+          },
+        },
+      });
+      const countRenpamFailed = await Renpam.count({
+        where: {
+          end_time: {
+            [Op.is]: null,
+          },
+          date: {
+            [Op.between]: [
+              moment().format("YYYY-MM-DD"),
+              moment().format("YYYY-MM-DD"),
+            ],
+          },
+        },
+      });
+
+      // fieldValue["t_officer_registered"] = 0;
+      // fieldValue["t_officer_registered_car"] = 0;
+      // fieldValue["t_officer_registered_bike"] = 0;
+      // fieldValue["t_officer_registered_not_driving"] = 0;
+
+      // fieldValue["t_officer_active"] = 0;
+      // fieldValue["t_officer_active_car"] = 0;
+      // fieldValue["t_officer_active_bike"] = 0;
+      // fieldValue["t_officer_active_not_driving"] = 0;
+
+      let getIrsms = await axios.get(
+        "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
+      );
+      var filterIrsms = getIrsms.data["result"].filter(function (e) {
+        return e.name == "BALI" && e.tgl_kejadian != null;
+      });
+
+      fieldValue["t_accident"] = filterIrsms[0]["total_accident"];
+      fieldValue["t_materialloss"] = filterIrsms[0]["total_materialloss"];
+      fieldValue["t_md"] = filterIrsms[0]["total_md"];
+      fieldValue["t_lb"] = filterIrsms[0]["total_lb"];
+      fieldValue["t_lr"] = filterIrsms[0]["total_lr"];
+      fieldValue["t_korban"] = filterIrsms[0]["total_korban"];
+
+      fieldValue["t_report_kriminal"] = countReportKriminal;
+      fieldValue["t_report_lalu_lintas"] = countReportLaluLintas;
+      fieldValue["t_report_kemacetan"] = countReportKemacetan;
+      fieldValue["t_report_bencanaalam"] = countReportBencanaAlam;
+      fieldValue["t_report_pengaturan"] = countReportPengaturan;
+      fieldValue["t_report_pengawalan"] = countReportPengawalan;
+      fieldValue["t_report_lainnya"] = countReportLainnya;
+      fieldValue["t_report"] =
+        countReportKriminal +
+        countReportLaluLintas +
+        countReportKemacetan +
+        countReportBencanaAlam +
+        countReportPengaturan +
+        countReportPengawalan +
+        countReportLainnya;
+
+      fieldValue["t_schedule_done"] = countSchedule;
+      fieldValue["t_rengiat_done"] = countRenpamDone;
+      fieldValue["t_rengiat_failed"] = countRenpamFailed;
+      fieldValue["t_rengiat"] = countRenpamDone + countRenpamFailed;
+
+      fieldValue["date"] = moment().format("YYYY-MM-DD");
+
+      const cekDataReportDay = await DayReport.findOne({
+        where: {
+          created_at: {
+            [Op.between]: [starDate, endDate],
+          },
+        },
+      });
+
+      if (!cekDataReportDay) {
+        await DayReport.create(fieldValue, { transaction: transaction });
+      } else {
+        await DayReport.update(fieldValue, {
+          where: {
+            id: AESDecrypt(cekDataReportDay["id"], {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+          transaction: transaction,
+        });
+      }
+
+      await transaction.commit();
+      response(res, true, "Succeed", fieldValue);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
