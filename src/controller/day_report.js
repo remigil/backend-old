@@ -514,7 +514,7 @@ module.exports = class ReportController {
     try {
       let fieldValue = {};
 
-      console.log("scheduler Day Laporan");
+      // console.log("scheduler Day Laporan");
       var starDate = moment().startOf("day").toDate();
       var endDate = moment().endOf("day").toDate();
 
