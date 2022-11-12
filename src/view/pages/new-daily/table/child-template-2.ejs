@@ -1,0 +1,42 @@
+<table class="table " style="margin-left: -3%;width: 80%;margin-top: 5%;">
+    <thead>
+        <tr class="trTable">
+
+            <% header.forEach(function(d){%>
+                <th class="tdCHild">
+                    <%= d %>
+                </th>
+
+                <% })%>
+        </tr>
+    </thead>
+    <tbody>
+        <% bodyData.forEach(function(d){%>
+            <tr class="trTable">
+                <td class="tdCHild">
+                    <%- d.id%>
+                </td>
+                <td class="tdCHild" style="text-align: left !important;">
+                    <%- d.title%>
+                </td>
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+                <% })%>
+
+            <tr class="trTable">
+                <td colspan="2" style="text-align: right !important;">Jumlah</td>
+
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+                <td class="tdCHild"></td>
+            </tr>
+    </tbody>
+</table>
+<p style="margin-left:18%;font-size: 13px;">
+    <i>
+        <%=titleBottom%>
+    </i>
+</p>

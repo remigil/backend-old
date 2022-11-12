@@ -244,5 +244,25 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/trxHt")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan/daftar_peserta",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan/daftar_peserta")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan/negara",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan/negara")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan/organisasi",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan/organisasi")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan/jadwal",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan/jadwal")
+);
 
 module.exports = router;

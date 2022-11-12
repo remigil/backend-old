@@ -1,0 +1,64 @@
+<table class="table " style=" margin-left: 20%;width: 40%;margin-top: 5%;">
+    <thead>
+        <tr class="trTable">
+            <!-- <th class="tdCHild">No</th>
+            <th class="tdCHild">Uraian</th>
+            <th class="tdCHild">Angka</th> -->
+            <% header.forEach(function(d){%>
+                <th class="tdCHild">
+                    <%= d %>
+                </th>
+
+                <% })%>
+        </tr>
+    </thead>
+    <tbody>
+        <% let jumlahAwal=0 %>
+            <% bodyData.forEach(function(d){%>
+                <tr class="trTable">
+                    <td class="tdCHild">
+                        <%- d.id%>
+                    </td>
+                    <td class="tdCHild" style="text-align: left !important;">
+                        <%- d.title%>
+
+                    </td>
+                    <td class="tdCHild">
+                        <% jumlahAwal +=d.angka %>
+                            <%- d.angka%>
+                    </td>
+                    <% })%>
+                        <!-- <tr class="trTable">
+            <td class="tdCHild">1</td>
+            <td class="tdCHild" style="text-align: left !important;">MEDIA CETAK</td>
+            <td class="tdCHild"></td>
+        </tr>
+        <tr class="trTable">
+            <td class="tdCHild">2</td>
+            <td class="tdCHild" style="text-align: left !important;">MEDIA ELEKTRONIK</td>
+            <td class="tdCHild"></td>
+        </tr>
+        <tr class="trTable">
+            <td class="tdCHild">3</td>
+            <td class="tdCHild" style="text-align: left !important;">MEDIA SOSIAL</td>
+            <td class="tdCHild"></td>
+        </tr>
+        <tr class="trTable">
+            <td class="tdCHild">4</td>
+            <td class="tdCHild" style="text-align: left !important;">LAIN</td>
+            <td class="tdCHild"></td>
+        </tr> -->
+                <tr class="trTable">
+                    <td colspan="2" style="text-align: right !important;">Jumlah</td>
+                    <!-- <td class="tdCHild">LAIN</td> -->
+                    <td class="tdCHild">
+                        <%-jumlahAwal%>
+                    </td>
+                </tr>
+    </tbody>
+</table>
+<p style="margin-left:18%;font-size: 13px;">
+    <i>
+        <%=titleBottom%>
+    </i>
+</p>
