@@ -17,6 +17,7 @@ const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
 const { TrackG20 } = require("../model/tracking/g20");
 const { Client } = require("@googlemaps/google-maps-services-js");
+const sharp = require("sharp");
 const googleMapClient = new Client();
 const fieldData = {
   code: null,
@@ -279,6 +280,10 @@ module.exports = class ReportController {
             let path = req.body.foto.filepath;
             let file = req.body.foto;
             let fileName = file.originalFilename;
+            let fileName0 = file.originalFilename.split(".");
+            let fileName1 = fileName0[0];
+            let fileName2 = fileName0[fileName0.length - 1];
+
             fs.renameSync(
               path,
               "./public/uploads/laporan/" + fileName,
@@ -286,7 +291,24 @@ module.exports = class ReportController {
                 if (err) throw err;
               }
             );
-            fieldValueData[key] = fileName;
+
+            await sharp("./public/uploads/laporan/" + fileName)
+              .jpeg({ quality: 50 })
+              .toFile(
+                "./public/uploads/laporan/" +
+                  AESEncrypt(fileName1, {
+                    isSafeUrl: true,
+                  }) +
+                  "." +
+                  fileName2
+              );
+
+            fieldValueData[key] =
+              AESEncrypt(fileName1, {
+                isSafeUrl: true,
+              }) +
+              "." +
+              fileName2;
           } else if (key == "coordinate") {
             let latlonData = JSON.parse(req.body[key]);
 
