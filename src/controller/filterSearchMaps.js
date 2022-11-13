@@ -84,6 +84,9 @@ const fieldData = {
     return await Cctv.findAll();
   },
   titik_laporan: async (req) => {
+    var starDate = moment().startOf("day").toDate();
+    var endDate = moment().endOf("day").toDate();
+
     return await Panic_button.findAll({
       include: [
         {
@@ -96,10 +99,15 @@ const fieldData = {
       ],
       where: {
         type: "LAP",
+        created_at: {
+          [Op.between]: [starDate, endDate],
+        },
       },
     });
   },
   titik_panicButton: async (req) => {
+    var starDate = moment().startOf("day").toDate();
+    var endDate = moment().endOf("day").toDate();
     return await Panic_button.findAll({
       include: [
         {
@@ -112,6 +120,9 @@ const fieldData = {
       ],
       where: {
         type: "PNC",
+        created_at: {
+          [Op.between]: [starDate, endDate],
+        },
       },
     });
   },
