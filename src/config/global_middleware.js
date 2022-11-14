@@ -83,11 +83,14 @@ module.exports = {
             return false;
           },
           dynamicMeta: (req, res) => {
-            const authData = JWTDecrypt(req.headers.authorization);
-            const userId = AESDecrypt(authData.uid, {
-              parseMode: "raw",
-              isSafeUrl: true,
-            });
+            let authData = JWTDecrypt(req.headers.authorization);
+            let userId = null;
+            if (authData != null) {
+              userId = AESDecrypt(authData?.uid, {
+                parseMode: "raw",
+                isSafeUrl: true,
+              });
+            }
             req.headers.tokenData = { authData, userId };
           },
         })
