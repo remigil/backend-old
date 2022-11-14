@@ -1,8 +1,10 @@
 const winston = require("winston");
 const expressWinston = require("express-winston");
+const winstonMongoDB = require("winston-mongodb");
 const moment = require("moment");
 const response = require("../lib/response");
 const compression = require("compression");
+const { JWTDecrypt, AESDecrypt } = require("../lib/encryption");
 module.exports = {
   beforeRouter: (app) => {
     app.use(require("../middleware/fomidable"));
@@ -48,11 +50,25 @@ module.exports = {
     }
 
     if (process.env.APP_ENABLE_DEBUG_LOG === "true") {
+      expressWinston.requestWhitelist.push("body");
+      expressWinston.bodyBlacklist.push("password");
+      expressWinston.responseWhitelist.push("body");
+
       app.use(
         expressWinston.logger({
           transports: [
             new winston.transports.File({
               filename: `./logs/debug/${moment().format("YYYY_MM_DD")}.log`,
+            }),
+            new winston.transports.MongoDB({
+              db: `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB_LOGS}?authSource=admin&retryWrites=true&w=majority`,
+              collection: process.env.MONGO_DB_LOGS_COLLECTION,
+              options: {
+                useUnifiedTopology: true,
+              },
+              capped: true,
+              metaKey: "meta",
+              //format: winston.format.metadata((info) => JSON.stringify(info)),
             }),
           ],
           format: winston.format.combine(
@@ -65,6 +81,14 @@ module.exports = {
           colorize: false,
           ignoreRoute: function (req, res) {
             return false;
+          },
+          dynamicMeta: (req, res) => {
+            const authData = JWTDecrypt(req.headers.authorization);
+            const userId = AESDecrypt(authData.uid, {
+              parseMode: "raw",
+              isSafeUrl: true,
+            });
+            req.headers.tokenData = { authData, userId };
           },
         })
       );
