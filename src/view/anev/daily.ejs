@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ANEV DAILY</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;"
+    />
+    <style>
+      body {
+        color: rgb(40, 40, 40);
+        background-color: #ececec;
+      }
+    </style>
+  </head>
+  <body>
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.slim.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.highcharts.com/highcharts.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.highcharts.com/highcharts-3d.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.highcharts.com/modules/exporting.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.highcharts.com/modules/export-data.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.highcharts.com/modules/accessibility.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- <script
+      src="https://code.highcharts.com/themes/brand-dark.js"
+      crossorigin="anonymous"
+    ></script> -->
+    <script
+      src="https://code.highcharts.com/themes/brand-light.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <%- include('../anev/pages/daily/judul.ejs'); %> 
+    <%- include('../anev/pages/daily/berita-terkini.ejs'); %> 
+    <%- include('../anev/pages/daily/tabulasi-laka.ejs'); %> 
+    <%- include('../anev/pages/daily/grafik-laka.ejs'); %> 
+    <%- include('../anev/pages/daily/tabulasi-laka-satker.ejs'); %>
+    <% data.pageMaps.forEach(function(d){%>
+      <%- include('../anev/pages/daily/kecelakaan-tertinggi.ejs',{dMaps:d}); %>
+    <%}); %> 
+    <%- include('../anev/pages/daily/grafik-dakgar.ejs'); %> 
+    <%- include('../anev/pages/daily/tabulasi-gar.ejs'); %> 
+    <%- include('../anev/pages/daily/dakgar-nasional.ejs'); %> 
+    <%- include('../anev/pages/daily/penutup.ejs'); %> 
+    
+    <%- include('../anev/partials/footer-daily.ejs'); %>
+  </body>
+</html>

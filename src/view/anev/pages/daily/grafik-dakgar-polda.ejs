@@ -1,0 +1,62 @@
+<div>
+  <table style="width: 100%">
+    <tbody>
+      <tr>
+        <td style="text-align: center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png"
+            style="width: 80px"
+            alt=""
+          />
+        </td>
+        <td>
+          <div
+            style="width: 400px; height: 150px"
+            id="<%=data.id_graphic%>"
+          ></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  $(document).ready(function () {
+    Highcharts.chart("<%=data.id_graphic%>", {
+      chart: {
+        type: "line",
+      },
+      title: {
+        useHtml:true,
+        text: "<b><%=data.title%></b>",
+      },
+      subtitle: {
+        text: "",
+      },
+      xAxis: {
+        categories: <%-JSON.stringify(data.categories)%>,
+      },
+      yAxis: {
+        title: {
+          useHtml: true,
+          text: ``,
+        },
+      },
+      plotOptions: {
+        line: {
+          dataLabels: {
+            enabled: true,
+          },
+          enableMouseTracking: false,
+        },
+      },
+      series: <%-JSON.stringify(data.series)%>,
+      exporting: {
+        enabled: false,
+      },
+      credits: {
+        enabled: false,
+      },
+    });
+  });
+</script>

@@ -1,0 +1,23 @@
+<div style="height: 100vh; position: relative">
+  <%- include('../../../anev/partials/header-daily.ejs',{filter,title:"BERITA LAKA LANTAS TERKINI ",titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <div class="row">
+      <div class="col-md-6">
+        <img
+          src="<%=data.page2.photo%>"
+          style="width: 100%; height: auto; object-fit: contain"
+        />
+      </div>
+      <div class="col-md-6">
+        <p style="text-align:justify;"><%-data.page2.description%></p>
+      </div>
+    </div>
+  </div>
+</div>

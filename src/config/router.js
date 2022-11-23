@@ -237,7 +237,7 @@ router.use(
 router.use(
   "/anev-daily",
   // authMiddleware.jwtAuth,
-  require("../router/anev")
+  require("../router/anevg20")
 );
 router.use(
   "/v" + process.env.APP_VERSION + "/ht",
@@ -265,4 +265,192 @@ router.use(
   require("../router/laporan/jadwal")
 );
 
+////////////////////////////////////umum
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/sosmed",
+  authMiddleware.jwtAuth,
+  require("../router/sosmed")
+);
+
+// Input data harian
+router.use(
+  "/v" + process.env.APP_VERSION + "/laka_langgar",
+  // authMiddleware.jwtAuth,
+  require("../router/input_laka_langgar")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/garlantas",
+  // authMiddleware.jwtAuth,
+  require("../router/input_garlantas")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/turjagwali",
+  // authMiddleware.jwtAuth,
+  require("../router/input_turjagwali")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/laka_lantas",
+  // authMiddleware.jwtAuth,
+  require("../router/input_laka_lantas")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/dikmaslantas",
+  // authMiddleware.jwtAuth,
+  require("../router/input_dikmaslantas")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/penyebaran",
+  // authMiddleware.jwtAuth,
+  require("../router/input_penyebaran")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/sim",
+  // authMiddleware.jwtAuth,
+  require("../router/input_sim")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/bpkb",
+  // authMiddleware.jwtAuth,
+  require("../router/input_bpkb")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/stnk",
+  // authMiddleware.jwtAuth,
+  require("../router/input_stnk")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/ranmor",
+  // authMiddleware.jwtAuth,
+  require("../router/input_ranmor")
+);
+// End input data harian
+
+// manajemen akun  dasboard
+router.use(
+  "/v" + process.env.APP_VERSION + "/test_account_user",
+  // authMiddleware.jwtAuth,
+  require("../router/test_account_user")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/test_account_profile",
+  // authMiddleware.jwtAuth,
+  require("../router/test_account_profile")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/test_account_profile_polda",
+  // authMiddleware.jwtAuth,
+  require("../router/test_account_profile_polda")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/test_account_profile_polres",
+  // authMiddleware.jwtAuth,
+  require("../router/test_account_profile_polres")
+);
+// end manajemen akun
+
+// etle
+router.use(
+  "/v" + process.env.APP_VERSION + "/etle",
+  // authMiddleware.jwtAuth,
+  require("../router/etle")
+);
+
+// Dashboard
+router.use(
+  "/v" + process.env.APP_VERSION + "/ditkamsel",
+  // authMiddleware.jwtAuth,
+  require("../router/count_ditkamsel")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/ditregident",
+  // authMiddleware.jwtAuth,
+  require("../router/count_ditregident")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/ditgakkum",
+  // authMiddleware.jwtAuth,
+  require("../router/count_ditgakkum")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/count-trip-on",
+  // authMiddleware.jwtAuth,
+  require("../router/count_tripOn")
+);
+// End Dashboard
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/home-statistik",
+  // authMiddleware.jwtAuth,
+  require("../router/count_home_mobile")
+);
+
+// Input laporan operasi khusus
+router.use(
+  "/v" + process.env.APP_VERSION + "/operasi_langgar",
+  // authMiddleware.jwtAuth,
+  require("../router/input_operasi_langgar")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/operasi_laka",
+  // authMiddleware.jwtAuth,
+  require("../router/input_operasi_laka")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/ntmc",
+  // authMiddleware.jwtAuth,
+  require("../router/input_ntmc")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/anev",
+  //authMiddleware.jwtAuth,
+  require("../router/anev")
+);
+// Import File Laporan Harian
+router.use(
+  "/v" + process.env.APP_VERSION + "/import",
+  // authMiddleware.jwtAuth,
+  require("../router/import_file")
+);
+
+// Laporan masyarakat
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan_masyarakat",
+  // authMiddleware.jwtAuth,
+  require("../router/input_lapMasyarakat")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/anev_harian",
+  // authMiddleware.jwtAuth,
+  require("../router/anev_harian")
+);
+
+// Export laphar
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan_harian",
+  // authMiddleware.jwtAuth,
+  require("../router/export_laphar")
+);
+//link
+router.use(
+  "/v" + process.env.APP_VERSION + "/link",
+  // authMiddleware.jwtAuth,
+  require("../router/link")
+);
 module.exports = router;

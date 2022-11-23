@@ -1,1002 +1,708 @@
+const db = require("../config/database");
 const response = require("../lib/response");
-
-const moment = require("moment");
-
 const puppeteer = require("puppeteer");
 const path = require("path");
-const { AESDecrypt, AESEncrypt } = require("../lib/encryption");
-const ReportFinal = require("../model/report_finally");
-const Account = require("../model/account");
-const Country = require("../model/country");
-const Vehicle = require("../model/vehicle");
-const Officer = require("../model/officer");
-module.exports = class Anev {
-  static daily = async (req, res) => {
-    try {
-      const { type, data, tanggal, mulaiOperasi, filename } = req.query;
+const { IDMonths } = require("../lib/generalhelper");
+const AnevNews = require("../model/anev_news");
+const { Op, Sequelize } = require("sequelize");
+const moment = require("moment");
 
-      moment.locale("id");
-      const date = moment().format("LL");
-      let dateChoose = tanggal ? tanggal : moment().format("YYYY-MM-DD");
-
-      switch (type) {
-        case "view": {
-          const datanya = AESDecrypt(data, {
-            isSafeUrl: true,
-            parseMode: "string",
-          });
-          req.body = JSON.parse(datanya);
-          const getAnev = await ReportFinal.findOne({
-            where: {
-              date: moment(dateChoose).subtract("day", 1).format("YYYY-MM-DD"),
-            },
-          });
-          const insertDb = {
-            title: req.body.title,
-            lalu_lintas_1: req.body.lalu_lintas[0].angka || 0,
-            lalu_lintas_2: req.body.lalu_lintas[1].angka || 0,
-            lalu_lintas_3: req.body.lalu_lintas[2].angka || 0,
-            lalu_lintas_4: req.body.lalu_lintas[3].angka || 0,
-            media_penyuluhan_1: req.body.media_penyuluhan_1[0].angka || 0,
-            media_penyuluhan_2: req.body.media_penyuluhan_1[1].angka || 0,
-            media_penyuluhan_3: req.body.media_penyuluhan_1[2].angka || 0,
-            media_penyuluhan_4: req.body.media_penyuluhan_1[3].angka || 0,
-            kegiatan_lalin_1: req.body.kegiatan_lalu_lintas_1[0].angka || 0,
-            kegiatan_lalin_2: req.body.kegiatan_lalu_lintas_1[1].angka || 0,
-            kegiatan_lalin_3: req.body.kegiatan_lalu_lintas_1[2].angka || 0,
-            kegiatan_lalin_4: req.body.kegiatan_lalu_lintas_1[3].angka || 0,
-            jenis_etle_1: req.body.jenis_etle[0].angka || 0,
-            jenis_etle_2: req.body.jenis_etle[1].angka || 0,
-            jenis_etle_3: req.body.jenis_etle[2].angka || 0,
-            pelanggaran_roda_2_1: req.body.pelanggaran_roda_2[0].angka || 0,
-            pelanggaran_roda_2_2: req.body.pelanggaran_roda_2[1].angka || 0,
-            pelanggaran_roda_2_3: req.body.pelanggaran_roda_2[2].angka || 0,
-            pelanggaran_roda_2_4: req.body.pelanggaran_roda_2[3].angka || 0,
-            pelanggaran_roda_2_5: req.body.pelanggaran_roda_2[4].angka || 0,
-            pelanggaran_roda_2_6: req.body.pelanggaran_roda_2[5].angka || 0,
-            pelanggaran_roda_2_7: req.body.pelanggaran_roda_2[6].angka || 0,
-            pelanggaran_roda_4_1: req.body.pelanggaran_roda_4[0].angka || 0,
-            pelanggaran_roda_4_2: req.body.pelanggaran_roda_4[1].angka || 0,
-            pelanggaran_roda_4_3: req.body.pelanggaran_roda_4[2].angka || 0,
-            pelanggaran_roda_4_4: req.body.pelanggaran_roda_4[3].angka || 0,
-            pelanggaran_roda_4_5: req.body.pelanggaran_roda_4[4].angka || 0,
-            pelanggaran_roda_4_6: req.body.pelanggaran_roda_4[5].angka || 0,
-            pelanggaran_roda_4_7: req.body.pelanggaran_roda_4[6].angka || 0,
-            barang_bukti_1: req.body.barang_bukti[0].angka || 0,
-            barang_bukti_2: req.body.barang_bukti[1].angka || 0,
-            barang_bukti_3: req.body.barang_bukti[2].angka || 0,
-            ranmor_1: req.body.ranmor[0].angka || 0,
-            ranmor_2: req.body.ranmor[1].angka || 0,
-            ranmor_3: req.body.ranmor[2].angka || 0,
-            ranmor_4: req.body.ranmor[3].angka || 0,
-            ranmor_5: req.body.ranmor[4].angka || 0,
-            profesi_pelanggar_1: req.body.profesi_pelanggar[0].angka || 0,
-            profesi_pelanggar_2: req.body.profesi_pelanggar[1].angka || 0,
-            profesi_pelanggar_3: req.body.profesi_pelanggar[2].angka || 0,
-            profesi_pelanggar_4: req.body.profesi_pelanggar[3].angka || 0,
-            profesi_pelanggar_5: req.body.profesi_pelanggar[4].angka || 0,
-            profesi_pelanggar_6: req.body.profesi_pelanggar[5].angka || 0,
-            profesi_pelanggar_7: req.body.profesi_pelanggar[6].angka || 0,
-            usia_pelanggaran_1: req.body.usia_pelanggaran[0].angka || 0,
-            usia_pelanggaran_2: req.body.usia_pelanggaran[1].angka || 0,
-            usia_pelanggaran_3: req.body.usia_pelanggaran[2].angka || 0,
-            usia_pelanggaran_4: req.body.usia_pelanggaran[3].angka || 0,
-            usia_pelanggaran_5: req.body.usia_pelanggaran[4].angka || 0,
-            usia_pelanggaran_6: req.body.usia_pelanggaran[5].angka || 0,
-            usia_pelanggaran_7: req.body.usia_pelanggaran[6].angka || 0,
-            usia_pelanggaran_8: req.body.usia_pelanggaran[7].angka || 0,
-            usia_pelanggaran_9: req.body.usia_pelanggaran[8].angka || 0,
-            usia_pelanggaran_10: req.body.usia_pelanggaran[9].angka || 0,
-            usia_pelanggaran_11: req.body.usia_pelanggaran[10].angka || 0,
-            sim_pelanggar_1: req.body.sim_pelanggar[0].angka || 0,
-            sim_pelanggar_2: req.body.sim_pelanggar[1].angka || 0,
-            sim_pelanggar_3: req.body.sim_pelanggar[2].angka || 0,
-            sim_pelanggar_4: req.body.sim_pelanggar[3].angka || 0,
-            sim_pelanggar_5: req.body.sim_pelanggar[4].angka || 0,
-            sim_pelanggar_6: req.body.sim_pelanggar[5].angka || 0,
-            sim_pelanggar_7: req.body.sim_pelanggar[6].angka || 0,
-            sim_pelanggar_8: req.body.sim_pelanggar[7].angka || 0,
-            sim_pelanggar_9: req.body.sim_pelanggar[8].angka || 0,
-            sim_pelanggar_10: req.body.sim_pelanggar[9].angka || 0,
-            lokasi_pelanggar_1: req.body.lokasi_pelanggar[0].angka || 0,
-            lokasi_pelanggar_2: req.body.lokasi_pelanggar[1].angka || 0,
-            lokasi_pelanggar_3: req.body.lokasi_pelanggar[2].angka || 0,
-            lokasi_pelanggar_4: req.body.lokasi_pelanggar[3].angka || 0,
-            jenis_jalan_1: req.body.jenis_jalan[0].angka || 0,
-            jenis_jalan_2: req.body.jenis_jalan[1].angka || 0,
-            jenis_jalan_3: req.body.jenis_jalan[2].angka || 0,
-            jenis_jalan_4: req.body.jenis_jalan[3].angka || 0,
-            kecelakaan_1: req.body.kecelakaan[0].angka || 0,
-            kecelakaan_2: req.body.kecelakaan[1].angka || 0,
-            kecelakaan_3: req.body.kecelakaan[2].angka || 0,
-            kecelakaan_4: req.body.kecelakaan[3].angka || 0,
-            kecelakaan_5: req.body.kecelakaan[4].angka || 0,
-            kecelakaan_berd_usia_1: req.body.kecelakaan_berd_usia[0].angka || 0,
-            kecelakaan_berd_usia_2: req.body.kecelakaan_berd_usia[1].angka || 0,
-            kecelakaan_berd_usia_3: req.body.kecelakaan_berd_usia[2].angka || 0,
-            kecelakaan_berd_usia_4: req.body.kecelakaan_berd_usia[3].angka || 0,
-            kecelakaan_berd_usia_5: req.body.kecelakaan_berd_usia[4].angka || 0,
-            kecelakaan_berd_usia_6: req.body.kecelakaan_berd_usia[5].angka || 0,
-            kecelakaan_berd_usia_7: req.body.kecelakaan_berd_usia[6].angka || 0,
-            kecelakaan_berd_usia_8: req.body.kecelakaan_berd_usia[7].angka || 0,
-            kecelakaan_berd_usia_9: req.body.kecelakaan_berd_usia[8].angka || 0,
-            kecelakaan_berd_usia_10:
-              req.body.kecelakaan_berd_usia[9].angka || 0,
-            kecelakaan_berd_usia_11:
-              req.body.kecelakaan_berd_usia[10].angka || 0,
-            profesi_korban_1: req.body.profesi_korban[0].angka || 0,
-            profesi_korban_2: req.body.profesi_korban[1].angka || 0,
-            profesi_korban_3: req.body.profesi_korban[2].angka || 0,
-            profesi_korban_4: req.body.profesi_korban[3].angka || 0,
-            profesi_korban_5: req.body.profesi_korban[4].angka || 0,
-            profesi_korban_6: req.body.profesi_korban[5].angka || 0,
-            profesi_korban_7: req.body.profesi_korban[6].angka || 0,
-            kecelakaan_berd_pendidikan_1:
-              req.body.kecelakaan_berd_pendidikan[0].angka || 0,
-            kecelakaan_berd_pendidikan_2:
-              req.body.kecelakaan_berd_pendidikan[1].angka || 0,
-            kecelakaan_berd_pendidikan_3:
-              req.body.kecelakaan_berd_pendidikan[2].angka || 0,
-            kecelakaan_berd_pendidikan_4:
-              req.body.kecelakaan_berd_pendidikan[3].angka || 0,
-            kecelakaan_berd_pendidikan_5:
-              req.body.kecelakaan_berd_pendidikan[4].angka || 0,
-            kecelakaan_berd_pendidikan_6:
-              req.body.kecelakaan_berd_pendidikan[5].angka || 0,
-            kecelakaan_berd_pendidikan_7:
-              req.body.kecelakaan_berd_pendidikan[6].angka || 0,
-            kecelakaan_berd_kendaraan_1:
-              req.body.kecelakaan_berd_kendaraan[0].angka || 0,
-            kecelakaan_berd_kendaraan_2:
-              req.body.kecelakaan_berd_kendaraan[1].angka || 0,
-            kecelakaan_berd_kendaraan_3:
-              req.body.kecelakaan_berd_kendaraan[2].angka || 0,
-            kecelakaan_berd_kendaraan_4:
-              req.body.kecelakaan_berd_kendaraan[3].angka || 0,
-            kecelakaan_berd_kendaraan_5:
-              req.body.kecelakaan_berd_kendaraan[4].angka || 0,
-          };
-          const listTableBab3 = {
-            kegiatan_penyuluhan: req.body.lalu_lintas.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["lalu_lintas_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            media_penyuluhan: req.body.media_penyuluhan_1.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["media_penyuluhan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kegiatan_lalu_lintas: req.body.kegiatan_lalu_lintas_1.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["kegiatan_lalin_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            dakgar_lantas: req.body.jenis_etle.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["jenis_etle_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            jenis_ranmor: req.body.ranmor.map((data, index) => {
-              let h1 = getAnev ? parseInt(getAnev["ranmor_" + (index + 1)]) : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            lantas_roda_dua: req.body.pelanggaran_roda_2.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["pelanggaran_roda_2_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            pelanggaran_roda_4_2: req.body.pelanggaran_roda_4.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["pelanggaran_roda_4_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-            barang_bukti_disita: req.body.barang_bukti.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["barang_bukti_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            // usia_pelanggaran_1: req.body.sim_pelanggar.map((data, index) => {
-            //   let h1 = getAnev
-            //     ? parseInt(getAnev["sim_pelanggar_" + (index + 1)])
-            //     : 0;
-            //   let angka = parseInt(data.angka) - h1;
-            //   return {
-            //     ...data,
-            //     h1: h1,
-            //     h2: parseInt(data.angka),
-            //     angka: angka,
-            //     trend: (angka / h1) * 100,
-            //   };
-            // }),
-
-            profesi_korban_1: req.body.profesi_korban.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["profesi_korban_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kecelakaan_1: req.body.kecelakaan.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["kecelakaan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kecelakaan_berd_usia_1: req.body.kecelakaan_berd_usia.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["kecelakaan_berd_usia_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            profesi_pelanggar_1: req.body.profesi_pelanggar.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["profesi_pelanggar_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            ranmor_1: req.body.kecelakaan_berd_kendaraan.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["kecelakaan_berd_kendaraan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            // ranmor_1: [
-            //   {
-            //     id: 1,
-            //     title: "SEPEDA MOTOR",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   {
-            //     id: 2,
-            //     title: "MOBIL PENUMPANG",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   { id: 3, title: "BUS", h1: "", h1: "", angka: "", trend: "" },
-            //   {
-            //     id: 4,
-            //     title: "MOBIL BARANG",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   { id: 5, title: "RANSUS", h1: "", h1: "", angka: "", trend: "" },
-            // ],
-          };
-          const formatHeaderTable = {
-            judul: req.body.title,
-            h2: "H" + parseInt(mulaiOperasi),
-            h1: "H" + (parseInt(mulaiOperasi) - 1),
-            tanggalSkrg: dateChoose,
-          };
-          const getAnevToday = await ReportFinal.findOne({
-            where: {
-              date: moment(dateChoose).format("YYYY-MM-DD"),
-            },
-          });
-          if (getAnevToday) {
-            await ReportFinal.update(
-              {
-                ...insertDb,
-                date: moment(dateChoose).format("YYYY-MM-DD"),
-                mulaiOperasi: parseInt(mulaiOperasi),
-                filename,
-              },
-              {
-                where: {
-                  date: moment(dateChoose).format("YYYY-MM-DD"),
-                },
-              }
-            );
-          } else {
-            await ReportFinal.create({
-              ...insertDb,
-              date: moment(dateChoose).format("YYYY-MM-DD"),
-              mulaiOperasi: parseInt(mulaiOperasi),
-              filename,
-            });
-          }
-
-          return res.render("template/daily", {
-            date: moment(dateChoose).format("LL"),
-            ...req.body,
-            ...listTableBab3,
-            ...formatHeaderTable,
-          });
-        }
-
-        case "pdf-download":
-          const browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-            executablePath: process.env.ANEV_CHROME_PATH,
-          });
-
-          const page = await browser.newPage();
-          // + "&tanggal=" + dateChoose
-          await page.goto(
-            `${
-              process.env.ANEV_BASE_URL
-            }?type=view&mulaiOperasi=${mulaiOperasi}&tanggal=${dateChoose}&data=${AESEncrypt(
-              JSON.stringify(req.body),
-              {
-                isSafeUrl: true,
-              }
-            )}&filename=monthly-${dateChoose}.pdf`,
-            {
-              waitUntil: "networkidle0",
-            }
-          );
-          await page.addStyleTag({
-            content: `
-              @page:first { 
-                margin-top: 0;
-               }`,
-          });
-          const pdf = await page.pdf({
-            displayHeaderFooter: true,
-            headerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-          <span class="pageNumber" style="font-size: 10px;"></span>
-      </div>`,
-            footerTemplate: `
-          <div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-
-      </div>
-        `,
-            printBackground: true,
-            format: "A4",
-            landscape: false,
-            margin: {
-              top: "80px",
-              right: "0px",
-              bottom: "80px",
-              left: "0px",
-            },
-            // scale: 1,
-            path: `${path.resolve(
-              "./report/anev/monthly-" + dateChoose + ".pdf"
-            )}`,
-          });
-
-          await browser.close();
-
-          // res.contentType("application/pdf");
-          // return res.status(200).send(pdf);
-          response(res, true, "berhasil", null);
-        default: {
-          return response(res, false, "Input Not Valid", null, 400);
-        }
-      }
-    } catch (error) {
-      return response(res, false, error.message, error, 400);
-    }
-  };
-  static newDaily = async (req, res) => {
-    try {
-      const { type, data, tanggal, mulaiOperasi, filename } = req.query;
-
-      moment.locale("id");
-      const date = moment().format("LL");
-      let dateChoose = tanggal ? tanggal : moment().format("YYYY-MM-DD");
-
-      switch (type) {
-        case "view": {
-          const datanya = AESDecrypt(data, {
-            isSafeUrl: true,
-            parseMode: "string",
-          });
-          req.body = JSON.parse(datanya);
-          const getAnev = await ReportFinal.findOne({
-            where: {
-              date: moment(dateChoose).subtract("day", 1).format("YYYY-MM-DD"),
-            },
-          });
-          const insertDb = {
-            title: req.body.title,
-            lalu_lintas_1: req.body.lalu_lintas[0].angka || 0,
-            lalu_lintas_2: req.body.lalu_lintas[1].angka || 0,
-            lalu_lintas_3: req.body.lalu_lintas[2].angka || 0,
-            lalu_lintas_4: req.body.lalu_lintas[3].angka || 0,
-            media_penyuluhan_1: req.body.media_penyuluhan_1[0].angka || 0,
-            media_penyuluhan_2: req.body.media_penyuluhan_1[1].angka || 0,
-            media_penyuluhan_3: req.body.media_penyuluhan_1[2].angka || 0,
-            media_penyuluhan_4: req.body.media_penyuluhan_1[3].angka || 0,
-            kegiatan_lalin_1: req.body.kegiatan_lalu_lintas_1[0].angka || 0,
-            kegiatan_lalin_2: req.body.kegiatan_lalu_lintas_1[1].angka || 0,
-            kegiatan_lalin_3: req.body.kegiatan_lalu_lintas_1[2].angka || 0,
-            kegiatan_lalin_4: req.body.kegiatan_lalu_lintas_1[3].angka || 0,
-            jenis_etle_1: req.body.jenis_etle[0].angka || 0,
-            jenis_etle_2: req.body.jenis_etle[1].angka || 0,
-            jenis_etle_3: req.body.jenis_etle[2].angka || 0,
-            pelanggaran_roda_2_1: req.body.pelanggaran_roda_2[0].angka || 0,
-            pelanggaran_roda_2_2: req.body.pelanggaran_roda_2[1].angka || 0,
-            pelanggaran_roda_2_3: req.body.pelanggaran_roda_2[2].angka || 0,
-            pelanggaran_roda_2_4: req.body.pelanggaran_roda_2[3].angka || 0,
-            pelanggaran_roda_2_5: req.body.pelanggaran_roda_2[4].angka || 0,
-            pelanggaran_roda_2_6: req.body.pelanggaran_roda_2[5].angka || 0,
-            pelanggaran_roda_2_7: req.body.pelanggaran_roda_2[6].angka || 0,
-            pelanggaran_roda_4_1: req.body.pelanggaran_roda_4[0].angka || 0,
-            pelanggaran_roda_4_2: req.body.pelanggaran_roda_4[1].angka || 0,
-            pelanggaran_roda_4_3: req.body.pelanggaran_roda_4[2].angka || 0,
-            pelanggaran_roda_4_4: req.body.pelanggaran_roda_4[3].angka || 0,
-            pelanggaran_roda_4_5: req.body.pelanggaran_roda_4[4].angka || 0,
-            pelanggaran_roda_4_6: req.body.pelanggaran_roda_4[5].angka || 0,
-            pelanggaran_roda_4_7: req.body.pelanggaran_roda_4[6].angka || 0,
-            barang_bukti_1: req.body.barang_bukti[0].angka || 0,
-            barang_bukti_2: req.body.barang_bukti[1].angka || 0,
-            barang_bukti_3: req.body.barang_bukti[2].angka || 0,
-            ranmor_1: req.body.ranmor[0].angka || 0,
-            ranmor_2: req.body.ranmor[1].angka || 0,
-            ranmor_3: req.body.ranmor[2].angka || 0,
-            ranmor_4: req.body.ranmor[3].angka || 0,
-            ranmor_5: req.body.ranmor[4].angka || 0,
-            profesi_pelanggar_1: req.body.profesi_pelanggar[0].angka || 0,
-            profesi_pelanggar_2: req.body.profesi_pelanggar[1].angka || 0,
-            profesi_pelanggar_3: req.body.profesi_pelanggar[2].angka || 0,
-            profesi_pelanggar_4: req.body.profesi_pelanggar[3].angka || 0,
-            profesi_pelanggar_5: req.body.profesi_pelanggar[4].angka || 0,
-            profesi_pelanggar_6: req.body.profesi_pelanggar[5].angka || 0,
-            profesi_pelanggar_7: req.body.profesi_pelanggar[6].angka || 0,
-            usia_pelanggaran_1: req.body.usia_pelanggaran[0].angka || 0,
-            usia_pelanggaran_2: req.body.usia_pelanggaran[1].angka || 0,
-            usia_pelanggaran_3: req.body.usia_pelanggaran[2].angka || 0,
-            usia_pelanggaran_4: req.body.usia_pelanggaran[3].angka || 0,
-            usia_pelanggaran_5: req.body.usia_pelanggaran[4].angka || 0,
-            usia_pelanggaran_6: req.body.usia_pelanggaran[5].angka || 0,
-            usia_pelanggaran_7: req.body.usia_pelanggaran[6].angka || 0,
-            usia_pelanggaran_8: req.body.usia_pelanggaran[7].angka || 0,
-            usia_pelanggaran_9: req.body.usia_pelanggaran[8].angka || 0,
-            usia_pelanggaran_10: req.body.usia_pelanggaran[9].angka || 0,
-            usia_pelanggaran_11: req.body.usia_pelanggaran[10].angka || 0,
-            sim_pelanggar_1: req.body.sim_pelanggar[0].angka || 0,
-            sim_pelanggar_2: req.body.sim_pelanggar[1].angka || 0,
-            sim_pelanggar_3: req.body.sim_pelanggar[2].angka || 0,
-            sim_pelanggar_4: req.body.sim_pelanggar[3].angka || 0,
-            sim_pelanggar_5: req.body.sim_pelanggar[4].angka || 0,
-            sim_pelanggar_6: req.body.sim_pelanggar[5].angka || 0,
-            sim_pelanggar_7: req.body.sim_pelanggar[6].angka || 0,
-            sim_pelanggar_8: req.body.sim_pelanggar[7].angka || 0,
-            sim_pelanggar_9: req.body.sim_pelanggar[8].angka || 0,
-            sim_pelanggar_10: req.body.sim_pelanggar[9].angka || 0,
-            lokasi_pelanggar_1: req.body.lokasi_pelanggar[0].angka || 0,
-            lokasi_pelanggar_2: req.body.lokasi_pelanggar[1].angka || 0,
-            lokasi_pelanggar_3: req.body.lokasi_pelanggar[2].angka || 0,
-            lokasi_pelanggar_4: req.body.lokasi_pelanggar[3].angka || 0,
-            jenis_jalan_1: req.body.jenis_jalan[0].angka || 0,
-            jenis_jalan_2: req.body.jenis_jalan[1].angka || 0,
-            jenis_jalan_3: req.body.jenis_jalan[2].angka || 0,
-            jenis_jalan_4: req.body.jenis_jalan[3].angka || 0,
-            kecelakaan_1: req.body.kecelakaan[0].angka || 0,
-            kecelakaan_2: req.body.kecelakaan[1].angka || 0,
-            kecelakaan_3: req.body.kecelakaan[2].angka || 0,
-            kecelakaan_4: req.body.kecelakaan[3].angka || 0,
-            kecelakaan_5: req.body.kecelakaan[4].angka || 0,
-            kecelakaan_berd_usia_1: req.body.kecelakaan_berd_usia[0].angka || 0,
-            kecelakaan_berd_usia_2: req.body.kecelakaan_berd_usia[1].angka || 0,
-            kecelakaan_berd_usia_3: req.body.kecelakaan_berd_usia[2].angka || 0,
-            kecelakaan_berd_usia_4: req.body.kecelakaan_berd_usia[3].angka || 0,
-            kecelakaan_berd_usia_5: req.body.kecelakaan_berd_usia[4].angka || 0,
-            kecelakaan_berd_usia_6: req.body.kecelakaan_berd_usia[5].angka || 0,
-            kecelakaan_berd_usia_7: req.body.kecelakaan_berd_usia[6].angka || 0,
-            kecelakaan_berd_usia_8: req.body.kecelakaan_berd_usia[7].angka || 0,
-            kecelakaan_berd_usia_9: req.body.kecelakaan_berd_usia[8].angka || 0,
-            kecelakaan_berd_usia_10:
-              req.body.kecelakaan_berd_usia[9].angka || 0,
-            kecelakaan_berd_usia_11:
-              req.body.kecelakaan_berd_usia[10].angka || 0,
-            profesi_korban_1: req.body.profesi_korban[0].angka || 0,
-            profesi_korban_2: req.body.profesi_korban[1].angka || 0,
-            profesi_korban_3: req.body.profesi_korban[2].angka || 0,
-            profesi_korban_4: req.body.profesi_korban[3].angka || 0,
-            profesi_korban_5: req.body.profesi_korban[4].angka || 0,
-            profesi_korban_6: req.body.profesi_korban[5].angka || 0,
-            profesi_korban_7: req.body.profesi_korban[6].angka || 0,
-            kecelakaan_berd_pendidikan_1:
-              req.body.kecelakaan_berd_pendidikan[0].angka || 0,
-            kecelakaan_berd_pendidikan_2:
-              req.body.kecelakaan_berd_pendidikan[1].angka || 0,
-            kecelakaan_berd_pendidikan_3:
-              req.body.kecelakaan_berd_pendidikan[2].angka || 0,
-            kecelakaan_berd_pendidikan_4:
-              req.body.kecelakaan_berd_pendidikan[3].angka || 0,
-            kecelakaan_berd_pendidikan_5:
-              req.body.kecelakaan_berd_pendidikan[4].angka || 0,
-            kecelakaan_berd_pendidikan_6:
-              req.body.kecelakaan_berd_pendidikan[5].angka || 0,
-            kecelakaan_berd_pendidikan_7:
-              req.body.kecelakaan_berd_pendidikan[6].angka || 0,
-            kecelakaan_berd_kendaraan_1:
-              req.body.kecelakaan_berd_kendaraan[0].angka || 0,
-            kecelakaan_berd_kendaraan_2:
-              req.body.kecelakaan_berd_kendaraan[1].angka || 0,
-            kecelakaan_berd_kendaraan_3:
-              req.body.kecelakaan_berd_kendaraan[2].angka || 0,
-            kecelakaan_berd_kendaraan_4:
-              req.body.kecelakaan_berd_kendaraan[3].angka || 0,
-            kecelakaan_berd_kendaraan_5:
-              req.body.kecelakaan_berd_kendaraan[4].angka || 0,
-          };
-          const listTableBab3 = {
-            kegiatan_penyuluhan: req.body.lalu_lintas.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["lalu_lintas_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            media_penyuluhan: req.body.media_penyuluhan_1.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["media_penyuluhan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kegiatan_lalu_lintas: req.body.kegiatan_lalu_lintas_1.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["kegiatan_lalin_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            dakgar_lantas: req.body.jenis_etle.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["jenis_etle_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            jenis_ranmor: req.body.ranmor.map((data, index) => {
-              let h1 = getAnev ? parseInt(getAnev["ranmor_" + (index + 1)]) : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            lantas_roda_dua: req.body.pelanggaran_roda_2.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["pelanggaran_roda_2_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            pelanggaran_roda_4_2: req.body.pelanggaran_roda_4.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["pelanggaran_roda_4_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-            barang_bukti_disita: req.body.barang_bukti.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["barang_bukti_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            // usia_pelanggaran_1: req.body.sim_pelanggar.map((data, index) => {
-            //   let h1 = getAnev
-            //     ? parseInt(getAnev["sim_pelanggar_" + (index + 1)])
-            //     : 0;
-            //   let angka = parseInt(data.angka) - h1;
-            //   return {
-            //     ...data,
-            //     h1: h1,
-            //     h2: parseInt(data.angka),
-            //     angka: angka,
-            //     trend: (angka / h1) * 100,
-            //   };
-            // }),
-
-            profesi_korban_1: req.body.profesi_korban.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["profesi_korban_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kecelakaan_1: req.body.kecelakaan.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["kecelakaan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-
-            kecelakaan_berd_usia_1: req.body.kecelakaan_berd_usia.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["kecelakaan_berd_usia_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            profesi_pelanggar_1: req.body.profesi_pelanggar.map(
-              (data, index) => {
-                let h1 = getAnev
-                  ? parseInt(getAnev["profesi_pelanggar_" + (index + 1)])
-                  : 0;
-                let angka = parseInt(data.angka) - h1;
-                return {
-                  ...data,
-                  h1: h1,
-                  h2: parseInt(data.angka),
-                  angka: angka,
-                  trend: (angka / h1) * 100,
-                };
-              }
-            ),
-
-            ranmor_1: req.body.kecelakaan_berd_kendaraan.map((data, index) => {
-              let h1 = getAnev
-                ? parseInt(getAnev["kecelakaan_berd_kendaraan_" + (index + 1)])
-                : 0;
-              let angka = parseInt(data.angka) - h1;
-              return {
-                ...data,
-                h1: h1,
-                h2: parseInt(data.angka),
-                angka: angka,
-                trend: (angka / h1) * 100,
-              };
-            }),
-            // ranmor_1: [
-            //   {
-            //     id: 1,
-            //     title: "SEPEDA MOTOR",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   {
-            //     id: 2,
-            //     title: "MOBIL PENUMPANG",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   { id: 3, title: "BUS", h1: "", h1: "", angka: "", trend: "" },
-            //   {
-            //     id: 4,
-            //     title: "MOBIL BARANG",
-            //     h1: "",
-            //     h1: "",
-            //     angka: "",
-            //     trend: "",
-            //   },
-            //   { id: 5, title: "RANSUS", h1: "", h1: "", angka: "", trend: "" },
-            // ],
-          };
-          const formatHeaderTable = {
-            judul: req.body.title,
-            h2: "H" + parseInt(mulaiOperasi),
-            h1: "H" + (parseInt(mulaiOperasi) - 1),
-            tanggalSkrg: dateChoose,
-          };
-          const getAnevToday = await ReportFinal.findOne({
-            where: {
-              date: moment(dateChoose).format("YYYY-MM-DD"),
-            },
-          });
-          if (getAnevToday) {
-            await ReportFinal.update(
-              {
-                ...insertDb,
-                date: moment(dateChoose).format("YYYY-MM-DD"),
-                mulaiOperasi: parseInt(mulaiOperasi),
-                filename,
-              },
-              {
-                where: {
-                  date: moment(dateChoose).format("YYYY-MM-DD"),
-                },
-              }
-            );
-          } else {
-            await ReportFinal.create({
-              ...insertDb,
-              date: moment(dateChoose).format("YYYY-MM-DD"),
-              mulaiOperasi: parseInt(mulaiOperasi),
-              filename,
-            });
-          }
-
-          return res.render("template/new-daily", {
-            date: moment(dateChoose).format("LL"),
-            ...req.body,
-            ...listTableBab3,
-            ...formatHeaderTable,
-          });
-        }
-
-        case "pdf-download":
-          const browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-            executablePath: process.env.ANEV_CHROME_PATH,
-          });
-
-          const page = await browser.newPage();
-          // + "&tanggal=" + dateChoose
-          await page.goto(
-            `${
-              process.env.ANEV_BASE_URL
-            }?type=view&mulaiOperasi=${mulaiOperasi}&tanggal=${dateChoose}&data=${AESEncrypt(
-              JSON.stringify(req.body),
-              {
-                isSafeUrl: true,
-              }
-            )}&filename=monthly-${dateChoose}.pdf`,
-            {
-              waitUntil: "networkidle0",
-            }
-          );
-          await page.addStyleTag({
-            content: `
-              @page:first { 
-                margin-top: 0;
-               }`,
-          });
-          const pdf = await page.pdf({
-            displayHeaderFooter: true,
-            headerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-          <span class="pageNumber" style="font-size: 10px;"></span>
-      </div>`,
-            footerTemplate: `
-          <div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
-
-      </div>
-        `,
-            printBackground: true,
-            format: "A4",
-            landscape: false,
-            margin: {
-              top: "80px",
-              right: "0px",
-              bottom: "80px",
-              left: "0px",
-            },
-            // scale: 1,
-            path: `${path.resolve(
-              "./report/new-anev/monthly-" + dateChoose + ".pdf"
-            )}`,
-          });
-
-          await browser.close();
-
-          // res.contentType("application/pdf");
-          // return res.status(200).send(pdf);
-          response(res, true, "berhasil", null);
-        default: {
-          return response(res, false, "Input Not Valid", null, 400);
-        }
-      }
-    } catch (error) {
-      return response(res, false, error.message, error, 400);
-    }
-  };
-  static testing = async (req, res) => {
-    let dataAccount = await Account.findOne({
-      include: [
-        {
-          model: Country,
-          // as: "countrys",
-          foreignKey: "id_country",
-          required: false,
-        },
-        {
-          model: Vehicle,
-          as: "vehicle",
-          foreignKey: "id_vehicle",
-          required: false,
-        },
-        {
-          model: Officer,
-          as: "officers",
-          required: true,
+class AnevController {
+  static getMonthly = async (req, res) => {
+    let { mode } = req.query;
+    switch (mode) {
+      case "view": {
+        let filter = {
+          month: req.query.month,
+          year: req.query.year,
+        };
+        filter.monthName = IDMonths[filter.month - 1];
+        filter.prevMonth = filter.month > 1 ? filter.month - 1 : 12;
+        filter.prevYear = filter.month > 1 ? filter.year : filter.year - 1;
+        filter.prevMonthName = IDMonths[filter.prevMonth - 1];
+        const newsData = await AnevNews.findAll({
           where: {
-            nrp_officer: "87050605",
+            deleted_at: null,
+            show_on_monthly: true,
+            [Op.and]: [
+              Sequelize.fn('EXTRACT(MONTH from "created_at") = ', filter.month),
+              Sequelize.fn('EXTRACT(YEAR from "created_at") = ', filter.year),
+            ],
           },
-        },
-      ],
-      where: {
-        name_account: "87050605",
-      },
-    });
-    response(res, true, "berhasil", dataAccount);
+          limit: 2,
+          order: [["created_at", "desc"]],
+        });
+        let dataLakaOnMonth = await db.query(
+          `SELECT SUM(laka.luka_berat)+SUM(laka.luka_ringan)+SUM(laka.meninggal_dunia) as jumlah_laka,
+              SUM(laka.meninggal_dunia) as meninggal_dunia,
+              SUM(laka.luka_berat) as luka_berat,
+              SUM(laka.luka_ringan) as luka_ringan
+              FROM "count_lakalantas_polda_month" laka
+              WHERE EXTRACT(MONTH from laka."date")= :month
+              AND EXTRACT(YEAR from laka."date")= :year`,
+          {
+            replacements: { month: filter.month, year: filter.year },
+          }
+        );
+        dataLakaOnMonth = dataLakaOnMonth[0][0];
+        dataLakaOnMonth.jumlah_laka = dataLakaOnMonth.jumlah_laka
+          ? parseInt(dataLakaOnMonth.jumlah_laka)
+          : 0;
+        dataLakaOnMonth.meninggal_dunia = dataLakaOnMonth.meninggal_dunia
+          ? parseInt(dataLakaOnMonth.meninggal_dunia)
+          : 0;
+        dataLakaOnMonth.luka_berat = dataLakaOnMonth.luka_berat
+          ? parseInt(dataLakaOnMonth.luka_berat)
+          : 0;
+        dataLakaOnMonth.luka_ringan = dataLakaOnMonth.luka_ringan
+          ? parseInt(dataLakaOnMonth.luka_ringan)
+          : 0;
+
+        let dataLakaPrevMonth = await db.query(
+          `SELECT SUM(laka.luka_berat)+SUM(laka.luka_ringan)+SUM(laka.meninggal_dunia) as jumlah_laka,
+              SUM(laka.meninggal_dunia) as meninggal_dunia,
+              SUM(laka.luka_berat) as luka_berat,
+              SUM(laka.luka_ringan) as luka_ringan
+              FROM "count_lakalantas_polda_month" laka
+              WHERE EXTRACT(MONTH from laka."date")= :month
+              AND EXTRACT(YEAR from laka."date")= :year`,
+          {
+            replacements: { month: filter.prevMonth, year: filter.prevYear },
+          }
+        );
+        dataLakaPrevMonth = dataLakaPrevMonth[0][0];
+        dataLakaPrevMonth.jumlah_laka = dataLakaPrevMonth.jumlah_laka
+          ? parseInt(dataLakaPrevMonth.jumlah_laka)
+          : 0;
+        dataLakaPrevMonth.meninggal_dunia = dataLakaPrevMonth.meninggal_dunia
+          ? parseInt(dataLakaPrevMonth.meninggal_dunia)
+          : 0;
+        dataLakaPrevMonth.luka_berat = dataLakaPrevMonth.luka_berat
+          ? parseInt(dataLakaPrevMonth.luka_berat)
+          : 0;
+        dataLakaPrevMonth.luka_ringan = dataLakaPrevMonth.luka_ringan
+          ? parseInt(dataLakaPrevMonth.luka_ringan)
+          : 0;
+
+        let dataGarOnMonth = await db.query(
+          `SELECT SUM(gar.pelanggaran_berat)+SUM(gar.pelanggaran_ringan)+SUM(gar.pelanggaran_sedang) as jumlah_gar,
+          SUM(gar.pelanggaran_berat) as pelanggaran_berat,
+          SUM(gar.pelanggaran_sedang) as pelanggaran_sedang,
+          SUM(gar.pelanggaran_ringan) as pelanggaran_ringan
+          FROM count_garlantas_polda_month gar
+          WHERE EXTRACT(MONTH from gar."date")= :month
+          AND EXTRACT(YEAR from gar."date")= :year`,
+          {
+            replacements: {
+              month: filter.month,
+              year: filter.year,
+            },
+          }
+        );
+        dataGarOnMonth = dataGarOnMonth[0][0];
+        dataGarOnMonth.jumlah_gar = dataGarOnMonth.jumlah_gar
+          ? parseInt(dataGarOnMonth.jumlah_gar)
+          : 0;
+        dataGarOnMonth.pelanggaran_berat = dataGarOnMonth.pelanggaran_berat
+          ? parseInt(dataGarOnMonth.pelanggaran_berat)
+          : 0;
+        dataGarOnMonth.pelanggaran_sedang = dataGarOnMonth.pelanggaran_sedang
+          ? parseInt(dataGarOnMonth.pelanggaran_sedang)
+          : 0;
+        dataGarOnMonth.pelanggaran_ringan = dataGarOnMonth.pelanggaran_ringan
+          ? parseInt(dataGarOnMonth.pelanggaran_ringan)
+          : 0;
+
+        let dataGarOnPrevMonth = await db.query(
+          `SELECT SUM(gar.pelanggaran_berat)+SUM(gar.pelanggaran_ringan)+SUM(gar.pelanggaran_sedang) as jumlah_gar,
+          SUM(gar.pelanggaran_berat) as pelanggaran_berat,
+          SUM(gar.pelanggaran_sedang) as pelanggaran_sedang,
+          SUM(gar.pelanggaran_ringan) as pelanggaran_ringan
+          FROM count_garlantas_polda_month gar
+          WHERE EXTRACT(MONTH from gar."date")= :month
+          AND EXTRACT(YEAR from gar."date")= :year`,
+          {
+            replacements: {
+              month: filter.prevMonth,
+              year: filter.prevYear,
+            },
+          }
+        );
+        dataGarOnPrevMonth = dataGarOnPrevMonth[0][0];
+        dataGarOnPrevMonth.jumlah_gar = dataGarOnPrevMonth.jumlah_gar
+          ? parseInt(dataGarOnPrevMonth.jumlah_gar)
+          : 0;
+        dataGarOnPrevMonth.pelanggaran_berat =
+          dataGarOnPrevMonth.pelanggaran_berat
+            ? parseInt(dataGarOnPrevMonth.pelanggaran_berat)
+            : 0;
+        dataGarOnPrevMonth.pelanggaran_sedang =
+          dataGarOnPrevMonth.pelanggaran_sedang
+            ? parseInt(dataGarOnPrevMonth.pelanggaran_sedang)
+            : 0;
+        dataGarOnPrevMonth.pelanggaran_ringan =
+          dataGarOnPrevMonth.pelanggaran_ringan
+            ? parseInt(dataGarOnPrevMonth.pelanggaran_ringan)
+            : 0;
+
+        const analisis = {
+          page3: {
+            grafik_kecelakaan: {
+              kesimpulan:
+                dataLakaOnMonth.jumlah_laka > dataLakaPrevMonth.jumlah_laka
+                  ? "kenaikan"
+                  : dataLakaOnMonth.jumlah_laka == dataLakaPrevMonth.jumlah_laka
+                  ? "kesamaan"
+                  : "penurunan",
+              selisih: Math.abs(
+                dataLakaPrevMonth.jumlah_laka - dataLakaOnMonth.jumlah_laka
+              ),
+              pesentase:
+                100 -
+                (dataLakaOnMonth.jumlah_laka < dataLakaPrevMonth.jumlah_laka
+                  ? (dataLakaOnMonth.jumlah_laka * 100) /
+                    dataLakaPrevMonth.jumlah_laka
+                  : (dataLakaPrevMonth.jumlah_laka * 100) /
+                    dataLakaOnMonth.jumlah_laka
+                ).toFixed(2),
+            },
+          },
+          page4: {
+            grafik_dakgar: {
+              kesimpulan:
+                dataGarOnMonth.jumlah_gar > dataGarOnPrevMonth.jumlah_gar
+                  ? "kenaikan"
+                  : dataGarOnMonth.jumlah_gar == dataGarOnPrevMonth.jumlah_gar
+                  ? "kesamaan"
+                  : "penurunan",
+              selisih: Math.abs(
+                dataGarOnPrevMonth.jumlah_gar - dataGarOnMonth.jumlah_gar
+              ),
+              pesentase:
+                100 -
+                (dataGarOnMonth.jumlah_gar < dataGarOnPrevMonth.jumlah_gar
+                  ? (dataGarOnMonth.jumlah_gar * 100) /
+                    dataGarOnPrevMonth.jumlah_gar
+                  : (dataGarOnPrevMonth.jumlah_gar * 100) /
+                    dataGarOnMonth.jumlah_gar
+                ).toFixed(2),
+            },
+          },
+        };
+
+        let data = {
+          page1: {
+            title: filter.monthName + " " + filter.year,
+          },
+          page2: {
+            news: newsData,
+          },
+          page3: {
+            grafik_kecelakaan: {
+              categories: [
+                "Jumlah Laka",
+                "Meninggal Dunia",
+                "Luka Berat",
+                "Luka Ringan",
+              ],
+              series: [
+                {
+                  name: filter.prevMonthName + " " + filter.prevYear,
+                  data: [
+                    dataLakaPrevMonth.jumlah_laka,
+                    dataLakaPrevMonth.meninggal_dunia,
+                    dataLakaPrevMonth.luka_berat,
+                    dataLakaPrevMonth.luka_ringan,
+                  ],
+                  color: "#124899",
+                },
+                {
+                  name: filter.monthName + " " + filter.year,
+                  data: [
+                    dataLakaOnMonth.jumlah_laka,
+                    dataLakaOnMonth.meninggal_dunia,
+                    dataLakaOnMonth.luka_berat,
+                    dataLakaOnMonth.luka_ringan,
+                  ],
+                  color: "#991212",
+                },
+              ],
+            },
+            analisis: `Analisis data kecelakaan pada bulan ini adalah kecelakaan lalu
+                lintas mengalami <b>${analisis.page3.grafik_kecelakaan.kesimpulan}</b> sebanyak <b>${analisis.page3.grafik_kecelakaan.pesentase}%</b> pada bulan sebelumnya.
+                Karena jumlah laka bulan <b>${filter.prevMonthName} ${filter.prevYear}</b> sebanyak <b>${dataLakaPrevMonth.jumlah_laka}</b> kejadian
+                sedangkan bulan <b>${filter.monthName} ${filter.year}</b> sebanyak <b>${dataLakaOnMonth.jumlah_laka}</b> kejadian. <b>Selisih</b>
+                dari <b>jumlah kecelakaan</b> sebanyak <b>${analisis.page3.grafik_kecelakaan.selisih}</b> kejadian.`,
+          },
+          page4: {
+            grafik_dakgar: {
+              categories: [
+                "JUMLAH DAKGAR",
+                "Gar Berat",
+                "Gar Sedang",
+                "Gar Ringan",
+              ],
+              series: [
+                {
+                  name: filter.prevMonthName + " " + filter.prevYear,
+                  data: [
+                    dataGarOnPrevMonth.jumlah_gar,
+                    dataGarOnPrevMonth.pelanggaran_berat,
+                    dataGarOnPrevMonth.pelanggaran_sedang,
+                    dataGarOnPrevMonth.pelanggaran_ringan,
+                  ],
+                  color: "#124899",
+                },
+                {
+                  name: filter.monthName + " " + filter.year,
+                  data: [
+                    dataGarOnMonth.jumlah_gar,
+                    dataGarOnMonth.pelanggaran_berat,
+                    dataGarOnMonth.pelanggaran_sedang,
+                    dataGarOnMonth.pelanggaran_ringan,
+                  ],
+                  color: "#991212",
+                },
+              ],
+            },
+            analisis: `Analisis berdasarkan data akumulasi rata-rata pelanggaran pada bulan <b>${filter.monthName} ${filter.year}</b>
+            adalah pelanggaran lalu lintas mengalami <b>${analisis.page4.grafik_dakgar.kesimpulan}</b> sebanyak <b>${analisis.page4.grafik_dakgar.pesentase}%</b> pada bulan sebelumnya.
+                Karena jumlah pelanggaran pada bulan <b>${filter.prevMonthName} ${filter.prevYear}</b> sebanyak <b>${dataGarOnPrevMonth.jumlah_gar}</b> kejadian
+                sedangkan bulan <b>${filter.monthName} ${filter.year}</b> sebanyak <b>${dataGarOnMonth.jumlah_gar}</b> kejadian. <b>Selisih</b>
+                dari <b>jumlah pelanggaran</b> sebanyak <b>${analisis.page4.grafik_dakgar.selisih}</b> kejadian.`,
+          },
+        };
+
+        return res.render("anev/monthly", { filter, data });
+      }
+      case "pdf-download": {
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+          executablePath: process.env.ANEV_CHROME_PATH,
+        });
+        const page = await browser.newPage();
+        var { month, year } = req.query;
+        await page.goto(
+          `${process.env.ANEV_BASE_URL}/getMonthly?mode=view&month=${month}&year=${year}`,
+          {
+            waitUntil: "networkidle0",
+          }
+        );
+        const pdf = await page.pdf({
+          printBackground: true,
+          format: "A4",
+          landscape: true,
+          margin: {
+            top: "0px",
+            right: "0px",
+            bottom: "0px",
+            left: "0px",
+          },
+          // scale: 1,
+          path: `${path.resolve("./report/anev/monthly.pdf")}`,
+        });
+
+        await browser.close();
+
+        res.contentType("application/pdf");
+        return res.status(200).send(pdf);
+      }
+      default: {
+        return response(res, false, "Input Not Valid", null, 400);
+      }
+    }
   };
-};
+  static getDaily = async (req, res) => {
+    let { mode } = req.query;
+    switch (mode) {
+      case "view": {
+        let filter = {
+          date: req.query.date,
+        };
+        filter.dateName = moment(filter.date)
+          .locale("id")
+          .format("dddd, DD MMMM YYYY");
+        filter.datePrev = moment(filter.date).subtract(1, "day");
+        filter.datePrevName = moment(filter.datePrev)
+          .locale("id")
+          .format("dddd, DD MMMM YYYY");
+        const newsData = await AnevNews.findOne({
+          where: {
+            deleted_at: null,
+            show_on_daily: true,
+            [Op.and]: [Sequelize.fn("DATE(created_at) = ", filter.date)],
+          },
+          limit: 2,
+          order: [["created_at", "desc"]],
+        });
+        //return res.send(newsData);
+        let data = {
+          page1: {
+            title: filter.dateName,
+          },
+          page2: {
+            photo: newsData.photo,
+            description: newsData.description,
+          },
+          page3: {
+            laka: [
+              {
+                no: 1,
+                uraian: `<b>JUMLAH LAKA</b>`,
+                currentDate: `<b>192</b>`,
+                prevDate: `<b>100</b>`,
+                trendAngka: `<b>92</b>`,
+                trendPersen: `<b>10</b>`,
+                kesimpulan: `<b>NAIK</b>`,
+              },
+              {
+                no: 2,
+                uraian: `MENINGGAL DUNIA`,
+                currentDate: `11`,
+                prevDate: `10`,
+                trendAngka: `1`,
+                trendPersen: `1`,
+                kesimpulan: `NAIK`,
+              },
+              {
+                no: 3,
+                uraian: `LUKA BERAT`,
+                currentDate: `8`,
+                prevDate: `10`,
+                trendAngka: `2`,
+                trendPersen: `2`,
+                kesimpulan: `TURUN`,
+              },
+              {
+                no: 4,
+                uraian: `LUKA RINGAN`,
+                currentDate: `1`,
+                prevDate: `0`,
+                trendAngka: `1`,
+                trendPersen: `1`,
+                kesimpulan: `NAIK`,
+              },
+              {
+                no: 5,
+                uraian: `MATERIAL`,
+                currentDate: `200.000.000`,
+                prevDate: `150.000.000`,
+                trendAngka: `-50.000.000`,
+                trendPersen: `20%`,
+                kesimpulan: `NAIK`,
+              },
+            ],
+            dakgar: [
+              {
+                no: 1,
+                uraian: `<b>JUMLAH DAKGAR</b>`,
+                currentDate: `<b>192</b>`,
+                prevDate: `<b>100</b>`,
+                trendAngka: `<b>92</b>`,
+                trendPersen: `<b>10</b>`,
+                kesimpulan: `<b>NAIK</b>`,
+              },
+              {
+                no: 2,
+                uraian: `GAR BERAT`,
+                currentDate: `11`,
+                prevDate: `10`,
+                trendAngka: `1`,
+                trendPersen: `1`,
+                kesimpulan: `NAIK`,
+              },
+              {
+                no: 3,
+                uraian: `GAR SEDANG`,
+                currentDate: `8`,
+                prevDate: `10`,
+                trendAngka: `2`,
+                trendPersen: `2`,
+                kesimpulan: `TURUN`,
+              },
+              {
+                no: 4,
+                uraian: `GAR RINGAN`,
+                currentDate: `1`,
+                prevDate: `0`,
+                trendAngka: `1`,
+                trendPersen: `1`,
+                kesimpulan: `NAIK`,
+              },
+            ],
+          },
+          page4: {
+            grafik_laka: {
+              categories: [
+                "Jumlah Laka",
+                "Meninggal Dunia",
+                "Luka Berat",
+                "Luka Sedang",
+                "Luka Ringan",
+              ],
+              series: [
+                {
+                  name: filter.datePrevName,
+                  data: [100, 11, 12, 1],
+                  color: "#063ac9",
+                },
+                {
+                  name: filter.dateName,
+                  data: [81, 19, 15, 3],
+                  color: "#e3781b",
+                },
+              ],
+            },
+            pie_laka: {
+              data: [
+                ["Jumlah Laka", 60],
+                ["Meninggal Dunia", 10],
+                ["Luka Berat", 10],
+                ["Luka Sedang", 5],
+                ["Luka Ringan", 15],
+              ],
+            },
+            analisis: `Analisis data akumulasi rata-rata kecelakaan pada hari ini adalah kecelakaan lalu lintas mengalami kenaikan sebanyak 16%
+            dibandingkan hari sebelumnya.
+            Jumlah laka pada tanggal 4 Oktober 2022 sebanyak 118 kejadian
+            dan 5 Oktober 2022 memiliki jumlah kecelakaan sebanyak 123
+            kejadian sehingga memiliki selisih sebanyak 5 kejadian. Tetapi
+            mengalami penurunan pada jumlah meninggal dunia sebanyak
+            35%.`,
+          },
+          page5: {
+            laka: [
+              {
+                no: 1,
+                name: "JABAR",
+                jumlah_laka: 10,
+                meninggal_dunia: 3,
+                luka_berat: 3,
+                luka_ringan: 7,
+              },
+              {
+                no: 2,
+                name: "JATIM",
+                jumlah_laka: 12,
+                meninggal_dunia: 1,
+                luka_berat: 13,
+                luka_ringan: 3,
+              },
+              {
+                no: 3,
+                name: "JATENG",
+                jumlah_laka: 19,
+                meninggal_dunia: 2,
+                luka_berat: 10,
+                luka_ringan: 1,
+              },
+            ],
+          },
+          pageMaps: [
+            {
+              title: `1. POLDA DKI JAKARTA`,
+              map: `https://jakarta.bpk.go.id/wp-content/uploads/2011/11/Peta-Wilayah-Jakarta.jpg`,
+              data: [
+                ["JUMLAH KEJADIAN", 33, 42, 9, 27],
+                ["MENINGGAL DUNIA", 3, 2, -1, 33],
+                ["LUKA BERAT", 0, 1, 1, 0],
+                ["LUKA RINGAN", 36, 51, 15, 42],
+              ],
+              analisis: `BERDASARKAN DATA AKUMULASI RATA-RATA TREND KECELAKAAN DI WILAYAH POLDA JAWA TENGAH HASILNYA NAIK 3% DARI HARI SEBELUMNYA.`,
+            },
+            {
+              title: `2. POLDA JAWA BARAT`,
+              map: `https://upload.wikimedia.org/wikipedia/commons/8/8b/Map_of_West_Java_with_cities_and_regencies_names.png`,
+              data: [
+                ["JUMLAH KEJADIAN", 33, 42, 9, 27],
+                ["MENINGGAL DUNIA", 3, 2, -1, 33],
+                ["LUKA BERAT", 0, 1, 1, 0],
+                ["LUKA RINGAN", 36, 51, 15, 42],
+              ],
+              analisis: `BERDASARKAN DATA AKUMULASI RATA-RATA TREND KECELAKAAN DI WILAYAH POLDA JAWA TENGAH HASILNYA NAIK 3% DARI HARI SEBELUMNYA.`,
+            },
+            {
+              title: `3. POLDA SULAWESI TENGAH`,
+              map: `https://www.tataruang.id/wp-content/uploads/2022/06/peta-sulawesi-tengah-hd.jpg`,
+              data: [
+                ["JUMLAH KEJADIAN", 33, 42, 9, 27],
+                ["MENINGGAL DUNIA", 3, 2, -1, 33],
+                ["LUKA BERAT", 0, 1, 1, 0],
+                ["LUKA RINGAN", 36, 51, 15, 42],
+              ],
+              analisis: `BERDASARKAN DATA AKUMULASI RATA-RATA TREND KECELAKAAN DI WILAYAH POLDA JAWA TENGAH HASILNYA NAIK 3% DARI HARI SEBELUMNYA.`,
+            },
+          ],
+          page9: {
+            pie_dakgar: {
+              data: [
+                ["JUMLAH DAKGAR", 60],
+                ["Gar Berat", 10],
+                ["Gar Sedang", 10],
+                ["Gar Ringan", 5],
+              ],
+            },
+            bar_dakgar: {
+              categories: [
+                "JUMLAH DAKGAR",
+                "Gar Berat",
+                "Gar Sedang",
+                "Gar Ringan",
+              ],
+              series: [
+                {
+                  name: filter.datePrevName,
+                  data: [100, 11, 12, 1],
+                  color: "#063ac9",
+                },
+                {
+                  name: filter.dateName,
+                  data: [81, 19, 15, 7],
+                  color: "#e3781b",
+                },
+              ],
+            },
+            analisis: `Analisis berdasarkan data akumulasi rata-rata pelanggaran pada 5 Oktober 2022
+            adalah pelanggaran lalu lintas mengalami kenaikan sebanyak 15% pada hari
+            sebelumnya. Karena jumlah pelanggaran pada 4 Oktober 2022 sebanyak 8.494
+            kejadian dan 5 Oktober 2022 sebanyak 9.915 kejadian. Selisih dari jumlah
+            pelanggaran sebanyak 1.421 kejadian. `,
+          },
+          page10: {
+            tabulasi_gar: [
+              {
+                no: 1,
+                name: "DKI Jakarta",
+                jumlah_gar: 100,
+                pelanggaran_berat: 10,
+                pelanggaran_sedang: 80,
+                pelanggaran_ringan: 10,
+              },
+            ],
+          },
+          page11: {
+            grafik_rangking: {
+              categories: [
+                "Jumlah Laka",
+                "Meninggal Dunia",
+                "Luka Berat",
+                "Luka Sedang",
+                "Luka Ringan",
+              ],
+              series: [
+                {
+                  name: filter.datePrevName,
+                  data: [100, 11, 12, 1],
+                  color: "#063ac9",
+                },
+                {
+                  name: filter.dateName,
+                  data: [81, 19, 15, 3],
+                  color: "#e3781b",
+                },
+              ],
+            },
+            grafik_polda: [
+              {
+                title: "1. POLDA DKI JAKARTA",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png",
+                id_graphic: "a",
+                categories: ["JUM", "PB", "PS", "PR"],
+                series: [
+                  {
+                    name: filter.datePrevName,
+                    data: [29, 8, 10, 23],
+                    color: "#063ac9",
+                  },
+                  {
+                    name: filter.dateName,
+                    data: [11, 20, 5, 3],
+                    color: "#e3781b",
+                  },
+                ],
+              },
+              {
+                title: "2. POLDA JAWA BARAT",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png",
+                id_graphic: "b",
+                categories: ["JUM", "PB", "PS", "PR"],
+                series: [
+                  {
+                    name: filter.datePrevName,
+                    data: [100, 11, 12, 1],
+                    color: "#063ac9",
+                  },
+                  {
+                    name: filter.dateName,
+                    data: [81, 19, 15, 3],
+                    color: "#e3781b",
+                  },
+                ],
+              },
+              {
+                title: "3. POLDA JAWA TENGAH",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png",
+                id_graphic: "c",
+                categories: ["JUM", "PB", "PS", "PR"],
+                series: [
+                  {
+                    name: filter.datePrevName,
+                    data: [8, 1, 12, 2],
+                    color: "#063ac9",
+                  },
+                  {
+                    name: filter.dateName,
+                    data: [12, 9, 5, 13],
+                    color: "#e3781b",
+                  },
+                ],
+              },
+            ],
+          },
+        };
+
+        return res.render("anev/daily", { filter, data });
+      }
+      case "pdf-download": {
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+          executablePath: process.env.ANEV_CHROME_PATH,
+        });
+        const page = await browser.newPage();
+        var { date } = req.query;
+        await page.goto(
+          `${process.env.ANEV_BASE_URL}/getDaily?mode=view&date=${date}`,
+          {
+            waitUntil: "networkidle0",
+          }
+        );
+        const pdf = await page.pdf({
+          printBackground: true,
+          format: "A4",
+          landscape: true,
+          margin: {
+            top: "0px",
+            right: "0px",
+            bottom: "0px",
+            left: "0px",
+          },
+          // scale: 1,
+          path: `${path.resolve("./report/anev/daily.pdf")}`,
+        });
+
+        await browser.close();
+
+        //return res.send("ok");
+        res.contentType("application/pdf");
+        return res.status(200).send(pdf);
+      }
+      default: {
+        return response(res, false, "Input Not Valid", null, 400);
+      }
+    }
+  };
+}
+
+module.exports = AnevController;

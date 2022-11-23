@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang='en' xmlns='http://www.w3.org/1999/xhtml' xmlns:o='urn:schemas-microsoft-com:office:office'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <meta name='x-apple-disable-message-reformatting'>
+  <title></title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    table, td, div, h1, p {font-family: Arial, sans-serif;}
+  </style>
+</head>
+<body style='margin:0;padding:0;'>
+  <table role='presentation' style='width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#ffffff;'>
+    <tr>
+      <td align='center' style='padding:0;'>
+        <table role='presentation' style='width:802px;border-collapse:collapse;border:1px solid #cccccc;border-spacing:0;text-align:left;'>
+          <tr>
+            <td align='center' style='padding:40px 0 30px 0;background:#ffffff;'>
+              <img src='https://simteg.bintangpelajar.com/assets/img/logo-bp-panjang-medium.png' width='400' style='height:auto;display:block;' />
+            </td>
+          </tr>
+          <tr>
+            <td style='padding:36px 30px 42px 30px;'>
+              <table role='presentation' style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
+                <tr>
+                  <td style='padding:0 0 36px 0;color:#153643;'>
+                    <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Assalaamu'alaikum wa rahmatullahi wa barakaatuh <br> <small>Kepada <strong>YTH < nama pelanggan > </strong> <br>  Ini adalah pemberitahuan bahwa tagihan Anda telah dibuat pada 29 Oktober 2022, 13:01 WIB </small> </p>
+
+                    <div  class='card' style='border: 1px solid; border-radius: 10px;' >
+                      <div class='container'>
+                        <h3 style='padding:10px' > Detil Pembayaran</h3>
+                        <hr>
+                        <div style=' background-color: #EBEBEB; padding:10px' >
+                          <h4>Virtual Account Bank Muamalat</h4>
+                          <label><strong>Bank Muamalat</strong></label>
+                          <br>
+                          <br>
+                          <table role='presentation' style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
+                            <tr>
+                              <td style='width:100px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Reference Account </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Virtual Account Number </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Ammount </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Expire Date </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Payment Status : </p>
+                                <br>
+                                <br>
+                                <br>
+                                <!-- not : nama domain/pendaftaran/cara_bayar -->
+                                <a href='http://localhost/frontendlmssiap/pendaftaran/cara_bayar'  target='_blank'  type='button'  style='background-color: #4385F5; border: none;color: white;padding: 10px 32px;  text-align: center; text-decoration: none; display: inline-block;margin: 4px 2px;cursor: pointer; border-radius: 10px;opacity: 1; font-size: 12px;' >Tata Cara Membayar</a>
+                              </td>
+                              <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
+                              <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : 100084</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : 8870182115499321</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Rp. 14.995.000</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : 30 Oktober 2022, 13:01 WIB</strong></p>
+                                <p > <strong> : </strong><strong style='margin:0 0 12px 0; padding-right:50px;padding-left:50px; padding-top:5px; padding-bottom:5px; font-size:16px;line-height:24px;font-family:Arial,sans-serif; background-color: #FDB010; color:#ffffff' >  Menunggu Pembayaran</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <small> Mohon Selesaikan Pembayaran dalam rentang waktu 1x24 jam Melalui Virtual Account Muamalat </small> </p>
+                              </td>
+                            </tr>
+                          </table>
+
+                        </div>
+                        <hr>
+                        <div style=' background-color: #ffffff; padding:10px' >
+                          <h4>Rincian Pembelian Paket Bimbel :</h4>
+                          <div class='col-lg-12' style='padding: 10px; background-color: #008001; color:#ffffff ' >
+                            <label>Data Kamu</label>
+                          </div>
+                          <br>
+                          <table role='presentation' style='width:70%;border-collapse:collapse;border:0;border-spacing:0;'>
+                            <tr>
+                              <td style='width:100px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Nama Lengkap </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Nama Orang tua  </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Kelas </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Jenis Kelamin </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Jurusan : </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Kurikulum  : </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Agama : </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Domisili : </p>
+                              </td>
+                              <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
+                              <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Taufik</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Sitompul S.</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : 12</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Pria</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : IPS</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : 2013</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Islam</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Kota Bogor</strong></p>
+                              </td>
+                            </tr>
+                          </table>
+
+                        </div>
+                        <hr>
+                        <div style=' background-color: #ffffff; padding:10px' >
+                          <div class='col-lg-12' style='padding: 10px; background-color: #008001; color:#ffffff ' >
+                            <label>Paket Bimbel</label>
+                          </div>
+                          <br>
+                          <table role='presentation' style='width:70%;border-collapse:collapse;border:0;border-spacing:0;'>
+                            <tr>
+                              <td style='width:100px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Nama Paket</p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Jenis Paket  </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Harga Paket  </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Metote Bayar </p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Periode Cicilan </p>
+                              </td>
+                              <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
+                              <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Sukses Tembus UI & ITB</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Platinum</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Rp. 14.995.000</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> : Cicil</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> 
+                                Cicilan 1 - Rp.4.995.000 <br>
+                                Cicilan 2 - Rp.1.900.000 <br>
+                                Cicilan 3 - Rp.1.900.000 <br>
+                                Cicilan 4 - Rp.1.900.000 <br>
+                                Cicilan 5 - Rp.1.900.000 <br>
+                              </strong></p>
+                              </td>
+                            </tr>
+                          </table>
+
+                        </div>
+                        <hr>
+                        <div style=' background-color: #ffffff; padding:10px' >
+                          <div class='col-lg-12' style='padding: 10px; background-color: #008001; color:#ffffff ' >
+                            <label>Mata Pelajaran</label>
+                          </div>
+                          <br>
+                          <table role='presentation' style='width:70%;border-collapse:collapse;border:0;border-spacing:0;'>
+                            <tr>
+                              <td style='width:100px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'>Mata Pelajaran :</p>
+                              </td>
+                              <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
+                              <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> Matematika</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> Fisika</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> Kimia</strong></p>
+                                <p style='margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;'> <strong> Biologi</strong></p>
+                              </td>
+                            </tr>
+                          </table>
+
+                        </div>
+                      </div>
+                    </div>
+                    <br>
+                    <label for=''>Punya pertanyaan? Hubungi kami di  <a href='mailto:marketing@bintangpelajar.com'> marketing@bintangpelajar.com </a> </label>
+
+                  </td>
+                </tr>
+              
+              </table>
+              <div style=' text-align: center;'>
+                      <p>ikuti kami juga di :</p>
+              </div>
+                    <br>
+                    <table role='presentation' style='width:40%;border-collapse:collapse;border:0;border-spacing:0; margin-left: auto;margin-right: auto;'>
+                          <tr>
+                            <td style='padding:0 0 36px 0;color:#153643;'>
+                            <a href='https://www.instagram.com/bintangpelajar_official/' target='_blank' >
+                            <img src='https://simteg.bintangpelajar.com/assets/img/instagram.png' alt='Snow' style='width:40%; display: block; cursor:pointer;margin-left: auto;margin-right: auto;'></a>
+                            </td>
+                            <td style='padding:0 0 36px 0;color:#153643;'>
+                            <a href='https://www.youtube.com/channel/UCpIaxoFZmCqQt3DIP53iHsg' target='_blank'>
+                            <img src='https://simteg.bintangpelajar.com/assets/img/youtube.png' alt='Forest' style='width:40%; display: block; cursor:pointer; margin-left: auto;margin-right: auto;'></a>
+                            </td>
+                            <td style='padding:0 0 36px 0;color:#153643;'>
+                            <a href='https://www.facebook.com/bintangpelajarofficial/?_rdc=1&_rdr' target='_blank'>
+                            <img src='https://simteg.bintangpelajar.com/assets/img/facebook.png' alt='Mountains' style='width:60%; display: block; cursor:pointer; margin-left: auto;margin-right: auto;'></a>
+                            </td>
+                          </tr>
+                    </table>
+            </td>
+          </tr>
+          <tr>
+            <td style='padding:30px;background: #D3E3FD 0% 0% no-repeat padding-box;opacity: 1;'>
+            <table role='presentation' style='width:100%;border-collapse:collapse;border:0;border-spacing:0;font-size:17px;font-family:Arial,sans-serif;'>
+                <tr>
+                  <td style='padding:0;width:100%;' align='left'>
+                    <h2 style='margin:0;font-size:20px;line-height:20px;font-family:Arial,sans-serif;'>
+                    Kantor Pusat Bintang Pelajar<br/></h2>
+                    <p>Komp. Ruko 24, Jl. Sholeh Iskandar No.2, RT.01/RW.05, Kedung Jaya, Kec. Tanah Sereal, Kota Bogor, Jawa Barat 16164.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+

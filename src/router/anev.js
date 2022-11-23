@@ -1,21 +1,21 @@
 const router = require("express").Router();
-const { body } = require("express-validator");
-const Anev = require("../controller/anev");
-// const ReportController = require("../controller/report");
-const formValidation = require("../middleware/form_validation");
-router.get("/test", formValidation, Anev.testing);
-router.get("/", formValidation, Anev.daily);
-router.post("/", formValidation, Anev.daily);
-// router.get("/getLaporanById/:id", ReportController.getLaporanById);
-// router.get("/laporanToday", ReportController.laporanToday);
-// router.get("/riwayat", ReportController.riwayat);
-// router.post("/add", formValidation, ReportController.add);
-// router.put("/edit/:id", ReportController.edit);
-// router.delete(
-//   "/delete",
-//   body("id").notEmpty().isLength({ min: 1 }),
-//   formValidation,
-//   ReportController.delete
-// );
+const validationRules = require("express-validator");
+const formValidator = require("../middleware/form_validation");
+const controller = require("../controller/anev");
+router.get(
+  "/getMonthly",
+  validationRules.query("mode").notEmpty().isIn(["view", "pdf-download"]),
+  validationRules.query("month").notEmpty().isNumeric(),
+  validationRules.query("year").notEmpty().isNumeric(),
+  formValidator,
+  controller.getMonthly
+);
+router.get(
+  "/getDaily",
+  validationRules.query("mode").notEmpty().isIn(["view", "pdf-download"]),
+  validationRules.query("date").notEmpty().isDate({ format: "YYYY-MM-DD" }),
+  formValidator,
+  controller.getDaily
+);
 
 module.exports = router;

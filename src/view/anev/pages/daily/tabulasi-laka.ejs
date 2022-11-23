@@ -1,0 +1,89 @@
+<style>
+  .table > thead > tr > th,.table > tbody > tr > td {
+    text-align: center;
+  }
+  .table>:not(caption)>*>* {
+    padding: 3px !important;
+  }
+</style>
+<div style="height: 100vh; position: relative">
+  <%-include('../../../anev/partials/header-daily.ejs',{filter,title:"TABULASI ANEV LAPORAN HARIAN ",titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <b style="font-size: 16pt">LAPORAN HARIAN ANEV KORBAN LAKA LANTAS</b>
+    <table
+      class="table table-bordered"
+      style="width: 100%; border-color: black"
+    >
+      <thead style="background-color: rgba(199, 125, 15, 0.871)">
+        <tr>
+          <th rowspan="2">NO</th>
+          <th rowspan="2">URAIAN</th>
+          <th colspan="2">WAKTU</th>
+          <th colspan="2">TREND</th>
+          <th rowspan="2">KETERANGAN</th>
+        </tr>
+        <tr>
+          <th><%-filter.dateName%></th>
+          <th><%-filter.datePrevName%></th>
+          <th>ANGKA</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.page3.laka.forEach(function(d){%>
+          <tr>
+            <td><%- d.no%></td>
+            <td><%- d.uraian%></td>
+            <td><%- d.currentDate%></td>
+            <td><%- d.prevDate%></td>
+            <td><%- d.trendAngka%></td>
+            <td><%- d.trendPersen%></td>
+            <td><%- d.kesimpulan%></td>
+          </tr>
+        <%});%>
+      </tbody>
+    </table>
+
+    <b style="font-size: 16pt">LAPORAN HARIAN ANEV DATA DAKGAR</b>
+    <table
+      class="table table-bordered"
+      style="width: 100%; border-color: black"
+    >
+      <thead style="background-color: rgba(199, 125, 15, 0.871)">
+        <tr>
+          <th rowspan="2">NO</th>
+          <th rowspan="2">URAIAN</th>
+          <th colspan="2">WAKTU</th>
+          <th colspan="2">TREND</th>
+          <th rowspan="2">KETERANGAN</th>
+        </tr>
+        <tr>
+          <th><%-filter.dateName%></th>
+          <th><%-filter.datePrevName%></th>
+          <th>ANGKA</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.page3.dakgar.forEach(function(d){%>
+          <tr>
+            <td><%- d.no%></td>
+            <td><%- d.uraian%></td>
+            <td><%- d.currentDate%></td>
+            <td><%- d.prevDate%></td>
+            <td><%- d.trendAngka%></td>
+            <td><%- d.trendPersen%></td>
+            <td><%- d.kesimpulan%></td>
+          </tr>
+        <%});%>
+      </tbody>
+    </table>
+  </div>
+</div>

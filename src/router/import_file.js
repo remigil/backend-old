@@ -1,0 +1,16 @@
+const router = require("express").Router();
+const ImportFile = require("../controller/import_file");
+router.post("/file", ImportFile.file);
+router.post("/rmfile", ImportFile.rmfile);
+router.get("/list", ImportFile.list);
+router.post("/dakgarlantas", ImportFile.dakgarlantas);
+router.post("/konvensional", ImportFile.konvensional);
+router.post("/lalulintas", ImportFile.lalulintas);
+router.post("/turjagwali", ImportFile.turjagwali);
+router.post("/dikmaslantas", ImportFile.dikmaslantas);
+router.post("/penyebaran", ImportFile.penyebaran);
+router.post("/sim", ImportFile.sim);
+router.post("/bpkb", ImportFile.bpkb);
+router.post("/ranmor", ImportFile.ranmor);
+router.post("/stnk", ImportFile.stnk);
+module.exports = router;

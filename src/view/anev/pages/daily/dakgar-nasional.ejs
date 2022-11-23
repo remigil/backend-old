@@ -1,0 +1,88 @@
+<div style="height: 100vh; position: relative">
+  <%-include('../../../anev/partials/header-daily.ejs',{filter,title:"GRAFIK DAKGAR NASIONAL",titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <table style="width: 100%">
+      <tbody>
+        <tr>
+          <td>
+            <div>
+              <% data.page11.grafik_polda.forEach(function(d){%>
+                <%- include('grafik-dakgar-polda.ejs',{data:d}); %>
+              <% })%>
+            </div>
+          </td>
+          <td>
+            <div style="width: 600px" id="grafik-dakgar-nasional"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+      Highcharts.chart("grafik-dakgar-nasional", {
+        chart: {
+          type: "column",
+          options3d: {
+            enabled: true,
+            alpha: 5,
+            beta: 5,
+            depth: 20,
+            viewDistance: 25,
+          },
+        },
+        title: {
+            useHTML:true,
+          text: "<b style='text-align:center;'>GRAFIK RANGKING TILANG SELURUH POLDA BY E-DAKGAR DITGAKKUM KORLANTAS POLRI<b>",
+        },
+        subtitle: {
+          text: "",
+        },
+        xAxis: {
+          categories: <%-JSON.stringify(data.page11.grafik_rangking.categories)%>,
+          crosshair: true,
+        },
+        yAxis: {
+          title: {
+            useHTML: true,
+            text: "",
+          },
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+          footerFormat: "</table>",
+          shared: true,
+          useHTML: true,
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+            dataLabels: {
+              enabled: true,
+            },
+          },
+        },
+        exporting: {
+          enabled: false,
+        },
+        credits: {
+          enabled: false,
+        },
+        series: <%-JSON.stringify(data.page11.grafik_rangking.series)%>,
+      });
+
+    });
+</script>

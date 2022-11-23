@@ -1,0 +1,65 @@
+<style>
+  .table > thead > tr > th,
+  .table > tbody > tr > td {
+    text-align: center;
+  }
+  .table > :not(caption) > * > * {
+    padding: 3px !important;
+  }
+</style>
+<div style="height: 100vh; position: relative">
+  <%-include('../../../anev/partials/header-daily.ejs',{filter,title:"WILAYAH KECELAKAAN TERTINGGI "+filter.dateName.toUpperCase(),titleFontSize:24});%>
+  <div
+    style="
+      padding-top: 70px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <div class="row">
+      <div class="col-md-6">
+        <b style="font-size: 18pt"><%=dMaps.title%></b>
+        <br />
+        <img style="width:100%" src="<%=dMaps.map%>" />
+      </div>
+      <div class="col-md-6">
+        <table
+          class="table table-bordered"
+          style="width: 100%; border-color: black"
+        >
+          <thead style="background-color: rgba(199, 125, 15, 0.871)">
+            <tr>
+              <th>KETERANGAN</th>
+              <th><%=filter.datePrevName%></th>
+              <th><%=filter.dateName%></th>
+              <th>SELISIH</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% dMaps.data.forEach(function(d){%>
+            <tr>
+              <td><%- d[0]%></td>
+              <td><%- d[1]%></td>
+              <td><%- d[2]%></td>
+              <td><%- d[3]%></td>
+              <td><%- d[4]%></td>
+            </tr>
+            <%});%>
+          </tbody>
+        </table>
+        <p
+                style="
+                  text-align: justify;
+                  background-color: rgb(232, 170, 84);
+                  padding: 5px;
+                  font-size: 12pt;
+                "
+              >
+                <%-dMaps.analisis%>
+              </p>
+      </div>
+    </div>
+  </div>
+</div>

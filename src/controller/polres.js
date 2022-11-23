@@ -8,6 +8,7 @@ const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 const Polda = require("../model/polda");
 const pagination = require("../lib/pagination-parser");
+const Officer = require("../model/officer");
 
 const fieldData = {
   polda_id: null,
@@ -116,64 +117,57 @@ module.exports = class PolresController {
     }
   };
   static importExcell = async (req, res) => {
-    const t = await db.transaction();
+    // const t = await db.transaction();
     try {
-      let path = req.body.file.filepath;
-      let file = req.body.file;
-      let fileName = file.originalFilename;
-      fs.renameSync(path, "./public/upload/" + fileName, function (err) {
-        if (err) response(res, false, "Error", err.message);
-      });
-      let readExcell = await readXlsxFile("./public/upload/" + fileName);
-      let index = 0;
+      // let path = req.body.file.filepath;
+      // let file = req.body.file;
+      // let fileName = file.originalFilename;
+
+      // fs.renameSync(path, "./public/uploads/" + fileName, function (err) {
+      //   if (err) response(res, false, "Error", err.message);
+      // });
+      // let readExcell = await readXlsxFile("./public/uploads/baru officer.csv");
+      // let index = 0;
       let listPolres = [];
       let idNotValid = [];
-      for (const iterator of readExcell) {
-        if (index == 0) {
-          if (
-            iterator[1] != "ID Polda" &&
-            iterator[2] != "Polres" &&
-            iterator[3] != "Kode Satpas" &&
-            iterator[4] != "Alamat"
-          ) {
-            response(res, false, "Failed", null);
-          }
-        } else {
-          let getIdPolda = await Polda.findOne({
-            where: {
-              id: iterator[1],
+      for (const iterator of req.body.data) {
+        // listPolres.push({
+        //   ...iterator,
+        // });
+        let getIdPolda = await Officer.findOne({
+          where: {
+            nrp_officer: iterator.nrp,
+          },
+        });
+        if (getIdPolda) {
+          let aaa = await Officer.update(
+            {
+              pam_officer: iterator.pam,
             },
+            {
+              where: {
+                nrp_officer: iterator.nrp,
+              },
+            }
+          );
+          listPolres.push({ data: aaa, nrp: iterator.nrp });
+        } else {
+          idNotValid.push({
+            ...iterator,
           });
-          if (getIdPolda) {
-            listPolres.push({
-              polda_id: iterator[1],
-              name_polres: iterator[2],
-              code_satpas: iterator[3],
-              address: iterator[4],
-              latitude: iterator[5] || null,
-              longitude: iterator[6] || null,
-            });
-          } else {
-            idNotValid.push({
-              polda_id: iterator[1],
-              name_polres: iterator[2],
-              code_satpas: iterator[3],
-              address: iterator[4],
-              latitude: iterator[5] || null,
-              longitude: iterator[6] || null,
-            });
-          }
         }
-        index++;
       }
-      const poldaUp = await Polres.bulkCreate(listPolres, {
-        transaction: t,
-      });
-      await t.commit();
+      // const poldaUp = await Polres.bulkCreate(listPolres, {
+      //   transaction: t,
+      // });
+      // await t.commit();
 
-      response(res, true, "Succed", poldaUp);
+      response(res, true, "Succed", {
+        listPolres,
+        idNotValid,
+      });
     } catch (error) {
-      await t.rollback();
+      // await t.rollback();
       response(res, false, "Failed", error.message);
     }
   };

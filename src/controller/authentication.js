@@ -35,6 +35,7 @@ class Authentication {
   };
   static loginMobile = async (req, res) => {
     try {
+      console.log(req.ipInfo);
       const { team, nrp_user, device_user } = req.body;
       const account = await Account.findOne({
         where: {

@@ -1,0 +1,48 @@
+<style>
+  .table > thead > tr > th,.table > tbody > tr > td {
+    text-align: center;
+  }
+  .table>:not(caption)>*>* {
+    padding: 3px !important;
+  }
+</style>
+<div style="height: 100vh; position: relative">
+  <%-include('../../../anev/partials/header-daily.ejs',{filter,title:"TABULASI DATA KECELAKAAN "+filter.dateName.toUpperCase(),titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <table
+      class="table table-bordered"
+      style="width: 100%; border-color: black"
+    >
+      <thead style="background-color: rgba(199, 125, 15, 0.871)">
+        <tr>
+          <th >NO</th>
+          <th >SATUAN KERJA</th>
+          <th >JUMLAH LAKA</th>
+          <th >MENINGGAL DUNIA</th>
+          <th >LUKA BERAT</th>
+          <th >LUKA RINGAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.page5.laka.forEach(function(d){%>
+          <tr>
+            <td><%- d.no%></td>
+            <td><%- d.name%></td>
+            <td><%- d.jumlah_laka%></td>
+            <td><%- d.meninggal_dunia%></td>
+            <td><%- d.luka_berat%></td>
+            <td><%- d.luka_ringan%></td>
+          </tr>
+        <%});%>
+      </tbody>
+    </table>
+    <small>Sumber data: IRMS</small>
+  </div>
+</div>

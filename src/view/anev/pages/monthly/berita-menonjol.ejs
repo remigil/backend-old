@@ -1,0 +1,22 @@
+<div style="background-color: #222a35; height: 100vh; position: relative">
+  <%- include('../../../anev/partials/header-monthly.ejs',{filter,title:"BERITA LAKA LANTAS MENONJOL ",titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <div class="row">
+      <% data.page2.news.forEach(function(n){%>
+      <div class="col-md-6">
+        <img
+          src="<%=n.photo%>"
+          style="width: 100%; height: auto; object-fit: contain"
+        />
+      </div>
+      <%});%>
+    </div>
+  </div>
+</div>

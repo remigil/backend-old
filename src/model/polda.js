@@ -25,10 +25,16 @@ Polda.init(
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: Sequelize.literal("polda.deleted_at is null") },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
-        where: Sequelize.literal("polda.deleted_at is null"),
+        where: {
+          deleted_at: null,
+        },
       },
     },
     deletedAt: "deleted_at",
@@ -39,8 +45,9 @@ Polda.init(
     sequelize: db,
   }
 );
+
 (async () => {
-  Polda.sync({ alter: false }).catch((err) => {
+  Polda.sync({ alter: true }).catch((err) => {
     console.log({ err });
   });
 })();

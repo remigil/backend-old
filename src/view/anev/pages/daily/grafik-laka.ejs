@@ -1,0 +1,142 @@
+<div style="height: 100vh; position: relative">
+  <%-include('../../../anev/partials/header-daily.ejs',{filter,title:"GRAFIK DATA KECELAKAAN ",titleFontSize:28});%>
+  <div
+    style="
+      padding-top: 50px;
+      padding-left: 32px;
+      padding-right: 32px;
+      padding-bottom: 32px;
+    "
+  >
+    <table style="width: 100%">
+      <tbody>
+        <tr>
+          <td>
+            <div>
+              <div style="width: 500px" id="pie-laka"></div>
+              <p
+                style="
+                  text-align: justify;
+                  background-color: rgb(232, 170, 84);
+                  padding: 5px;
+                  font-size: 12pt;
+                "
+              >
+                <%-data.page4.analisis%>
+              </p>
+            </div>
+          </td>
+          <td>
+            <div style="width: 500px" id="grafik-laka"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+      Highcharts.chart("grafik-laka", {
+        chart: {
+          type: "column",
+          options3d: {
+            enabled: true,
+            alpha: 5,
+            beta: 5,
+            depth: 20,
+            viewDistance: 25,
+          },
+        },
+        title: {
+          text: "DATA KECELAKAAN BY IRSMS",
+        },
+        subtitle: {
+          text: "",
+        },
+        xAxis: {
+          categories: <%-JSON.stringify(data.page4.grafik_laka.categories)%>,
+          crosshair: true,
+        },
+        yAxis: {
+          title: {
+            useHTML: true,
+            text: "",
+          },
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat:
+            '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+          footerFormat: "</table>",
+          shared: true,
+          useHTML: true,
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0,
+            dataLabels: {
+              enabled: true,
+            },
+          },
+        },
+        exporting: {
+          enabled: false,
+        },
+        credits: {
+          enabled: false,
+        },
+        series: <%-JSON.stringify(data.page4.grafik_laka.series)%>,
+      });
+
+  Highcharts.chart('pie-laka', {
+      chart: {
+          type: 'pie',
+          options3d: {
+              enabled: true,
+              alpha: 45,
+              beta: 0
+          }
+      },
+      title: {
+          text: '<%-filter.dateName%>'
+      },
+      subtitle: {
+          text: ''
+      },
+      accessibility: {
+          point: {
+              valueSuffix: '%'
+          }
+      },
+      tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+          pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              depth: 35,
+              dataLabels: {
+                  enabled: true,
+                  format: '<b>{point.name}:{point.percentage:.0f}%</b>'
+              },
+              showInLegend: true
+          }
+      },
+      series: [{
+          type: 'pie',
+          name: 'Kejadian',
+          data: <%-JSON.stringify(data.page4.pie_laka.data)%>
+      }],
+        exporting: {
+          enabled: false,
+        },
+        credits: {
+          enabled: false,
+        },
+  });
+    });
+</script>
