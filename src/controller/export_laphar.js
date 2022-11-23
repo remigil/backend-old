@@ -1019,62 +1019,121 @@ module.exports = class ExportLapharController {
         },
       });
 
+      let getGarToday = await Garlantas_polda_day.findAll({
+        attributes: [
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_berat")),
+            "pelanggaran_berat",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_ringan")),
+            "pelanggaran_ringan",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_sedang")),
+            "pelanggaran_sedang",
+          ],
+          // [Sequelize.fn("sum", Sequelize.col("teguran")), "teguran"],
+          [
+            Sequelize.literal(
+              "SUM(pelanggaran_berat + pelanggaran_ringan + pelanggaran_sedang)"
+            ),
+            "total_garlantas",
+          ],
+        ],
+        where: {
+          date: date,
+        },
+      });
+
+      let getGarYesterday = await Garlantas_polda_day.findAll({
+        attributes: [
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_berat")),
+            "pelanggaran_berat",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_ringan")),
+            "pelanggaran_ringan",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_sedang")),
+            "pelanggaran_sedang",
+          ],
+          // [Sequelize.fn("sum", Sequelize.col("teguran")), "teguran"],
+          [
+            Sequelize.literal(
+              "SUM(pelanggaran_berat + pelanggaran_ringan + pelanggaran_sedang)"
+            ),
+            "total_garlantas",
+          ],
+        ],
+        where: {
+          date: yesterday,
+        },
+      });
+
       for (let i = 0; i < getLakaToday.length; i++) {
-        let angka_meninggal_dunia =
-          parseInt(getLakaToday[i].dataValues.meninggal_dunia) -
-          parseInt(getLakaYesterday[i].dataValues.meninggal_dunia);
+        let insiden_kecelakaan_today =
+          parseInt(getLakaToday[i].dataValues.insiden_kecelakaan) || 0;
+        let insiden_kecelakaan_yesterday =
+          parseInt(getLakaYesterday[i].dataValues.insiden_kecelakaan) || 0;
 
-        let angka_luka_berat =
-          parseInt(getLakaToday[i].dataValues.luka_berat) -
-          parseInt(getLakaYesterday[i].dataValues.luka_berat);
+        let meninggal_dunia_today =
+          parseInt(getLakaToday[i].dataValues.meninggal_dunia) || 0;
+        let meninggal_dunia_yesterday =
+          parseInt(getLakaYesterday[i].dataValues.meninggal_dunia) || 0;
 
-        let angka_luka_ringan =
-          parseInt(getLakaToday[i].dataValues.luka_ringan) -
-          parseInt(getLakaYesterday[i].dataValues.luka_ringan);
+        let luka_berat_today =
+          parseInt(getLakaToday[i].dataValues.luka_berat) || 0;
+        let luka_berat_yesterday =
+          parseInt(getLakaYesterday[i].dataValues.luka_berat) || 0;
+
+        let luka_ringan_today =
+          parseInt(getLakaToday[i].dataValues.luka_ringan) || 0;
+        let luka_ringan_yesterday =
+          parseInt(getLakaYesterday[i].dataValues.luka_ringan) || 0;
+
+        let kerugian_material_today =
+          parseInt(getLakaToday[i].dataValues.kerugian_material) || 0;
+        let kerugian_material_yesterday =
+          parseInt(getLakaYesterday[i].dataValues.kerugian_material) || 0;
 
         let angka_insiden_kecelakaan =
-          parseInt(getLakaToday[i].dataValues.insiden_kecelakaan) -
-          parseInt(getLakaYesterday[i].dataValues.insiden_kecelakaan);
-
+          insiden_kecelakaan_today - insiden_kecelakaan_yesterday;
+        let angka_meninggal_dunia =
+          meninggal_dunia_today - meninggal_dunia_yesterday;
+        let angka_luka_berat = luka_berat_today - luka_berat_yesterday;
+        let angka_luka_ringan = luka_ringan_today - luka_ringan_yesterday;
         let angka_kerugian_material =
-          parseInt(getLakaToday[i].dataValues.kerugian_material) -
-          parseInt(getLakaYesterday[i].dataValues.kerugian_material);
+          kerugian_material_today - kerugian_material_yesterday;
 
         let persen_insiden_kecelakaan = (
-          (angka_insiden_kecelakaan /
-            parseInt(getLakaYesterday[i].dataValues.insiden_kecelakaan)) *
+          (angka_insiden_kecelakaan / insiden_kecelakaan_yesterday) *
           100
         ).toFixed(0);
-
         let persen_meninggal_dunia = (
-          (angka_meninggal_dunia /
-            parseInt(getLakaYesterday[i].dataValues.meninggal_dunia)) *
+          (angka_meninggal_dunia / meninggal_dunia_yesterday) *
           100
         ).toFixed(0);
-
         let persen_luka_berat = (
-          (angka_luka_berat /
-            parseInt(getLakaYesterday[i].dataValues.luka_berat)) *
+          (angka_luka_berat / luka_berat_yesterday) *
           100
         ).toFixed(0);
-
         let persen_luka_ringan = (
-          (angka_luka_ringan /
-            parseInt(getLakaYesterday[i].dataValues.luka_ringan)) *
+          (angka_luka_ringan / luka_ringan_yesterday) *
           100
         ).toFixed(0);
-
         let persen_kerugian_material = (
-          (angka_kerugian_material /
-            parseInt(getLakaYesterday[i].dataValues.kerugian_material)) *
+          (angka_kerugian_material / kerugian_material_yesterday) *
           100
         ).toFixed(0);
 
-        let status_meninggal_dunia = "";
-        let status_luka_berat = "";
-        let status_luka_ringan = "";
-        let status_kerugian_material = "";
-        let status_insiden_kecelakaan = "";
+        let status_meninggal_dunia = "SAMA";
+        let status_luka_berat = "SAMA";
+        let status_luka_ringan = "SAMA";
+        let status_kerugian_material = "SAMA";
+        let status_insiden_kecelakaan = "SAMA";
 
         if (
           getLakaToday[i].dataValues.insiden_kecelakaan >
@@ -1087,8 +1146,8 @@ module.exports = class ExportLapharController {
         ) {
           status_insiden_kecelakaan = "TURUN";
         } else if (
-          (getLakaToday[i].dataValues.insiden_kecelakaan =
-            getLakaYesterday[i].dataValues.insiden_kecelakaan)
+          getLakaToday[i].dataValues.insiden_kecelakaan ==
+          getLakaYesterday[i].dataValues.insiden_kecelakaan
         ) {
           status_insiden_kecelakaan = "SAMA";
         }
@@ -1104,76 +1163,65 @@ module.exports = class ExportLapharController {
         ) {
           status_meninggal_dunia = "TURUN";
         } else if (
-          (getLakaToday[i].dataValues.meninggal_dunia =
-            getLakaYesterday[i].dataValues.meninggal_dunia)
+          getLakaToday[i].dataValues.meninggal_dunia ==
+          getLakaYesterday[i].dataValues.meninggal_dunia
         ) {
           status_meninggal_dunia = "SAMA";
         }
 
-        if (
-          getLakaToday[i].dataValues.luka_berat >
-          getLakaYesterday[i].dataValues.luka_berat
-        ) {
+        if (insiden_kecelakaan_today > insiden_kecelakaan_yesterday) {
+          status_insiden_kecelakaan = "NAIK";
+        } else if (insiden_kecelakaan_today < insiden_kecelakaan_yesterday) {
+          status_insiden_kecelakaan = "TURUN";
+        } else if (insiden_kecelakaan_today == insiden_kecelakaan_yesterday) {
+          status_insiden_kecelakaan = "SAMA";
+        }
+
+        if (meninggal_dunia_today > meninggal_dunia_yesterday) {
+          status_meninggal_dunia = "NAIK";
+        } else if (meninggal_dunia_today < meninggal_dunia_yesterday) {
+          status_meninggal_dunia = "TURUN";
+        } else if (meninggal_dunia_today == meninggal_dunia_yesterday) {
+          status_meninggal_dunia = "SAMA";
+        }
+
+        if (luka_berat_today > luka_berat_yesterday) {
           status_luka_berat = "NAIK";
-        } else if (
-          getLakaToday[i].dataValues.luka_berat <
-          getLakaYesterday[i].dataValues.luka_berat
-        ) {
+        } else if (luka_berat_today < luka_berat_yesterday) {
           status_luka_berat = "TURUN";
-        } else if (
-          (getLakaToday[i].dataValues.luka_berat =
-            getLakaYesterday[i].dataValues.luka_berat)
-        ) {
+        } else if (luka_berat_today == luka_berat_yesterday) {
           status_luka_berat = "SAMA";
         }
 
-        if (
-          getLakaToday[i].dataValues.luka_ringan >
-          getLakaYesterday[i].dataValues.luka_ringan
-        ) {
+        if (luka_ringan_today > luka_ringan_yesterday) {
           status_luka_ringan = "NAIK";
-        } else if (
-          getLakaToday[i].dataValues.luka_ringan <
-          getLakaYesterday[i].dataValues.luka_ringan
-        ) {
+        } else if (luka_ringan_today < luka_ringan_yesterday) {
           status_luka_ringan = "TURUN";
-        } else if (
-          (getLakaToday[i].dataValues.luka_ringan =
-            getLakaYesterday[i].dataValues.luka_ringan)
-        ) {
+        } else if (luka_ringan_today == luka_ringan_yesterday) {
           status_luka_ringan = "SAMA";
         }
 
-        if (
-          getLakaToday[i].dataValues.kerugian_material >
-          getLakaYesterday[i].dataValues.kerugian_material
-        ) {
+        if (kerugian_material_today > kerugian_material_yesterday) {
           status_kerugian_material = "NAIK";
-        } else if (
-          getLakaToday[i].dataValues.kerugian_material <
-          getLakaYesterday[i].dataValues.kerugian_material
-        ) {
+        } else if (kerugian_material_today < kerugian_material_yesterday) {
           status_kerugian_material = "TURUN";
-        } else if (
-          (getLakaToday[i].dataValues.kerugian_material =
-            getLakaYesterday[i].dataValues.kerugian_material)
-        ) {
+        } else if (kerugian_material_today == kerugian_material_yesterday) {
           status_kerugian_material = "SAMA";
         }
 
         anev_laka.push({
           today: moment(date).format("YYYY/MM/DD"),
           yesterday: moment(yesterday).format("YYYY/MM/DD"),
-          insiden_kecelakaan_today: getLakaToday[i].insiden_kecelakaan,
-          insiden_kecelakaan_yesterday: getLakaYesterday[i].insiden_kecelakaan,
-          meninggal_dunia_today: getLakaToday[i].meninggal_dunia,
-          meninggal_dunia_yesterday: getLakaYesterday[i].meninggal_dunia,
-          luka_berat_today: getLakaToday[i].luka_berat,
-          luka_berat_yesterday: getLakaYesterday[i].luka_berat,
-          luka_ringan_today: getLakaToday[i].luka_ringan,
-          luka_ringan_yesterday: getLakaYesterday[i].luka_ringan,
-          kerugian_material_today: getLakaToday[i].kerugian_material,
-          kerugian_material_yesterday: getLakaYesterday[i].kerugian_material,
+          insiden_kecelakaan_today,
+          insiden_kecelakaan_yesterday,
+          meninggal_dunia_today,
+          meninggal_dunia_yesterday,
+          luka_berat_today,
+          luka_berat_yesterday,
+          luka_ringan_today,
+          luka_ringan_yesterday,
+          kerugian_material_today,
+          kerugian_material_yesterday,
           angka_insiden_kecelakaan,
           angka_meninggal_dunia,
           angka_luka_berat,
@@ -1192,7 +1240,121 @@ module.exports = class ExportLapharController {
         });
       }
 
-      let results = tempAnevGakkum(anev_laka);
+      let anev_gar = [];
+      for (let i = 0; i < getGarToday.length; i++) {
+        let pelanggaran_berat_today =
+          parseInt(getGarToday[i].dataValues.pelanggaran_berat) || 0;
+        let pelanggaran_berat_yesterday =
+          parseInt(getGarYesterday[i].dataValues.pelanggaran_berat) || 0;
+
+        let pelanggaran_sedang_today =
+          parseInt(getGarToday[i].dataValues.pelanggaran_sedang) || 0;
+        let pelanggaran_sedang_yesterday =
+          parseInt(getGarYesterday[i].dataValues.pelanggaran_sedang) || 0;
+
+        let pelanggaran_ringan_today =
+          parseInt(getGarToday[i].dataValues.pelanggaran_ringan) || 0;
+        let pelanggaran_ringan_yesterday =
+          parseInt(getGarYesterday[i].dataValues.pelanggaran_ringan) || 0;
+
+        let total_garlantas_today =
+          parseInt(getGarToday[i].dataValues.total_garlantas) || 0;
+        let total_garlantas_yesterday =
+          parseInt(getGarYesterday[i].dataValues.total_garlantas) || 0;
+
+        let angka_pelanggaran_berat =
+          pelanggaran_berat_today - pelanggaran_berat_yesterday;
+
+        let angka_pelanggaran_sedang =
+          pelanggaran_sedang_today - pelanggaran_sedang_yesterday;
+
+        let angka_pelanggaran_ringan =
+          pelanggaran_ringan_today - pelanggaran_ringan_yesterday;
+
+        let angka_total_garlantas =
+          total_garlantas_today - total_garlantas_yesterday;
+
+        let persen_pelanggaran_berat = (
+          (angka_pelanggaran_berat / pelanggaran_berat_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_pelanggaran_ringan = (
+          (angka_pelanggaran_ringan / pelanggaran_ringan_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_pelanggaran_sedang = (
+          (angka_pelanggaran_sedang / pelanggaran_sedang_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_total_garlantas = (
+          (angka_total_garlantas / total_garlantas_yesterday) *
+          100
+        ).toFixed(0);
+
+        let status_pelanggaran_berat = "SAMA";
+        let status_pelanggaran_sedang = "SAMA";
+        let status_pelanggaran_ringan = "SAMA";
+        let status_total_garlantas = "SAMA";
+
+        if (pelanggaran_berat_today > pelanggaran_berat_yesterday) {
+          status_pelanggaran_berat = "NAIK";
+        } else if (pelanggaran_berat_today < pelanggaran_berat_yesterday) {
+          status_pelanggaran_berat = "TURUN";
+        } else if (pelanggaran_berat_today == pelanggaran_berat_yesterday) {
+          status_pelanggaran_berat = "SAMA";
+        }
+
+        if (pelanggaran_sedang_today > pelanggaran_sedang_yesterday) {
+          status_pelanggaran_sedang = "NAIK";
+        } else if (pelanggaran_sedang_today < pelanggaran_sedang_yesterday) {
+          status_pelanggaran_sedang = "TURUN";
+        } else if (pelanggaran_sedang_today == pelanggaran_sedang_yesterday) {
+          status_pelanggaran_sedang = "SAMA";
+        }
+
+        if (pelanggaran_ringan_today > pelanggaran_ringan_yesterday) {
+          status_pelanggaran_ringan = "NAIK";
+        } else if (pelanggaran_ringan_today < pelanggaran_ringan_yesterday) {
+          status_pelanggaran_ringan = "TURUN";
+        } else if (pelanggaran_ringan_today == pelanggaran_ringan_yesterday) {
+          status_pelanggaran_ringan = "SAMA";
+        }
+
+        if (total_garlantas_today > total_garlantas_yesterday) {
+          status_total_garlantas = "NAIK";
+        } else if (total_garlantas_today < total_garlantas_yesterday) {
+          status_total_garlantas = "TURUN";
+        } else if (total_garlantas_today == total_garlantas_yesterday) {
+          status_total_garlantas = "SAMA";
+        }
+
+        anev_gar.push({
+          today: moment(date).format("YYYY/MM/DD"),
+          yesterday: moment(yesterday).format("YYYY/MM/DD"),
+          pelanggaran_berat_today,
+          pelanggaran_berat_yesterday,
+          pelanggaran_sedang_today,
+          pelanggaran_sedang_yesterday,
+          pelanggaran_ringan_today,
+          pelanggaran_ringan_yesterday,
+          total_garlantas_today,
+          total_garlantas_yesterday,
+          angka_pelanggaran_berat,
+          angka_pelanggaran_sedang,
+          angka_pelanggaran_ringan,
+          angka_total_garlantas,
+          persen_pelanggaran_berat,
+          persen_total_garlantas,
+          persen_pelanggaran_sedang,
+          persen_pelanggaran_ringan,
+          status_pelanggaran_berat,
+          status_pelanggaran_sedang,
+          status_pelanggaran_ringan,
+          status_total_garlantas,
+        });
+      }
+
+      let results = tempAnevGakkum(anev_laka, anev_gar);
       const workSheet = XLSX.utils.table_to_sheet(results);
       const workBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
@@ -1201,7 +1363,7 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/anev_gakkum_${date}.xlsx`
       );
       res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
-      // response(res, true, "Succeed", anev_laka);
+      // response(res, true, "Succeed", anev_gar);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
