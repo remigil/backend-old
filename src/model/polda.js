@@ -18,8 +18,44 @@ Polda.init(
         });
       },
     },
+    code_satpas: {
+      type: Sequelize.STRING(5),
+    },
     name_polda: {
       type: Sequelize.STRING(255),
+    },
+    address: {
+      type: Sequelize.TEXT,
+    },
+    logo_polda: {
+      type: Sequelize.TEXT,
+    },
+    phone_polda: {
+      type: Sequelize.STRING(50),
+    },
+    image: {
+      type: Sequelize.STRING(200),
+    },
+    hotline: {
+      type: Sequelize.STRING(20),
+    },
+    website: {
+      type: Sequelize.TEXT,
+    },
+    latitude: {
+      type: Sequelize.TEXT,
+    },
+    longitude: {
+      type: Sequelize.TEXT,
+    },
+    zoomview: {
+      type: Sequelize.TEXT,
+    },
+    open_time: {
+      type: Sequelize.TIME,
+    },
+    close_time: {
+      type: Sequelize.TIME,
     },
 
     ...StructureTimestamp,
@@ -45,10 +81,7 @@ Polda.init(
     sequelize: db,
   }
 );
-
 (async () => {
-  Polda.sync({ alter: true }).catch((err) => {
-    console.log({ err });
-  });
+  Polda.sync({ alter: true });
 })();
 module.exports = Polda;
