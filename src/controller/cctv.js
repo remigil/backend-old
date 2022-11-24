@@ -21,7 +21,7 @@ const fieldData = {
   password_cctv: null,
   lat_cctv: null,
   lng_cctv: null,
-  status_cctv: null,
+  polda_id: null,
 };
 module.exports = class CctvController {
   static get = async (req, res) => {
@@ -124,7 +124,14 @@ module.exports = class CctvController {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "polda_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await Cctv.create(fieldValue, { transaction: transaction });
@@ -203,7 +210,14 @@ module.exports = class CctvController {
       let fieldValue = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValue[val] = req.body[val];
+          if (val == "polda_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValue[val] = req.body[val];
+          }
         }
       });
       await Cctv.update(fieldValue, {

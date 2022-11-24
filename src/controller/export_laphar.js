@@ -3,6 +3,7 @@ const response = require("../lib/response");
 const moment = require("moment");
 const { tempalteLaphar, templateLapharNew } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
+const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
 const { AESDecrypt } = require("../lib/encryption");
 const { Sequelize, Op } = require("sequelize");
 const { existsSync } = require("fs");
@@ -23,6 +24,7 @@ const Stnk_polda_day = require("../model/count_stnk_polda_day");
 const Ranmor_polda_day = require("../model/count_ranmor_polda_day");
 
 const Polda = require("../model/polda");
+const { subtract } = require("lodash");
 const decAes = (token) =>
   AESDecrypt(token, {
     isSafeUrl: true,
@@ -969,11 +971,83 @@ module.exports = class ExportLapharController {
         start = null,
         polda_id = null,
         topPolda = null,
+        type = null,
       } = req.query;
+      let rules_today = "";
+      let rules_yesterday = "";
+      let today = "";
+      let yesterday = "";
+      if (type === "day") {
+        rules_today = { date: date };
+        today = date;
+        rules_yesterday = {
+          date: moment(date, "YYYY-MM-DD").subtract(1, "days"),
+        };
+        yesterday = moment(date).subtract(1, "days").format("YYYY-MM-DD");
+      } else if (type === "month") {
+        let start_today_date = moment(date, "MM")
+          .startOf("month")
+          .format("YYYY-MM-DD");
+        let end_today_date = moment(date, "MM")
+          .endOf("month")
+          .format("YYYY-MM-DD");
 
-      let yesterday = moment(date, "YYYY-MM-DD").subtract(1, "days");
+        let start_yesterday_date = moment(date, "MM")
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date, "MM")
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD");
 
-      let anev_laka = [];
+        rules_today = {
+          date: {
+            [Op.between]: [start_today_date, end_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [start_yesterday_date, end_yesterday_date],
+          },
+        };
+
+        today = moment(date).format("MMMM");
+        yesterday = moment(date).subtract(1, "month").format("MMMM");
+      } else if (type === "years") {
+        let start_today_date = moment(date, "YYYY")
+          .startOf("years")
+          .format("YYYY-MM-DD");
+        let end_today_date = moment(date, "YYYY")
+          .endOf("years")
+          .format("YYYY-MM-DD");
+
+        let start_yesterday_date = moment(date, "YYYY")
+          .subtract(1, "years")
+          .startOf("years")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date, "YYYY")
+          .subtract(1, "years")
+          .endOf("years")
+          .format("YYYY-MM-DD");
+
+        rules_today = {
+          date: {
+            [Op.between]: [start_today_date, end_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [start_yesterday_date, end_yesterday_date],
+          },
+        };
+
+        today = moment(date).format("YYYY");
+        yesterday = moment(date).subtract(1, "years").format("YYYY");
+      }
+
       let getLakaToday = await Lakalantas_polda_day.findAll({
         attributes: [
           [
@@ -992,9 +1066,7 @@ module.exports = class ExportLapharController {
             "insiden_kecelakaan",
           ],
         ],
-        where: {
-          date: date,
-        },
+        where: rules_today,
       });
       let getLakaYesterday = await Lakalantas_polda_day.findAll({
         attributes: [
@@ -1014,9 +1086,7 @@ module.exports = class ExportLapharController {
             "insiden_kecelakaan",
           ],
         ],
-        where: {
-          date: yesterday,
-        },
+        where: rules_yesterday,
       });
 
       let getGarToday = await Garlantas_polda_day.findAll({
@@ -1041,9 +1111,7 @@ module.exports = class ExportLapharController {
             "total_garlantas",
           ],
         ],
-        where: {
-          date: date,
-        },
+        where: rules_today,
       });
 
       let getGarYesterday = await Garlantas_polda_day.findAll({
@@ -1068,11 +1136,42 @@ module.exports = class ExportLapharController {
             "total_garlantas",
           ],
         ],
-        where: {
-          date: yesterday,
-        },
+        where: rules_yesterday,
       });
 
+      let getTurjagwaliToday = await Turjagwali_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("pengaturan")), "pengaturan"],
+          [Sequelize.fn("sum", Sequelize.col("penjagaan")), "penjagaan"],
+          [Sequelize.fn("sum", Sequelize.col("pengawalan")), "pengawalan"],
+          [Sequelize.fn("sum", Sequelize.col("patroli")), "patroli"],
+          [
+            Sequelize.literal(
+              "SUM(pengawalan + penjagaan + patroli + pengaturan)"
+            ),
+            "total_turjagwali",
+          ],
+        ],
+        where: rules_today,
+      });
+
+      let getTurjagwaliYesterday = await Turjagwali_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("pengaturan")), "pengaturan"],
+          [Sequelize.fn("sum", Sequelize.col("penjagaan")), "penjagaan"],
+          [Sequelize.fn("sum", Sequelize.col("pengawalan")), "pengawalan"],
+          [Sequelize.fn("sum", Sequelize.col("patroli")), "patroli"],
+          [
+            Sequelize.literal(
+              "SUM(pengawalan + penjagaan + patroli + pengaturan)"
+            ),
+            "total_turjagwali",
+          ],
+        ],
+        where: rules_yesterday,
+      });
+
+      let anev_laka = [];
       for (let i = 0; i < getLakaToday.length; i++) {
         let insiden_kecelakaan_today =
           parseInt(getLakaToday[i].dataValues.insiden_kecelakaan) || 0;
@@ -1210,8 +1309,8 @@ module.exports = class ExportLapharController {
         }
 
         anev_laka.push({
-          today: moment(date).format("YYYY/MM/DD"),
-          yesterday: moment(yesterday).format("YYYY/MM/DD"),
+          today,
+          yesterday,
           insiden_kecelakaan_today,
           insiden_kecelakaan_yesterday,
           meninggal_dunia_today,
@@ -1329,8 +1428,8 @@ module.exports = class ExportLapharController {
         }
 
         anev_gar.push({
-          today: moment(date).format("YYYY/MM/DD"),
-          yesterday: moment(yesterday).format("YYYY/MM/DD"),
+          today,
+          yesterday,
           pelanggaran_berat_today,
           pelanggaran_berat_yesterday,
           pelanggaran_sedang_today,
@@ -1354,7 +1453,147 @@ module.exports = class ExportLapharController {
         });
       }
 
-      let results = tempAnevGakkum(anev_laka, anev_gar);
+      let anev_turjagwali = [];
+      for (let i = 0; i < getTurjagwaliToday.length; i++) {
+        let pengaturan_today =
+          parseInt(getTurjagwaliToday[i].dataValues.pengaturan) || 0;
+        let pengaturan_yesterday =
+          parseInt(getTurjagwaliYesterday[i].dataValues.pengaturan) || 0;
+
+        let penjagaan_today =
+          parseInt(getTurjagwaliToday[i].dataValues.penjagaan) || 0;
+        let penjagaan_yesterday =
+          parseInt(getTurjagwaliYesterday[i].dataValues.penjagaan) || 0;
+
+        let pengawalan_today =
+          parseInt(getTurjagwaliToday[i].dataValues.pengawalan) || 0;
+        let pengawalan_yesterday =
+          parseInt(getTurjagwaliYesterday[i].dataValues.pengawalan) || 0;
+
+        let patroli_today =
+          parseInt(getTurjagwaliToday[i].dataValues.patroli) || 0;
+        let patroli_yesterday =
+          parseInt(getTurjagwaliYesterday[i].dataValues.patroli) || 0;
+
+        let total_turjagwali_today =
+          parseInt(getTurjagwaliToday[i].dataValues.total_turjagwali) || 0;
+        let total_turjagwali_yesterday =
+          parseInt(getTurjagwaliYesterday[i].dataValues.total_turjagwali) || 0;
+
+        let angka_pengaturan = pengaturan_today - pengaturan_yesterday;
+
+        let angka_penjagaan = penjagaan_today - penjagaan_yesterday;
+
+        let angka_pengawalan = pengawalan_today - pengawalan_yesterday;
+
+        let angka_patroli = patroli_today - patroli_yesterday;
+
+        let angka_total_turjagwali =
+          total_turjagwali_today - total_turjagwali_yesterday;
+
+        let persen_pengaturan = (
+          (angka_pengaturan / pengaturan_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_pengawalan = (
+          (angka_pengawalan / pengawalan_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_penjagaan = (
+          (angka_penjagaan / penjagaan_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_patroli = (
+          (angka_patroli / patroli_yesterday) *
+          100
+        ).toFixed(0);
+
+        let persen_total_turjagwali = (
+          (angka_total_turjagwali / total_turjagwali_yesterday) *
+          100
+        ).toFixed(0);
+
+        let status_pengaturan = "SAMA";
+        let status_penjagaan = "SAMA";
+        let status_pengawalan = "SAMA";
+        let status_patroli = "SAMA";
+        let status_total_turjagwali = "SAMA";
+
+        if (pengaturan_today > pengaturan_yesterday) {
+          status_pengaturan = "NAIK";
+        } else if (pengaturan_today < pengaturan_yesterday) {
+          status_pengaturan = "TURUN";
+        } else if (pengaturan_today == pengaturan_yesterday) {
+          status_pengaturan = "SAMA";
+        }
+
+        if (penjagaan_today > penjagaan_yesterday) {
+          status_penjagaan = "NAIK";
+        } else if (penjagaan_today < penjagaan_yesterday) {
+          status_penjagaan = "TURUN";
+        } else if (penjagaan_today == penjagaan_yesterday) {
+          status_penjagaan = "SAMA";
+        }
+
+        if (pengawalan_today > pengawalan_yesterday) {
+          status_pengawalan = "NAIK";
+        } else if (pengawalan_today < pengawalan_yesterday) {
+          status_pengawalan = "TURUN";
+        } else if (pengawalan_today == pengawalan_yesterday) {
+          status_pengawalan = "SAMA";
+        }
+
+        if (patroli_today > patroli_yesterday) {
+          status_patroli = "NAIK";
+        } else if (patroli_today < patroli_yesterday) {
+          status_patroli = "TURUN";
+        } else if (patroli_today == patroli_yesterday) {
+          status_patroli = "SAMA";
+        }
+
+        if (total_turjagwali_today > total_turjagwali_yesterday) {
+          status_total_turjagwali = "NAIK";
+        } else if (total_turjagwali_today < total_turjagwali_yesterday) {
+          status_total_turjagwali = "TURUN";
+        } else if (total_turjagwali_today == total_turjagwali_yesterday) {
+          status_total_turjagwali = "SAMA";
+        }
+
+        anev_turjagwali.push({
+          today,
+          yesterday,
+          pengaturan_today,
+          pengaturan_yesterday,
+          penjagaan_today,
+          penjagaan_yesterday,
+          pengawalan_today,
+          pengawalan_yesterday,
+          patroli_today,
+          patroli_yesterday,
+          total_turjagwali_today,
+          total_turjagwali_yesterday,
+
+          angka_pengaturan,
+          angka_penjagaan,
+          angka_pengawalan,
+          angka_patroli,
+          angka_total_turjagwali,
+
+          persen_pengaturan,
+          persen_patroli,
+          persen_penjagaan,
+          persen_pengawalan,
+          persen_total_turjagwali,
+
+          status_pengaturan,
+          status_penjagaan,
+          status_pengawalan,
+          status_patroli,
+          status_total_turjagwali,
+        });
+      }
+
+      let results = tempAnevGakkum(anev_laka, anev_gar, anev_turjagwali);
       const workSheet = XLSX.utils.table_to_sheet(results);
       const workBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
@@ -1363,7 +1602,511 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/anev_gakkum_${date}.xlsx`
       );
       res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
-      // response(res, true, "Succeed", anev_gar);
+      response(res, true, "Succeed", anev_laka);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_anev_ditkamsel = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+        type = null,
+      } = req.query;
+      let rules_today = "";
+      let rules_yesterday = "";
+      let today = "";
+      let yesterday = "";
+      if (type === "day") {
+        rules_today = { date: date };
+        today = date;
+        rules_yesterday = {
+          date: moment(date, "YYYY-MM-DD").subtract(1, "days"),
+        };
+        yesterday = moment(date).subtract(1, "days").format("YYYY-MM-DD");
+      } else if (type === "month") {
+        let start_today_date = moment(date, "MM")
+          .startOf("month")
+          .format("YYYY-MM-DD");
+        let end_today_date = moment(date, "MM")
+          .endOf("month")
+          .format("YYYY-MM-DD");
+
+        let start_yesterday_date = moment(date, "MM")
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date, "MM")
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD");
+
+        rules_today = {
+          date: {
+            [Op.between]: [start_today_date, end_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [start_yesterday_date, end_yesterday_date],
+          },
+        };
+
+        today = moment(date).format("MMMM");
+        yesterday = moment(date).subtract(1, "month").format("MMMM");
+      } else if (type === "years") {
+        let start_today_date = moment(date, "YYYY")
+          .startOf("years")
+          .format("YYYY-MM-DD");
+        let end_today_date = moment(date, "YYYY")
+          .endOf("years")
+          .format("YYYY-MM-DD");
+
+        let start_yesterday_date = moment(date, "YYYY")
+          .subtract(1, "years")
+          .startOf("years")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date, "YYYY")
+          .subtract(1, "years")
+          .endOf("years")
+          .format("YYYY-MM-DD");
+
+        rules_today = {
+          date: {
+            [Op.between]: [start_today_date, end_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [start_yesterday_date, end_yesterday_date],
+          },
+        };
+
+        today = moment(date).format("YYYY");
+        yesterday = moment(date).subtract(1, "years").format("YYYY");
+      }
+
+      let getDikmaslantasToday = await Dikmaslantas_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("media_cetak")), "media_cetak"],
+          [
+            Sequelize.fn("sum", Sequelize.col("media_elektronik")),
+            "media_elektronik",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("media_sosial")), "media_sosial"],
+          // [Sequelize.fn("date_trunc", "month", Sequelize.col("date")), "year"],
+          [Sequelize.fn("sum", Sequelize.col("laka_langgar")), "laka_langgar"],
+          [
+            Sequelize.literal(
+              "SUM(media_cetak + media_elektronik + media_sosial + laka_langgar)"
+            ),
+            "total_dikmaslantas",
+          ],
+        ],
+        where: rules_today,
+      });
+      let getDikmaslantasYesterday = await Dikmaslantas_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("media_cetak")), "media_cetak"],
+          [
+            Sequelize.fn("sum", Sequelize.col("media_elektronik")),
+            "media_elektronik",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("media_sosial")), "media_sosial"],
+          // [Sequelize.fn("date_trunc", "month", Sequelize.col("date")), "year"],
+          [Sequelize.fn("sum", Sequelize.col("laka_langgar")), "laka_langgar"],
+          [
+            Sequelize.literal(
+              "SUM(media_cetak + media_elektronik + media_sosial + laka_langgar)"
+            ),
+            "total_dikmaslantas",
+          ],
+        ],
+        where: rules_yesterday,
+      });
+
+      let getPenyebaranToday = await Penyebaran_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("leaflet")), "leaflet"],
+          [Sequelize.fn("sum", Sequelize.col("spanduk")), "spanduk"],
+          [Sequelize.fn("sum", Sequelize.col("billboard")), "billboard"],
+          [Sequelize.fn("sum", Sequelize.col("stiker")), "stiker"],
+          [
+            Sequelize.literal("SUM(leaflet + spanduk + billboard + stiker)"),
+            "total_penyebaran",
+          ],
+        ],
+        where: rules_today,
+      });
+
+      let getPenyebaranYesterday = await Penyebaran_polda_day.findAll({
+        attributes: [
+          [Sequelize.fn("sum", Sequelize.col("leaflet")), "leaflet"],
+          [Sequelize.fn("sum", Sequelize.col("spanduk")), "spanduk"],
+          [Sequelize.fn("sum", Sequelize.col("billboard")), "billboard"],
+          [Sequelize.fn("sum", Sequelize.col("stiker")), "stiker"],
+          [
+            Sequelize.literal("SUM(leaflet + spanduk + billboard + stiker)"),
+            "total_penyebaran",
+          ],
+        ],
+        where: rules_yesterday,
+      });
+
+      let anev_dikmaslantas = [];
+      for (let i = 0; i < getDikmaslantasToday.length; i++) {
+        let media_sosial_today =
+          parseInt(getDikmaslantasToday[i].dataValues.media_sosial) || 0;
+        let media_sosial_yesterday =
+          parseInt(getDikmaslantasYesterday[i].dataValues.media_sosial) || 0;
+
+        let media_elektronik_today =
+          parseInt(getDikmaslantasToday[i].dataValues.media_elektronik) || 0;
+        let media_elektronik_yesterday =
+          parseInt(getDikmaslantasYesterday[i].dataValues.media_elektronik) ||
+          0;
+
+        let media_cetak_today =
+          parseInt(getDikmaslantasToday[i].dataValues.media_cetak) || 0;
+        let media_cetak_yesterday =
+          parseInt(getDikmaslantasYesterday[i].dataValues.media_cetak) || 0;
+
+        let laka_langgar_today =
+          parseInt(getDikmaslantasToday[i].dataValues.laka_langgar) || 0;
+        let laka_langgar_yesterday =
+          parseInt(getDikmaslantasYesterday[i].dataValues.laka_langgar) || 0;
+
+        let total_dikmaslantas_today =
+          parseInt(getDikmaslantasToday[i].dataValues.total_dikmaslantas) || 0;
+        let total_dikmaslantas_yesterday =
+          parseInt(getDikmaslantasYesterday[i].dataValues.total_dikmaslantas) ||
+          0;
+
+        let angka_media_cetak = media_cetak_today - media_cetak_yesterday;
+        let angka_media_sosial = media_sosial_today - media_sosial_yesterday;
+        let angka_media_elektronik =
+          media_elektronik_today - media_elektronik_yesterday;
+        let angka_laka_langgar = laka_langgar_today - laka_langgar_yesterday;
+        let angka_total_dikmaslantas =
+          total_dikmaslantas_today - total_dikmaslantas_yesterday;
+
+        let persen_media_cetak = (
+          (angka_media_cetak / media_cetak_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_media_elektronik = (
+          (angka_media_elektronik / media_elektronik_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_media_sosial = (
+          (angka_media_sosial / media_sosial_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_laka_langgar = (
+          (angka_laka_langgar / laka_langgar_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_total_dikmaslantas = (
+          (angka_total_dikmaslantas / total_dikmaslantas_yesterday) *
+          100
+        ).toFixed(0);
+
+        let status_media_cetak = "SAMA";
+        let status_media_elektronik = "SAMA";
+        let status_media_sosial = "SAMA";
+        let status_laka_langgar = "SAMA";
+        let status_total_dikmaslantas = "SAMA";
+
+        if (
+          getDikmaslantasToday[i].dataValues.media_cetak >
+          getDikmaslantasYesterday[i].dataValues.media_cetak
+        ) {
+          status_media_cetak = "NAIK";
+        } else if (
+          getDikmaslantasToday[i].dataValues.media_cetak <
+          getDikmaslantasYesterday[i].dataValues.media_cetak
+        ) {
+          status_media_cetak = "TURUN";
+        } else if (
+          getDikmaslantasToday[i].dataValues.media_cetak ==
+          getDikmaslantasYesterday[i].dataValues.media_cetak
+        ) {
+          status_media_cetak = "SAMA";
+        }
+
+        if (
+          getDikmaslantasToday[i].dataValues.media_elektronik >
+          getDikmaslantasYesterday[i].dataValues.media_elektronik
+        ) {
+          status_media_elektronik = "NAIK";
+        } else if (
+          getDikmaslantasToday[i].dataValues.media_elektronik <
+          getDikmaslantasYesterday[i].dataValues.media_elektronik
+        ) {
+          status_media_elektronik = "TURUN";
+        } else if (
+          getDikmaslantasToday[i].dataValues.media_elektronik ==
+          getDikmaslantasYesterday[i].dataValues.media_elektronik
+        ) {
+          status_media_elektronik = "SAMA";
+        }
+
+        if (media_cetak_today > media_cetak_yesterday) {
+          status_media_cetak = "NAIK";
+        } else if (media_cetak_today < media_cetak_yesterday) {
+          status_media_cetak = "TURUN";
+        } else if (media_cetak_today == media_cetak_yesterday) {
+          status_media_cetak = "SAMA";
+        }
+
+        if (media_elektronik_today > media_elektronik_yesterday) {
+          status_media_elektronik = "NAIK";
+        } else if (media_elektronik_today < media_elektronik_yesterday) {
+          status_media_elektronik = "TURUN";
+        } else if (media_elektronik_today == media_elektronik_yesterday) {
+          status_media_elektronik = "SAMA";
+        }
+
+        if (media_sosial_today > media_sosial_yesterday) {
+          status_media_sosial = "NAIK";
+        } else if (media_sosial_today < media_sosial_yesterday) {
+          status_media_sosial = "TURUN";
+        } else if (media_sosial_today == media_sosial_yesterday) {
+          status_media_sosial = "SAMA";
+        }
+
+        if (laka_langgar_today > laka_langgar_yesterday) {
+          status_laka_langgar = "NAIK";
+        } else if (laka_langgar_today < laka_langgar_yesterday) {
+          status_laka_langgar = "TURUN";
+        } else if (laka_langgar_today == laka_langgar_yesterday) {
+          status_laka_langgar = "SAMA";
+        }
+
+        if (total_dikmaslantas_today > total_dikmaslantas_yesterday) {
+          status_total_dikmaslantas = "NAIK";
+        } else if (total_dikmaslantas_today < total_dikmaslantas_yesterday) {
+          status_total_dikmaslantas = "TURUN";
+        } else if (total_dikmaslantas_today == total_dikmaslantas_yesterday) {
+          status_total_dikmaslantas = "SAMA";
+        }
+
+        anev_dikmaslantas.push({
+          today,
+          yesterday,
+          media_cetak_today,
+          media_cetak_yesterday,
+          media_sosial_today,
+          media_sosial_yesterday,
+          media_elektronik_today,
+          media_elektronik_yesterday,
+          laka_langgar_today,
+          laka_langgar_yesterday,
+          total_dikmaslantas_today,
+          total_dikmaslantas_yesterday,
+          angka_media_cetak,
+          angka_media_sosial,
+          angka_media_elektronik,
+          angka_laka_langgar,
+          angka_total_dikmaslantas,
+          persen_media_cetak,
+          persen_media_sosial,
+          persen_total_dikmaslantas,
+          persen_media_elektronik,
+          persen_laka_langgar,
+          status_media_cetak,
+          status_media_sosial,
+          status_media_elektronik,
+          status_laka_langgar,
+          status_total_dikmaslantas,
+        });
+      }
+
+      let anev_penyebaran = [];
+      for (let i = 0; i < getPenyebaranToday.length; i++) {
+        let spanduk_today =
+          parseInt(getPenyebaranToday[i].dataValues.spanduk) || 0;
+        let spanduk_yesterday =
+          parseInt(getPenyebaranYesterday[i].dataValues.spanduk) || 0;
+
+        let stiker_today =
+          parseInt(getPenyebaranToday[i].dataValues.stiker) || 0;
+        let stiker_yesterday =
+          parseInt(getPenyebaranYesterday[i].dataValues.stiker) || 0;
+
+        let leaflet_today =
+          parseInt(getPenyebaranToday[i].dataValues.leaflet) || 0;
+        let leaflet_yesterday =
+          parseInt(getPenyebaranYesterday[i].dataValues.leaflet) || 0;
+
+        let billboard_today =
+          parseInt(getPenyebaranToday[i].dataValues.billboard) || 0;
+        let billboard_yesterday =
+          parseInt(getPenyebaranYesterday[i].dataValues.billboard) || 0;
+
+        let total_penyebaran_today =
+          parseInt(getPenyebaranToday[i].dataValues.total_penyebaran) || 0;
+        let total_penyebaran_yesterday =
+          parseInt(getPenyebaranYesterday[i].dataValues.total_penyebaran) || 0;
+
+        let angka_leaflet = leaflet_today - leaflet_yesterday;
+        let angka_spanduk = spanduk_today - spanduk_yesterday;
+        let angka_stiker = stiker_today - stiker_yesterday;
+        let angka_billboard = billboard_today - billboard_yesterday;
+        let angka_total_penyebaran =
+          total_penyebaran_today - total_penyebaran_yesterday;
+
+        let persen_leaflet = (
+          (angka_leaflet / leaflet_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_stiker = ((angka_stiker / stiker_yesterday) * 100).toFixed(
+          0
+        );
+        let persen_spanduk = (
+          (angka_spanduk / spanduk_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_billboard = (
+          (angka_billboard / billboard_yesterday) *
+          100
+        ).toFixed(0);
+        let persen_total_penyebaran = (
+          (angka_total_penyebaran / total_penyebaran_yesterday) *
+          100
+        ).toFixed(0);
+
+        let status_leaflet = "SAMA";
+        let status_stiker = "SAMA";
+        let status_spanduk = "SAMA";
+        let status_billboard = "SAMA";
+        let status_total_penyebaran = "SAMA";
+
+        if (
+          getDikmaslantasToday[i].dataValues.leaflet >
+          getDikmaslantasYesterday[i].dataValues.leaflet
+        ) {
+          status_leaflet = "NAIK";
+        } else if (
+          getDikmaslantasToday[i].dataValues.leaflet <
+          getDikmaslantasYesterday[i].dataValues.leaflet
+        ) {
+          status_leaflet = "TURUN";
+        } else if (
+          getDikmaslantasToday[i].dataValues.leaflet ==
+          getDikmaslantasYesterday[i].dataValues.leaflet
+        ) {
+          status_leaflet = "SAMA";
+        }
+
+        if (
+          getDikmaslantasToday[i].dataValues.stiker >
+          getDikmaslantasYesterday[i].dataValues.stiker
+        ) {
+          status_stiker = "NAIK";
+        } else if (
+          getDikmaslantasToday[i].dataValues.stiker <
+          getDikmaslantasYesterday[i].dataValues.stiker
+        ) {
+          status_stiker = "TURUN";
+        } else if (
+          getDikmaslantasToday[i].dataValues.stiker ==
+          getDikmaslantasYesterday[i].dataValues.stiker
+        ) {
+          status_stiker = "SAMA";
+        }
+
+        if (leaflet_today > leaflet_yesterday) {
+          status_leaflet = "NAIK";
+        } else if (leaflet_today < leaflet_yesterday) {
+          status_leaflet = "TURUN";
+        } else if (leaflet_today == leaflet_yesterday) {
+          status_leaflet = "SAMA";
+        }
+
+        if (stiker_today > stiker_yesterday) {
+          status_stiker = "NAIK";
+        } else if (stiker_today < stiker_yesterday) {
+          status_stiker = "TURUN";
+        } else if (stiker_today == stiker_yesterday) {
+          status_stiker = "SAMA";
+        }
+
+        if (spanduk_today > spanduk_yesterday) {
+          status_spanduk = "NAIK";
+        } else if (spanduk_today < spanduk_yesterday) {
+          status_spanduk = "TURUN";
+        } else if (spanduk_today == spanduk_yesterday) {
+          status_spanduk = "SAMA";
+        }
+
+        if (billboard_today > billboard_yesterday) {
+          status_billboard = "NAIK";
+        } else if (billboard_today < billboard_yesterday) {
+          status_billboard = "TURUN";
+        } else if (billboard_today == billboard_yesterday) {
+          status_billboard = "SAMA";
+        }
+
+        if (total_penyebaran_today > total_penyebaran_yesterday) {
+          status_total_penyebaran = "NAIK";
+        } else if (total_penyebaran_today < total_penyebaran_yesterday) {
+          status_total_penyebaran = "TURUN";
+        } else if (total_penyebaran_today == total_penyebaran_yesterday) {
+          status_total_penyebaran = "SAMA";
+        }
+
+        anev_penyebaran.push({
+          today,
+          yesterday,
+          leaflet_today,
+          leaflet_yesterday,
+          spanduk_today,
+          spanduk_yesterday,
+          stiker_today,
+          stiker_yesterday,
+          billboard_today,
+          billboard_yesterday,
+          total_penyebaran_today,
+          total_penyebaran_yesterday,
+          angka_leaflet,
+          angka_spanduk,
+          angka_stiker,
+          angka_billboard,
+          angka_total_penyebaran,
+          persen_leaflet,
+          persen_spanduk,
+          persen_total_penyebaran,
+          persen_stiker,
+          persen_billboard,
+          status_leaflet,
+          status_spanduk,
+          status_stiker,
+          status_billboard,
+          status_total_penyebaran,
+        });
+      }
+
+      let results = tempAnevKamsel(anev_dikmaslantas, anev_penyebaran);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/anev_ditkamsel_${date}.xlsx`
+      );
+      res.download(`./public/export_laphar/anev_ditkamsel_${date}.xlsx`);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

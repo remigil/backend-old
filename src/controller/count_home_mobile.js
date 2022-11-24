@@ -19,23 +19,29 @@ const GarlantasDay = require("../model/count_garlantas_polda_day");
 const RanmorDay = require("../model/count_ranmor_polda_day");
 // const RanmorMonth = require("../model/count_ranmor_polda_month");
 
-let thisday = moment().subtract(1, "days");
-let yesterday = moment().subtract(2, "days");
+const Turjagwali = require("../model/count_turjagwali_polda_day");
+
+let thisday = moment().subtract(0, "days");
+let yesterday = moment().subtract(1, "days");
 let thisweek = moment().subtract(6, "days").toDate();
 let lastweek = moment().subtract(13, "days").toDate();
 let thismonth = moment().endOf("month").format("YYYY-MM-DD");
-let lastmonth = moment().subtract(1, "month").endOf("month").format("YYYY-MM-DD");
-
-
-let StartDateThisMonth = moment().startOf('month').format('YYYY-MM-DD');
-let EndDateThisMonth = moment().endOf("month").format("YYYY-MM-DD");
-
-let StartDateYesterdayMonth = moment().subtract(1, "month").startOf("month").format("YYYY-MM-DD");
-let EndDateYesterdayMonth = moment()
+let lastmonth = moment()
   .subtract(1, "month")
   .endOf("month")
   .format("YYYY-MM-DD");
 
+let StartDateThisMonth = moment().startOf("month").format("YYYY-MM-DD");
+let EndDateThisMonth = moment().endOf("month").format("YYYY-MM-DD");
+
+let StartDateYesterdayMonth = moment()
+  .subtract(1, "month")
+  .startOf("month")
+  .format("YYYY-MM-DD");
+let EndDateYesterdayMonth = moment()
+  .subtract(1, "month")
+  .endOf("month")
+  .format("YYYY-MM-DD");
 
 let StartDateThisYear = moment().startOf("year").format("YYYY-MM-DD");
 let EndDateThisYear = moment().endOf("year").format("YYYY-MM-DD");
@@ -49,7 +55,6 @@ let EndDateYesterdatYear = moment()
   .subtract(1, "year")
   .endOf("year")
   .format("YYYY-MM-DD");
-
 
 let thisstartyear = moment().startOf("year").format("YYYY-MM-DD");
 let thisendyear = moment().endOf("year").format("YYYY-MM-DD");
@@ -65,18 +70,19 @@ let lastendyear = moment()
 module.exports = class CountHomeMobileController {
   static kecelakaan = async (req, res) => {
     try {
+      console.log(thisday, yesterday);
       let lakaPerhariKemarin = await LakaLantasDay.findAll({
         where: {
-          date: thisday,
+          date: yesterday,
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPerhariIni = await LakaLantasDay.findAll({
         where: {
-          date: yesterday,
+          date: thisday,
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPermingguKemarin = await LakaLantasDay.findAll({
@@ -85,7 +91,7 @@ module.exports = class CountHomeMobileController {
             [Op.between]: [lastweek, thisweek],
           },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPermingguIni = await LakaLantasDay.findAll({
@@ -94,25 +100,25 @@ module.exports = class CountHomeMobileController {
             [Op.gte]: thisweek,
           },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPerbulanKemarin = await LakaLantasDay.findAll({
         where: {
           date: {
-            [Op.between]:[StartDateYesterdayMonth, EndDateYesterdayMonth]
+            [Op.between]: [StartDateYesterdayMonth, EndDateYesterdayMonth],
           },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPerbulanIni = await LakaLantasDay.findAll({
         where: {
           date: {
-            [Op.between]:[StartDateThisMonth, EndDateThisMonth]
-          }
+            [Op.between]: [StartDateThisMonth, EndDateThisMonth],
+          },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPertahunKemarin = await LakaLantasDay.findAll({
@@ -121,7 +127,7 @@ module.exports = class CountHomeMobileController {
             [Op.between]: [StartDateYesterdayYear, EndDateYesterdatYear],
           },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let lakaPertahunIni = await LakaLantasDay.findAll({
@@ -130,7 +136,7 @@ module.exports = class CountHomeMobileController {
             [Op.between]: [StartDateThisYear, EndDateThisYear],
           },
         },
-        attributes: ["meninggal_dunia", "luka_berat", "luka_ringan"],
+        attributes: ["insiden_kecelakaan"],
       });
 
       let result_lakaPerhariKemarin =
@@ -245,26 +251,17 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let laka_perhari = Math.round(
-        parseInt(result_lakaPerhariKemarin + result_lakaPerhariIni) / 2
-      );
-      let laka_perminggu = Math.round(
-        parseInt(result_lakaPermingguKemarin + result_lakaPermingguIni) / 2
-      );
-      let laka_perbulan = Math.round(
-        parseInt(result_lakaPerbulanKemarin + result_lakaPerbulanIni) / 2
-      );
-      let laka_pertahun = Math.round(
-        parseInt(result_lakaPertahunKemarin + result_lakaPertahunIni) / 2
-      );
+      let laka_perhari = result_lakaPerhariIni;
+      let laka_perminggu = result_lakaPermingguIni;
+      let laka_perbulan = result_lakaPerbulanIni;
+      let laka_pertahun = result_lakaPertahunIni;
 
-      let finalResponse =
-        {
-          laka_perhari,
-          laka_perminggu,
-          laka_perbulan,
-          laka_pertahun,
-        }
+      let finalResponse = {
+        laka_perhari,
+        laka_perminggu,
+        laka_perbulan,
+        laka_pertahun,
+      };
 
       //   let resultPerhariKemarin = Object.values();
 
@@ -276,77 +273,77 @@ module.exports = class CountHomeMobileController {
 
   static sim = async (req, res) => {
     try {
-      let simPerhariKemarin = await SimDay.findAll({
+      let ranmorPerhariKemarin = await Turjagwali.findAll({
         where: {
           date: thisday,
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPerhariIni = await SimDay.findAll({
+      let ranmorPerhariIni = await Turjagwali.findAll({
         where: {
           date: yesterday,
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPermingguKemarin = await SimDay.findAll({
+      let ranmorPermingguKemarin = await Turjagwali.findAll({
         where: {
           date: {
             [Op.between]: [lastweek, thisweek],
           },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPermingguIni = await SimDay.findAll({
+      let ranmorPermingguIni = await Turjagwali.findAll({
         where: {
           date: {
             [Op.gte]: thisweek,
           },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPerbulanKemarin = await SimDay.findAll({
+      let ranmorPerbulanKemarin = await Turjagwali.findAll({
         where: {
           date: {
             [Op.between]: [StartDateYesterdayMonth, EndDateYesterdayMonth],
           },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPerbulanIni = await SimDay.findAll({
+      let ranmorPerbulanIni = await Turjagwali.findAll({
         where: {
           date: {
-            [Op.between] : [StartDateThisMonth, EndDateThisMonth]
-          }
+            [Op.between]: [StartDateThisMonth, EndDateThisMonth],
+          },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPertahunKemarin = await SimDay.findAll({
+      let ranmorPertahunKemarin = await Turjagwali.findAll({
         where: {
           date: {
             [Op.between]: [StartDateYesterdayYear, EndDateYesterdatYear],
           },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let simPertahunIni = await SimDay.findAll({
+      let ranmorPertahunIni = await Turjagwali.findAll({
         where: {
           date: {
             [Op.between]: [StartDateThisYear, EndDateThisYear],
           },
         },
-        attributes: ["baru"],
+        attributes: ["pengaturan", "penjagaan", "pengawalan", "patroli"],
       });
 
-      let result_simPerhariKemarin =
-        simPerhariKemarin.length > 0
-          ? simPerhariKemarin
+      let result_ranmorPerhariKemarin =
+        ranmorPerhariKemarin.length > 0
+          ? ranmorPerhariKemarin
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -358,9 +355,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPerhariIni =
-        simPerhariIni.length > 0
-          ? simPerhariIni
+      let result_ranmorPerhariIni =
+        ranmorPerhariIni.length > 0
+          ? ranmorPerhariIni
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -372,9 +369,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPermingguKemarin =
-        simPermingguKemarin.length > 0
-          ? simPermingguKemarin
+      let result_ranmorPermingguKemarin =
+        ranmorPermingguKemarin.length > 0
+          ? ranmorPermingguKemarin
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -386,9 +383,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPermingguIni =
-        simPermingguIni.length > 0
-          ? simPermingguIni
+      let result_ranmorPermingguIni =
+        ranmorPermingguIni.length > 0
+          ? ranmorPermingguIni
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -400,9 +397,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPerbulanKemarin =
-        simPerbulanKemarin.length > 0
-          ? simPerbulanKemarin
+      let result_ranmorPerbulanKemarin =
+        ranmorPerbulanKemarin.length > 0
+          ? ranmorPerbulanKemarin
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -414,9 +411,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPerbulanIni =
-        simPerbulanIni.length > 0
-          ? simPerbulanIni
+      let result_ranmorPerbulanIni =
+        ranmorPerbulanIni.length > 0
+          ? ranmorPerbulanIni
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -428,9 +425,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPertahunKemarin =
-        simPertahunKemarin.length > 0
-          ? simPertahunKemarin
+      let result_ranmorPertahunKemarin =
+        ranmorPertahunKemarin.length > 0
+          ? ranmorPertahunKemarin
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -442,9 +439,9 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let result_simPertahunIni =
-        simPertahunIni.length > 0
-          ? simPertahunIni
+      let result_ranmorPertahunIni =
+        ranmorPertahunIni.length > 0
+          ? ranmorPertahunIni
               .map((element) => {
                 let a = Object.values(element.dataValues).reduce((c, d) => {
                   return c + d;
@@ -456,25 +453,17 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let sim_perhari = Math.round(
-        parseInt(result_simPerhariKemarin + result_simPerhariIni) / 2
-      );
-      let sim_perminggu = Math.round(
-        parseInt(result_simPermingguKemarin + result_simPermingguIni) / 2
-      );
-      let sim_perbulan = Math.round(
-        parseInt(result_simPerbulanKemarin + result_simPerbulanIni) / 2
-      );
-      let sim_pertahun = Math.round(
-        parseInt(result_simPertahunKemarin + result_simPertahunIni) / 2
-      );
+      let sim_perhari = result_ranmorPerhariIni;
+      let sim_perminggu = result_ranmorPermingguIni;
+      let sim_perbulan = result_ranmorPerbulanIni;
+      let sim_pertahun = result_ranmorPertahunIni;
 
       let finalResponse = {
-          sim_perhari,
-          sim_perminggu,
-          sim_perbulan,
-          sim_pertahun,
-        }
+        sim_perhari,
+        sim_perminggu,
+        sim_perbulan,
+        sim_pertahun,
+      };
 
       //   let resultPerhariKemarin = Object.values();
 
@@ -488,7 +477,7 @@ module.exports = class CountHomeMobileController {
     try {
       let garlantasPerhariKemarin = await GarlantasDay.findAll({
         where: {
-          date: thisday,
+          date: yesterday,
         },
         attributes: [
           "pelanggaran_berat",
@@ -499,7 +488,7 @@ module.exports = class CountHomeMobileController {
 
       let garlantasPerhariIni = await GarlantasDay.findAll({
         where: {
-          date: yesterday,
+          date: thisday,
         },
         attributes: [
           "pelanggaran_berat",
@@ -550,8 +539,8 @@ module.exports = class CountHomeMobileController {
       let garlantasPerbulanIni = await GarlantasDay.findAll({
         where: {
           date: {
-            [Op.between]:[StartDateThisMonth, EndDateThisMonth]
-          }
+            [Op.between]: [StartDateThisMonth, EndDateThisMonth],
+          },
         },
         attributes: [
           "pelanggaran_berat",
@@ -698,33 +687,17 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let pelanggaran_perhari = Math.round(
-        parseInt(result_garlantasPerhariKemarin + result_garlantasPerhariIni) /
-          2
-      );
-      let pelanggaran_perminggu = Math.round(
-        parseInt(
-          result_garlantasPemingguKemarin + result_garlantasPermingguIni
-        ) / 2
-      );
-      let pelanggaran_perbulan = Math.round(
-        parseInt(
-          result_garlantasPerbulanKemarin + result_garlantasPerbulanIni
-        ) / 2
-      );
-      let pelanggaran_pertahun = Math.round(
-        parseInt(
-          result_garlantasPertahunKemarin + result_garlantasPertahunIni
-        ) / 2
-      );
+      let pelanggaran_perhari = result_garlantasPerhariIni;
+      let pelanggaran_perminggu = result_garlantasPermingguIni;
+      let pelanggaran_perbulan = result_garlantasPerbulanIni;
+      let pelanggaran_pertahun = result_garlantasPertahunIni;
 
-      let finalResponse =
-        {
-          pelanggaran_perhari,
-          pelanggaran_perminggu,
-          pelanggaran_perbulan,
-          pelanggaran_pertahun,
-        }
+      let finalResponse = {
+        pelanggaran_perhari,
+        pelanggaran_perminggu,
+        pelanggaran_perbulan,
+        pelanggaran_pertahun,
+      };
 
       //   let resultPerhariKemarin = Object.values();
 
@@ -738,20 +711,20 @@ module.exports = class CountHomeMobileController {
     try {
       let ranmorPerhariKemarin = await RanmorDay.findAll({
         where: {
-          date: thisday,
+          date: yesterday,
         },
         attributes: [
           "mobil_penumpang",
           "mobil_barang",
           "mobil_bus",
           "ransus",
-          "sepeda_motor"
+          "sepeda_motor",
         ],
       });
 
       let ranmorPerhariIni = await RanmorDay.findAll({
         where: {
-          date: yesterday,
+          date: thisday,
         },
         attributes: [
           "mobil_penumpang",
@@ -810,7 +783,7 @@ module.exports = class CountHomeMobileController {
       let ranmorPerbulanIni = await RanmorDay.findAll({
         where: {
           date: {
-            [Op.between]:[StartDateThisMonth, EndDateThisMonth]
+            [Op.between]: [StartDateThisMonth, EndDateThisMonth],
           },
         },
         attributes: [
@@ -964,25 +937,10 @@ module.exports = class CountHomeMobileController {
               })
           : 0;
 
-      let ranmor_perhari = Math.round(
-        parseInt(result_ranmorPerhariKemarin + result_ranmorPerhariIni) /
-          2
-      );
-      let ranmor_perminggu = Math.round(
-        parseInt(
-          result_ranmorPemingguKemarin + result_ranmorPermingguIni
-        ) / 2
-      );
-      let ranmor_perbulan = Math.round(
-        parseInt(
-          result_ranmorPerbulanKemarin + result_ranmorPerbulanIni
-        ) / 2
-      );
-      let ranmor_pertahun = Math.round(
-        parseInt(
-          result_ranmorPertahunKemarin + result_ranmorPertahunIni
-        ) / 2
-      );
+      let ranmor_perhari = result_ranmorPerhariIni;
+      let ranmor_perminggu = result_ranmorPermingguIni;
+      let ranmor_perbulan = result_ranmorPerbulanIni;
+      let ranmor_pertahun = result_ranmorPertahunIni;
 
       let finalResponse = {
         ranmor_perhari,

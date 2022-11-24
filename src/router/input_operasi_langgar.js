@@ -30,12 +30,13 @@ router.post("/profesi", InputOperasiProfesi.add);
 router.post("/sim", InputOperasiSim.add);
 router.post("/usia", InputOperasiUsia.add);
 
-
 router.get("/turjagwali-grafik", InputOperasiGiatlantas.mobile_giatlantas);
 router.get(
   "/pelanggaran-grafik",
   InputOperasiLanggarLantas.mobile_langgarlantas
 );
 
-router.get("/bukti", InputOperasiBukti.get);
+router.get("/bukti/daily", InputOperasiBukti.get);
+router.get("/bukti/date", InputOperasiBukti.get_by_date);
+
 module.exports = router;

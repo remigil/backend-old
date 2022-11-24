@@ -121,7 +121,16 @@ module.exports = class OperationProfileController {
       response(res, false, "Failed", e.message);
     }
   };
-
+  static mobile = async (req, res) => {
+    try {
+      const [operation] = db.query(
+        `select * from operation_profile op where op.date_start_operation <= now() and op.date_end_operation >= now()`
+      );
+      response(res, true, "Berhasil", operation, 400);
+    } catch (e) {
+      response(res, false, e.message, e, 400);
+    }
+  };
   static getId = async (req, res) => {
     try {
       const data = await OperationProfile.findOne({

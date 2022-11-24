@@ -23,6 +23,7 @@ const fieldData = {
   fasum_close_time: null,
   fasum_status: 0,
   fasum_radius: 0,
+  polda_id: null,
 };
 module.exports = class FasumController {
   static get = async (req, res) => {
@@ -148,6 +149,11 @@ module.exports = class FasumController {
               }
             );
             fieldValue[val] = fileName;
+          } else if (val == "polda_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
           } else {
             fieldValue[val] = req.body[val];
           }
@@ -240,6 +246,11 @@ module.exports = class FasumController {
               }
             );
             fieldValue[val] = fileName;
+          } else if (val == "polda_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
           } else {
             fieldValue[val] = req.body[val];
           }

@@ -188,7 +188,8 @@ const nearByPlacesGoogle = ({ type, radius, coordinate }) => {
 module.exports = class FilterSearchController {
   static get = async (req, res) => {
     try {
-      const { filter, type, coordinate, radius } = req.query;
+      const { filter, type, coordinate, radius, polda_id } = req.query;
+
       let tampung = {};
       let tampungArr = [];
       Object.keys(fieldData).forEach((value, key) => {
@@ -202,18 +203,92 @@ module.exports = class FilterSearchController {
               });
               tampung[value] = true;
               tampungArr.push(aaa);
+            } else if (value == "polres") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Polres.findAll({
+                  where: {
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "cctv") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Cctv.findAll({
+                  where: {
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "fasum_khusus") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 9,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
             } else if (value == "titik_laporan") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
             } else if (value == "titik_panicButton") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
-            } else if (value == "fasum_khusus") {
-              tampung[value] = true;
-              tampungArr.push(fieldData[value](req));
             } else if (value == "cluster") {
               tampung[value] = true;
-              tampungArr.push(fieldData[value](req));
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 10,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
             } else {
               tampung[value] = true;
               tampungArr.push(fieldData[value]());

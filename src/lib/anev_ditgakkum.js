@@ -1,6 +1,6 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-exports.tempAnevGakkum = (laka, gar) => {
+exports.tempAnevGakkum = (laka, gar, turjagwali) => {
   let htmlString = `<table width="70%" align="center" id="table1">
             <h3 align="center">
                 Selamat Pagi Komandan Melaporkan Anev Harian Laka dan Dakgar Lantas berdasarkan Rekapitulasi 
@@ -145,46 +145,46 @@ exports.tempAnevGakkum = (laka, gar) => {
             <th rowspan="2">Keterangan</th>
         </tr>
         <tr>
-            <th>SABTU, 19-11-22</th>
-            <th>MINGGU, 20-11-22</th>
+            <th>${turjagwali[0].yesterday}</th>
+                <th>${turjagwali[0].today}</th>
             <th>ANGKA</th>
             <th>PERSEN %</th>
         </tr>
         <tr align="center">
             <td>1</td>
             <td>PENGATURAN</td>
-            <td>401</td>
-            <td>22</td>
-            <td>4</td>
-            <td>-5%</td>
-            <td>TURUN</td>
+           <td>${turjagwali[0].pengaturan_yesterday}</td>
+                <td>${turjagwali[0].pengaturan_today}</td>
+                <td>${turjagwali[0].angka_pengaturan}</td>
+                <td>${turjagwali[0].persen_pengaturan}%</td>
+                <td>${turjagwali[0].status_pengaturan}</td>
         </tr>
         <tr align="center">
             <td>2</td>
             <td>PENJAGAAN</td>
-            <td>807</td>
-            <td>108</td>
-            <td>699</td>
-            <td>94%</td>
-            <td>NAIK</td>
+           <td>${turjagwali[0].penjagaan_yesterday}</td>
+                <td>${turjagwali[0].penjagaan_today}</td>
+                <td>${turjagwali[0].angka_penjagaan}</td>
+                <td>${turjagwali[0].persen_penjagaan}%</td>
+                <td>${turjagwali[0].status_penjagaan}</td>
         </tr>
         <tr align="center">
             <td>3</td>
             <td>PENGAWALAN</td>
-            <td>109</td>
-            <td>14</td>
-            <td>-95</td>
-            <td>-87%</td>
-            <td>TURUN</td>
+           <td>${turjagwali[0].pengawalan_yesterday}</td>
+                <td>${turjagwali[0].pengawalan_today}</td>
+                <td>${turjagwali[0].angka_pengawalan}</td>
+                <td>${turjagwali[0].persen_pengawalan}%</td>
+                <td>${turjagwali[0].status_pengawalan}</td>
         </tr>
         <tr align="center">
             <td>4</td>
             <td>PATROLI</td>
-            <td>2,836</td>
-            <td>102</td>
-            <td>-734</td>
-            <td>-6%</td>
-            <td>TURUN</td>
+           <td>${turjagwali[0].patroli_yesterday}</td>
+                <td>${turjagwali[0].patroli_today}</td>
+                <td>${turjagwali[0].angka_patroli}</td>
+                <td>${turjagwali[0].persen_patroli}%</td>
+                <td>${turjagwali[0].status_patroli}</td>
         </tr>
         <tr>
             <td></td>
@@ -196,7 +196,7 @@ exports.tempAnevGakkum = (laka, gar) => {
             <td></td>
         </tr>
         <tr>
-            <td>Jakarta, 21 November 2022</td>
+            <td>Jakarta, ${gar[0].today}</td>
         </tr>
         <tr>
             <td>Penanggung Jawab</td>

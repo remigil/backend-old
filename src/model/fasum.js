@@ -56,6 +56,9 @@ Fasum.init(
     fasum_radius: {
       type: Sequelize.INTEGER,
     },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {

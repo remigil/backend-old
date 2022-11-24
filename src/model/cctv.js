@@ -57,6 +57,9 @@ Cctv.init(
     status_cctv: {
       type: Sequelize.INTEGER,
     },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
@@ -76,8 +79,6 @@ Cctv.init(
   }
 );
 (async () => {
-  Cctv.sync({ alter: true }).catch((err) => {
-    console.log({ err });
-  });
+  Cctv.sync({ alter: true });
 })();
 module.exports = Cctv;
