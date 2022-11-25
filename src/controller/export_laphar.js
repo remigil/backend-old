@@ -1602,7 +1602,7 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/anev_gakkum_${date}.xlsx`
       );
       res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
-      response(res, true, "Succeed", anev_laka);
+      // response(res, true, "Succeed", anev_laka);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

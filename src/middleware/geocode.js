@@ -17,6 +17,7 @@ module.exports = async (params = []) => {
         "administrative_area_level_6",
         "administrative_area_level_7",
       ],
+      language: "id",
     },
   });
   const result = data.data.results;

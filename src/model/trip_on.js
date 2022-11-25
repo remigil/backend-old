@@ -77,6 +77,19 @@ Trip_on.init(
     barcode: {
       type: Sequelize.STRING,
     },
+    kode_prov_start: {
+      type: Sequelize.STRING,
+    },
+    kode_kabkot_start: {
+      type: Sequelize.STRING,
+    },
+    kode_prov_end: {
+      type: Sequelize.STRING,
+    },
+    kode_kabkot_end: {
+      type: Sequelize.STRING,
+    },
+
     ...StructureTimestamp,
   },
   {

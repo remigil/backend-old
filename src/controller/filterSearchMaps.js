@@ -12,9 +12,13 @@ const { Client } = require("@googlemaps/google-maps-services-js");
 const pagination = require("../lib/pagination-parser");
 const moment = require("moment");
 const { TrackG20 } = require("../model/tracking/g20");
-const Cctv = require("../model/cctv");
+const Polda = require("../model/polda");
 const Polres = require("../model/polres");
+const Cctv = require("../model/cctv");
+const Etle = require("../model/etle");
 const Fasum = require("../model/fasum");
+const Sim_keliling = require("../model/sim_keliling");
+const Samsat = require("../model/samsat");
 const CategoryFasum = require("../model/category_fasum");
 const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
@@ -77,11 +81,37 @@ const fieldData = {
 
     return getTrack;
   },
+  polda: async () => {
+    return await Polda.findAll();
+  },
   polres: async () => {
     return await Polres.findAll();
   },
   cctv: async () => {
     return await Cctv.findAll();
+  },
+  etle: async () => {
+    return await Etle.findAll();
+  },
+  fasum_khusus: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 9,
+      },
+    });
+  },
+  sim_keliling: async () => {
+    return await Sim_keliling.findAll();
+  },
+  samsat: async () => {
+    return await Samsat.findAll();
   },
   titik_laporan: async (req) => {
     var starDate = moment().startOf("day").toDate();
@@ -131,26 +161,13 @@ const fieldData = {
     for (const iterator of type.split(",")) {
       let nearby = await nearByPlacesGoogle({
         type: iterator,
+
         radius: radius,
         coordinate: coordinate,
       });
       tampung_nearby.push(...nearby.data.results);
     }
     return tampung_nearby;
-  },
-  fasum_khusus: async (req) => {
-    return await Fasum.findAll({
-      include: [
-        {
-          model: CategoryFasum,
-          foreignKey: "fasum_type",
-          required: false,
-        },
-      ],
-      where: {
-        fasum_type: 9,
-      },
-    });
   },
   cluster: async (req) => {
     return await Fasum.findAll({
@@ -205,7 +222,6 @@ module.exports = class FilterSearchController {
               tampungArr.push(aaa);
             } else if (value == "polres") {
               tampung[value] = true;
-
               if (polda_id) {
                 var dummyData = Polres.findAll({
                   where: {
@@ -262,7 +278,19 @@ module.exports = class FilterSearchController {
             } else if (value == "titik_laporan") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
+            } else if (value == "polda") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
             } else if (value == "titik_panicButton") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "samsat") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "sim_keliling") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
+            } else if (value == "etle") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
             } else if (value == "cluster") {

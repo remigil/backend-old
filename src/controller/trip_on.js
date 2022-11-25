@@ -344,6 +344,31 @@ module.exports = class Trip_onController {
         input["district_start"] = geocodestart.district;
         input["province_end"] = geocodeend.province;
         input["district_end"] = geocodeend.district;
+        const [provinsi_end] = await db.query(
+          `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodeend.province.toLowerCase()}%'`
+        );
+        const [kabupaten_end] = await db.query(
+          `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodeend.district.toLowerCase()}%'`
+        );
+        const [provinsi_start] = await db.query(
+          `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodestart.province.toLowerCase()}%'`
+        );
+        const [kabupaten_start] = await db.query(
+          `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodestart.district.toLowerCase()}%'`
+        );
+        input["kode_prov_start"] = provinsi_end.length
+          ? provinsi_end[0].kode
+          : "";
+        input["kode_kabkot_start"] = kabupaten_end.length
+          ? kabupaten_end[0].kode
+          : "";
+        input["kode_prov_end"] = provinsi_start.length
+          ? provinsi_start[0].kode
+          : "";
+        input["kode_kabkot_end"] = kabupaten_start.length
+          ? kabupaten_start[0].kode
+          : "";
+
         let insertTripOn = await Trip_on.create(input, {
           transaction: transaction,
         });

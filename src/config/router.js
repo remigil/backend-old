@@ -453,4 +453,10 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/link")
 );
+router.use(
+  "/v" + process.env.APP_VERSION + "/wilayah",
+  // authMiddleware.jwtAuth,
+  require("../router/wilayah")
+);
+
 module.exports = router;

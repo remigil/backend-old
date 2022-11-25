@@ -258,6 +258,7 @@ class GoogleAPIs {
             "administrative_area_level_6",
             "administrative_area_level_7",
           ],
+          language: "id",
         },
       })
       .then((resGeocode) => {
