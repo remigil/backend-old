@@ -63,6 +63,38 @@ router.use(
   require("../router/category_schedule")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/trip_on",
+  authMiddleware.jwtAuth,
+  require("../router/trip_on")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/passenger_trip_on",
+  authMiddleware.jwtAuth,
+  require("../router/passenger_trip_on")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/public_vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/public_vehicle")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/auth-society",
+  require("../router/authentication_society")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/forgot-password",
+  require("../router/forgot_password")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/society",
+  authMiddleware.jwtAuth,
+  require("../router/society")
+);
+
 // MASTER DATA
 router.use(
   "/v" + process.env.APP_VERSION + "/position",
