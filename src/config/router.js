@@ -126,6 +126,25 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/fuel_vehicle")
 );
+//  --------------- berita
+router.use(
+  "/v" + process.env.APP_VERSION + "/news",
+  // authMiddleware.jwtAuth,
+  require("../router/news")
+);
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/category_news",
+  authMiddleware.jwtAuth,
+  require("../router/category_news")
+);
+
+// --------------- troublespot
+router.use(
+  "/v" + process.env.APP_VERSION + "/troublespot",
+  authMiddleware.jwtAuth,
+  require("../router/troublespot")
+);
 
 // CCTV
 router.use(
@@ -257,9 +276,32 @@ router.use(
 );
 
 router.use(
+  "/v" + process.env.APP_VERSION + "/faq",
+  authMiddleware.jwtAuth,
+  require("../router/faq")
+);
+router.use(
+  "/v" + process.env.APP_VERSION + "/panduan",
+  authMiddleware.jwtAuth,
+  require("../router/panduan")
+);
+router.use(
   "/v" + process.env.APP_VERSION + "/logout",
   // authMiddleware.jwtAuth,
   require("../router/report_login")
+);
+//  ------- tipe kendaraan
+router.use(
+  "/v" + process.env.APP_VERSION + "/type_vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/type_vehicle")
+);
+
+//  ------- merk kendaraan
+router.use(
+  "/v" + process.env.APP_VERSION + "/brand_vehicle",
+  authMiddleware.jwtAuth,
+  require("../router/brand_vehicle")
 );
 router.use(
   "/v" + process.env.APP_VERSION + "/reportMobile",
@@ -299,6 +341,12 @@ router.use(
 
 ////////////////////////////////////umum
 
+// -------------- sim keliling
+router.use(
+  "/v" + process.env.APP_VERSION + "/sim_keliling",
+  authMiddleware.jwtAuth,
+  require("../router/sim_keliling")
+);
 router.use(
   "/v" + process.env.APP_VERSION + "/sosmed",
   authMiddleware.jwtAuth,
