@@ -113,13 +113,11 @@ const fieldData = {
     return await Samsat.findAll();
   },
   trouble_spot: async () => {
-    var starDate = moment().startOf("day").toDate();
-    var endDate = moment().endOf("day").toDate();
-
+    const today = dateParse(moment());
     return await Troublespot.findAll({
       where: {
         report_date: {
-          [Op.between]: [starDate, endDate],
+          [Op.between]: [today, today],
         },
       },
     });
@@ -289,12 +287,12 @@ module.exports = class FilterSearchController {
               tampung[value] = true;
 
               if (polda_id) {
-                var starDate = moment().startOf("day").toDate();
-                var endDate = moment().endOf("day").toDate();
+                const today = dateParse(moment());
+
                 var dummyData = Troublespot.findAll({
                   where: {
                     report_date: {
-                      [Op.between]: [starDate, endDate],
+                      [Op.between]: [today, today],
                     },
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
