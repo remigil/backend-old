@@ -1,12 +1,16 @@
 const XLSX = require("xlsx");
 const response = require("../lib/response");
 const moment = require("moment");
+const puppeteer = require("puppeteer");
+const ejs = require("ejs");
+const { IDDays } = require("../lib/generalhelper");
 const { tempalteLaphar, templateLapharNew } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
 const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
 const { AESDecrypt } = require("../lib/encryption");
 const { Sequelize, Op } = require("sequelize");
 const { existsSync } = require("fs");
+const path = require("path");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -977,6 +981,9 @@ module.exports = class ExportLapharController {
       let rules_yesterday = "";
       let today = "";
       let yesterday = "";
+      let name_todays = "";
+      let name_yesterdays = "";
+      let full_date = moment().locale("id").format("LL");
       if (type === "day") {
         rules_today = { date: date };
         today = date;
@@ -984,6 +991,12 @@ module.exports = class ExportLapharController {
           date: moment(date, "YYYY-MM-DD").subtract(1, "days"),
         };
         yesterday = moment(date).subtract(1, "days").format("YYYY-MM-DD");
+
+        name_todays = moment(today).locale("id").format("dddd DD-MM-YYYY");
+
+        name_yesterdays = moment(yesterday)
+          .locale("id")
+          .format("dddd DD-MM-YYYY");
       } else if (type === "month") {
         let start_today_date = moment(date, "MM")
           .startOf("month")
@@ -1015,6 +1028,13 @@ module.exports = class ExportLapharController {
 
         today = moment(date).format("MMMM");
         yesterday = moment(date).subtract(1, "month").format("MMMM");
+
+        name_todays = moment(date).locale("id").format("MMMM");
+
+        name_yesterdays = moment(date)
+          .subtract(1, "month")
+          .locale("id")
+          .format("MMMM");
       } else if (type === "years") {
         let start_today_date = moment(date, "YYYY")
           .startOf("years")
@@ -1046,6 +1066,74 @@ module.exports = class ExportLapharController {
 
         today = moment(date).format("YYYY");
         yesterday = moment(date).subtract(1, "years").format("YYYY");
+
+        name_todays = today;
+
+        name_yesterdays = yesterday;
+      } else if (type === "weeks") {
+        let start_today_date = moment(date).format("YYYY-MM-DD");
+        let end_today_date = moment(date)
+          .subtract(6, "days")
+          .format("YYYY-MM-DD");
+
+        let start_yesterday_date = moment(date)
+          .subtract(7, "days")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date)
+          .subtract(13, "days")
+          .format("YYYY-MM-DD");
+
+        rules_today = {
+          date: {
+            [Op.between]: [end_today_date, start_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [end_yesterday_date, start_yesterday_date],
+          },
+        };
+
+        name_todays =
+          moment(end_today_date).locale("id").format("dddd DD-MM-YYYY") +
+          " s.d " +
+          moment(start_today_date).locale("id").format("dddd DD-MM-YYYY");
+
+        name_yesterdays =
+          moment(end_yesterday_date).locale("id").format("dddd DD-MM-YYYY") +
+          " s.d " +
+          moment(start_yesterday_date).locale("id").format("dddd DD-MM-YYYY");
+      } else if (type === "triwulan") {
+        let start_today_date = moment(date).format("MM");
+        let end_today_date = moment(date).subtract(2, "month").format("MM");
+
+        let start_yesterday_date = moment(date)
+          .subtract(3, "month")
+          .format("MM");
+        let end_yesterday_date = moment(date).subtract(5, "month").format("MM");
+
+        rules_today = {
+          date: {
+            [Op.between]: [end_today_date, start_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [end_yesterday_date, start_yesterday_date],
+          },
+        };
+
+        name_todays =
+          moment(end_today_date).locale("id").format("MMMM") +
+          " s.d " +
+          moment(start_today_date).locale("id").format("MMMM");
+
+        name_yesterdays =
+          moment(end_yesterday_date).locale("id").format("MMMM") +
+          " s.d " +
+          moment(start_yesterday_date).locale("id").format("MMMM");
       }
 
       let getLakaToday = await Lakalantas_polda_day.findAll({
@@ -1593,16 +1681,71 @@ module.exports = class ExportLapharController {
         });
       }
 
-      let results = tempAnevGakkum(anev_laka, anev_gar, anev_turjagwali);
-      const workSheet = XLSX.utils.table_to_sheet(results);
-      const workBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
-      XLSX.writeFile(
-        workBook,
-        `./public/export_laphar/anev_gakkum_${date}.xlsx`
-      );
-      res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
+      // let results = tempAnevGakkum(anev_laka, anev_gar, anev_turjagwali);
+      // const workSheet = XLSX.utils.table_to_sheet(results);
+      // const workBook = XLSX.utils.book_new();
+      // XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      // XLSX.writeFile(
+      //   workBook,
+      //   `./public/export_laphar/anev_gakkum_${date}.xlsx`
+      // );
+      // res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
       // response(res, true, "Succeed", anev_laka);
+      let browser = await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+        executablePath: process.env.ANEV_CHROME_PATH,
+      });
+      const [page] = await browser.pages();
+      const html = await ejs.renderFile(
+        path.join("./src/view/template/anev_ditgakkum.ejs"),
+        {
+          anev_laka,
+          anev_gar,
+          anev_turjagwali,
+          name_todays,
+          name_yesterdays,
+          full_date,
+        }
+      );
+      await page.setContent(html);
+      const pdf = await page.pdf({
+        displayHeaderFooter: true,
+        headerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
+          <span class="pageNumber" style="font-size: 10px;"></span>
+      </div>`,
+        footerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
+
+      </div>`,
+        printBackground: true,
+        format: "A4",
+        landscape: false,
+        margin: {
+          top: "80px",
+          right: "0px",
+          bottom: "80px",
+          left: "0px",
+        },
+      });
+
+      res.contentType("application/pdf");
+
+      // optionally:
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=Laporan-Harian-Ditgakkum.pdf"
+      );
+
+      res.send(pdf);
+      await browser.close();
+      // res.render("template/anev_ditgakkum", {
+      //   anev_laka,
+      //   anev_gar,
+      //   anev_turjagwali,
+      //   name_todays,
+      //   name_yesterdays,
+      //   full_date,
+      // });
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
@@ -1626,6 +1769,9 @@ module.exports = class ExportLapharController {
       let rules_yesterday = "";
       let today = "";
       let yesterday = "";
+        let name_todays = "";
+        let name_yesterdays = "";
+      let full_date = moment().locale("id").format("LL");
       if (type === "day") {
         rules_today = { date: date };
         today = date;
@@ -1633,6 +1779,12 @@ module.exports = class ExportLapharController {
           date: moment(date, "YYYY-MM-DD").subtract(1, "days"),
         };
         yesterday = moment(date).subtract(1, "days").format("YYYY-MM-DD");
+
+        name_todays = moment(today).locale("id").format("dddd DD-MM-YYYY");
+
+        name_yesterdays = moment(yesterday)
+          .locale("id")
+          .format("dddd DD-MM-YYYY");
       } else if (type === "month") {
         let start_today_date = moment(date, "MM")
           .startOf("month")
@@ -1664,6 +1816,13 @@ module.exports = class ExportLapharController {
 
         today = moment(date).format("MMMM");
         yesterday = moment(date).subtract(1, "month").format("MMMM");
+
+        name_todays = moment(date).locale("id").format("MMMM");
+
+        name_yesterdays = moment(date)
+          .subtract(1, "month")
+          .locale("id")
+          .format("MMMM");
       } else if (type === "years") {
         let start_today_date = moment(date, "YYYY")
           .startOf("years")
@@ -1695,6 +1854,74 @@ module.exports = class ExportLapharController {
 
         today = moment(date).format("YYYY");
         yesterday = moment(date).subtract(1, "years").format("YYYY");
+
+        name_todays = today;
+
+        name_yesterdays = yesterday;
+      } else if (type === "weeks") {
+        let start_today_date = moment(date).format("YYYY-MM-DD");
+        let end_today_date = moment(date)
+          .subtract(6, "days")
+          .format("YYYY-MM-DD");
+
+        let start_yesterday_date = moment(date)
+          .subtract(7, "days")
+          .format("YYYY-MM-DD");
+        let end_yesterday_date = moment(date)
+          .subtract(13, "days")
+          .format("YYYY-MM-DD");
+
+        rules_today = {
+          date: {
+            [Op.between]: [end_today_date, start_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [end_yesterday_date, start_yesterday_date],
+          },
+        };
+
+        name_todays =
+          moment(end_today_date).locale("id").format("dddd DD-MM-YYYY") +
+          " s.d " +
+          moment(start_today_date).locale("id").format("dddd DD-MM-YYYY");
+
+        name_yesterdays =
+          moment(end_yesterday_date).locale("id").format("dddd DD-MM-YYYY") +
+          " s.d " +
+          moment(start_yesterday_date).locale("id").format("dddd DD-MM-YYYY");
+      } else if (type === "triwulan") {
+        let start_today_date = moment(date).format("MM");
+        let end_today_date = moment(date).subtract(2, "month").format("MM");
+
+        let start_yesterday_date = moment(date)
+          .subtract(3, "month")
+          .format("MM");
+        let end_yesterday_date = moment(date).subtract(5, "month").format("MM");
+
+        rules_today = {
+          date: {
+            [Op.between]: [end_today_date, start_today_date],
+          },
+        };
+
+        rules_yesterday = {
+          date: {
+            [Op.between]: [end_yesterday_date, start_yesterday_date],
+          },
+        };
+
+        name_todays =
+          moment(end_today_date).locale("id").format("MMMM") +
+          " s.d " +
+          moment(start_today_date).locale("id").format("MMMM");
+
+        name_yesterdays =
+          moment(end_yesterday_date).locale("id").format("MMMM") +
+          " s.d " +
+          moment(start_yesterday_date).locale("id").format("MMMM");
       }
 
       let getDikmaslantasToday = await Dikmaslantas_polda_day.findAll({
@@ -2098,15 +2325,67 @@ module.exports = class ExportLapharController {
         });
       }
 
-      let results = tempAnevKamsel(anev_dikmaslantas, anev_penyebaran);
-      const workSheet = XLSX.utils.table_to_sheet(results);
-      const workBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
-      XLSX.writeFile(
-        workBook,
-        `./public/export_laphar/anev_ditkamsel_${date}.xlsx`
+      // let results = tempAnevKamsel(anev_dikmaslantas, anev_penyebaran);
+      // const workSheet = XLSX.utils.table_to_sheet(results);
+      // const workBook = XLSX.utils.book_new();
+      // XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      // XLSX.writeFile(
+      //   workBook,
+      //   `./public/export_laphar/anev_ditkamsel_${date}.xlsx`
+      // );
+      // res.download(`./public/export_laphar/anev_ditkamsel_${date}.xlsx`);
+
+      // res.send({
+      //   anev_dikmaslantas,
+      //   anev_penyebaran
+      // })
+
+      let browser = await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
+        executablePath: process.env.ANEV_CHROME_PATH,
+      });
+      const [page] = await browser.pages();
+      const html = await ejs.renderFile(
+        path.join("./src/view/template/anev_ditkamsel.ejs"),
+        {
+          anev_dikmaslantas,
+          anev_penyebaran,
+          name_todays,
+          name_yesterdays,
+          full_date,
+        }
       );
-      res.download(`./public/export_laphar/anev_ditkamsel_${date}.xlsx`);
+      await page.setContent(html);
+      const pdf = await page.pdf({
+        displayHeaderFooter: true,
+        headerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
+          <span class="pageNumber" style="font-size: 10px;"></span>
+      </div>`,
+        footerTemplate: `<div style="width: 100%; font-size: 10px; margin: 0 1cm; color: #bbb; height: 30px; text-align: center;">
+
+      </div>`,
+        printBackground: true,
+        format: "A4",
+        landscape: false,
+        margin: {
+          top: "80px",
+          right: "0px",
+          bottom: "80px",
+          left: "0px",
+        },
+      });
+
+      res.contentType("application/pdf");
+
+      // optionally:
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=Laporan-Harian-Ditkamsel.pdf"
+      );
+
+      res.send(pdf);
+      await browser.close();
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

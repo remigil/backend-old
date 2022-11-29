@@ -10,6 +10,18 @@ const socketInstace = require("./src/config/socketConnetion");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 
+const cronDikmaslantas = require("./src/controller/cron_dikmaslantas");
+const cronPenyebaran = require("./src/controller/cron_penyebaran");
+const cronLakalantas = require("./src/controller/cron_lakalantas");
+const cronGarlantas = require("./src/controller/cron_garlantas");
+const cronLakalanggar = require("./src/controller/cron_lakalanggar");
+const cronTurjagwali = require("./src/controller/cron_turjagwali");
+const cronSim = require("./src/controller/cron_sim");
+const cronStnk = require("./src/controller/cron_stnk");
+const cronBpkb = require("./src/controller/cron_bpkb");
+const cronRanmor = require("./src/controller/cron_ranmor");
+const cronLapmasyarakat = require("./src/controller/cron_lapMasyarakat");
+
 //console.log(options)
 const server = http.createServer(app);
 //const server = https.createServer(options,app);
@@ -27,6 +39,20 @@ app.use(express.static(path.join(__dirname, "./public")));
 
 socketInstace(server);
 // socketInstace(server);
+
+
+// Cronjob
+// cronDikmaslantas.cronDikmaslantas();
+// cronPenyebaran.cronPenyebaran();
+cronLakalantas.cronLakalantas();
+// cronGarlantas.cronGarlantas();
+// cronLakalanggar.cronLakalanggar();
+// cronTurjagwali.cronTurjagwali();
+// cronSim.cronSim();
+// cronStnk.cronStnk();
+// cronBpkb.cronBpkb();
+// cronRanmor.cronRanmor();
+// cronLapmasyarakat.cronLapmasyarakat();
 
 //ejs
 app.set("view engine", "ejs");

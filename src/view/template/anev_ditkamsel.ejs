@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel Laporan Ditkamsel</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+        }
+        th {
+            background-color: #006faf;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="margin: 30px;">
+        <table width="100%" align="center">
+            <br>
+            <div>
+                <p>A. LAPORAN HARIAN DITKAMSEL (DIKMASLANTAS)</p>
+            </div>
+            <div>
+                <tr>
+                    <th rowspan="2" style="background-color: #006faf; color: white">No</th>
+                    <th rowspan="2">Uraian</th>
+                    <th colspan="2">Waktu</th>
+                    <th colspan="2">Trend</th>
+                    <th rowspan="2">Keterangan</th>
+                </tr>
+                <tr>
+                      <th><%= name_yesterdays %></th>
+                    <th><%= name_todays %></th>
+                    <th>ANGKA</th>
+                    <th>PERSEN %</th>
+                </tr>
+            <tr align="center">
+                <td>1</td>
+                <td>MEDIA CETAK</td>
+                <td><%= anev_dikmaslantas[0].media_cetak_yesterday %></td>
+                <td><%= anev_dikmaslantas[0].media_cetak_today %></td>
+                <td><%= anev_dikmaslantas[0].angka_media_cetak %></td>
+                <td><%= anev_dikmaslantas[0].persen_media_cetak %>%</td>
+                <td><%= anev_dikmaslantas[0].status_media_cetak %></td>
+            </tr>
+            <tr align="center">
+                <td>2</td>
+                <td>MEDIA ELEKTRONIK</td>
+                <td><%= anev_dikmaslantas[0].media_elektronik_yesterday %></td>
+                <td><%= anev_dikmaslantas[0].media_elektronik_today %></td>
+                <td><%= anev_dikmaslantas[0].angka_media_elektronik %></td>
+                <td><%= anev_dikmaslantas[0].persen_media_elektronik %>%</td>
+                <td><%= anev_dikmaslantas[0].status_media_elektronik %></td>
+            </tr>
+            <tr align="center">
+                <td>3</td>
+                <td>MEDIA SOSIAL</td>
+                <td><%= anev_dikmaslantas[0].media_sosial_yesterday %></td>
+                <td><%= anev_dikmaslantas[0].media_sosial_today %></td>
+                <td><%= anev_dikmaslantas[0].angka_media_sosial %></td>
+                <td><%= anev_dikmaslantas[0].persen_media_sosial %>%</td>
+                <td><%= anev_dikmaslantas[0].status_media_sosial %></td>
+            </tr>
+            <tr align="center">
+                <td>4</td>
+                <td>LAKA LANGGAR</td>
+                <td><%= anev_dikmaslantas[0].laka_langgar_yesterday %></td>
+                <td><%= anev_dikmaslantas[0].laka_langgar_today %></td>
+                <td><%= anev_dikmaslantas[0].angka_laka_langgar %></td>
+                <td><%= anev_dikmaslantas[0].persen_laka_langgar %>%</td>
+                <td><%= anev_dikmaslantas[0].status_laka_langgar %></td>
+            </tr>
+             <tr align="center">
+                <td>5</td>
+                <td>TOTAL DIKMASLANTAS</td>
+                 <td><%= anev_dikmaslantas[0].total_dikmaslantas_yesterday %></td>
+                <td><%= anev_dikmaslantas[0].total_dikmaslantas_today %></td>
+                <td><%= anev_dikmaslantas[0].angka_total_dikmaslantas %></td>
+                <td><%= anev_dikmaslantas[0].persen_total_dikmaslantas %>%</td>
+                <td><%= anev_dikmaslantas[0].status_total_dikmaslantas %></td>
+            </tr>
+            </div>
+        </table>
+
+        <table width="100%" align="center" >
+            <div style="margin-top: 30px;">
+                <div>
+                    <p>B. LAPORAN HARIAN DITKAMSEL (PENYEBARAN)</p>
+                </div>
+                <tr>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Uraian</th>
+                    <th colspan="2">Waktu</th>
+                    <th colspan="2">Trend</th>
+                    <th rowspan="2">Keterangan</th>
+                </tr>
+                <tr>
+                     <th><%= name_yesterdays %></th>
+                    <th><%= name_todays %></th>
+                    <th>ANGKA</th>
+                    <th>PERSEN %</th>
+                </tr>
+                <tr align="center">
+                    <td>1</td>
+                    <td>SPANDUK</td>
+                   <td><%= anev_penyebaran[0].spanduk_yesterday %></td>
+                <td><%= anev_penyebaran[0].spanduk_today %></td>
+                <td><%= anev_penyebaran[0].angka_spanduk %></td>
+                <td><%= anev_penyebaran[0].persen_spanduk %>%</td>
+                <td><%= anev_penyebaran[0].status_spanduk %></td>
+                </tr>
+                <tr align="center">
+                    <td>2</td>
+                    <td>LEAFLET</td>
+                   <td><%= anev_penyebaran[0].leaflet_yesterday %></td>
+                <td><%= anev_penyebaran[0].leaflet_today %></td>
+                <td><%= anev_penyebaran[0].angka_leaflet %></td>
+                <td><%= anev_penyebaran[0].persen_leaflet %>%</td>
+                <td><%= anev_penyebaran[0].status_leaflet %></td>
+                </tr>
+                <tr align="center">
+                    <td>3</td>
+                    <td>STIKER</td>
+                    <td><%= anev_penyebaran[0].stiker_yesterday %></td>
+                <td><%= anev_penyebaran[0].stiker_today %></td>
+                <td><%= anev_penyebaran[0].angka_stiker %></td>
+                <td><%= anev_penyebaran[0].persen_stiker %>%</td>
+                <td><%= anev_penyebaran[0].status_stiker %></td>
+                </tr>
+                <tr align="center">
+                    <td>4</td>
+                    <td>BILLBOARD</td>
+                     <td><%= anev_penyebaran[0].billboard_yesterday %></td>
+                <td><%= anev_penyebaran[0].billboard_today %></td>
+                <td><%= anev_penyebaran[0].angka_billboard %></td>
+                <td><%= anev_penyebaran[0].persen_billboard %>%</td>
+                <td><%= anev_penyebaran[0].status_billboard %></td>
+                </tr>
+                <tr align="center">
+                    <td>5</td>
+                    <td>TOTAL PENYEBARAN</td>
+                       <td><%= anev_penyebaran[0].billboard_yesterday %></td>
+                <td><%= anev_penyebaran[0].billboard_today %></td>
+                <td><%= anev_penyebaran[0].angka_billboard %></td>
+                <td><%= anev_penyebaran[0].persen_billboard %>%</td>
+                <td><%= anev_penyebaran[0].status_billboard %></td>
+                </tr>
+            </div>
+        </table>
+   
+
+    <div style=" width: 100%; text-align: right; float: right; margin-top: 50px;">
+        <div>Jakarta, <%= full_date %></div><br>
+        <div>PENANGGUNG JAWAB</div><br>
+        <div>KANIT II NTMC BAG OPS KORLANTAS POLRI</div>
+        <div style="margin-top: 15vh;">NURAYNO</div><br>
+        <div>IPDA / 71090054</div><br><br><br>
+    </div>
+     </div>
+</body>
+</html>

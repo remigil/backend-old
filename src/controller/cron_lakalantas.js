@@ -12,7 +12,7 @@ const Polda = require("../model/polda");
 const { Op, Sequelize } = require("sequelize");
 exports.cronLakalantas = () => {
   const scheduledJobFunction = cron.schedule(
-    "* */1 * * *",
+    "0 0 */1 * * *",
     () => {
       console.log("Cron lakalantas is running");
       // update_polda_month();
