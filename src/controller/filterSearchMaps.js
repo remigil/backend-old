@@ -22,6 +22,7 @@ const Samsat = require("../model/samsat");
 const CategoryFasum = require("../model/category_fasum");
 const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
+const Troublespot = require("../model/troublespot");
 const dateParse = (date) => {
   const aaa = moment.tz(date, "Etc/GMT-5");
   return aaa.format("YYYY-MM-DD");
@@ -30,8 +31,6 @@ const googleMapClient = new Client();
 const fieldData = {
   turjawali: async () => {
     const today = dateParse(moment());
-
-    console.log({ today });
 
     let getTrack = await TrackG20.aggregate(
       [
@@ -113,6 +112,18 @@ const fieldData = {
   samsat: async () => {
     return await Samsat.findAll();
   },
+  trouble_spot: async () => {
+    var starDate = moment().startOf("day").toDate();
+    var endDate = moment().endOf("day").toDate();
+
+    return await Troublespot.findAll({
+      where: {
+        report_date: {
+          [Op.between]: [starDate, endDate],
+        },
+      },
+    });
+  },
   titik_laporan: async (req) => {
     var starDate = moment().startOf("day").toDate();
     var endDate = moment().endOf("day").toDate();
@@ -183,7 +194,6 @@ const fieldData = {
       },
     });
   },
-  troublespot: null,
   jadwal_kegiatan: async () => {
     return await Schedule.findAll();
   },
@@ -265,6 +275,27 @@ module.exports = class FilterSearchController {
                   ],
                   where: {
                     fasum_type: 9,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "trouble_spot") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var starDate = moment().startOf("day").toDate();
+                var endDate = moment().endOf("day").toDate();
+                var dummyData = Troublespot.findAll({
+                  where: {
+                    report_date: {
+                      [Op.between]: [starDate, endDate],
+                    },
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",

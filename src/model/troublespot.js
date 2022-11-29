@@ -64,21 +64,26 @@ Troublespot.init(
     result: {
       type: Sequelize.TEXT,
     },
+    route: {
+      type: Sequelize.JSON,
+    },
 
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: {
-      deleted_at: null
-    } },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
         where: {
-          deleted_at: null
+          deleted_at: null,
         },
       },
     },
-    indexes: [{fields: ["polda_id","polres_id"]}],
+    indexes: [{ fields: ["polda_id", "polres_id"] }],
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
@@ -87,15 +92,15 @@ Troublespot.init(
     sequelize: db,
   }
 );
-  Troublespot.hasOne(Polres, {
-    foreignKey:"id",
-    sourceKey:"polres_id",
-  });
+Troublespot.hasOne(Polres, {
+  foreignKey: "id",
+  sourceKey: "polres_id",
+});
 
-  Troublespot.hasOne(Polda, {
-    foreignKey:"id",
-    sourceKey:"polda_id",
-  });
+Troublespot.hasOne(Polda, {
+  foreignKey: "id",
+  sourceKey: "polda_id",
+});
 
 (async () => {
   Troublespot.sync({ alter: true });

@@ -34,6 +34,7 @@ const fieldData = {
   recommendation: null,
   action: null,
   result: null,
+  route: null,
 };
 module.exports = class TroublespotController {
   static get = async (req, res) => {
@@ -156,7 +157,11 @@ module.exports = class TroublespotController {
       let fieldValueData = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValueData[val] = req.body[val];
+          if (val == "route") {
+            fieldValueData[val] = JSON.parse(req.body[val]);
+          } else {
+            fieldValueData[val] = req.body[val];
+          }
         } else {
           fieldValueData[val] = null;
         }
@@ -233,7 +238,11 @@ module.exports = class TroublespotController {
       let fieldValueData = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          fieldValueData[val] = req.body[val];
+          if (val == "route") {
+            fieldValueData[val] = JSON.parse(req.body[val]);
+          } else {
+            fieldValueData[val] = req.body[val];
+          }
         } else {
           fieldValueData[val] = null;
         }
