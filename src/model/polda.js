@@ -51,6 +51,9 @@ Polda.init(
     zoomview: {
       type: Sequelize.TEXT,
     },
+    file_shp: {
+      type: Sequelize.TEXT,
+    },
     open_time: {
       type: Sequelize.TIME,
     },
