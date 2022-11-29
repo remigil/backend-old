@@ -7,6 +7,20 @@ const { AESDecrypt } = require("../lib/encryption");
 const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 const pagination = require("../lib/pagination-parser");
+
+const field_polda = {
+  code_satpas: null,
+  name_polda: null,
+  address: null,
+  logo_polda: null,
+  phone_polda: null,
+  image: null,
+  hotline: null,
+  latitude: null,
+  longitude: null,
+  open_time: null,
+  close_time: null,
+};
 module.exports = class PoldaController {
   static get = async (req, res) => {
     try {
@@ -17,23 +31,18 @@ module.exports = class PoldaController {
         search = null,
         filter = [],
         filterSearch = [],
-        order = null,
+        order = 0,
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Polda.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        const resPage = pagination.getPagination(length, start);
-        getDataRules.limit = resPage.limit;
-        getDataRules.offset = resPage.offset;
+        getDataRules.limit = length;
+        getDataRules.offset = start;
       }
-      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      getDataRules.order = [
-        [
-          order != null ? order : "id",
-          orderDirection != null ? orderDirection : "asc",
-        ],
-      ];
+      if (order <= modelAttr.length) {
+        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      }
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
@@ -83,22 +92,65 @@ module.exports = class PoldaController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getId = async (req, res) => {
+    try {
+      const data = await Polda.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Polda.create(
-        {
-          polda_id: req.body.polda_id,
-          name_polres: req.body.name_polres,
-          code_satpas: req.body.code_satpas,
-          address: req.body.address,
-          latitude: req.body.latitude || null,
-          longitude: req.body.longitude || null,
-        },
-        { transaction: transaction }
-      );
+      let input = {};
+      Object.keys(field_polda).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "logo_polda") {
+            let path = req.body.logo_polda.filepath;
+            let file = req.body.logo_polda;
+            let fileNameLogo = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/polda/logo/" + fileNameLogo,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            input[val] = fileNameLogo;
+          } else if (val == "image") {
+            let path = req.body.image.filepath;
+            let file = req.body.image;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/polda/image/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            input[val] = fileName;
+          } else {
+            input[val] = req.body[val];
+          }
+        } else {
+          input[val] = null;
+        }
+      });
+      let op = await Polda.create(input, {
+        transaction: transaction,
+      });
       await transaction.commit();
-      response(res, true, "Succeed", null);
+      response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -110,10 +162,10 @@ module.exports = class PoldaController {
       let path = req.body.file.filepath;
       let file = req.body.file;
       let fileName = file.originalFilename;
-      fs.renameSync(path, "./public/upload/" + fileName, function (err) {
+      fs.renameSync(path, "./public/uploads/" + fileName, function (err) {
         if (err) response(res, false, "Error", err.message);
       });
-      let readExcell = await readXlsxFile("./public/upload/" + fileName);
+      let readExcell = await readXlsxFile("./public/uploads/" + fileName);
       let index = 0;
       let listPolda = [];
       for (const iterator of readExcell) {
@@ -123,7 +175,17 @@ module.exports = class PoldaController {
           }
         } else {
           listPolda.push({
-            name_polda: iterator[1],
+            code_satpas: iterator[1],
+            name_polda: iterator[2],
+            address: iterator[3],
+            logo_polda: iterator[4] | null,
+            phone_polda: iterator[5] | null,
+            image: iterator[6] | null,
+            hotline: iterator[7] | null,
+            latitude: iterator[8] | null,
+            longitude: iterator[9] | null,
+            open_time: iterator[10] || null,
+            close_time: iterator[11] || null,
           });
         }
         index++;
@@ -142,20 +204,68 @@ module.exports = class PoldaController {
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Polda.update(
-        {
-          name_polda: req.body?.name_polda,
-        },
-        {
-          where: {
-            id: AESDecrypt(req.params.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          transaction: transaction,
+      let input = {};
+      Object.keys(field_polda).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "logo_polda") {
+            let path = req.body.logo_polda.filepath;
+            let file = req.body.logo_polda;
+            let fileNameLogo = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/polda/logo/" + fileNameLogo,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            input[val] = fileNameLogo;
+          } else if (val == "image") {
+            let path = req.body.image.filepath;
+            let file = req.body.image;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/polda/image/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            input[val] = fileName;
+          } else {
+            input[val] = req.body[val];
+          }
         }
-      );
+      });
+      let op = await Polda.update(input, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", input);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static delete = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let fieldValue = {};
+      fieldValue["deleted_at"] = new Date();
+      await Polda.update(fieldValue, {
+        where: {
+          id: AESDecrypt(req.body.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -163,7 +273,7 @@ module.exports = class PoldaController {
       response(res, false, "Failed", e.message);
     }
   };
-  static delete = async (req, res) => {
+  static hardDelete = async (req, res) => {
     const transaction = await db.transaction();
     try {
       await Polda.destroy({

@@ -3,9 +3,10 @@ const { body } = require("express-validator");
 const PoldaController = require("../controller/polda");
 const formValidation = require("../middleware/form_validation");
 router.get("/", PoldaController.get);
+router.get("/getId/:id", PoldaController.getId);
 router.post(
   "/add",
-  body("name_officer").notEmpty().isLength({ min: 3 }),
+  body("name_polda").notEmpty().isLength({ min: 3 }),
   formValidation,
   PoldaController.add
 );
