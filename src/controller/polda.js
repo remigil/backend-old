@@ -182,4 +182,21 @@ module.exports = class PoldaController {
       response(res, false, "Failed", e.message);
     }
   };
+  static getId = async (req, res) => {
+    try {
+      const data = await Polda.findOne({
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 };

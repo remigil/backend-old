@@ -616,7 +616,7 @@ module.exports = class ExportLapharController {
         const workSheet = XLSX.utils.table_to_sheet(results);
         const workBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
-        XLSX.writeFile(workBook, `./public/export_laphar/${path}`);
+        XLSX.writeFile(workBook, `./public/export_laphar/laporan_harian.xlsx`);
       }
       console.log("file ada");
       res.download(file);
@@ -2340,11 +2340,7 @@ module.exports = class ExportLapharController {
       //   anev_penyebaran
       // })
 
-      let browser = await puppeteer.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-        executablePath: process.env.ANEV_CHROME_PATH,
-      });
+      let browser = await puppeteer.launch();
       const [page] = await browser.pages();
       const html = await ejs.renderFile(
         path.join("./src/view/template/anev_ditkamsel.ejs"),

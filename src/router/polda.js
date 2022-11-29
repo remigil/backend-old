@@ -17,5 +17,5 @@ router.delete(
   formValidation,
   PoldaController.delete
 );
-
+router.get("/getId/:id", PoldaController.getId);
 module.exports = router;
