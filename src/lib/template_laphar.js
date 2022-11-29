@@ -190,10 +190,6 @@ exports.tempalteLaphar = (data, tgl) => {
 };
 
 exports.templateLapharNew = (data) => {
-  let polda_name = ``;
-  data.map((element, index) => {
-    polda_name += `<td>${element}</td>`;
-  });
   const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
         class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">
         
@@ -201,7 +197,9 @@ exports.templateLapharNew = (data) => {
             <tr class="tableizer-firstrow">
                 <td>NO</td>
                 <td>URAIAN</td>
-                ${polda_name}
+                ${data.rows_name_polda.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td style="font-weight: bold;">I</td>
@@ -213,109 +211,33 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Pelanggaran Berat</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_pelanggaran_berat.map((element) => {
+                  return `<td>${element}</td>`;
+                })}}
             </tr>
             <tr>
                 <td>2. Pelanggaran Sedang</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_pelanggaran_sedang.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}}
             </tr>
             <tr>
                 <td>3. Pelanggaran Ringan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_pelanggaran_ringan.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}}
             </tr>
             <tr>
                 <td>4. Teguran</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_teguran.map((element) => {
+                  return `<td>${element}</td>`;
+                })}}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3+4)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td rowspan="13"></td>
-                <td colspan="4" style="font-weight: bold;">B. Laka Langgar</td>
-            </tr>
-            <tr>
-                <td>1. Capture Camera</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>2. Statis</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>3. Mobile</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td style="font-weight:bold;">Total Validasi Petugas (1+2)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>4. Online</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>5. Posko</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td style="font-weight:bold;">Total Konfirmasi Masyarakat (4+5)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>6. Preventif</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>7. Preemtif</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>8. Odol 227</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td>9. Odol 307</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
-            </tr>
-            <tr>
-                <td style="font-weight:bold;">Total Odol (6+7+8+9)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_jumlah_garlantas.map((element) => {
+                  return `<td>${element}</td>`;
+                })}}
             </tr>
             <tr>
                 <td rowspan="6"></td>
@@ -323,33 +245,33 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Meninggal Dunia</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_meninggal_dunia.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>2. Luka Berat</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_luka_berat.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>3. Luka Ringan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_luka_ringan.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>4. Kerugian Material</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_kerugian_material.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
-                <td style="font-weight:bold;">Total (1+2+3)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                <td style="font-weight:bold;">Total Insinden</td>
+                ${data.rows_jumlah_lakalantas.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td rowspan="6"></td>
@@ -357,33 +279,33 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Pengaturan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_pengaturan.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>2. Penjagaan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_penjagaan.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td>3. Pengawalan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_pengawalan.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td>4. Patroli</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_patroli.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3+4)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_jumlah_turjagwali.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td style="font-weight:bold">II</td>
@@ -395,33 +317,33 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Media Cetak</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_media_cetak.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td>2. Media Elektronik</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_media_elektronik.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>3. Media Sosial</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_media_sosial.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td>4. Laka langgar</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_laka_langgar.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3+4)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_jumlah_dikmaslantas.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td rowspan="7"></td>
@@ -429,39 +351,39 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Stiker</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_stiker.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>2. Spanduk</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_spanduk.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>3. Leaflet</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_leaflet.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>4. Billboard</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_billboard.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>5. Jemensosprek</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_jemensosprek.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3+4+5)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_jumlah_penyebaran.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td style="font-weight: bold;">III</td>
@@ -473,21 +395,21 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Baru</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_sim_baru.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>2. Perpanjangan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_sim_perpanjangan.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_jumlah_sim.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td rowspan="5"></td>
@@ -495,27 +417,27 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Baru</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_stnk_baru.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td>2. Perpanjangan</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_stnk_perpanjangan.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td>3. Rubentina</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_stnk_rubentina.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_jumlah_stnk.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td rowspan="5"></td>
@@ -523,27 +445,27 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Baru</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_bpkb_baru.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>2. Ganti Nama</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_bpkb_gantinama.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>3. Rubentina</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_bpkb_rubentina.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_jumlah_bpkb.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td rowspan="7"></td>
@@ -551,39 +473,39 @@ exports.templateLapharNew = (data) => {
             </tr>
             <tr>
                 <td>1. Mobil Barang</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_mobil_barang.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td>2. Mobil Penumpang</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_mobil_penumpang.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>3. Mobil Bus</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                ${data.rows_mobil_bus.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
             </tr>
             <tr>
                 <td>4. Sepeda Motor</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+                 ${data.rows_sepeda_motor.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
             </tr>
             <tr>
                 <td>5. Ransus</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_ransus.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
             <tr>
                 <td style="font-weight:bold;">Total (1+2+3+4+5)</td>
-                <td>10</td>
-                <td>32</td>
-                <td>22</td>
+               ${data.rows_jumlah_ranmor.map((element) => {
+                 return `<td>${element}</td>`;
+               })}
             </tr>
         </tbody>
     </table>`;
