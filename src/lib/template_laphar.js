@@ -189,11 +189,29 @@ exports.tempalteLaphar = (data, tgl) => {
   return table;
 };
 
-exports.templateLapharNew = (data) => {
+exports.templateLapharNew = (data, tgl) => {
   const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
         class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">
         
         <tbody>
+        <tr>
+                                <th colspan="7">Markas Besar</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Kepolisian Negara Republik Indonesia</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Corps Lalulintas</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Tanggal : ${tgl}</th>
+                            </tr>
+                                  <tr>
+                                <th colspan="7"></th>
+                            </tr>
+                                <tr>
+                                <th colspan="7"></th>
+                            </tr>
             <tr class="tableizer-firstrow">
                 <td>NO</td>
                 <td>URAIAN</td>
