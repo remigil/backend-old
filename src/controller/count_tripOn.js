@@ -11,16 +11,16 @@ const Trip_on = require("../model/trip_on");
 const Prov = require("../model/provinsi");
 const KabKot = require("../model/kabkot");
 
-Prov.hasMany(Trip_on, {
-  foreignKey: "kode_prov_start",
-  sourceKey: "kode",
-  as: "start_prov",
-});
-Prov.hasMany(Trip_on, {
-  foreignKey: "kode_prov_end",
-  sourceKey: "kode",
-  as: "end_prov",
-});
+// Prov.hasMany(Trip_on, {
+//   foreignKey: "kode_prov_start",
+//   sourceKey: "kode",
+//   as: "start_prov",
+// });
+// Prov.hasMany(Trip_on, {
+//   foreignKey: "kode_prov_end",
+//   sourceKey: "kode",
+//   as: "end_prov",
+// });
 
 module.exports = class CountTripOnController {
   static get_type = async (req, res) => {
@@ -117,7 +117,7 @@ module.exports = class CountTripOnController {
             model: Trip_on,
             required: false,
             attributes: [],
-            as: "start_prov",
+            // as: "start_prov",
           },
         ],
         nest: true,
@@ -136,7 +136,7 @@ module.exports = class CountTripOnController {
             model: Trip_on,
             required: false,
             attributes: [],
-            as: "end_prov",
+            // as: "end_prov",
           },
         ],
         nest: true,
