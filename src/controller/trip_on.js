@@ -510,4 +510,100 @@ module.exports = class Trip_onController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getWeb = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = 0,
+        orderDirection = "asc",
+      } = req.query;
+      const modelAttr = Object.keys(Trip_on.getAttributes());
+      let getDataRules = {
+        where: null,
+        include: [
+          {
+            model: Society,
+            attributes: ["person_name", "foto", "nik", "nationality"],
+          },
+          {
+            model: Public_vehicle,
+            attributes: ["no_vehicle"],
+          },
+          {
+            model: Type_vehicle,
+            attributes: ["type_name"],
+          },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
+          {
+            model: Passenger_trip_on,
+            // required: true,
+            attributes: ["name", "nationality", "nik"],
+          },
+        ],
+      };
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+      if (order <= modelAttr.length) {
+        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      }
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getDataRules.where = {
+          ...getDataRules.where,
+          ...filters,
+        };
+      }
+      const data = await Trip_on.findAll(getDataRules);
+      const count = await Trip_on.count({
+        where: getDataRules?.where,
+      });
+      response(res, true, "Succeed", {
+        data,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 };

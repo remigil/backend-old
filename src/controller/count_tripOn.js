@@ -102,48 +102,40 @@ module.exports = class CountTripOnController {
 
   static prov_tripon = async (req, res) => {
     try {
-      let Depature_prov = await Prov.findAll({
-        group: ["provinsi.id"],
-        attributes: [
-          "kode",
-          "nama",
-          [
-            Sequelize.fn("count", Sequelize.col("kode_prov_start")),
-            "keberangkatan",
-          ],
-        ],
-        include: [
-          {
-            model: Trip_on,
-            required: false,
-            attributes: [],
-            // as: "start_prov",
-          },
-        ],
-        nest: true,
-        subQuery: false,
-      });
+      const {
+        filter,
+        start_prov,
+        end_prov,
+        limit = 34,
+        topTripon = false,
+      } = req.query;
 
-      let Arrival_prov = await Prov.findAll({
-        group: ["provinsi.id"],
-        attributes: [
-          "kode",
-          "nama",
-          [Sequelize.fn("count", Sequelize.col("kode_prov_end")), "kedatangan"],
-        ],
-        include: [
-          {
-            model: Trip_on,
-            required: false,
-            attributes: [],
-            // as: "end_prov",
-          },
-        ],
-        nest: true,
-        subQuery: false,
-      });
+      const [depature, depature_metadata] = await db.query(
+        `SELECT "provinsi"."id", "provinsi"."kode", "provinsi"."nama", count("kode_prov_start") AS "keberangkatan" FROM "provinsi" AS "provinsi" LEFT OUTER JOIN "trip_on" AS "start_prov" ON "provinsi"."kode" = "start_prov"."kode_prov_start" AND "start_prov"."deleted_at" IS NULL WHERE "provinsi"."deleted_at" IS NULL GROUP BY "provinsi"."id"`
+      );
 
-      response(res, true, "Succeed", { Depature_prov, Arrival_prov });
+      const [arrival, arrival_metadata] = await db.query(
+        `SELECT "provinsi"."id", "provinsi"."kode", "provinsi"."nama", count("kode_prov_end") AS "kedatangan" FROM "provinsi" AS "provinsi" LEFT OUTER JOIN "trip_on" AS "end_prov" ON "provinsi"."kode" = "end_prov"."kode_prov_end" AND "end_prov"."deleted_at" IS NULL WHERE "provinsi"."deleted_at" IS NULL GROUP BY "provinsi"."id"`
+      );
+
+      let rows = [];
+      for (let i = 0; i < arrival.length; i++) {
+        rows.push({
+          kode: arrival[i].kode,
+          nama: arrival[i].nama,
+          kedatangan: parseInt(arrival[i].kedatangan),
+          keberangkatan: parseInt(depature[i].keberangkatan),
+          total:
+            parseInt(arrival[i].kedatangan) +
+            parseInt(depature[i].keberangkatan),
+        });
+      }
+
+      if (topTripon) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, limit);
+      }
+      response(res, true, "Succeed", rows);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

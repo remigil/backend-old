@@ -26,4 +26,7 @@ router.delete(
   Trip_onController.hardDelete
 );
 
+router.get("/list_tripon", Trip_onController.getWeb);
+
+
 module.exports = router;
