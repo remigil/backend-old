@@ -8,6 +8,19 @@ const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 
 const Trip_on = require("../model/trip_on");
+const Prov = require("../model/provinsi");
+const KabKot = require("../model/kabkot");
+
+Prov.hasMany(Trip_on, {
+  foreignKey: "kode_prov_start",
+  sourceKey: "kode",
+  as: "start_prov",
+});
+Prov.hasMany(Trip_on, {
+  foreignKey: "kode_prov_end",
+  sourceKey: "kode",
+  as: "end_prov",
+});
 
 module.exports = class CountTripOnController {
   static get_type = async (req, res) => {
@@ -82,6 +95,55 @@ module.exports = class CountTripOnController {
         });
       }
       response(res, true, "Succeed", finals);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static prov_tripon = async (req, res) => {
+    try {
+      let Depature_prov = await Prov.findAll({
+        group: ["provinsi.id"],
+        attributes: [
+          "kode",
+          "nama",
+          [
+            Sequelize.fn("count", Sequelize.col("kode_prov_start")),
+            "keberangkatan",
+          ],
+        ],
+        include: [
+          {
+            model: Trip_on,
+            required: false,
+            attributes: [],
+            as: "start_prov",
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      });
+
+      let Arrival_prov = await Prov.findAll({
+        group: ["provinsi.id"],
+        attributes: [
+          "kode",
+          "nama",
+          [Sequelize.fn("count", Sequelize.col("kode_prov_end")), "kedatangan"],
+        ],
+        include: [
+          {
+            model: Trip_on,
+            required: false,
+            attributes: [],
+            as: "end_prov",
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      });
+
+      response(res, true, "Succeed", { Depature_prov, Arrival_prov });
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
