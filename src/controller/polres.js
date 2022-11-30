@@ -215,4 +215,21 @@ module.exports = class PolresController {
       response(res, false, "Failed", e.message);
     }
   };
+  static get_by_polda = async (req, res) => {
+    try {
+      const data = await Polres.findAll({
+        where: {
+          polda_id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
 };
