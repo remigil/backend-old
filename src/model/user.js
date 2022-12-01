@@ -67,7 +67,6 @@ User.init(
 );
 User.hasOne(UserRole, {
   foreignKey: "id",
-  as: "user_role",
   sourceKey: "role_id",
 });
 (async () => {

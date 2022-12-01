@@ -5,6 +5,14 @@ const UserRole = require("../model/user_role");
 const db = require("../config/database");
 const Account = require("../model/account");
 
+const Polda = require("../model/polda");
+const Polres = require("../model/polres");
+
+const Account_Profile_Polda = require("../model/test_account_profile_polda");
+const Account_Profile_Polres = require("../model/test_account_profile_polres");
+
+Polres.belongsTo(Polda, { foreignKey: "polda_id" });
+
 const fieldData = {
   operation_id: null,
   username: null,
@@ -14,6 +22,26 @@ const fieldData = {
   password: null,
   // token_notif: null,
 };
+
+User.hasOne(Account_Profile_Polda, {
+  foreignKey: "user_id",
+  as: "polda_profile",
+});
+
+User.hasOne(Account_Profile_Polres, {
+  foreignKey: "user_id",
+  as: "polres_profile",
+});
+
+Account_Profile_Polda.belongsTo(Polda, {
+  foreignKey: "polda_id",
+  as: "polda",
+});
+
+Account_Profile_Polres.belongsTo(Polres, {
+  foreignKey: "polres_id",
+  as: "polres",
+});
 module.exports = class UserController {
   static get = async (req, res) => {
     response(
@@ -36,30 +64,66 @@ module.exports = class UserController {
     );
   };
   static getLoggedUser = async (req, res) => {
-    response(
-      res,
-      true,
-      "Succeed",
-      await User.findOne({
-        attributes: {
-          exclude: ["role_id"],
-        },
-        // include: {
-        //   model: UserRole,
-        //   // attributes: ["id"],
-        // },
-        include: {
+    let GetData = await User.findOne({
+      where: {
+        id: AESDecrypt(req.auth.uid, {
+          isSafeUrl: true,
+          parseMode: "string",
+        }),
+      },
+      attributes: {
+        exclude: ["role_id"],
+      },
+      include: [
+        {
           model: UserRole,
-          as: "user_role",
+          attributes: ["id", "name"],
+          // required: false,
         },
-        where: {
-          id: AESDecrypt(req.auth.uid, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
+        {
+          model: Account_Profile_Polda,
+          attributes: ["polda_id", "user_id"],
+          as: "polda_profile",
+          required: false,
+          include: [
+            {
+              model: Polda,
+              attributes: ["id", "name_polda", "logo_polda"],
+              as: "polda",
+
+              include: [
+                {
+                  model: Polres,
+                  as: "polres",
+                },
+              ],
+            },
+          ],
         },
-      })
-    );
+        {
+          model: Account_Profile_Polres,
+          as: "polres_profile",
+          required: false,
+          attributes: ["polres_id", "user_id"],
+          include: [
+            {
+              model: Polres,
+              as: "polres",
+              include: [
+                {
+                  model: Polda,
+                  required: false,
+                  attributes: ["id", "name_polda"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    // console.log(GetData);
+    response(res, true, "Succeed", GetData);
   };
   static getLoggedUserMobile = async (req, res) => {
     try {
