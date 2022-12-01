@@ -2,7 +2,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-const dbCon = `mongodb://k3iadminmongo:k3imongodb@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/?retryWrites=true&w=majority`;
+const dbCon = `mongodb://k3iadminmongo:K3iMoNg0!!!@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/?retryWrites=true&w=majority`;
 
 const mongo = mongoose
   .connect(dbCon, { useNewUrlParser: true, useUnifiedTopology: true })
