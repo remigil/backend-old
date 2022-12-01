@@ -80,7 +80,7 @@ ImportFile.init(
   }
 );
 (async () => {
-  ImportFile.sync({ alter: true });
+  ImportFile.sync({ alter: false });
 })();
 
 /**
@@ -168,7 +168,7 @@ Dakgarlantas.init(
   }
 );
 (async () => {
-  Dakgarlantas.sync({ alter: true });
+  Dakgarlantas.sync({ alter: false });
 })();
 
 /**
@@ -256,80 +256,80 @@ Polres.hasOne(Polda, {
   sourceKey: "polda_id",
 });
 (async () => {
-  Polres.sync({ alter: true });
+  Polres.sync({ alter: false });
 })();
 
 /**
  * Class Konvensional
  */
- class Konvensional extends Model {}
- Konvensional.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     polda_id: {
-       type: Sequelize.INTEGER,
-     },
+class Konvensional extends Model {}
+Konvensional.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     //  polres_id: {
     //    type: Sequelize.INTEGER,
     //  },
-     date: {
-       type: Sequelize.DATEONLY,
-     },
-     pelanggaran_berat: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     pelanggaran_sedang: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     pelanggaran_ringan: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     teguran: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "count_garlantas_polda_day",
-     modelName: "count_garlantas_polda_day",
-     sequelize: db,
-   }
- );
- (async () => {
-  Konvensional.sync({ alter: true });
- })();
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+    pelanggaran_berat: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    pelanggaran_sedang: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    pelanggaran_ringan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    teguran: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "count_garlantas_polda_day",
+    modelName: "count_garlantas_polda_day",
+    sequelize: db,
+  }
+);
+(async () => {
+  Konvensional.sync({ alter: false });
+})();
 
- /**
-  * Class Lalu Lintas
-  */
+/**
+ * Class Lalu Lintas
+ */
 class Lalulintas extends Model {}
 Lalulintas.init(
   {
@@ -400,7 +400,7 @@ Lalulintas.init(
   }
 );
 (async () => {
-  Lalulintas.sync({ alter: true });
+  Lalulintas.sync({ alter: false });
 })();
 
 /**
@@ -469,80 +469,80 @@ Turjagwali.init(
 );
 
 (async () => {
-  Turjagwali.sync({ alter: true });
+  Turjagwali.sync({ alter: false });
 })();
 
 /**
  * Dikmaslantas
  */
- class Dikmaslantas extends Model {}
- Dikmaslantas.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     polda_id: {
-       type: Sequelize.INTEGER,
-     },
+class Dikmaslantas extends Model {}
+Dikmaslantas.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     //  polres_id: {
     //    type: Sequelize.INTEGER,
     //  },
-     date: {
-       type: Sequelize.DATEONLY,
-     },
-     media_cetak: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     media_elektronik: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     media_sosial: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     laka_langgar: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "count_dikmaslantas_polda_day",
-     modelName: "count_dikmaslantas_polda_day",
-     sequelize: db,
-   }
- );
- (async () => {
-    Dikmaslantas.sync({ alter: true });
- })();
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+    media_cetak: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    media_elektronik: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    media_sosial: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    laka_langgar: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "count_dikmaslantas_polda_day",
+    modelName: "count_dikmaslantas_polda_day",
+    sequelize: db,
+  }
+);
+(async () => {
+  Dikmaslantas.sync({ alter: false });
+})();
 
- /**
-  * Class Penyebaran
-  */
+/**
+ * Class Penyebaran
+ */
 class Penyebaran extends Model {}
 Penyebaran.init(
   {
@@ -610,7 +610,7 @@ Penyebaran.init(
 );
 
 (async () => {
-  Penyebaran.sync({ alter: true });
+  Penyebaran.sync({ alter: false });
 })();
 
 /**
@@ -671,77 +671,77 @@ Sim.init(
 );
 
 (async () => {
-  Sim.sync({ alter: true });
+  Sim.sync({ alter: false });
 })();
 
 /**
  * Class BPKB
  */
- class Bpkb extends Model {}
- Bpkb.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     polda_id: {
-       type: Sequelize.INTEGER,
-     },
+class Bpkb extends Model {}
+Bpkb.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     //  polres_id: {
     //    type: Sequelize.INTEGER,
     //  },
-     date: {
-       type: Sequelize.DATEONLY,
-     },
-     baru: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     perpanjangan: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     rubentina: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "count_bpkb_polda_day",
-     modelName: "count_bpkb_polda_day",
-     sequelize: db,
-   }
- );
- 
- (async () => {
-   Bpkb.sync({ alter: true });
- })();
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+    baru: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    rubentina: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "count_bpkb_polda_day",
+    modelName: "count_bpkb_polda_day",
+    sequelize: db,
+  }
+);
 
- /**
-  * Class Ranmor
-  */
+(async () => {
+  Bpkb.sync({ alter: false });
+})();
+
+/**
+ * Class Ranmor
+ */
 class Ranmor extends Model {}
 Ranmor.init(
   {
@@ -809,7 +809,7 @@ Ranmor.init(
 );
 
 (async () => {
-  Ranmor.sync({ alter: true });
+  Ranmor.sync({ alter: false });
 })();
 
 /**
@@ -874,7 +874,7 @@ Stnk.init(
 );
 
 (async () => {
-  Stnk.sync({ alter: true });
+  Stnk.sync({ alter: false });
 })();
 
 /**
@@ -960,7 +960,7 @@ Poldaa.init(
   }
 );
 (async () => {
-  Poldaa.sync({ alter: true });
+  Poldaa.sync({ alter: false });
 })();
 
 /**
@@ -980,75 +980,75 @@ Poldaa.init(
 /**
  * Class ImportFileOps
  */
- class ImportFileOps extends Model {}
- ImportFileOps.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     operasi_id: {
-       type: Sequelize.INTEGER,
-     },
-     jenis_satker: {
-       type: Sequelize.INTEGER,
-     },
-     jenis_laporan: {
-       type: Sequelize.INTEGER,
-     },
-     tanggal: {
-       type: Sequelize.DATEONLY,
-     },
-     file_name: {
-       type: Sequelize.STRING,
-     },
-     file_client_name: {
-       type: Sequelize.STRING,
-     },
-     file_ext: {
-       type: Sequelize.STRING,
-     },
-     file_type: {
-       type: Sequelize.STRING,
-     },
-     status: {
-       type: Sequelize.INTEGER,
-     },
-     imported_by: {
-       type: Sequelize.STRING,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "import_laporan_operasi",
-     modelName: "import_file",
-     sequelize: db,
-   }
- );
- (async () => {
-   ImportFileOps.sync({ alter: true });
- })();
+class ImportFileOps extends Model {}
+ImportFileOps.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    operasi_id: {
+      type: Sequelize.INTEGER,
+    },
+    jenis_satker: {
+      type: Sequelize.INTEGER,
+    },
+    jenis_laporan: {
+      type: Sequelize.INTEGER,
+    },
+    tanggal: {
+      type: Sequelize.DATEONLY,
+    },
+    file_name: {
+      type: Sequelize.STRING,
+    },
+    file_client_name: {
+      type: Sequelize.STRING,
+    },
+    file_ext: {
+      type: Sequelize.STRING,
+    },
+    file_type: {
+      type: Sequelize.STRING,
+    },
+    status: {
+      type: Sequelize.INTEGER,
+    },
+    imported_by: {
+      type: Sequelize.STRING,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "import_laporan_operasi",
+    modelName: "import_file",
+    sequelize: db,
+  }
+);
+(async () => {
+  ImportFileOps.sync({ alter: false });
+})();
 
 /**
  * Class Langgarlantas
@@ -1121,7 +1121,7 @@ Langgarlantas.init(
 );
 
 (async () => {
-  Langgarlantas.sync({ alter: true });
+  Langgarlantas.sync({ alter: false });
 })();
 
 /**
@@ -1198,7 +1198,7 @@ Langgarmotor.init(
 );
 
 (async () => {
-  Langgarmotor.sync({ alter: true });
+  Langgarmotor.sync({ alter: false });
 })();
 
 /**
@@ -1275,7 +1275,7 @@ Langgarmobil.init(
 );
 
 (async () => {
-  Langgarmobil.sync({ alter: true });
+  Langgarmobil.sync({ alter: false });
 })();
 
 /**
@@ -1340,7 +1340,7 @@ Barangbukti.init(
 );
 
 (async () => {
-  Barangbukti.sync({ alter: true });
+  Barangbukti.sync({ alter: false });
 })();
 
 /**
@@ -1411,7 +1411,7 @@ Kendaraanterlibat.init(
 );
 
 (async () => {
-  Kendaraanterlibat.sync({ alter: true });
+  Kendaraanterlibat.sync({ alter: false });
 })();
 
 /**
@@ -1488,7 +1488,7 @@ Profesipelaku.init(
 );
 
 (async () => {
-  Profesipelaku.sync({ alter: true });
+  Profesipelaku.sync({ alter: false });
 })();
 
 /**
@@ -1580,7 +1580,7 @@ Usia.init(
 );
 
 (async () => {
-  Usia.sync({ alter: true });
+  Usia.sync({ alter: false });
 })();
 
 /**
@@ -1663,7 +1663,7 @@ Simpelaku.init(
 );
 
 (async () => {
-  Simpelaku.sync({ alter: true });
+  Simpelaku.sync({ alter: false });
 })();
 
 /**
@@ -1734,7 +1734,7 @@ Lokasikawasan.init(
 );
 
 (async () => {
-  Lokasikawasan.sync({ alter: true });
+  Lokasikawasan.sync({ alter: false });
 })();
 
 /**
@@ -1802,7 +1802,7 @@ Statusjalan.init(
 );
 
 (async () => {
-  Statusjalan.sync({ alter: true });
+  Statusjalan.sync({ alter: false });
 })();
 
 /**
@@ -1870,7 +1870,7 @@ Dikmaslantasops.init(
 );
 
 (async () => {
-  Dikmaslantasops.sync({ alter: true });
+  Dikmaslantasops.sync({ alter: false });
 })();
 
 /**
@@ -1938,7 +1938,7 @@ Giatlantas.init(
 );
 
 (async () => {
-  Giatlantas.sync({ alter: true });
+  Giatlantas.sync({ alter: false });
 })();
 
 /**
@@ -2006,7 +2006,7 @@ Lakalantas.init(
 );
 
 (async () => {
-  Lakalantas.sync({ alter: true });
+  Lakalantas.sync({ alter: false });
 })();
 
 /**
@@ -2074,7 +2074,7 @@ Fungsijalan.init(
 );
 
 (async () => {
-  Fungsijalan.sync({ alter: true });
+  Fungsijalan.sync({ alter: false });
 })();
 
 /**
@@ -2151,7 +2151,7 @@ Pekerjaankorban.init(
 );
 
 (async () => {
-  Pekerjaankorban.sync({ alter: true });
+  Pekerjaankorban.sync({ alter: false });
 })();
 
 /**
@@ -2228,7 +2228,7 @@ Pekerjaanpelaku.init(
 );
 
 (async () => {
-  Pekerjaanpelaku.sync({ alter: true });
+  Pekerjaanpelaku.sync({ alter: false });
 })();
 
 /**
@@ -2305,7 +2305,7 @@ Pendidikankorban.init(
 );
 
 (async () => {
-  Pendidikankorban.sync({ alter: true });
+  Pendidikankorban.sync({ alter: false });
 })();
 
 /**
@@ -2373,7 +2373,7 @@ Penyebaranops.init(
 );
 
 (async () => {
-  Penyebaranops.sync({ alter: true });
+  Penyebaranops.sync({ alter: false });
 })();
 
 /**
@@ -2444,7 +2444,7 @@ Ranmorops.init(
 );
 
 (async () => {
-  Ranmorops.sync({ alter: true });
+  Ranmorops.sync({ alter: false });
 })();
 
 /**
@@ -2542,7 +2542,7 @@ Usiakorban.init(
 );
 
 (async () => {
-  Usiakorban.sync({ alter: true });
+  Usiakorban.sync({ alter: false });
 })();
 
 /**
@@ -2625,81 +2625,80 @@ Usiapelaku.init(
 );
 
 (async () => {
-  Usiapelaku.sync({ alter: true });
+  Usiapelaku.sync({ alter: false });
 })();
-
 
 /**
  * Class Turjagwaliops
  */
- class Turjagwaliops extends Model {}
- Turjagwaliops.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     polda_id: {
-       type: Sequelize.INTEGER,
-     },
-     polres_id: {
-       type: Sequelize.INTEGER,
-     },
-     operasi_id: {
-       type: Sequelize.INTEGER,
-     },
-     date: {
-       type: Sequelize.DATEONLY,
-     },
-     pengaturan: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     penjagaan: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     pengawalan: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     patroli: {
-       type: Sequelize.INTEGER,
-       defaultValue: 0,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "operasi_turjagwali",
-     modelName: "operasi_turjagwali",
-     sequelize: db,
-   }
- );
- 
- (async () => {
-  Turjagwaliops.sync({ alter: true });
- })();
+class Turjagwaliops extends Model {}
+Turjagwaliops.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
+    polres_id: {
+      type: Sequelize.INTEGER,
+    },
+    operasi_id: {
+      type: Sequelize.INTEGER,
+    },
+    date: {
+      type: Sequelize.DATEONLY,
+    },
+    pengaturan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    penjagaan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    pengawalan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    patroli: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "operasi_turjagwali",
+    modelName: "operasi_turjagwali",
+    sequelize: db,
+  }
+);
+
+(async () => {
+  Turjagwaliops.sync({ alter: false });
+})();
 /**
  * [END]
  * SECTION IMPORT LAPORAN OPERASI KHUSUS
@@ -2713,72 +2712,72 @@ Usiapelaku.init(
 /**
  * Class ImportFile
  */
- class ImportFileNtmc extends Model {}
- ImportFileNtmc.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     jenis_satker: {
-       type: Sequelize.INTEGER,
-     },
-     jenis_laporan: {
-       type: Sequelize.INTEGER,
-     },
-     tanggal: {
-       type: Sequelize.DATEONLY,
-     },
-     file_name: {
-       type: Sequelize.STRING,
-     },
-     file_client_name: {
-       type: Sequelize.STRING,
-     },
-     file_ext: {
-       type: Sequelize.STRING,
-     },
-     file_type: {
-       type: Sequelize.STRING,
-     },
-     status: {
-       type: Sequelize.INTEGER,
-     },
-     imported_by: {
-       type: Sequelize.STRING,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "import_laporan_ntmc",
-     modelName: "import_file",
-     sequelize: db,
-   }
- );
- (async () => {
-  ImportFileNtmc.sync({ alter: true });
- })();
+class ImportFileNtmc extends Model {}
+ImportFileNtmc.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    jenis_satker: {
+      type: Sequelize.INTEGER,
+    },
+    jenis_laporan: {
+      type: Sequelize.INTEGER,
+    },
+    tanggal: {
+      type: Sequelize.DATEONLY,
+    },
+    file_name: {
+      type: Sequelize.STRING,
+    },
+    file_client_name: {
+      type: Sequelize.STRING,
+    },
+    file_ext: {
+      type: Sequelize.STRING,
+    },
+    file_type: {
+      type: Sequelize.STRING,
+    },
+    status: {
+      type: Sequelize.INTEGER,
+    },
+    imported_by: {
+      type: Sequelize.STRING,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "import_laporan_ntmc",
+    modelName: "import_file",
+    sequelize: db,
+  }
+);
+(async () => {
+  ImportFileNtmc.sync({ alter: false });
+})();
 
 /**
  * Class Programtv
@@ -2839,7 +2838,7 @@ Programtv.init(
 );
 
 (async () => {
-  Programtv.sync({ alter: true });
+  Programtv.sync({ alter: false });
 })();
 
 /**
@@ -2892,7 +2891,7 @@ Programonline.init(
 );
 
 (async () => {
-  Programonline.sync({ alter: true });
+  Programonline.sync({ alter: false });
 })();
 
 /**
@@ -2948,7 +2947,7 @@ Programmedsos.init(
 );
 
 (async () => {
-  Programmedsos.sync({ alter: true });
+  Programmedsos.sync({ alter: false });
 })();
 
 /**
@@ -3001,7 +3000,7 @@ Offairprogram.init(
 );
 
 (async () => {
-  Offairprogram.sync({ alter: true });
+  Offairprogram.sync({ alter: false });
 })();
 
 /**
@@ -3051,7 +3050,7 @@ Mediatv.init(
 );
 
 (async () => {
-  Mediatv.sync({ alter: true });
+  Mediatv.sync({ alter: false });
 })();
 
 /**
@@ -3119,7 +3118,7 @@ Medsos.init(
 );
 
 (async () => {
-  Medsos.sync({ alter: true });
+  Medsos.sync({ alter: false });
 })();
 
 /**
@@ -3172,7 +3171,7 @@ Sosial.init(
 );
 
 (async () => {
-  Sosial.sync({ alter: true });
+  Sosial.sync({ alter: false });
 })();
 
 /**
@@ -3231,7 +3230,7 @@ Radio.init(
 );
 
 (async () => {
-  Radio.sync({ alter: true });
+  Radio.sync({ alter: false });
 })();
 
 /**
@@ -3290,13 +3289,12 @@ Pengaduan.init(
 );
 
 (async () => {
-  Pengaduan.sync({ alter: true });
+  Pengaduan.sync({ alter: false });
 })();
 /**
  * [END]
  * SECTION IMPORT LAPORAN NTMC
  */
-
 
 /**
  * SECTION IMPORT LAPORAN MASYARAKAT
@@ -3306,75 +3304,75 @@ Pengaduan.init(
 /**
  * Class ImportFileMasyarakat
  */
- class ImportFileMasyarakat extends Model {}
- ImportFileMasyarakat.init(
-   {
-     id: {
-       type: Sequelize.INTEGER,
-       autoIncrement: true,
-       primaryKey: true,
-       get() {
-         return AESEncrypt(String(this.getDataValue("id")), {
-           isSafeUrl: true,
-         });
-       },
-     },
-     polda_id: {
-       type: Sequelize.INTEGER,
-     },
-     jenis_satker: {
-       type: Sequelize.INTEGER,
-     },
-     jenis_laporan: {
-       type: Sequelize.INTEGER,
-     },
-     tanggal: {
-       type: Sequelize.DATEONLY,
-     },
-     file_name: {
-       type: Sequelize.STRING,
-     },
-     file_client_name: {
-       type: Sequelize.STRING,
-     },
-     file_ext: {
-       type: Sequelize.STRING,
-     },
-     file_type: {
-       type: Sequelize.STRING,
-     },
-     status: {
-       type: Sequelize.INTEGER,
-     },
-     imported_by: {
-       type: Sequelize.STRING,
-     },
-     ...StructureTimestamp,
-   },
-   {
-     defaultScope: {
-       where: {
-         deleted_at: null,
-       },
-     },
-     scopes: {
-       deleted: {
-         where: {
-           deleted_at: null,
-         },
-       },
-     },
-     deletedAt: "deleted_at",
-     createdAt: "created_at",
-     updatedAt: "updated_at",
-     tableName: "import_laporan_masyarakat",
-     modelName: "import_file",
-     sequelize: db,
-   }
- );
- (async () => {
-  ImportFileMasyarakat.sync({ alter: true });
- })();
+class ImportFileMasyarakat extends Model {}
+ImportFileMasyarakat.init(
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      get() {
+        return AESEncrypt(String(this.getDataValue("id")), {
+          isSafeUrl: true,
+        });
+      },
+    },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
+    jenis_satker: {
+      type: Sequelize.INTEGER,
+    },
+    jenis_laporan: {
+      type: Sequelize.INTEGER,
+    },
+    tanggal: {
+      type: Sequelize.DATEONLY,
+    },
+    file_name: {
+      type: Sequelize.STRING,
+    },
+    file_client_name: {
+      type: Sequelize.STRING,
+    },
+    file_ext: {
+      type: Sequelize.STRING,
+    },
+    file_type: {
+      type: Sequelize.STRING,
+    },
+    status: {
+      type: Sequelize.INTEGER,
+    },
+    imported_by: {
+      type: Sequelize.STRING,
+    },
+    ...StructureTimestamp,
+  },
+  {
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
+    scopes: {
+      deleted: {
+        where: {
+          deleted_at: null,
+        },
+      },
+    },
+    deletedAt: "deleted_at",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    tableName: "import_laporan_masyarakat",
+    modelName: "import_file",
+    sequelize: db,
+  }
+);
+(async () => {
+  ImportFileMasyarakat.sync({ alter: false });
+})();
 
 /**
  * Class Kegiatanmasyarakat
@@ -3442,7 +3440,7 @@ Kegiatanmasyarakat.init(
 );
 
 (async () => {
-  Kegiatanmasyarakat.sync({ alter: true });
+  Kegiatanmasyarakat.sync({ alter: false });
 })();
 /**
  * [END]
