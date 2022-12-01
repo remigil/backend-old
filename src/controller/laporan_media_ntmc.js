@@ -205,7 +205,7 @@ module.exports = class LaporanMediaNTMCController {
             let path = req.body[key].filepath;
             let file = req.body[key];
             let fileName = file.originalFilename;
-            fs.copyFile(
+            fs.renameSync(
               path,
               "./public/uploads/laporan_media_ntmc/" + fileName,
               function (err) {
