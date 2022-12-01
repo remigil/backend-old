@@ -539,4 +539,11 @@ router.use(
   require("../router/wilayah")
 );
 
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan_media_ntmc",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan_media_ntmc")
+);
+
 module.exports = router;
