@@ -252,6 +252,23 @@ module.exports = class PoldaController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static editJson = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let input = req.body.polda;
+      const poldaUp = await Polda.bulkCreate(input, {
+        updateOnDuplicate: ["file_shp"],
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", poldaUp);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static delete = async (req, res) => {
     const transaction = await db.transaction();
     try {

@@ -12,6 +12,7 @@ router.post(
 );
 router.post("/import", formValidation, PoldaController.importExcell);
 router.put("/edit/:id", PoldaController.edit);
+router.put("/editJson", PoldaController.editJson);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),
