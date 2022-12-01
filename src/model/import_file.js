@@ -929,6 +929,9 @@ Poldaa.init(
     open_time: {
       type: Sequelize.TIME,
     },
+    file_shp: {
+      type: Sequelize.TEXT,
+    },
     close_time: {
       type: Sequelize.TIME,
     },
