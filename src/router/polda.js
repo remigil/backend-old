@@ -20,4 +20,6 @@ router.delete(
   PoldaController.delete
 );
 router.get("/getId/:id", PoldaController.getId);
+
+router.get("/get_web", PoldaController.get_web);
 module.exports = router;

@@ -186,6 +186,13 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/polda")
 );
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/polda_front",
+  // authMiddleware.jwtAuth,
+  require("../router/polda")
+);
+
 router.use(
   "/v" + process.env.APP_VERSION + "/polres",
   authMiddleware.jwtAuth,
