@@ -24,6 +24,7 @@ const fieldData = {
   content: null,
   picture: null,
   author: null,
+  link: null,
   date: null,
 };
 

@@ -34,6 +34,9 @@ News.init(
     author: {
       type: Sequelize.TEXT,
     },
+    link: {
+      type: Sequelize.TEXT,
+    },
     date: {
       type: Sequelize.STRING(30),
     },
