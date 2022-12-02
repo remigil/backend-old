@@ -24,11 +24,79 @@ Count_sim_polda_day.init(
     date: {
       type: Sequelize.DATEONLY,
     },
-    baru: {
+    baru_a: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
-    perpanjangan: {
+    baru_c: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    baru_d: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_a: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_au: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_c: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_c1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_c2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_d: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_d1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_b1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_b1u: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_b2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_b2u: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    peningkatan_au: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    peningkatan_b1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    peningkatan_b1u: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    peningkatan_b2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    peningkatan_b2u: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
