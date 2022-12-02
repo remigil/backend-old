@@ -24,6 +24,14 @@ Count_sim_polda_day.init(
     date: {
       type: Sequelize.DATEONLY,
     },
+    baru: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
     baru_a: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
