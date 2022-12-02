@@ -146,6 +146,13 @@ router.use(
   require("../router/troublespot")
 );
 
+// --------------- blankspot
+router.use(
+  "/v" + process.env.APP_VERSION + "/blankspot",
+  authMiddleware.jwtAuth,
+  require("../router/blankspot")
+);
+
 // CCTV
 router.use(
   "/v" + process.env.APP_VERSION + "/cctv",
@@ -545,7 +552,6 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/wilayah")
 );
-
 
 router.use(
   "/v" + process.env.APP_VERSION + "/laporan_media_ntmc",

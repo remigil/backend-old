@@ -23,6 +23,7 @@ const CategoryFasum = require("../model/category_fasum");
 const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
 const Troublespot = require("../model/troublespot");
+const Blankspot = require("../model/blankspot");
 const dateParse = (date) => {
   const aaa = moment.tz(date, "Etc/GMT-5");
   return aaa.format("YYYY-MM-DD");
@@ -115,6 +116,16 @@ const fieldData = {
   trouble_spot: async () => {
     const today = dateParse(moment());
     return await Troublespot.findAll({
+      where: {
+        report_date: {
+          [Op.between]: [today, today],
+        },
+      },
+    });
+  },
+  blank_spot: async () => {
+    const today = dateParse(moment());
+    return await Blankspot.findAll({
       where: {
         report_date: {
           [Op.between]: [today, today],
@@ -290,6 +301,27 @@ module.exports = class FilterSearchController {
                 const today = dateParse(moment());
 
                 var dummyData = Troublespot.findAll({
+                  where: {
+                    report_date: {
+                      [Op.between]: [today, today],
+                    },
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "blank_spot") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                const today = dateParse(moment());
+
+                var dummyData = Blankspot.findAll({
                   where: {
                     report_date: {
                       [Op.between]: [today, today],
