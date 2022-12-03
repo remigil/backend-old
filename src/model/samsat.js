@@ -36,17 +36,21 @@ Samsat.init(
     samsat_close_time: {
       type: Sequelize.TEXT,
     },
-
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
-    defaultScope: { where: {
-      deleted_at: null
-    } },
+    defaultScope: {
+      where: {
+        deleted_at: null,
+      },
+    },
     scopes: {
       deleted: {
         where: {
-          deleted_at: null
+          deleted_at: null,
         },
       },
     },
