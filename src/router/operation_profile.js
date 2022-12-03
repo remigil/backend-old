@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const OperationProfileController = require("../controller/operation_profile");
 const formValidation = require("../middleware/form_validation");
 router.get("/", OperationProfileController.get);
+router.get("/mobile", OperationProfileController.mobile);
 router.get("/getId/:id", OperationProfileController.getId);
 router.post(
   "/add",

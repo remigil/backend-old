@@ -123,10 +123,10 @@ module.exports = class OperationProfileController {
   };
   static mobile = async (req, res) => {
     try {
-      const [operation] = db.query(
+      const [operation] = await db.query(
         `select * from operation_profile op where op.date_start_operation <= now() and op.date_end_operation >= now()`
       );
-      response(res, true, "Berhasil", operation, 400);
+      response(res, true, "Berhasil", operation, 200);
     } catch (e) {
       response(res, false, e.message, e, 400);
     }
