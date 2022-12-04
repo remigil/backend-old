@@ -81,11 +81,11 @@ module.exports = class UserController {
           attributes: ["id", "name"],
           // required: false,
         },
-        {
-          model: OperationProfile,
-          // attributes: ["id", "name"],
-          // required: false,
-        },
+        // {
+        // model: OperationProfile,
+        // attributes: ["id", "name"],
+        // required: false,
+        // },
         {
           model: Account_Profile_Polda,
           attributes: ["polda_id", "user_id"],
