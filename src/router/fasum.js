@@ -12,6 +12,8 @@ router.post(
 );
 router.post("/import", formValidation, FasumController.importExcell);
 router.put("/edit/:id", formValidation, FasumController.edit);
+
+router.post("/addJson", formValidation, FasumController.addJson);
 router.delete(
   "/delete",
   body("id").notEmpty().isLength({ min: 1 }),

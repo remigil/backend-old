@@ -107,6 +107,34 @@ const fieldData = {
       },
     });
   },
+  rest_area: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 4,
+      },
+    });
+  },
+  pos_pam: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 18,
+      },
+    });
+  },
   sim_keliling: async () => {
     return await Sim_keliling.findAll();
   },
@@ -284,6 +312,54 @@ module.exports = class FilterSearchController {
                   ],
                   where: {
                     fasum_type: 9,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "rest_area") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 4,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "pos_pam") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 18,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",

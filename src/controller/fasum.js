@@ -227,6 +227,50 @@ module.exports = class FasumController {
     }
   };
 
+  static addJson = async (req, res) => {
+    const transaction = await db.transaction();
+    try {
+      let input = req.body.features;
+      let dummy = [];
+
+      var fieldValue = {};
+      for (let i = 0; i < input.length; i++) {
+        fieldValue = {};
+        fieldValue["fasum_type"] = req.body.fasum_type;
+        fieldValue["fasum_name"] = input[i]["properties"]["nama"];
+        fieldValue["fasum_logo"] = input[i]["properties"]["foto"];
+        fieldValue["fasum_address"] = input[i]["properties"]["nama"];
+        fieldValue["fasum_phone"] = input[i]["properties"]["nama"];
+        fieldValue["fasum_lat"] = input[i]["properties"]["lat"];
+        fieldValue["fasum_lng"] = input[i]["properties"]["long"];
+        fieldValue["fasum_description"] = `<p>
+                                            Daftar Resto : ${input[i]["properties"]["dftr_resto"]} </br>
+                                            Daftar Mushola : ${input[i]["properties"]["dftr_musho"]} </br>
+                                            Daftar Mini Market : ${input[i]["properties"]["dftr_minim"]} </br>
+                                            Daftar ATM : ${input[i]["properties"]["dftr_atm"]} </br>
+                                            Daftar Bengekel : ${input[i]["properties"]["dftr_bengk"]}
+                                          </p>`;
+        fieldValue["fasum_open_time"] = "00:00:00";
+        fieldValue["fasum_close_time"] = "23:00:00";
+        fieldValue["fasum_status"] = 1;
+        fieldValue["fasum_radius"] = 0;
+        fieldValue["polda_id"] = null;
+
+        dummy.push(fieldValue);
+      }
+
+      const data = await Fasum.bulkCreate(dummy, {
+        // updateOnDuplicate: ["file_shp"],
+        transaction: transaction,
+      });
+      await transaction.commit();
+      response(res, true, "Succeed", data);
+    } catch (e) {
+      await transaction.rollback();
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
