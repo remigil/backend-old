@@ -135,6 +135,20 @@ const fieldData = {
       },
     });
   },
+  sat_pas: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 19,
+      },
+    });
+  },
   sim_keliling: async () => {
     return await Sim_keliling.findAll();
   },
@@ -360,6 +374,30 @@ module.exports = class FilterSearchController {
                   ],
                   where: {
                     fasum_type: 18,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "sat_pas") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 19,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",
