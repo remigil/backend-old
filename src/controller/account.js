@@ -10,7 +10,11 @@ const { Op, Sequelize } = require("sequelize");
 const { AESDecrypt } = require("../lib/encryption");
 const Officer = require("../model/officer");
 const pagination = require("../lib/pagination-parser");
+const fs = require("fs");
 const TrxAccountOfficer = require("../model/trx_account_officer");
+const exportUser = require("../middleware/exportExcel");
+const { default: readXlsxFile } = require("read-excel-file/node");
+// const { default: readXlsxFile } = require("read-excel-file");
 
 const field_account = {
   name_account: null,
@@ -146,6 +150,288 @@ module.exports = class AccountController {
     } catch (e) {
       console.log(e);
       response(res, false, "Failed", e.message);
+    }
+  };
+
+  static export = async (req, res) => {
+    try {
+      let formatExcell = [
+        { header: "id", key: "id", width: 5 },
+        { header: "name_account", key: "name_account", width: 10 },
+        { header: "vehicle_id", key: "vehicle_id", width: 10 },
+        { header: "password", key: "password", width: 10 },
+        { header: "country_id", key: "country_id", width: 10 },
+        { header: "name_officer", key: "name_officer", width: 10 },
+        { header: "nrp_officer", key: "nrp_officer", width: 10 },
+        { header: "rank_officer", key: "rank_officer", width: 10 },
+        { header: "struktural_officer", key: "struktural_officer", width: 10 },
+        { header: "pam_officer", key: "pam_officer", width: 10 },
+        { header: "phone_officer", key: "phone_officer", width: 10 },
+        { header: "status_officer", key: "status_officer", width: 10 },
+        { header: "leader_team", key: "leader_team", width: 10 },
+      ];
+
+      await exportUser(
+        req,
+        res,
+        formatExcell,
+        "Format Import Officer",
+        "Officer",
+        async (worksheet, workbook) => {
+          const worksheet2 = workbook.addWorksheet("Data Vehicle");
+          worksheet2.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "no_vehicle", key: "no_vehicle", width: 10 },
+            { header: "type_vehicle", key: "type_vehicle", width: 10 },
+            { header: "brand_vehicle", key: "brand_vehicle", width: 10 },
+            {
+              header: "ownership_vehicle",
+              key: "ownership_vehicle",
+              width: 10,
+            },
+            { header: "fuel_vehicle", key: "fuel_vehicle", width: 10 },
+          ];
+
+          const [getVehicle] = await db.query(
+            `SELECT * FROM vehicle WHERE deleted_at is null ORDER BY id ASC`
+          );
+          getVehicle.forEach((vehicle) => {
+            vehicle.id = vehicle.id;
+            vehicle.no_vehicle = vehicle.no_vehicle;
+            vehicle.type_vehicle = vehicle.type_vehicle;
+            vehicle.brand_vehicle = vehicle.brand_vehicle;
+            vehicle.ownership_vehicle = vehicle.ownership_vehicle;
+            vehicle.fuel_vehicle = vehicle.fuel_vehicle;
+            worksheet2.addRow(vehicle);
+          });
+
+          worksheet2.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+          });
+
+          const worksheet3 = workbook.addWorksheet("Data Country");
+          worksheet3.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "name_country", key: "name_country", width: 10 },
+          ];
+
+          // const getCountry = await Country.findAll();
+          const [getCountry] = await db.query(
+            `SELECT * FROM country WHERE deleted_at is null ORDER BY id ASC`
+          );
+          getCountry.forEach((country) => {
+            country.id = country.id;
+            country.name_country = country.name_country;
+
+            worksheet3.addRow(country);
+          });
+
+          worksheet3.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+          });
+          res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          );
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=Format-Import-Officer.xlsx`
+          );
+
+          return workbook.xlsx.write(res).then(() => {
+            res.status(200);
+          });
+        }
+      );
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static importExcell = async (req, res) => {
+    const t = await db.transaction();
+    try {
+      let path = req.body.file.filepath;
+      let file = req.body.file;
+      let fileName = file.originalFilename;
+      fs.renameSync(path, "./public/uploads/excel/" + fileName, function (err) {
+        if (err) response(res, false, "Error", err.message);
+      });
+      let readExcell = await readXlsxFile("./public/uploads/excel/" + fileName);
+      let index = 0;
+      let listOfficer = [];
+      const officerCreate = [];
+      const officerCreateError = [];
+      const vehicleCreateError = [];
+      const countryCreateError = [];
+      let errorData = {
+        country_not_found: {},
+        vehicle_not_found: {},
+        officer_avail: {},
+      };
+      for (const iterator of readExcell) {
+        if (index == 0) {
+        } else {
+          let officerCheck = await Officer.findOne({
+            where: {
+              nrp_officer: `${iterator[6]}`,
+            },
+          });
+          let vehicleCheck = await Vehicle.findOne({
+            where: {
+              id: iterator[2],
+            },
+          });
+          let countryCheck = await Country.findOne({
+            where: {
+              id: iterator[4],
+            },
+          });
+
+          if (vehicleCheck) {
+            if (countryCheck) {
+              if (officerCheck) {
+                officerCreateError.push({
+                  baris: index + 1,
+                  name_officer: iterator[5] || null,
+                  nrp_officer: iterator[6] || null,
+                  rank_officer: iterator[7] || null,
+                  struktural_officer: iterator[8] || null,
+                  pam_officer: iterator[9] || null,
+                  phone_officer: iterator[10] || null,
+                  status_officer: iterator[11] || null,
+                });
+              } else {
+                officerCreate.push({
+                  name_officer: iterator[5] || null,
+                  nrp_officer: iterator[6] || null,
+                  rank_officer: iterator[7] || null,
+                  struktural_officer: iterator[8] || null,
+                  pam_officer: iterator[9] || null,
+                  phone_officer: iterator[10] || null,
+                  status_officer: iterator[11] || null,
+                });
+                listOfficer.push({
+                  name_account: iterator[1],
+                  vehicle_id: iterator[2],
+                  password: iterator[3],
+                  country_id: iterator[4] || null,
+                  name_officer: iterator[5] || null,
+                  nrp_officer: iterator[6] || null,
+                  rank_officer: iterator[7] || null,
+                  struktural_officer: iterator[8] || null,
+                  pam_officer: iterator[9] || null,
+                  phone_officer: iterator[10] || null,
+                  status_officer: iterator[11] || null,
+                  leader_team: iterator[11] || null,
+                });
+              }
+            } else {
+              countryCreateError.push({
+                baris: index + 1,
+                name_officer: iterator[5] || null,
+                nrp_officer: iterator[6] || null,
+                rank_officer: iterator[7] || null,
+                struktural_officer: iterator[8] || null,
+                pam_officer: iterator[9] || null,
+                phone_officer: iterator[10] || null,
+                status_officer: iterator[11] || null,
+              });
+            }
+          } else {
+            vehicleCreateError.push({
+              baris: index + 1,
+              name_officer: iterator[5] || null,
+              nrp_officer: iterator[6] || null,
+              rank_officer: iterator[7] || null,
+              struktural_officer: iterator[8] || null,
+              pam_officer: iterator[9] || null,
+              phone_officer: iterator[10] || null,
+              status_officer: iterator[11] || null,
+            });
+          }
+        }
+        index++;
+      }
+      errorData = {
+        officer_available: officerCreateError,
+        country_not_found: countryCreateError,
+        vehicle_not_found: vehicleCreateError,
+      };
+      const officerCreateDb = await Officer.bulkCreate(officerCreate, {
+        transaction: t,
+      });
+      let accountData = [];
+      let officerDataForTRX = [];
+      for (const iterator of listOfficer) {
+        let leaderTeam = officerCreateDb.filter(
+          (officer) => officer.nrp_officer === iterator.nrp_officer
+        );
+        officerDataForTRX.push({
+          ...iterator,
+          name_account: iterator.name_account,
+          vehicle_id: iterator.vehicle_id,
+          password: iterator.password,
+          country_id: iterator.country_id,
+          leader_team: leaderTeam[0].dataValues.id,
+          id: leaderTeam[0].dataValues.id,
+        });
+        accountData.push({
+          name_account: iterator.name_account,
+          vehicle_id: iterator.vehicle_id,
+          password: iterator.password,
+          country_id: iterator.country_id,
+          leader_team: leaderTeam[0].dataValues.id,
+        });
+      }
+      const accountCreateDb = await Account.bulkCreate(accountData, {
+        transaction: t,
+      });
+      let trxAccountOfficerData = [];
+      for (const iterator of officerDataForTRX) {
+        let account_id = accountCreateDb.filter((account) => {
+          return account.name_account === iterator.name_account;
+        });
+        trxAccountOfficerData.push({
+          officer_id: iterator.id,
+          account_id: account_id[0].dataValues.id,
+        });
+      }
+
+      const accountOfficerTrx = await TrxAccountOfficer.bulkCreate(
+        trxAccountOfficerData,
+        {
+          transaction: t,
+        }
+      );
+      await t.commit();
+
+      response(
+        res,
+        true,
+        "Succed",
+        {
+          berhasil: {
+            officer: officerCreateDb,
+            account: accountCreateDb,
+            account_officer: accountOfficerTrx,
+          },
+          gagal: errorData,
+        },
+        200
+      );
+      // console.log({ listOfficer });
+      // // res.json({
+      // //   isSuccess: false,
+      // // });
+      // // res.setHeader("Content-Type", "application/json");
+      // res.header("Content-Type", "application/json");
+      // res.status(200).send({ message: "This is a message" });
+      // response(res, true, "Succeed", [], 200);
+    } catch (error) {
+      console.log({ error });
+      await t.rollback();
+      response(res, false, error.message, error, 400);
     }
   };
   static getOfficerAccount = async (req, res) => {

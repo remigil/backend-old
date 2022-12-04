@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const AccountController = require("../controller/account");
 const formValidation = require("../middleware/form_validation");
 router.get("/", AccountController.get);
+
 router.get("/getId/:id", AccountController.getId);
 router.get("/getOfficerTeam", AccountController.getOfficerAccount);
 router.get("/getOfficerAccountById", AccountController.getOfficerAccountById);

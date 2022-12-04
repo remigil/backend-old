@@ -104,7 +104,7 @@ module.exports = class VehicleController {
   static add = async (req, res) => {
     const transaction = await db.transaction();
     try {
-      await Vehicle.create(
+      let create = await Vehicle.create(
         {
           no_vehicle: req.body.no_vehicle,
           back_number_vehicle: req.body.back_number_vehicle,
@@ -116,7 +116,7 @@ module.exports = class VehicleController {
         { transaction: transaction }
       );
       await transaction.commit();
-      response(res, true, "Succeed", null);
+      response(res, true, "Succeed", create);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);

@@ -559,4 +559,11 @@ router.use(
   require("../router/laporan_media_ntmc")
 );
 
+//import export officer account dan kendaraan
+router.use(
+  "/v" + process.env.APP_VERSION + "/accounts",
+  // authMiddleware.jwtAuth,
+  require("../router/exportExcel")
+);
+
 module.exports = router;
