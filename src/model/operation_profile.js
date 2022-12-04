@@ -35,6 +35,12 @@ OperationProfile.init(
     logo: {
       type: Sequelize.TEXT,
     },
+    latlng_center: {
+      type: Sequelize.STRING(255),
+    },
+    zoom_level: {
+      type: Sequelize.STRING(255),
+    },
     // level_operation: {
     //   type: Sequelize.STRING(255),
     // },

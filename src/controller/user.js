@@ -2,6 +2,7 @@ const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const User = require("../model/user");
 const UserRole = require("../model/user_role");
+const OperationProfile = require("../model/operation_profile");
 const db = require("../config/database");
 const Account = require("../model/account");
 
@@ -78,6 +79,11 @@ module.exports = class UserController {
         {
           model: UserRole,
           attributes: ["id", "name"],
+          // required: false,
+        },
+        {
+          model: OperationProfile,
+          // attributes: ["id", "name"],
           // required: false,
         },
         {

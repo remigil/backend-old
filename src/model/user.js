@@ -3,6 +3,7 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const UserRole = require("./user_role");
+const OperationProfile = require("./operation_profile");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
@@ -68,6 +69,10 @@ User.init(
 User.hasOne(UserRole, {
   foreignKey: "id",
   sourceKey: "role_id",
+});
+User.hasOne(OperationProfile, {
+  foreignKey: "id",
+  sourceKey: "operation_id",
 });
 (async () => {
   User.sync({ alter: true }).catch((err) => {
