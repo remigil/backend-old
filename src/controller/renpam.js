@@ -986,14 +986,13 @@ module.exports = class RenpamController {
           }
         }
       });
-      if (req.body.route) {
+      if (req.body.route && req.body.type_renpam != "6") {
         let test = await direction_route(JSON.parse(req.body.route));
-
         fieldValue["direction_route"] = test.route;
         fieldValue["estimasi"] = test.estimasi;
         fieldValue["estimasi_time"] = test.estimasiWaktu;
       }
-      if (req.body.route_alternatif_1) {
+      if (req.body.route_alternatif_1 && req.body.type_renpam != "6") {
         let routeAlter1 = await direction_route(
           JSON.parse(req.body.route_alternatif_1)
         );
@@ -1001,7 +1000,7 @@ module.exports = class RenpamController {
         fieldValue["estimasi_alter1"] = routeAlter1.estimasi;
         fieldValue["estimasi_time_alter1"] = routeAlter1.estimasiWaktu;
       }
-      if (req.body.route_alternatif_2) {
+      if (req.body.route_alternatif_2 && req.body.type_renpam != "6") {
         let routeAlter2 = await direction_route(
           JSON.parse(req.body.route_alternatif_2)
         );
@@ -1009,7 +1008,7 @@ module.exports = class RenpamController {
         fieldValue["estimasi_alter2"] = routeAlter2.estimasi;
         fieldValue["estimasi_time_alter2"] = routeAlter2.estimasiWaktu;
       }
-      if (req.body.route_masyarakat) {
+      if (req.body.route_masyarakat && req.body.type_renpam != "6") {
         let routeAlter3 = await direction_route(
           JSON.parse(req.body.route_masyarakat)
         );
@@ -1017,7 +1016,7 @@ module.exports = class RenpamController {
         fieldValue["estimasi_masyarakat"] = routeAlter3.estimasi;
         fieldValue["estimasi_time_masyarakat"] = routeAlter3.estimasiWaktu;
       }
-      if (req.body.route_umum) {
+      if (req.body.route_umum && req.body.type_renpam != "6") {
         let routeAlter4 = await direction_route(
           JSON.parse(req.body.route_umum)
         );

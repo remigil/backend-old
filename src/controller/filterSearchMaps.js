@@ -245,7 +245,7 @@ const fieldData = {
     }
     return tampung_nearby;
   },
-  cluster: async (req) => {
+  radius: async (req) => {
     return await Fasum.findAll({
       include: [
         {
@@ -256,6 +256,20 @@ const fieldData = {
       ],
       where: {
         fasum_type: 10,
+      },
+    });
+  },
+  cluster: async (req) => {
+    return await Fasum.findAll({
+      include: [
+        {
+          model: CategoryFasum,
+          foreignKey: "fasum_type",
+          required: false,
+        },
+      ],
+      where: {
+        fasum_type: 11,
       },
     });
   },
@@ -482,7 +496,7 @@ module.exports = class FilterSearchController {
             } else if (value == "etle") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
-            } else if (value == "cluster") {
+            } else if (value == "radius") {
               tampung[value] = true;
 
               if (polda_id) {
@@ -496,6 +510,30 @@ module.exports = class FilterSearchController {
                   ],
                   where: {
                     fasum_type: 10,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "cluster") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Fasum.findAll({
+                  include: [
+                    {
+                      model: CategoryFasum,
+                      foreignKey: "fasum_type",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    fasum_type: 11,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",
