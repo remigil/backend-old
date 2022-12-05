@@ -341,6 +341,10 @@ module.exports = class AccountController {
           } else {
             vehicleCreateError.push({
               baris: index + 1,
+              name_account: iterator[1],
+              vehicle_id: iterator[2],
+              password: iterator[3],
+              country_id: iterator[4] || null,
               name_officer: iterator[5] || null,
               nrp_officer: iterator[6] || null,
               rank_officer: iterator[7] || null,
@@ -348,6 +352,7 @@ module.exports = class AccountController {
               pam_officer: iterator[9] || null,
               phone_officer: iterator[10] || null,
               status_officer: iterator[11] || null,
+              leader_team: iterator[11] || null,
             });
           }
         }
@@ -358,43 +363,51 @@ module.exports = class AccountController {
         country_not_found: countryCreateError,
         vehicle_not_found: vehicleCreateError,
       };
+
       const officerCreateDb = await Officer.bulkCreate(officerCreate, {
         transaction: t,
       });
       let accountData = [];
       let officerDataForTRX = [];
       for (const iterator of listOfficer) {
-        let leaderTeam = officerCreateDb.filter(
-          (officer) => officer.nrp_officer === iterator.nrp_officer
-        );
+        let leaderTeam = officerCreateDb.filter((officer) => {
+          return `${officer.nrp_officer}` === `${iterator.nrp_officer}`;
+        });
+
         officerDataForTRX.push({
           ...iterator,
           name_account: iterator.name_account,
           vehicle_id: iterator.vehicle_id,
           password: iterator.password,
           country_id: iterator.country_id,
-          leader_team: leaderTeam[0].dataValues.id,
-          id: leaderTeam[0].dataValues.id,
+          leader_team: leaderTeam[0]?.dataValues?.id,
+          id: leaderTeam[0]?.dataValues?.id,
         });
-        accountData.push({
-          name_account: iterator.name_account,
-          vehicle_id: iterator.vehicle_id,
-          password: iterator.password,
-          country_id: iterator.country_id,
-          leader_team: leaderTeam[0].dataValues.id,
-        });
+        let checkData = accountData.filter(
+          (check) => check.name_account === iterator.name_account
+        );
+        if (!checkData.length) {
+          accountData.push({
+            name_account: iterator.name_account,
+            id_vehicle: iterator.vehicle_id,
+            password: iterator.password,
+            country_id: iterator.country_id,
+            leader_team: leaderTeam[0]?.dataValues?.id,
+          });
+        }
       }
       const accountCreateDb = await Account.bulkCreate(accountData, {
+        // updateOnDuplicate: ["name_account"],
         transaction: t,
       });
       let trxAccountOfficerData = [];
       for (const iterator of officerDataForTRX) {
         let account_id = accountCreateDb.filter((account) => {
-          return account.name_account === iterator.name_account;
+          return `${account.name_account}` === `${iterator.name_account}`;
         });
         trxAccountOfficerData.push({
           officer_id: iterator.id,
-          account_id: account_id[0].dataValues.id,
+          account_id: account_id[0]?.dataValues?.id,
         });
       }
 
@@ -411,6 +424,8 @@ module.exports = class AccountController {
         true,
         "Succed",
         {
+          // listOfficer,
+          // officerDataForTRX,
           berhasil: {
             officer: officerCreateDb,
             account: accountCreateDb,
