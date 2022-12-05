@@ -199,7 +199,7 @@ module.exports = class TroublespotController {
 
       // fieldValueData["no_ts"] = no_ts;
       if (req.body.route) {
-        let route = await direction_route(JSON.parse(req.body[val]));
+        let route = await direction_route(JSON.parse(req.body.route));
         fieldValueData["direction_route"] = route;
       }
       let op = await Troublespot.create(fieldValueData, {
@@ -236,6 +236,7 @@ module.exports = class TroublespotController {
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
+      console.log(e);
       response(res, false, "Failed", e.message);
     }
   };
@@ -256,7 +257,7 @@ module.exports = class TroublespotController {
         }
       });
       if (req.body.route) {
-        let route = await direction_route(JSON.parse(req.body[val]));
+        let route = await direction_route(JSON.parse(req.body.route));
         fieldValueData["direction_route"] = route;
       }
 
