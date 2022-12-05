@@ -12,6 +12,7 @@ const moment = require("moment");
 const { codeTS } = require("../middleware/codeTroublespot");
 const { decimalToHex } = require("../middleware/decimaltohex");
 const pagination = require("../lib/pagination-parser");
+const direction_route = require("../middleware/direction_route");
 
 const decAes = (token) =>
   AESDecrypt(token, {
@@ -158,7 +159,11 @@ module.exports = class TroublespotController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "route") {
-            fieldValueData[val] = JSON.parse(req.body[val]);
+            let route = await direction_route(
+              JSON.parse(req.body[val])
+            );
+            // fieldValue["direction_route_alter2"] = routeAlter2.route;
+            fieldValueData[val] = route;
           } else {
             fieldValueData[val] = req.body[val];
           }
@@ -239,7 +244,10 @@ module.exports = class TroublespotController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "route") {
-            fieldValueData[val] = JSON.parse(req.body[val]);
+            let route = await direction_route(
+              JSON.parse(req.body[val])
+            );
+            fieldValueData[val] = route;
           } else {
             fieldValueData[val] = req.body[val];
           }
