@@ -159,11 +159,11 @@ module.exports = class TroublespotController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "route") {
-            let route = await direction_route(
-              JSON.parse(req.body[val])
-            );
-            // fieldValue["direction_route_alter2"] = routeAlter2.route;
-            fieldValueData[val] = route;
+            // let route = await direction_route(
+            //   JSON.parse(req.body[val])
+            // );
+            // fieldValueData['direction_route'] = route;
+            fieldValueData[val] = JSON.parse(req.body[val]);
           } else {
             fieldValueData[val] = req.body[val];
           }
@@ -198,7 +198,10 @@ module.exports = class TroublespotController {
       // let getSatpas = cekSatpas["code_satpas"];
 
       // fieldValueData["no_ts"] = no_ts;
-
+      if (req.body.route) {
+        let route = await direction_route(JSON.parse(req.body[val]));
+        fieldValueData["direction_route"] = route;
+      }
       let op = await Troublespot.create(fieldValueData, {
         transaction: transaction,
       });
@@ -244,10 +247,7 @@ module.exports = class TroublespotController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "route") {
-            let route = await direction_route(
-              JSON.parse(req.body[val])
-            );
-            fieldValueData[val] = route;
+            fieldValueData[val] = JSON.parse(req.body[val]);
           } else {
             fieldValueData[val] = req.body[val];
           }
@@ -255,6 +255,11 @@ module.exports = class TroublespotController {
           fieldValueData[val] = null;
         }
       });
+      if (req.body.route) {
+        let route = await direction_route(JSON.parse(req.body[val]));
+        fieldValueData["direction_route"] = route;
+      }
+
       await Troublespot.update(fieldValueData, {
         where: {
           id: AESDecrypt(req.params.id, {
