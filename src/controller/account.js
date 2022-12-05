@@ -405,10 +405,56 @@ module.exports = class AccountController {
         let account_id = accountCreateDb.filter((account) => {
           return `${account.name_account}` === `${iterator.name_account}`;
         });
+
         trxAccountOfficerData.push({
           officer_id: iterator.id,
           account_id: account_id[0]?.dataValues?.id,
         });
+      }
+
+      for (const iterator of trxAccountOfficerData) {
+        if (!iterator.account_id) {
+          await t.rollback();
+          return response(
+            res,
+            true,
+            "Succed",
+            {
+              // listOfficer,
+              // officerDataForTRX,
+              // berhasil: {
+              //   officer: officerCreateDb,
+              //   account: accountCreateDb,
+              //   account_officer: accountOfficerTrx,
+              // },
+              gagal: {
+                ...errorData,
+                officer_account: { ...iterator, message: "account_id is null" },
+              },
+            },
+            200
+          );
+        }
+        if (!iterator.officer_id) {
+          await t.rollback();
+          return response(
+            res,
+            true,
+            "Succed",
+            {
+              // berhasil: {
+              //   officer: officerCreateDb,
+              //   account: accountCreateDb,
+              //   account_officer: accountOfficerTrx,
+              // },
+              gagal: {
+                ...errorData,
+                officer_account: { ...iterator, message: "officer_id is null" },
+              },
+            },
+            200
+          );
+        }
       }
 
       const accountOfficerTrx = await TrxAccountOfficer.bulkCreate(
