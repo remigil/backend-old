@@ -188,6 +188,7 @@ module.exports = class CctvController {
             lng_cctv: iterator[11] || null,
             link_cctv: iterator[12],
             status_cctv: iterator[13],
+            polda_id: iterator[14] || null,
           });
         }
         index++;

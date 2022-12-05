@@ -88,7 +88,21 @@ const fieldData = {
     return await Polres.findAll();
   },
   cctv: async () => {
-    return await Cctv.findAll();
+    return await Cctv.findAll({
+      attributes: {
+        exclude: [
+          "created_at",
+          "updated_at",
+          "deleted_at",
+          "status_cctv",
+          "gateway_cctv",
+          "jenis_cctv",
+          "merek_cctv",
+          "username_cctv",
+          "password_cctv",
+        ],
+      },
+    });
   },
   etle: async () => {
     return await Etle.findAll();
@@ -158,21 +172,21 @@ const fieldData = {
   trouble_spot: async () => {
     const today = dateParse(moment());
     return await Troublespot.findAll({
-      where: {
-        report_date: {
-          [Op.between]: [today, today],
-        },
-      },
+      // where: {
+      //   report_date: {
+      //     [Op.between]: [today, today],
+      //   },
+      // },
     });
   },
   blank_spot: async () => {
     const today = dateParse(moment());
     return await Blankspot.findAll({
-      where: {
-        report_date: {
-          [Op.between]: [today, today],
-        },
-      },
+      // where: {
+      //   report_date: {
+      //     [Op.between]: [today, today],
+      //   },
+      // },
     });
   },
   titik_laporan: async (req) => {
@@ -416,9 +430,9 @@ module.exports = class FilterSearchController {
 
                 var dummyData = Troublespot.findAll({
                   where: {
-                    report_date: {
-                      [Op.between]: [today, today],
-                    },
+                    // report_date: {
+                    //   [Op.between]: [today, today],
+                    // },
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",
@@ -437,9 +451,9 @@ module.exports = class FilterSearchController {
 
                 var dummyData = Blankspot.findAll({
                   where: {
-                    report_date: {
-                      [Op.between]: [today, today],
-                    },
+                    // report_date: {
+                    //   [Op.between]: [today, today],
+                    // },
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",
