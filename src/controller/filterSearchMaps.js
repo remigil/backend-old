@@ -24,6 +24,7 @@ const Schedule = require("../model/schedule");
 const Panic_button = require("../model/report");
 const Troublespot = require("../model/troublespot");
 const Blankspot = require("../model/blankspot");
+const Renpam = require("../model/renpam");
 const dateParse = (date) => {
   const aaa = moment.tz(date, "Etc/GMT-5");
   return aaa.format("YYYY-MM-DD");
@@ -277,6 +278,13 @@ const fieldData = {
     return await Schedule.findAll();
   },
   operasi: null,
+  renpam: async () => {
+    return await Renpam.findAll({
+      where: {
+        type_renpam: 6,
+      },
+    });
+  },
 };
 
 const nearByPlacesGoogle = ({ type, radius, coordinate }) => {

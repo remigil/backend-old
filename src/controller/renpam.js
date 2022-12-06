@@ -1524,4 +1524,18 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static checkRouteRenpamByOne = async (req, res) => {
+    try {
+      const getData = await Renpam.findOne({
+        where: {
+          id: 1495,
+        },
+      });
+      let routeAlter2 = await direction_route(getData.route);
+      response(res, true, "Berhasil", routeAlter2);
+    } catch (e) {
+      response(res, false, e.message, e);
+    }
+  };
 };
