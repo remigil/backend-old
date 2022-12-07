@@ -20,6 +20,9 @@ const field_polda = {
   longitude: null,
   open_time: null,
   close_time: null,
+  youtube: null,
+  twitter: null,
+  facebook: null,
 };
 module.exports = class PoldaController {
   static get = async (req, res) => {
