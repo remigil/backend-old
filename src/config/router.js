@@ -367,6 +367,15 @@ router.use(
   require("../router/sosmed")
 );
 
+
+// -------------- samsat
+router.use(
+  "/v" + process.env.APP_VERSION + "/samsat",
+  authMiddleware.jwtAuth,
+  require("../router/samsat")
+);
+
+
 // Input data harian
 router.use(
   "/v" + process.env.APP_VERSION + "/laka_langgar",
