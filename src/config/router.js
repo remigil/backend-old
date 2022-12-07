@@ -376,6 +376,15 @@ router.use(
 );
 
 
+
+// -------------- satpas
+router.use(
+  "/v" + process.env.APP_VERSION + "/satpas",
+  authMiddleware.jwtAuth,
+  require("../router/satpas")
+);
+
+
 // Input data harian
 router.use(
   "/v" + process.env.APP_VERSION + "/laka_langgar",
