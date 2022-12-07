@@ -24,4 +24,6 @@ router.delete(
   SamsatController.hardDelete
 );
 
+router.get("/getPolda/:id", SamsatController.get_by_polda);
+
 module.exports = router;
