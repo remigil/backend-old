@@ -281,9 +281,90 @@ module.exports = class SimController {
         attributes: [
           "id",
           "name_polda",
-          [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
-          [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
-          [Sequelize.literal("SUM(baru + perpanjangan)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
+            "perpanjangan_a",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_au")),
+            "perpanjangan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c")),
+            "perpanjangan_c",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c1")),
+            "perpanjangan_c1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c2")),
+            "perpanjangan_c2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
+            "perpanjangan_d",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d1")),
+            "perpanjangan_d1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
+            "perpanjangan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1u")),
+            "perpanjangan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
+            "perpanjangan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2u")),
+            "perpanjangan_b2u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_au")),
+            "peningkatan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
+            "peningkatan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1u")),
+            "peningkatan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
+            "peningkatan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
+            "peningkatan_b2u",
+          ],
+          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
+          [
+            Sequelize.literal(
+              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "perpanjangan",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "peningkatan",
+          ],
+          // [
+          //   Sequelize.literal("SUM(baru + perpanjangan + peningkatan)"),
+          //   "total",
+          // ],
         ],
         include: [
           {
@@ -344,7 +425,7 @@ module.exports = class SimController {
         rows = rows.slice(0, limit);
       }
       response(res, true, "Succeed", {
-        rows,
+        finals,
         recordsFiltered: count,
         recordsTotal: count,
       });
@@ -373,9 +454,77 @@ module.exports = class SimController {
         attributes: [
           "id",
           "name_polda",
-          [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
-          [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
-          [Sequelize.literal("SUM(baru + perpanjangan)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
+            "perpanjangan_a",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_au")),
+            "perpanjangan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c")),
+            "perpanjangan_c",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c1")),
+            "perpanjangan_c1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c2")),
+            "perpanjangan_c2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
+            "perpanjangan_d",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d1")),
+            "perpanjangan_d1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
+            "perpanjangan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1u")),
+            "perpanjangan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
+            "perpanjangan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2u")),
+            "perpanjangan_b2u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_au")),
+            "peningkatan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
+            "peningkatan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1u")),
+            "peningkatan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
+            "peningkatan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
+            "peningkatan_b2u",
+          ],
+          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
+          [Sequelize.literal("SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"), "perpanjngan"],
+          [Sequelize.literal("SUM(peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"), "peningkatan"],
+             [Sequelize.literal("SUM(baru + perpanjangan + peningkatan)"), "total"],
         ],
         include: [
           {
@@ -501,7 +650,7 @@ module.exports = class SimController {
 
       const getDataRules = {
         attributes: [
-          [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
+          [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
         ],
         where: wheres,
