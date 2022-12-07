@@ -60,6 +60,15 @@ Polda.init(
     close_time: {
       type: Sequelize.TIME,
     },
+    youtube: {
+      type: Sequelize.STRING(200),
+    },
+    facebook: {
+      type: Sequelize.STRING(200),
+    },
+    twitter: {
+      type: Sequelize.STRING(200),
+    },
 
     ...StructureTimestamp,
   },
