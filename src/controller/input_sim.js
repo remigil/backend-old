@@ -797,14 +797,63 @@ module.exports = class SimController {
           const data = rows.find((x) => x.dataValues.date == item);
           if (data) {
             finals.push({
-              baru: parseInt(data.baru),
-              perpanjangan: parseInt(data.perpanjangan),
               date: data.date,
+
+              baru_a: parseInt(data.baru_a) || 0,
+              baru_c: parseInt(data.baru_c) || 0,
+              baru_d: parseInt(data.baru_d) || 0,
+
+              perpanjangan_a: parseInt(data.perpanjangan_a) || 0,
+              perpanjangan_au: parseInt(data.perpanjangan_au) || 0,
+              perpanjangan_c: parseInt(data.perpanjangan_c) || 0,
+              perpanjangan_c1: parseInt(data.perpanjangan_c1) || 0,
+              perpanjangan_c2: parseInt(data.perpanjangan_c2) || 0,
+              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
+              perpanjangan_d1: parseInt(data.perpanjangan_d1) || 0,
+              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
+              perpanjangan_b1u: parseInt(data.perpanjangan_b1u) || 0,
+              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
+              perpanjangan_b2u: parseInt(data.perpanjangan_b2u) || 0,
+
+              peningkatan_au: parseInt(data.peningkatan_au) || 0,
+              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
+              peningkatan_b1u: parseInt(data.peningkatan_b1u) || 0,
+              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
+              peningkatan_b2u: parseInt(data.peningkatan_b2u) || 0,
+
+              baru: parseInt(data.baru) || 0,
+              perpanjangan: parseInt(data.perpanjangan) || 0,
+              peningkatan: parseInt(data.peningkatan) || 0,
             });
           } else {
             finals.push({
-              baru: 0,
-              perpanjangan: 0,
+
+
+              baru_a:  0,
+              baru_c:  0,
+              baru_d:  0,
+
+              perpanjangan_a:  0,
+              perpanjangan_au:  0,
+              perpanjangan_c:  0,
+              perpanjangan_c1:  0,
+              perpanjangan_c2:  0,
+              perpanjangan_d:  0,
+              perpanjangan_d1:  0,
+              perpanjangan_b1:  0,
+              perpanjangan_b1u:  0,
+              perpanjangan_b2:  0,
+              perpanjangan_b2u:  0,
+
+              peningkatan_au:  0,
+              peningkatan_b1:  0,
+              peningkatan_b1u:  0,
+              peningkatan_b2:  0,
+              peningkatan_b2u:  0,
+
+              baru:  0,
+              perpanjangan:  0,
+              peningkatan:  0,
               date: item,
             });
           }
@@ -812,8 +861,35 @@ module.exports = class SimController {
       } else if (type === "month") {
         let abc = rows.map((element, index) => {
           return {
-            baru: parseInt(element.dataValues.baru),
-            perpanjangan: parseInt(element.dataValues.perpanjangan),
+
+            baru_a: parseInt(element.dataValues.baru_a) || 0,
+            baru_c: parseInt(element.dataValues.baru_c) || 0,
+            baru_d: parseInt(element.dataValues.baru_d) || 0,
+
+            perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
+            perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
+            perpanjangan_c: parseInt(element.dataValues.perpanjangan_c) || 0,
+            perpanjangan_c1: parseInt(element.dataValues.perpanjangan_c1) || 0,
+            perpanjangan_c2: parseInt(element.dataValues.perpanjangan_c2) || 0,
+            perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
+            perpanjangan_d1: parseInt(element.dataValues.perpanjangan_d1) || 0,
+            perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
+            perpanjangan_b1u:
+              parseInt(element.dataValues.perpanjangan_b1u) || 0,
+            perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
+            perpanjangan_b2u:
+              parseInt(element.dataValues.perpanjangan_b2u) || 0,
+
+            peningkatan_au: parseInt(element.dataValues.peningkatan_au) || 0,
+            peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
+            peningkatan_b1u: parseInt(element.dataValues.peningkatan_b1u) || 0,
+            peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
+            peningkatan_b2u: parseInt(element.dataValues.peningkatan_b2u) || 0,
+
+            baru: parseInt(element.dataValues.baru) || 0,
+            perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
+            peningkatan: parseInt(element.dataValues.peningkatan) || 0,
+
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -822,14 +898,71 @@ module.exports = class SimController {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({
-              baru: parseInt(data.baru),
-              perpanjangan: parseInt(data.perpanjangan),
+
+              baru_a: parseInt(data.baru_a) || 0,
+              baru_c: parseInt(data.baru_c) || 0,
+              baru_d: parseInt(data.baru_d) || 0,
+
+              perpanjangan_a: parseInt(data.perpanjangan_a) || 0,
+              perpanjangan_au:
+                parseInt(data.perpanjangan_au) || 0,
+              perpanjangan_c: parseInt(data.perpanjangan_c) || 0,
+              perpanjangan_c1:
+                parseInt(data.perpanjangan_c1) || 0,
+              perpanjangan_c2:
+                parseInt(data.perpanjangan_c2) || 0,
+              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
+              perpanjangan_d1:
+                parseInt(data.perpanjangan_d1) || 0,
+              perpanjangan_b1:
+                parseInt(data.perpanjangan_b1) || 0,
+              perpanjangan_b1u:
+                parseInt(data.perpanjangan_b1u) || 0,
+              perpanjangan_b2:
+                parseInt(data.perpanjangan_b2) || 0,
+              perpanjangan_b2u:
+                parseInt(data.perpanjangan_b2u) || 0,
+
+              peningkatan_au: parseInt(data.peningkatan_au) || 0,
+              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
+              peningkatan_b1u:
+                parseInt(data.peningkatan_b1u) || 0,
+              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
+              peningkatan_b2u:
+                parseInt(data.peningkatan_b2u) || 0,
+
+              baru: parseInt(data.baru) || 0,
+              perpanjangan: parseInt(data.perpanjangan) || 0,
+              peningkatan: parseInt(data.peningkatan) || 0,
               date: data.date,
             });
           } else {
             finals.push({
+              baru_a: 0,
+              baru_c: 0,
+              baru_d: 0,
+
+              perpanjangan_a: 0,
+              perpanjangan_au: 0,
+              perpanjangan_c: 0,
+              perpanjangan_c1: 0,
+              perpanjangan_c2: 0,
+              perpanjangan_d: 0,
+              perpanjangan_d1: 0,
+              perpanjangan_b1: 0,
+              perpanjangan_b1u: 0,
+              perpanjangan_b2: 0,
+              perpanjangan_b2u: 0,
+
+              peningkatan_au: 0,
+              peningkatan_b1: 0,
+              peningkatan_b1u: 0,
+              peningkatan_b2: 0,
+              peningkatan_b2u: 0,
+
               baru: 0,
               perpanjangan: 0,
+              peningkatan: 0,
               date: item,
             });
           }
