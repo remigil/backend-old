@@ -414,9 +414,31 @@ module.exports = class SimController {
         rows.push({
           id: element.id,
           name_polda: element.name_polda,
+          baru_a: parseInt(element.dataValues.baru_a) || 0,
+          baru_c: parseInt(element.dataValues.baru_c) || 0,
+          baru_d: parseInt(element.dataValues.baru_d) || 0,
+
+          perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
+          perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
+          perpanjangan_c: parseInt(element.dataValues.perpanjangan_c) || 0,
+          perpanjangan_c1: parseInt(element.dataValues.perpanjangan_c1) || 0,
+          perpanjangan_c2: parseInt(element.dataValues.perpanjangan_c2) || 0,
+          perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
+          perpanjangan_d1: parseInt(element.dataValues.perpanjangan_d1) || 0,
+          perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
+          perpanjangan_b1u: parseInt(element.dataValues.perpanjangan_b1u) || 0,
+          perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
+          perpanjangan_b2u: parseInt(element.dataValues.perpanjangan_b2u) || 0,
+
+          peningkatan_au: parseInt(element.dataValues.peningkatan_au) || 0,
+          peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
+          peningkatan_b1u: parseInt(element.dataValues.peningkatan_b1u) || 0,
+          peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
+          peningkatan_b2u: parseInt(element.dataValues.peningkatan_b2u) || 0,
+
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-          total: parseInt(element.dataValues.total) || 0,
+          peningkatan: parseInt(element.dataValues.peningkatan) || 0,
         });
       });
 
@@ -425,7 +447,7 @@ module.exports = class SimController {
         rows = rows.slice(0, limit);
       }
       response(res, true, "Succeed", {
-        finals,
+        rows,
         recordsFiltered: count,
         recordsTotal: count,
       });
@@ -574,9 +596,31 @@ module.exports = class SimController {
         rows.push({
           id: element.id,
           name_polda: element.name_polda,
+          baru_a: parseInt(element.dataValues.baru_a) || 0,
+          baru_c: parseInt(element.dataValues.baru_c) || 0,
+          baru_d: parseInt(element.dataValues.baru_d) || 0,
+
+          perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
+          perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
+          perpanjangan_c: parseInt(element.dataValues.perpanjangan_c) || 0,
+          perpanjangan_c1: parseInt(element.dataValues.perpanjangan_c1) || 0,
+          perpanjangan_c2: parseInt(element.dataValues.perpanjangan_c2) || 0,
+          perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
+          perpanjangan_d1: parseInt(element.dataValues.perpanjangan_d1) || 0,
+          perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
+          perpanjangan_b1u: parseInt(element.dataValues.perpanjangan_b1u) || 0,
+          perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
+          perpanjangan_b2u: parseInt(element.dataValues.perpanjangan_b2u) || 0,
+
+          peningkatan_au: parseInt(element.dataValues.peningkatan_au) || 0,
+          peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
+          peningkatan_b1u: parseInt(element.dataValues.peningkatan_b1u) || 0,
+          peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
+          peningkatan_b2u: parseInt(element.dataValues.peningkatan_b2u) || 0,
+
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-          total: parseInt(element.dataValues.total) || 0,
+          peningkatan: parseInt(element.dataValues.peningkatan) || 0,
         });
       });
 
@@ -651,7 +695,85 @@ module.exports = class SimController {
       const getDataRules = {
         attributes: [
           [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
-          [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
+            "perpanjangan_a",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_au")),
+            "perpanjangan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c")),
+            "perpanjangan_c",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c1")),
+            "perpanjangan_c1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_c2")),
+            "perpanjangan_c2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
+            "perpanjangan_d",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_d1")),
+            "perpanjangan_d1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
+            "perpanjangan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1u")),
+            "perpanjangan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
+            "perpanjangan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2u")),
+            "perpanjangan_b2u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_au")),
+            "peningkatan_au",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
+            "peningkatan_b1",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b1u")),
+            "peningkatan_b1u",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
+            "peningkatan_b2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
+            "peningkatan_b2u",
+          ],
+          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
+          [
+            Sequelize.literal(
+              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "perpanjangan",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "peningkatan",
+          ],
         ],
         where: wheres,
       };
