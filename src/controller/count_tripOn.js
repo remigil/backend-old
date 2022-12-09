@@ -35,6 +35,9 @@ module.exports = class CountTripOnController {
         start_date = null,
         end_date = null,
         filter = null,
+        time = null,
+        start_time = null,
+        end_time = null,
         date = null,
         type_vehicle = null,
       } = req.query;
@@ -52,6 +55,26 @@ module.exports = class CountTripOnController {
           departure_date: date,
         };
       }
+
+      if (filter) {
+        if (time) {
+          getDataRules.where = {
+            departure_date: {
+              [Op.and]: {
+                [Op.between]: [start_date, end_date],
+                [Op.between]: [start_time, end_time],
+              },
+            },
+          };
+        }
+
+        getDataRules.where = {
+          departure_date: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      }
+
       let finals = [];
       let data = await Trip_on.findAll(getDataRules);
 
