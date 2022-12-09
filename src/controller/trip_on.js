@@ -524,32 +524,35 @@ module.exports = class Trip_onController {
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Trip_on.getAttributes());
-      let getDataRules = {
-        where: null,
-        include: [
-          {
-            model: Society,
-            attributes: ["person_name", "foto", "nik", "nationality"],
-          },
-          {
-            model: Public_vehicle,
-            attributes: ["no_vehicle"],
-          },
-          {
-            model: Type_vehicle,
-            attributes: ["type_name"],
-          },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
-          {
-            model: Passenger_trip_on,
-            // required: true,
-            attributes: ["name", "nationality", "nik"],
-          },
-        ],
-      };
+      let getDataRules = { where: null };
+
+      getDataRules.include = [
+        {
+          model: Society,
+          required: false,
+          attributes: ["person_name", "foto", "nik", "nationality"],
+        },
+        {
+          model: Public_vehicle,
+          required: false,
+          attributes: ["no_vehicle"],
+        },
+        {
+          model: Type_vehicle,
+          required: false,
+          attributes: ["type_name"],
+        },
+        {
+          model: Brand_vehicle,
+          required: false,
+          attributes: ["brand_name"],
+        },
+        {
+          model: Passenger_trip_on,
+          required: false,
+          attributes: ["name", "nationality", "nik"],
+        },
+      ];
       if (serverSide?.toLowerCase() === "true") {
         getDataRules.limit = length;
         getDataRules.offset = start;
