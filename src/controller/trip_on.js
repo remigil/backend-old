@@ -145,12 +145,13 @@ module.exports = class Trip_onController {
           },
         ],
       });
+      let countpassenger = data.dataValues.passenger_trip_ons.length;
       let asd = new Date(data.dataValues.validity_period);
       let validity_period = timeAgo.format(asd);
-      // data.push(validity_period);
       response(res, true, "Succeed", {
         data,
         validity_period,
+        countpassenger,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -405,11 +406,21 @@ module.exports = class Trip_onController {
           { transaction: transaction }
         );
         await transaction.commit();
+        let countpassenger = await Passenger_trip_on.count({
+          where: { trip_on_id: parseInt(getId) },
+        });
+        let countvehicle = await Public_vehicle.count({
+          where: {
+            id: input["vehicle_id"],
+          },
+        });
 
         response(res, true, "Succeed", {
           ...insertTripOn.dataValues,
           code: codetrp,
           passenger: insertBulkPenumpang,
+          countpassenger: countpassenger,
+          countvehicle: countvehicle,
         });
       } else {
         response(
