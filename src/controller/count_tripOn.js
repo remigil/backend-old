@@ -303,7 +303,42 @@ module.exports = class CountTripOnController {
 
   static filter = async (req, res) => {
     try {
-      const { start_prov, end_prov } = req.query;
+      const {
+        start_prov,
+        end_prov,
+        filter,
+        start_date,
+        end_date,
+        time,
+        start_time,
+        end_time,
+      } = req.query;
+
+      let wheres = [];
+
+      if (start_prov && end_prov) {
+        wheres.push(
+          { kode_prov_start: start_prov },
+          { kode_prov_end: end_prov }
+        );
+      }
+
+      if (filter) {
+        wheres.push({
+          departure_date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+      }
+
+      if (time) {
+        wheres.push({
+          departure_time: {
+            [Op.between]: [start_time, end_time],
+          },
+        });
+      }
+
       let data = await Trip_on.findAll({
         include: [
           {
@@ -332,13 +367,9 @@ module.exports = class CountTripOnController {
             attributes: ["name", "nationality", "nik"],
           },
         ],
+
         where: {
-          // kode_prov_start: start_prov,
-          // kode_prov_end: end_prov,
-          [Op.and]: [
-            { kode_prov_start: start_prov },
-            { kode_prov_end: end_prov },
-          ],
+          [Op.and]: wheres,
         },
       });
       response(res, true, "Succeed", data);
