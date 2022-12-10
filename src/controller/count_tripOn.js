@@ -17,11 +17,9 @@ const Public_vehicle = require("../model/public_vehicle");
 const Prov = require("../model/provinsi");
 const KabKot = require("../model/kabkot");
 
-// Prov.hasMany(Trip_on, {
-//   foreignKey: "kode_prov_start",
-//   sourceKey: "kode",
-//   as: "start_prov",
-// });
+Brand_vehicle.hasMany(Trip_on, {
+  foreignKey: "brand_id",
+});
 // Prov.hasMany(Trip_on, {
 //   foreignKey: "kode_prov_end",
 //   sourceKey: "kode",
@@ -123,6 +121,76 @@ module.exports = class CountTripOnController {
           });
         });
       }
+      response(res, true, "Succeed", finals);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static get_model = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        time = null,
+        start_time = null,
+        end_time = null,
+        date = null,
+        type_vehicle = null,
+      } = req.query;
+
+      const getDataRules = {
+        group: "brand_vehicle.id",
+        attributes: [
+          "brand_name",
+          [Sequelize.fn("count", Sequelize.col("brand_id")), "jumlah"],
+        ],
+        include: [
+          {
+            model: Trip_on,
+            required: false,
+            attributes: [],
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      };
+
+      if (date) {
+        getDataRules.include[0].where = {
+          departure_date: date,
+        };
+      }
+
+      if (filter) {
+        if (time) {
+          getDataRules.include[0].where = {
+            departure_date: {
+              [Op.and]: {
+                [Op.between]: [start_date, end_date],
+                [Op.between]: [start_time, end_time],
+              },
+            },
+          };
+        }
+
+        getDataRules.include[0].where = {
+          departure_date: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      }
+
+      let finals = [];
+      let data = await Brand_vehicle.findAll(getDataRules);
+
+      data.map((element, index) => {
+        finals.push({
+          brand: element.dataValues.brand_name,
+          jumlah: parseInt(element.dataValues.jumlah),
+        });
+      });
       response(res, true, "Succeed", finals);
     } catch (error) {
       response(res, false, "Failed", error.message);
