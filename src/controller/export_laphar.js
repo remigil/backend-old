@@ -3,6 +3,7 @@ const response = require("../lib/response");
 const moment = require("moment");
 const puppeteer = require("puppeteer");
 const ejs = require("ejs");
+const cron = require("node-cron");
 const { IDDays } = require("../lib/generalhelper");
 const { tempalteLaphar, templateLapharNew } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
@@ -26,6 +27,8 @@ const Sim_polda_day = require("../model/count_sim_polda_day");
 const Bpkb_polda_day = require("../model/count_bpkb_polda_day");
 const Stnk_polda_day = require("../model/count_stnk_polda_day");
 const Ranmor_polda_day = require("../model/count_ranmor_polda_day");
+
+const Laporan_Harian = require("../model/laporan_harian");
 
 const Polda = require("../model/polda");
 const { subtract } = require("lodash");
@@ -51,7 +54,7 @@ module.exports = class ExportLapharController {
 
       let rules = [];
       let rules_polda = [];
-      let tgl = "";
+      let tgl = moment().format("YYYY-MM-DD");
       if (date) {
         rules.push({
           date: date,
@@ -733,8 +736,11 @@ module.exports = class ExportLapharController {
       const workSheet = XLSX.utils.table_to_sheet(results);
       const workBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
-      XLSX.writeFile(workBook, `./public/export_laphar/laporan_harian.xlsx`);
-      res.download("./public/export_laphar/laporan_harian.xlsx");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_${tgl}.xlsx`
+      );
+      res.download(`./public/export_laphar/laporan_harian_${tgl}.xlsx`);
       // response(res, true, "Succeed", ditkamsel);
     } catch (error) {
       response(res, false, "Failed", error.message);
@@ -1885,8 +1891,8 @@ module.exports = class ExportLapharController {
       let rules_yesterday = "";
       let today = "";
       let yesterday = "";
-        let name_todays = "";
-        let name_yesterdays = "";
+      let name_todays = "";
+      let name_yesterdays = "";
       let full_date = moment().locale("id").format("LL");
       if (type === "day") {
         rules_today = { date: date };
@@ -2498,6 +2504,22 @@ module.exports = class ExportLapharController {
 
       res.send(pdf);
       await browser.close();
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static get = async (req, res) => {
+    try {
+      const { kategori, limit } = req.query;
+      let data = await Laporan_Harian.findAll({
+        where: {
+          kategori_laporan: kategori,
+        },
+        limit: limit,
+        order: [["date", "DESC"]],
+      });
+      response(res, true, "Succeed", data);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

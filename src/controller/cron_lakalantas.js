@@ -41,55 +41,60 @@ exports.cronLakalantas = () => {
 };
 
 const update_polda_day = async () => {
-  let getIrsms = await axios.get(
-    "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
-  );
+  try {
+    let getIrsms = await axios.get(
+      "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
+    );
 
-  var filterIrsms = getIrsms.data["result"].filter(function (e) {
-    return e.tgl_kejadian != null && e.name != "TOTAL";
-  });
-
-  let finals = filterIrsms.map((Element, index) => {
-    let a = namePolda(Element.name);
-    date = Element.tgl_kejadian.split("/").reverse().join("-");
-    // let date = moment(d).format('YYYY-MM-DD') ;)
-    return {
-      ...a,
-      ...Element,
-      date,
-    };
-  });
-
-  for (let i = 0; i < finals.length; i++) {
-    let checkData = await Count_polda_day.findOne({
-      where: {
-        polda_id: finals[i].polda_id,
-        date: finals[i].date,
-      },
+    var filterIrsms = getIrsms.data["result"].filter(function (e) {
+      return e.tgl_kejadian != null && e.name != "TOTAL";
     });
 
-    let data = {
-      polda_id: finals[i].polda_id,
-      date: finals[i].date,
-      meninggal_dunia: finals[i].total_md,
-      luka_berat: finals[i].total_lb,
-      luka_ringan: finals[i].total_lr,
-      insiden_kecelakaan: finals[i].total_accident,
-      kerugian_material: finals[i].total_materialloss,
-      total_korban: finals[i].total_korban,
-    };
+    let finals = filterIrsms.map((Element, index) => {
+      let a = namePolda(Element.name);
+      date = Element.tgl_kejadian.split("/").reverse().join("-");
+      // let date = moment(d).format('YYYY-MM-DD') ;)
+      return {
+        ...a,
+        ...Element,
+        date,
+      };
+    });
 
-    if (checkData) {
-      await Count_polda_day.update(data, {
+    for (let i = 0; i < finals.length; i++) {
+      let checkData = await Count_polda_day.findOne({
         where: {
           polda_id: finals[i].polda_id,
           date: finals[i].date,
         },
       });
-    } else {
-      await Count_polda_day.create(data);
+
+      let data = {
+        polda_id: finals[i].polda_id,
+        date: finals[i].date,
+        meninggal_dunia: finals[i].total_md,
+        luka_berat: finals[i].total_lb,
+        luka_ringan: finals[i].total_lr,
+        insiden_kecelakaan: finals[i].total_accident,
+        kerugian_material: finals[i].total_materialloss,
+        total_korban: finals[i].total_korban,
+      };
+
+      if (checkData) {
+        await Count_polda_day.update(data, {
+          where: {
+            polda_id: finals[i].polda_id,
+            date: finals[i].date,
+          },
+        });
+      } else {
+        await Count_polda_day.create(data);
+      }
     }
+  } catch (error) {
+    console.log(error);
   }
+ 
 };
 
 const update_polda_month = async () => {

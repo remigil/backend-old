@@ -21,6 +21,7 @@ const cronStnk = require("./src/controller/cron_stnk");
 const cronBpkb = require("./src/controller/cron_bpkb");
 const cronRanmor = require("./src/controller/cron_ranmor");
 const cronLapmasyarakat = require("./src/controller/cron_lapMasyarakat");
+const cronLaporanHarian = require("./src/controller/cron_laporanHarian");
 
 //console.log(options)
 const server = http.createServer(app);
@@ -40,11 +41,11 @@ app.use(express.static(path.join(__dirname, "./public")));
 socketInstace(server);
 // socketInstace(server);
 
-
 // Cronjob
 // cronDikmaslantas.cronDikmaslantas();
 // cronPenyebaran.cronPenyebaran();
 cronLakalantas.cronLakalantas();
+cronLaporanHarian.Laporan_Harian();
 // cronGarlantas.cronGarlantas();
 // cronLakalanggar.cronLakalanggar();
 // cronTurjagwali.cronTurjagwali();

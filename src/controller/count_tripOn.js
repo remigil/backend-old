@@ -21,9 +21,9 @@ Brand_vehicle.hasMany(Trip_on, {
   foreignKey: "brand_id",
 });
 // Prov.hasMany(Trip_on, {
-//   foreignKey: "kode_prov_end",
+//   foreignKey: "kode_prov_start",
 //   sourceKey: "kode",
-//   as: "end_prov",
+//   as: "start_prov",
 // });
 
 module.exports = class CountTripOnController {
@@ -285,13 +285,19 @@ module.exports = class CountTripOnController {
   //             [Op.and]: [
   //               {
   //                 departure_date: {
-  //                   [Op.between]: ["2022-10-26", "2022-10-26"],
+  //                   [Op.between]: ["2022-12-09", "2022-12-09"],
   //                 },
   //               },
   //               {
   //                 departure_time: {
   //                   [Op.between]: ["09:00:00", "21:00:00"],
   //                 },
+  //               },
+  //               {
+  //                 kode_prov_start: "32",
+  //               },
+  //               {
+  //                 kode_prov_end: "32",
   //               },
   //             ],
   //           },
