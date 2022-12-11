@@ -56,13 +56,6 @@ const decAes = (token) =>
     isSafeUrl: true,
     parseMode: "string",
   });
-
-function convert(str) {
-  var date = new Date(str),
-    mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-    day = ("0" + date.getDate()).slice(-2);
-  return [date.getFullYear(), mnth, day].join("-");
-}
 module.exports = class Trip_onController {
   static get = async (req, res) => {
     try {
@@ -89,10 +82,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -142,10 +135,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -186,10 +179,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -210,12 +203,8 @@ module.exports = class Trip_onController {
     }
   };
 
-  static getbySocietyId = async (req, res) => {
+  static gethistorybySocietyId = async (req, res) => {
     try {
-      let asd = AESDecrypt(req.auth.uid, {
-        isSafeUrl: true,
-        parseMode: "string",
-      });
       let { limit, page, order } = req.query;
       let orderby = order ? order.toUpperCase() : "";
       page = page ? parseInt(page) : 1;
@@ -232,7 +221,6 @@ module.exports = class Trip_onController {
         nest: true,
         limit: resPage.limit,
         offset: resPage.offset,
-
         include: [
           {
             model: Society,
@@ -246,25 +234,25 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
           {
             model: Passenger_trip_on,
             attributes: ["name", "nationality", "nik"],
           },
         ],
       });
-
       let rows = tripon.rows;
       let date = groupBy(rows, (list) => list.created_at);
       let datanya = [];
       Object.keys(date).forEach((listDate) => {
         var newa = new Date(listDate);
         let newdate = newa.toISOString().replace("Z", "").replace("T", " ");
+        let newdatea = newdate.substring(0, 10);
         datanya.push({
-          date: newdate,
+          date: newdatea,
           data: date[listDate],
         });
       });
@@ -274,7 +262,48 @@ module.exports = class Trip_onController {
         total_page: Math.ceil(parseInt(tripon.count) / parseInt(resPage.limit)),
         recordsFiltered: tripon.count,
         recordsTotal: tripon.count,
-        rows,
+        datanya,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+  static getbySocietyId = async (req, res) => {
+    try {
+      const data = await Trip_on.findAll({
+        where: {
+          user_id: AESDecrypt(req.auth.uid, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        order: [["created_at", "DESC"]],
+        include: [
+          {
+            model: Society,
+            attributes: ["person_name", "foto", "nik", "nationality"],
+          },
+          {
+            model: Public_vehicle,
+            attributes: ["no_vehicle"],
+          },
+          {
+            model: Type_vehicle,
+            attributes: ["type_name"],
+          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
+          {
+            model: Passenger_trip_on,
+            // required: true,
+            attributes: ["name", "nationality", "nik"],
+          },
+        ],
+      });
+      response(res, true, "Succeed", {
+        data,
       });
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -311,10 +340,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          {
-            model: Brand_vehicle,
-            attributes: ["brand_name"],
-          },
+          // {
+          //   model: Brand_vehicle,
+          //   attributes: ["brand_name"],
+          // },
           {
             model: Passenger_trip_on,
             // required: true,

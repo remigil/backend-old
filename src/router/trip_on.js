@@ -7,6 +7,7 @@ router.get("/getid/:id", Trip_onController.getId);
 router.get("/cektripon", Trip_onController.cekTripon);
 router.get("/getbycode", Trip_onController.getbycodetripon);
 router.get("/getbysocietyId/", Trip_onController.getbySocietyId);
+router.get("/gethistorybysocietyId/", Trip_onController.gethistorybySocietyId);
 router.post(
   "/add",
   // body("no_vehicle").notEmpty().isLength({ min: 3 }),
