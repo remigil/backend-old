@@ -5,6 +5,7 @@ const formValidation = require("../middleware/form_validation");
 router.get("/", Trip_onController.get);
 router.get("/getid/:id", Trip_onController.getId);
 router.get("/cektripon", Trip_onController.cekTripon);
+router.get("/getbycode", Trip_onController.getbycodetripon);
 router.get("/getbysocietyId/", Trip_onController.getbySocietyId);
 router.post(
   "/add",
@@ -27,6 +28,5 @@ router.delete(
 );
 
 router.get("/list_tripon", Trip_onController.getWeb);
-
 
 module.exports = router;
