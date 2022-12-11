@@ -261,6 +261,11 @@ router.use(
   require("../router/panicButton")
 );
 router.use(
+  "/v" + process.env.APP_VERSION + "/panic-button-umum",
+  authMiddleware.jwtAuth,
+  require("../router/panicButton_umum")
+);
+router.use(
   "/v" + process.env.APP_VERSION + "/report",
   authMiddleware.jwtAuth,
   require("../router/report")
@@ -299,6 +304,7 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/panduan")
 );
+
 router.use(
   "/v" + process.env.APP_VERSION + "/logout",
   // authMiddleware.jwtAuth,
@@ -367,7 +373,6 @@ router.use(
   require("../router/sosmed")
 );
 
-
 // -------------- samsat
 router.use(
   "/v" + process.env.APP_VERSION + "/samsat",
@@ -375,15 +380,12 @@ router.use(
   require("../router/samsat")
 );
 
-
-
 // -------------- satpas
 router.use(
   "/v" + process.env.APP_VERSION + "/satpas",
   authMiddleware.jwtAuth,
   require("../router/satpas")
 );
-
 
 // Input data harian
 router.use(
