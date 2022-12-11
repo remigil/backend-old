@@ -82,10 +82,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -135,10 +135,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -179,10 +179,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -234,10 +234,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             attributes: ["name", "nationality", "nik"],
@@ -291,10 +291,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             // required: true,
@@ -340,10 +340,10 @@ module.exports = class Trip_onController {
             model: Type_vehicle,
             attributes: ["type_name"],
           },
-          // {
-          //   model: Brand_vehicle,
-          //   attributes: ["brand_name"],
-          // },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
           {
             model: Passenger_trip_on,
             // required: true,
