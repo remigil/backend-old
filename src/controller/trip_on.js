@@ -647,27 +647,22 @@ module.exports = class Trip_onController {
       getDataRules.include = [
         {
           model: Society,
-          required: false,
           attributes: ["person_name", "foto", "nik", "nationality"],
         },
         {
           model: Public_vehicle,
-          required: false,
           attributes: ["no_vehicle"],
         },
         {
           model: Type_vehicle,
-          required: false,
           attributes: ["type_name"],
         },
         {
           model: Brand_vehicle,
-          required: false,
           attributes: ["brand_name"],
         },
         {
           model: Passenger_trip_on,
-          required: false,
           attributes: ["name", "nationality", "nik"],
         },
       ];
