@@ -982,114 +982,156 @@ module.exports = class ImportFileController {
         const transaction = await db.transaction();
         const param = req.body;
         const source_id = decAes(param.source_id)
-        const value = param.value
-        try {
+         const value = param.value;
 
-            /**
-             * Validate parameter
-             */
-            
-            const schema = {
-                value: ['string','array']
-            }
-            const valid = check.validate(req.body, schema)
+         console.log(value);
+         try {
+           /**
+            * Validate parameter
+            */
 
-            if (valid === true) {
-                
-                /**
-                 * Data Payload
-                 */
-                let Data = []
-                let Destroy = []
-                for (let i in value) {
+           const schema = {
+             value: ["string", "array"],
+           };
+           const valid = check.validate(req.body, schema);
 
-                    /**
-                     * Define Parameter
-                     */
-                    const polda_id = value[i].polda_id
-                    // const polres_name = value[i].polres_name
-                    const date = value[i].date
-                    const baru = value[i].baru
-                    const perpanjangan = value[i].perpanjangan
+           if (valid === true) {
+             /**
+              * Data Payload
+              */
+             let Data = [];
+             let Destroy = [];
+             for (let i in value) {
+               /**
+                * Define Parameter
+                */
+               const polda_id = value[i].polda_id;
+               // const polres_name = value[i].polres_name
+               const date = value[i].date;
 
-                    /**
-                     * Get ID Polda
-                     */
-                    let getIdPolda = await Poldaa.findOne({
-                        where: {
-                            name_polda: polda_id
-                        }
-                    });
+               const baru_a = value[i].baru_a;
+               const baru_c = value[i].baru_c;
+               const baru_d = value[i].baru_d;
 
-                    /**
-                     * Get ID Polres
-                     */
-                    // let getIdPolres = await Polres.findOne({
-                    //     where: {
-                    //         name_polres: polres_name
-                    //     }
-                    // });
+               const perpanjangan_a = value[i].perpanjangan_a;
+               const perpanjangan_au = value[i].perpanjangan_au;
+               const perpanjangan_c = value[i].perpanjangan_c;
+               const perpanjangan_c1 = value[i].perpanjangan_c1;
+               const perpanjangan_c2 = value[i].perpanjangan_c2;
+               const perpanjangan_d = value[i].perpanjangan_d;
+               const perpanjangan_d1 = value[i].perpanjangan_d1;
+               const perpanjangan_b1 = value[i].perpanjangan_b1;
+               const perpanjangan_b1u = value[i].perpanjangan_b1u;
+               const perpanjangan_b2 = value[i].perpanjangan_b2u;
+               const perpanjangan_b2u = value[i].perpanjangan_b2u;
 
-                    /**
-                     * Data Payload
-                     */
-                    Data.push({
-                        polda_id: getIdPolda.dataValues.id,
-                        // polres_id: getIdPolres.dataValues.id,
-                        date: date,
-                        baru: baru,
-                        perpanjangan: perpanjangan
-                    })
+               const peningkatan_au = value[i].peningkatan_au;
+               const peningkatan_b1 = value[i].peningkatan_b1;
+               const peningkatan_b1u = value[i].peningkatan_b1u;
+               const peningkatan_b2 = value[i].peningkatan_b2;
+               const peningkatan_b2u = value[i].peningkatan_b2u;
 
+               /**
+                * Get ID Polda
+                */
+               let getIdPolda = await Poldaa.findOne({
+                 where: {
+                   name_polda: polda_id,
+                 },
+               });
 
-                    /**
-                     * Check data if exist set to array destroy
-                     */
-                    let checkExist = await Sim.findAll({
-                        where: {
-                            polda_id: getIdPolda.dataValues.id,
-                            // polres_id: getIdPolres.dataValues.id,
-                            date: date
-                        }
-                    });
+               /**
+                * Get ID Polres
+                */
+               // let getIdPolres = await Polres.findOne({
+               //     where: {
+               //         name_polres: polres_name
+               //     }
+               // });
 
-                    /**
-                     * Data Destroy & Update to new value
-                     */
-                    for (let i in checkExist) {
-                        if(checkExist[i].dataValues.id!=null){
-                            Destroy.push(
-                                checkExist[i].dataValues.id
-                            )
-                        }
-                    }
+               /**
+                * Data Payload
+                */
+               Data.push({
+                 polda_id: getIdPolda.dataValues.id,
+                 // polres_id: getIdPolres.dataValues.id,
+                 date: date,
+                 baru_a: baru_a,
+                 baru_c: baru_c,
+                 baru_d: baru_d,
 
-                }
+                 perpanjangan_a: perpanjangan_a,
+                 perpanjangan_au: perpanjangan_au,
+                 perpanjangan_c: perpanjangan_c,
+                 perpanjangan_c1: perpanjangan_c1,
+                 perpanjangan_c2: perpanjangan_c2,
+                 perpanjangan_d: perpanjangan_d,
+                 perpanjangan_d1: perpanjangan_d1,
+                 perpanjangan_b1: perpanjangan_b1,
+                 perpanjangan_b1u: perpanjangan_b1u,
+                 perpanjangan_b2: perpanjangan_b2,
+                 perpanjangan_b2u: perpanjangan_b2u,
 
-                /**
-                 * Transaction process
-                 */
-                await Sim.destroy({where: {id: Destroy}, transaction: transaction});
-                await Sim.bulkCreate(Data, {transaction: transaction});
-                await ImportFile.update({status: 1}, {where: {id: source_id}, transaction: transaction});
-                await transaction.commit();
-                response(res, true, "Success", "Success");
-            }else{
-                /**
-                 * Validate Error
-                 */
-                response(res, false, "Failed", "You have some error please check parameter");
-            }
+                 peningkatan_au: peningkatan_au,
+                 peningkatan_b1: peningkatan_b1,
+                 peningkatan_b1u: peningkatan_b1u,
+                 peningkatan_b2: peningkatan_b2,
+                 peningkatan_b2u: peningkatan_b2u,
+               });
 
-        } catch (error) {
-            
-            /**
-             * Rollback if error
-             */
-            await transaction.rollback();
-            response(res, false, "Failed", error.message);
-        
-        }
+               /**
+                * Check data if exist set to array destroy
+                */
+               let checkExist = await Sim.findAll({
+                 where: {
+                   polda_id: getIdPolda.dataValues.id,
+                   // polres_id: getIdPolres.dataValues.id,
+                   date: date,
+                 },
+               });
+
+               /**
+                * Data Destroy & Update to new value
+                */
+               for (let i in checkExist) {
+                 if (checkExist[i].dataValues.id != null) {
+                   Destroy.push(checkExist[i].dataValues.id);
+                 }
+               }
+             }
+
+             /**
+              * Transaction process
+              */
+             await Sim.destroy({
+               where: { id: Destroy },
+               transaction: transaction,
+             });
+             await Sim.bulkCreate(Data, { transaction: transaction });
+             await ImportFile.update(
+               { status: 1 },
+               { where: { id: source_id }, transaction: transaction }
+             );
+             await transaction.commit();
+             response(res, true, "Success", "Success");
+           } else {
+             /**
+              * Validate Error
+              */
+             response(
+               res,
+               false,
+               "Failed",
+               "You have some error please check parameter"
+             );
+           }
+         } catch (error) {
+           /**
+            * Rollback if error
+            */
+           await transaction.rollback();
+           response(res, false, "Failed", error.message);
+         }
     };
 
     /**
