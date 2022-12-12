@@ -283,7 +283,12 @@ module.exports = class SimController {
           "name_polda",
           [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
           [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c1")), "baru_c1"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c2")), "baru_c2"],
+
           [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d1")), "baru_d1"],
+
           [
             Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
             "perpanjangan_a",
@@ -348,7 +353,12 @@ module.exports = class SimController {
             Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
             "peningkatan_b2u",
           ],
-          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
+          [
+            Sequelize.literal(
+              "SUM(baru_a + baru_c + baru_c1 + baru_c2 + baru_d + baru_d1)"
+            ),
+            "baru",
+          ],
           [
             Sequelize.literal(
               "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u)"
@@ -416,7 +426,11 @@ module.exports = class SimController {
           name_polda: element.name_polda,
           baru_a: parseInt(element.dataValues.baru_a) || 0,
           baru_c: parseInt(element.dataValues.baru_c) || 0,
+          baru_c1: parseInt(element.dataValues.baru_c1) || 0,
+          baru_c2: parseInt(element.dataValues.baru_c2) || 0,
+
           baru_d: parseInt(element.dataValues.baru_d) || 0,
+          baru_d1: parseInt(element.dataValues.baru_d1) || 0,
 
           perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
           perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
@@ -482,7 +496,12 @@ module.exports = class SimController {
           "name_polda",
           [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
           [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c1")), "baru_c1"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c2")), "baru_c2"],
+
           [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d1")), "baru_d1"],
+
           [
             Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
             "perpanjangan_a",
@@ -547,10 +566,24 @@ module.exports = class SimController {
             Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
             "peningkatan_b2u",
           ],
-          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
-          [Sequelize.literal("SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"), "perpanjngan"],
-          [Sequelize.literal("SUM(peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"), "peningkatan"],
-             [Sequelize.literal("SUM(baru + perpanjangan + peningkatan)"), "total"],
+          [
+            Sequelize.literal(
+              "SUM(baru_a + baru_c + baru_c1 + baru_c2 + baru_d + baru_d1)"
+            ),
+            "baru",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u)"
+            ),
+            "perpanjangan",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "peningkatan",
+          ],
         ],
         include: [
           {
@@ -602,7 +635,11 @@ module.exports = class SimController {
           name_polda: element.name_polda,
           baru_a: parseInt(element.dataValues.baru_a) || 0,
           baru_c: parseInt(element.dataValues.baru_c) || 0,
+          baru_c1: parseInt(element.dataValues.baru_c1) || 0,
+          baru_c2: parseInt(element.dataValues.baru_c2) || 0,
+
           baru_d: parseInt(element.dataValues.baru_d) || 0,
+          baru_d1: parseInt(element.dataValues.baru_d1) || 0,
 
           perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
           perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
@@ -625,6 +662,10 @@ module.exports = class SimController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           peningkatan: parseInt(element.dataValues.peningkatan) || 0,
+           total:
+            parseInt(element.dataValues.baru) +
+            parseInt(element.dataValues.perpanjangan) +
+            parseInt(element.dataValues.peningkatan),
         });
       });
 
@@ -700,7 +741,12 @@ module.exports = class SimController {
         attributes: [
           [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
           [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c1")), "baru_c1"],
+          [Sequelize.fn("sum", Sequelize.col("baru_c2")), "baru_c2"],
+
           [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+          [Sequelize.fn("sum", Sequelize.col("baru_d1")), "baru_d1"],
+
           [
             Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
             "perpanjangan_a",
@@ -765,10 +811,15 @@ module.exports = class SimController {
             Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
             "peningkatan_b2u",
           ],
-          [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
           [
             Sequelize.literal(
-              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+              "SUM(baru_a + baru_c + baru_c1 + baru_c2 + baru_d + baru_d1)"
+            ),
+            "baru",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u)"
             ),
             "perpanjangan",
           ],
@@ -805,7 +856,11 @@ module.exports = class SimController {
 
               baru_a: parseInt(data.baru_a) || 0,
               baru_c: parseInt(data.baru_c) || 0,
+              baru_c1: parseInt(data.baru_c1) || 0,
+              baru_c2: parseInt(data.baru_c2) || 0,
+
               baru_d: parseInt(data.baru_d) || 0,
+              baru_d1: parseInt(data.baru_d1) || 0,
 
               perpanjangan_a: parseInt(data.perpanjangan_a) || 0,
               perpanjangan_au: parseInt(data.perpanjangan_au) || 0,
@@ -828,36 +883,42 @@ module.exports = class SimController {
               baru: parseInt(data.baru) || 0,
               perpanjangan: parseInt(data.perpanjangan) || 0,
               peningkatan: parseInt(data.peningkatan) || 0,
+              total:
+                parseInt(data.baru) +
+                parseInt(data.perpanjangan) +
+                parseInt(data.peningkatan),
             });
           } else {
             finals.push({
+              baru_a: 0,
+              baru_c: 0,
+              baru_c1: 0,
+              baru_c2: 0,
+              baru_d: 0,
+              baru_d1: 0,
 
+              perpanjangan_a: 0,
+              perpanjangan_au: 0,
+              perpanjangan_c: 0,
+              perpanjangan_c1: 0,
+              perpanjangan_c2: 0,
+              perpanjangan_d: 0,
+              perpanjangan_d1: 0,
+              perpanjangan_b1: 0,
+              perpanjangan_b1u: 0,
+              perpanjangan_b2: 0,
+              perpanjangan_b2u: 0,
 
-              baru_a:  0,
-              baru_c:  0,
-              baru_d:  0,
+              peningkatan_au: 0,
+              peningkatan_b1: 0,
+              peningkatan_b1u: 0,
+              peningkatan_b2: 0,
+              peningkatan_b2u: 0,
 
-              perpanjangan_a:  0,
-              perpanjangan_au:  0,
-              perpanjangan_c:  0,
-              perpanjangan_c1:  0,
-              perpanjangan_c2:  0,
-              perpanjangan_d:  0,
-              perpanjangan_d1:  0,
-              perpanjangan_b1:  0,
-              perpanjangan_b1u:  0,
-              perpanjangan_b2:  0,
-              perpanjangan_b2u:  0,
-
-              peningkatan_au:  0,
-              peningkatan_b1:  0,
-              peningkatan_b1u:  0,
-              peningkatan_b2:  0,
-              peningkatan_b2u:  0,
-
-              baru:  0,
-              perpanjangan:  0,
-              peningkatan:  0,
+              baru: 0,
+              perpanjangan: 0,
+              peningkatan: 0,
+              total: 0,
               date: item,
             });
           }
@@ -865,10 +926,13 @@ module.exports = class SimController {
       } else if (type === "month") {
         let abc = rows.map((element, index) => {
           return {
-
             baru_a: parseInt(element.dataValues.baru_a) || 0,
             baru_c: parseInt(element.dataValues.baru_c) || 0,
+            baru_c1: parseInt(element.dataValues.baru_c1) || 0,
+            baru_c2: parseInt(element.dataValues.baru_c2) || 0,
+
             baru_d: parseInt(element.dataValues.baru_d) || 0,
+            baru_d1: parseInt(element.dataValues.baru_d1) || 0,
 
             perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
             perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
@@ -893,7 +957,10 @@ module.exports = class SimController {
             baru: parseInt(element.dataValues.baru) || 0,
             perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
             peningkatan: parseInt(element.dataValues.peningkatan) || 0,
-
+            total:
+              parseInt(element.dataValues.baru) +
+              parseInt(element.dataValues.perpanjangan) +
+              parseInt(element.dataValues.peningkatan),
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -902,42 +969,39 @@ module.exports = class SimController {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({
-
               baru_a: parseInt(data.baru_a) || 0,
               baru_c: parseInt(data.baru_c) || 0,
+              baru_c1: parseInt(data.baru_c1) || 0,
+              baru_c2: parseInt(data.baru_c2) || 0,
+
               baru_d: parseInt(data.baru_d) || 0,
+              baru_d1: parseInt(data.baru_d1) || 0,
 
               perpanjangan_a: parseInt(data.perpanjangan_a) || 0,
-              perpanjangan_au:
-                parseInt(data.perpanjangan_au) || 0,
+              perpanjangan_au: parseInt(data.perpanjangan_au) || 0,
               perpanjangan_c: parseInt(data.perpanjangan_c) || 0,
-              perpanjangan_c1:
-                parseInt(data.perpanjangan_c1) || 0,
-              perpanjangan_c2:
-                parseInt(data.perpanjangan_c2) || 0,
+              perpanjangan_c1: parseInt(data.perpanjangan_c1) || 0,
+              perpanjangan_c2: parseInt(data.perpanjangan_c2) || 0,
               perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
-              perpanjangan_d1:
-                parseInt(data.perpanjangan_d1) || 0,
-              perpanjangan_b1:
-                parseInt(data.perpanjangan_b1) || 0,
-              perpanjangan_b1u:
-                parseInt(data.perpanjangan_b1u) || 0,
-              perpanjangan_b2:
-                parseInt(data.perpanjangan_b2) || 0,
-              perpanjangan_b2u:
-                parseInt(data.perpanjangan_b2u) || 0,
+              perpanjangan_d1: parseInt(data.perpanjangan_d1) || 0,
+              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
+              perpanjangan_b1u: parseInt(data.perpanjangan_b1u) || 0,
+              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
+              perpanjangan_b2u: parseInt(data.perpanjangan_b2u) || 0,
 
               peningkatan_au: parseInt(data.peningkatan_au) || 0,
               peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
-              peningkatan_b1u:
-                parseInt(data.peningkatan_b1u) || 0,
+              peningkatan_b1u: parseInt(data.peningkatan_b1u) || 0,
               peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
-              peningkatan_b2u:
-                parseInt(data.peningkatan_b2u) || 0,
+              peningkatan_b2u: parseInt(data.peningkatan_b2u) || 0,
 
               baru: parseInt(data.baru) || 0,
               perpanjangan: parseInt(data.perpanjangan) || 0,
               peningkatan: parseInt(data.peningkatan) || 0,
+              total:
+                parseInt(data.baru) +
+                parseInt(data.perpanjangan) +
+                parseInt(data.peningkatan),
               date: data.date,
             });
           } else {
@@ -967,6 +1031,7 @@ module.exports = class SimController {
               baru: 0,
               perpanjangan: 0,
               peningkatan: 0,
+              total: 0,
               date: item,
             });
           }
@@ -991,7 +1056,10 @@ module.exports = class SimController {
 
           baru_a: item.baru_a,
           baru_c: item.baru_c,
+          baru_c1: item.baru_c1,
+          baru_c2: item.baru_c2,
           baru_d: item.baru_d,
+          baru_d1: item.baru_d1,
 
           perpanjangan_a: item.perpanjangan_a,
           perpanjangan_au: item.perpanjangan_au,

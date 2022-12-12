@@ -638,6 +638,16 @@ Sim.init(
     date: {
       type: Sequelize.DATEONLY,
     },
+    baru: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+      allowNull: true,
+    },
+    perpanjangan: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+      allowNull: true,
+    },
     baru_a: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
@@ -646,7 +656,19 @@ Sim.init(
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
+    baru_c1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    baru_c2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
     baru_d: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    baru_d1: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },

@@ -679,8 +679,6 @@ module.exports = class ImportFileController {
                         patroli: patroli,
                         pengaturan: pengaturan
                     })
-
-
                     /**
                      * Check data if exist set to array destroy
                      */
@@ -984,7 +982,6 @@ module.exports = class ImportFileController {
         const source_id = decAes(param.source_id)
          const value = param.value;
 
-         console.log(value);
          try {
            /**
             * Validate parameter
@@ -1000,105 +997,119 @@ module.exports = class ImportFileController {
               * Data Payload
               */
              let Data = [];
-             let Destroy = [];
-             for (let i in value) {
-               /**
-                * Define Parameter
-                */
-               const polda_id = value[i].polda_id;
-               // const polres_name = value[i].polres_name
-               const date = value[i].date;
+               let Destroy = [];
+              
+               for (let i in value) {
+                 /**
+                  * Define Parameter
+                  */
+                
+            
+                 const polda_id = value[i].polda_id;
+                 // const polres_name = value[i].polres_name
+                 const date = value[i].date;
+                 const baru = 0;
+                 const perpanjangan = 0;
+                 const baru_a = value[i].baru_a;
+                   const baru_c = value[i].baru_c;
+                   const baru_c1 = value[i].baru_c1;
+                   const baru_c2 = value[i].baru_c2;
 
-               const baru_a = value[i].baru_a;
-               const baru_c = value[i].baru_c;
-               const baru_d = value[i].baru_d;
+                   const baru_d = value[i].baru_d;
+                   const baru_d1 = value[i].baru_d1;
+                   
 
-               const perpanjangan_a = value[i].perpanjangan_a;
-               const perpanjangan_au = value[i].perpanjangan_au;
-               const perpanjangan_c = value[i].perpanjangan_c;
-               const perpanjangan_c1 = value[i].perpanjangan_c1;
-               const perpanjangan_c2 = value[i].perpanjangan_c2;
-               const perpanjangan_d = value[i].perpanjangan_d;
-               const perpanjangan_d1 = value[i].perpanjangan_d1;
-               const perpanjangan_b1 = value[i].perpanjangan_b1;
-               const perpanjangan_b1u = value[i].perpanjangan_b1u;
-               const perpanjangan_b2 = value[i].perpanjangan_b2u;
-               const perpanjangan_b2u = value[i].perpanjangan_b2u;
+                 const perpanjangan_a = value[i].perpanjangan_a;
+                 const perpanjangan_au = value[i].perpanjangan_au;
+                 const perpanjangan_c = value[i].perpanjangan_c;
+                 const perpanjangan_c1 = value[i].perpanjangan_c1;
+                 const perpanjangan_c2 = value[i].perpanjangan_c2;
+                 const perpanjangan_d = value[i].perpanjangan_d;
+                 const perpanjangan_d1 = value[i].perpanjangan_d1;
+                 const perpanjangan_b1 = value[i].perpanjangan_b1;
+                 const perpanjangan_b1u = value[i].perpanjangan_b1u;
+                 const perpanjangan_b2 = value[i].perpanjangan_b2u;
+                 const perpanjangan_b2u = value[i].perpanjangan_b2u;
 
-               const peningkatan_au = value[i].peningkatan_au;
-               const peningkatan_b1 = value[i].peningkatan_b1;
-               const peningkatan_b1u = value[i].peningkatan_b1u;
-               const peningkatan_b2 = value[i].peningkatan_b2;
-               const peningkatan_b2u = value[i].peningkatan_b2u;
+                 const peningkatan_au = value[i].peningkatan_au;
+                 const peningkatan_b1 = value[i].peningkatan_b1;
+                 const peningkatan_b1u = value[i].peningkatan_b1u;
+                 const peningkatan_b2 = value[i].peningkatan_b2;
+                 const peningkatan_b2u = value[i].peningkatan_b2u;
 
-               /**
-                * Get ID Polda
-                */
-               let getIdPolda = await Poldaa.findOne({
-                 where: {
-                   name_polda: polda_id,
-                 },
-               });
+                 /**
+                  * Get ID Polda
+                  */
+                 let getIdPolda = await Poldaa.findOne({
+                   where: {
+                     name_polda: polda_id,
+                   },
+                 });
+              
+                 /**
+                  * Get ID Polres
+                  */
+                 // let getIdPolres = await Polres.findOne({
+                 //     where: {
+                 //         name_polres: polres_name
+                 //     }
+                 // });
 
-               /**
-                * Get ID Polres
-                */
-               // let getIdPolres = await Polres.findOne({
-               //     where: {
-               //         name_polres: polres_name
-               //     }
-               // });
-
-               /**
-                * Data Payload
-                */
-               Data.push({
-                 polda_id: getIdPolda.dataValues.id,
-                 // polres_id: getIdPolres.dataValues.id,
-                 date: date,
-                 baru_a: baru_a,
-                 baru_c: baru_c,
-                 baru_d: baru_d,
-
-                 perpanjangan_a: perpanjangan_a,
-                 perpanjangan_au: perpanjangan_au,
-                 perpanjangan_c: perpanjangan_c,
-                 perpanjangan_c1: perpanjangan_c1,
-                 perpanjangan_c2: perpanjangan_c2,
-                 perpanjangan_d: perpanjangan_d,
-                 perpanjangan_d1: perpanjangan_d1,
-                 perpanjangan_b1: perpanjangan_b1,
-                 perpanjangan_b1u: perpanjangan_b1u,
-                 perpanjangan_b2: perpanjangan_b2,
-                 perpanjangan_b2u: perpanjangan_b2u,
-
-                 peningkatan_au: peningkatan_au,
-                 peningkatan_b1: peningkatan_b1,
-                 peningkatan_b1u: peningkatan_b1u,
-                 peningkatan_b2: peningkatan_b2,
-                 peningkatan_b2u: peningkatan_b2u,
-               });
-
-               /**
-                * Check data if exist set to array destroy
-                */
-               let checkExist = await Sim.findAll({
-                 where: {
+                 /**
+                  * Data Payload
+                  */
+                 Data.push({
                    polda_id: getIdPolda.dataValues.id,
                    // polres_id: getIdPolres.dataValues.id,
                    date: date,
-                 },
-               });
+                   baru_a: baru_a,
+                     baru_c: baru_c,
+                     baru_c1: baru_c1,
+                   baru_c2:baru_c2,
+                     baru_d: baru_d,
+                   baru_d1:baru_d1,
 
-               /**
-                * Data Destroy & Update to new value
-                */
-               for (let i in checkExist) {
-                 if (checkExist[i].dataValues.id != null) {
-                   Destroy.push(checkExist[i].dataValues.id);
+                   perpanjangan_a: perpanjangan_a,
+                   perpanjangan_au: perpanjangan_au,
+                   perpanjangan_c: perpanjangan_c,
+                   perpanjangan_c1: perpanjangan_c1,
+                   perpanjangan_c2: perpanjangan_c2,
+                   perpanjangan_d: perpanjangan_d,
+                   perpanjangan_d1: perpanjangan_d1,
+                   perpanjangan_b1: perpanjangan_b1,
+                   perpanjangan_b1u: perpanjangan_b1u,
+                   perpanjangan_b2: perpanjangan_b2,
+                   perpanjangan_b2u: perpanjangan_b2u,
+
+                   peningkatan_au: peningkatan_au,
+                   peningkatan_b1: peningkatan_b1,
+                   peningkatan_b1u: peningkatan_b1u,
+                   peningkatan_b2: peningkatan_b2,
+                   peningkatan_b2u: peningkatan_b2u,
+                 });
+
+            
+
+                 /**
+                  * Check data if exist set to array destroy
+                  */
+                 let checkExist = await Sim.findAll({
+                   where: {
+                     polda_id: getIdPolda.dataValues.id,
+                     // polres_id: getIdPolres.dataValues.id,
+                     date: date,
+                   },
+                 });
+
+                 /**
+                  * Data Destroy & Update to new value
+                  */
+                 for (let i in checkExist) {
+                   if (checkExist[i].dataValues.id != null) {
+                     Destroy.push(checkExist[i].dataValues.id);
+                   }
                  }
                }
-             }
 
              /**
               * Transaction process
@@ -5777,7 +5788,7 @@ module.exports = class ImportFileController {
 
             const modelAttr = Object.keys(ImportFileMasyarakat.getAttributes());
             let getDataRules = { where: null };
-            console.log('start',start)
+          
             if (serverSide?.toLowerCase() === "true") {
                 getDataRules.limit = length;
                 getDataRules.offset = start;
@@ -5830,8 +5841,7 @@ module.exports = class ImportFileController {
               where: getDataRules?.where,
             });
 
-            console.log('getDataRules',getDataRules)
-            console.log('data',data)
+          
 
             response(res, true, "Succeed", {
               data,
