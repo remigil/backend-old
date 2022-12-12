@@ -27,15 +27,75 @@ Count_stnk_polda_day.init(
     baru: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+      allowNull: true,
     },
     perpanjangan: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+      allowNull: true,
     },
     rubentina: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+      allowNull: true,
     },
+    bbn_1_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    bbn_1_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perubahan_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perubahan_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perpanjangan_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_keluar_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_keluar_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_masuk_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_masuk_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    pengesahan_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    pengesahan_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    samolnas_r2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    samolnas_r4: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+
     ...StructureTimestamp,
   },
   {

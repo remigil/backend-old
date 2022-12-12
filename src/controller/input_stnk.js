@@ -301,7 +301,77 @@ module.exports = class StnkController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
-          [Sequelize.literal("SUM(baru + perpanjangan + rubentina)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r2")), "bbn_1_r2"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r4")), "bbn_1_r4"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r2")), "perubahan_r2"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r4")), "perubahan_r4"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r2")),
+            "perpanjangan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r4")),
+            "perpanjangan_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r2")),
+            "mutasi_keluar_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r4")),
+            "mutasi_keluar_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r2")),
+            "mutasi_masuk_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r4")),
+            "mutasi_masuk_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r2")),
+            "pengesahan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r4")),
+            "pengesahan_r4",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r2")), "samolnas_r2"],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r4")), "samolnas_r4"],
+
+          [Sequelize.literal("SUM(bbn_1_r2 + bbn_1_r4)"), "total_bbn"],
+          [
+            Sequelize.literal("SUM(perubahan_r2 + perubahan_r4)"),
+            "total_perubahan",
+          ],
+          [
+            Sequelize.literal("SUM(perpanjangan_r2 + perpanjangan_r4)"),
+            "total_perpanjangan",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_keluar_r2 + mutasi_keluar_r4)"),
+            "total_mutasi_keluar",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_masuk_r2 + mutasi_masuk_r4)"),
+            "total_mutasi_masuk",
+          ],
+          [
+            Sequelize.literal("SUM(pengesahan_r2 + pengesahan_r4)"),
+            "total_pengesahan",
+          ],
+          [
+            Sequelize.literal("SUM(samolnas_r2 + samolnas_r4)"),
+            "total_samolnas",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1_r2 + bbn_1_r4 + perubahan_r2 + perubahan_r4 + perpanjangan_r2 + perpanjangan_r4 + mutasi_keluar_r2 + mutasi_keluar_r4 + mutasi_masuk_r2 + mutasi_masuk_r4 + pengesahan_r2 + pengesahan_r4 + samolnas_r2 + samolnas_r4)"
+            ),
+            "total",
+          ],
         ],
         include: [
           {
@@ -354,6 +424,32 @@ module.exports = class StnkController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           rubentina: parseInt(element.dataValues.rubentina) || 0,
+          bbn_1_r2: parseInt(element.dataValues.bbn_1_r2) || 0,
+          bbn_1_r4: parseInt(element.dataValues.bbn_1_r4) || 0,
+
+          perubahan_r2: parseInt(element.dataValues.perubahan_r2) || 0,
+          perubahan_r4: parseInt(element.dataValues.perubahan_r4) || 0,
+          perpanjangan_r2: parseInt(element.dataValues.perpanjangan_r2) || 0,
+          perpanjangan_r4: parseInt(element.dataValues.perpanjangan_r4) || 0,
+          mutasi_keluar_r2: parseInt(element.dataValues.mutasi_keluar_r2) || 0,
+          mutasi_keluar_r4: parseInt(element.dataValues.mutasi_keluar_r4) || 0,
+          mutasi_masuk_r2: parseInt(element.dataValues.mutasi_masuk_r2) || 0,
+          mutasi_masuk_r4: parseInt(element.dataValues.mutasi_masuk_r4) || 0,
+          pengesahan_r2: parseInt(element.dataValues.pengesahan_r2) || 0,
+          pengesahan_r4: parseInt(element.dataValues.pengesahan_r4) || 0,
+          samolnas_r2: parseInt(element.dataValues.samolnas_r2) || 0,
+          samolnas_r4: parseInt(element.dataValues.samolnas_r4) || 0,
+          total_bbn: parseInt(element.dataValues.total_bbn) || 0,
+          total_perubahan: parseInt(element.dataValues.total_perubahan) || 0,
+          total_perpanjangan:
+            parseInt(element.dataValues.total_perpanjangan) || 0,
+          total_mutasi_keluar:
+            parseInt(element.dataValues.total_mutasi_keluar) || 0,
+          total_mutasi_masuk:
+            parseInt(element.dataValues.total_mutasi_masuk) || 0,
+          total_pengesahan: parseInt(element.dataValues.total_pengesahan) || 0,
+          total_samolnas: parseInt(element.dataValues.total_samolnas) || 0,
+
           total: parseInt(element.dataValues.total) || 0,
         });
       });
@@ -395,7 +491,77 @@ module.exports = class StnkController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
-          [Sequelize.literal("SUM(baru + perpanjangan + rubentina)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r2")), "bbn_1_r2"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r4")), "bbn_1_r4"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r2")), "perubahan_r2"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r4")), "perubahan_r4"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r2")),
+            "perpanjangan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r4")),
+            "perpanjangan_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r2")),
+            "mutasi_keluar_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r4")),
+            "mutasi_keluar_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r2")),
+            "mutasi_masuk_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r4")),
+            "mutasi_masuk_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r2")),
+            "pengesahan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r4")),
+            "pengesahan_r4",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r2")), "samolnas_r2"],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r4")), "samolnas_r4"],
+
+          [Sequelize.literal("SUM(bbn_1_r2 + bbn_1_r4)"), "total_bbn"],
+          [
+            Sequelize.literal("SUM(perubahan_r2 + perubahan_r4)"),
+            "total_perubahan",
+          ],
+          [
+            Sequelize.literal("SUM(perpanjangan_r2 + perpanjangan_r4)"),
+            "total_perpanjangan",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_keluar_r2 + mutasi_keluar_r4)"),
+            "total_mutasi_keluar",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_masuk_r2 + mutasi_masuk_r4)"),
+            "total_mutasi_masuk",
+          ],
+          [
+            Sequelize.literal("SUM(pengesahan_r2 + pengesahan_r4)"),
+            "total_pengesahan",
+          ],
+          [
+            Sequelize.literal("SUM(samolnas_r2 + samolnas_r4)"),
+            "total_samolnas",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1_r2 + bbn_1_r4 + perubahan_r2 + perubahan_r4 + perpanjangan_r2 + perpanjangan_r4 + mutasi_keluar_r2 + mutasi_keluar_r4 + mutasi_masuk_r2 + mutasi_masuk_r4 + pengesahan_r2 + pengesahan_r4 + samolnas_r2 + samolnas_r4)"
+            ),
+            "total",
+          ],
         ],
         include: [
           {
@@ -448,6 +614,32 @@ module.exports = class StnkController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           rubentina: parseInt(element.dataValues.rubentina) || 0,
+          bbn_1_r2: parseInt(element.dataValues.bbn_1_r2) || 0,
+          bbn_1_r4: parseInt(element.dataValues.bbn_1_r4) || 0,
+
+          perubahan_r2: parseInt(element.dataValues.perubahan_r2) || 0,
+          perubahan_r4: parseInt(element.dataValues.perubahan_r4) || 0,
+          perpanjangan_r2: parseInt(element.dataValues.perpanjangan_r2) || 0,
+          perpanjangan_r4: parseInt(element.dataValues.perpanjangan_r4) || 0,
+          mutasi_keluar_r2: parseInt(element.dataValues.mutasi_keluar_r2) || 0,
+          mutasi_keluar_r4: parseInt(element.dataValues.mutasi_keluar_r4) || 0,
+          mutasi_masuk_r2: parseInt(element.dataValues.mutasi_masuk_r2) || 0,
+          mutasi_masuk_r4: parseInt(element.dataValues.mutasi_masuk_r4) || 0,
+          pengesahan_r2: parseInt(element.dataValues.pengesahan_r2) || 0,
+          pengesahan_r4: parseInt(element.dataValues.pengesahan_r4) || 0,
+          samolnas_r2: parseInt(element.dataValues.samolnas_r2) || 0,
+          samolnas_r4: parseInt(element.dataValues.samolnas_r4) || 0,
+          total_bbn: parseInt(element.dataValues.total_bbn) || 0,
+          total_perubahan: parseInt(element.dataValues.total_perubahan) || 0,
+          total_perpanjangan:
+            parseInt(element.dataValues.total_perpanjangan) || 0,
+          total_mutasi_keluar:
+            parseInt(element.dataValues.total_mutasi_keluar) || 0,
+          total_mutasi_masuk:
+            parseInt(element.dataValues.total_mutasi_masuk) || 0,
+          total_pengesahan: parseInt(element.dataValues.total_pengesahan) || 0,
+          total_samolnas: parseInt(element.dataValues.total_samolnas) || 0,
+
           total: parseInt(element.dataValues.total) || 0,
         });
       });
@@ -525,6 +717,77 @@ module.exports = class StnkController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r2")), "bbn_1_r2"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1_r4")), "bbn_1_r4"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r2")), "perubahan_r2"],
+          [Sequelize.fn("sum", Sequelize.col("perubahan_r4")), "perubahan_r4"],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r2")),
+            "perpanjangan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perpanjangan_r4")),
+            "perpanjangan_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r2")),
+            "mutasi_keluar_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r4")),
+            "mutasi_keluar_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r2")),
+            "mutasi_masuk_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r4")),
+            "mutasi_masuk_r4",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r2")),
+            "pengesahan_r2",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pengesahan_r4")),
+            "pengesahan_r4",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r2")), "samolnas_r2"],
+          [Sequelize.fn("sum", Sequelize.col("samolnas_r4")), "samolnas_r4"],
+
+          [Sequelize.literal("SUM(bbn_1_r2 + bbn_1_r4)"), "total_bbn"],
+          [
+            Sequelize.literal("SUM(perubahan_r2 + perubahan_r4)"),
+            "total_perubahan",
+          ],
+          [
+            Sequelize.literal("SUM(perpanjangan_r2 + perpanjangan_r4)"),
+            "total_perpanjangan",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_keluar_r2 + mutasi_keluar_r4)"),
+            "total_mutasi_keluar",
+          ],
+          [
+            Sequelize.literal("SUM(mutasi_masuk_r2 + mutasi_masuk_r4)"),
+            "total_mutasi_masuk",
+          ],
+          [
+            Sequelize.literal("SUM(pengesahan_r2 + pengesahan_r4)"),
+            "total_pengesahan",
+          ],
+          [
+            Sequelize.literal("SUM(samolnas_r2 + samolnas_r4)"),
+            "total_samolnas",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1_r2 + bbn_1_r4 + perubahan_r2 + perubahan_r4 + perpanjangan_r2 + perpanjangan_r4 + mutasi_keluar_r2 + mutasi_keluar_r4 + mutasi_masuk_r2 + mutasi_masuk_r4 + pengesahan_r2 + pengesahan_r4 + samolnas_r2 + samolnas_r4)"
+            ),
+            "total",
+          ],
         ],
         where: wheres,
       };
@@ -551,6 +814,30 @@ module.exports = class StnkController {
               baru: parseInt(data.baru),
               rubentina: parseInt(data.rubentina),
               perpanjangan: parseInt(data.perpanjangan),
+              bbn_1_r2: parseInt(data.bbn_1_r2) || 0,
+              bbn_1_r4: parseInt(data.bbn_1_r4) || 0,
+
+              perubahan_r2: parseInt(data.perubahan_r2) || 0,
+              perubahan_r4: parseInt(data.perubahan_r4) || 0,
+              perpanjangan_r2: parseInt(data.perpanjangan_r2) || 0,
+              perpanjangan_r4: parseInt(data.perpanjangan_r4) || 0,
+              mutasi_keluar_r2: parseInt(data.mutasi_keluar_r2) || 0,
+              mutasi_keluar_r4: parseInt(data.mutasi_keluar_r4) || 0,
+              mutasi_masuk_r2: parseInt(data.mutasi_masuk_r2) || 0,
+              mutasi_masuk_r4: parseInt(data.mutasi_masuk_r4) || 0,
+              pengesahan_r2: parseInt(data.pengesahan_r2) || 0,
+              pengesahan_r4: parseInt(data.pengesahan_r4) || 0,
+              samolnas_r2: parseInt(data.samolnas_r2) || 0,
+              samolnas_r4: parseInt(data.samolnas_r4) || 0,
+              total_bbn: parseInt(data.total_bbn) || 0,
+              total_perubahan: parseInt(data.total_perubahan) || 0,
+              total_perpanjangan: parseInt(data.total_perpanjangan) || 0,
+              total_mutasi_keluar: parseInt(data.total_mutasi_keluar) || 0,
+              total_mutasi_masuk: parseInt(data.total_mutasi_masuk) || 0,
+              total_pengesahan: parseInt(data.total_pengesahan) || 0,
+              total_samolnas: parseInt(data.total_samolnas) || 0,
+
+              total: parseInt(data.total) || 0,
               date: data.date,
             });
           } else {
@@ -558,6 +845,30 @@ module.exports = class StnkController {
               baru: 0,
               rubentina: 0,
               perpanjangan: 0,
+              bbn_1_r2: 0,
+              bbn_1_r4: 0,
+
+              perubahan_r2: 0,
+              perubahan_r4: 0,
+              perpanjangan_r2: 0,
+              perpanjangan_r4: 0,
+              mutasi_keluar_r2: 0,
+              mutasi_keluar_r4: 0,
+              mutasi_masuk_r2: 0,
+              mutasi_masuk_r4: 0,
+              pengesahan_r2: 0,
+              pengesahan_r4: 0,
+              samolnas_r2: 0,
+              samolnas_r4: 0,
+              total_bbn: 0,
+              total_perubahan: 0,
+              total_perpanjangan: 0,
+              total_mutasi_keluar: 0,
+              total_mutasi_masuk: 0,
+              total_pengesahan: 0,
+              total_samolnas: 0,
+
+              total: 0,
               date: item,
             });
           }
@@ -568,6 +879,36 @@ module.exports = class StnkController {
             baru: parseInt(element.dataValues.baru),
             rubentina: parseInt(element.dataValues.rubentina),
             perpanjangan: parseInt(element.dataValues.perpanjangan),
+            bbn_1_r2: parseInt(element.dataValues.bbn_1_r2) || 0,
+            bbn_1_r4: parseInt(element.dataValues.bbn_1_r4) || 0,
+
+            perubahan_r2: parseInt(element.dataValues.perubahan_r2) || 0,
+            perubahan_r4: parseInt(element.dataValues.perubahan_r4) || 0,
+            perpanjangan_r2: parseInt(element.dataValues.perpanjangan_r2) || 0,
+            perpanjangan_r4: parseInt(element.dataValues.perpanjangan_r4) || 0,
+            mutasi_keluar_r2:
+              parseInt(element.dataValues.mutasi_keluar_r2) || 0,
+            mutasi_keluar_r4:
+              parseInt(element.dataValues.mutasi_keluar_r4) || 0,
+            mutasi_masuk_r2: parseInt(element.dataValues.mutasi_masuk_r2) || 0,
+            mutasi_masuk_r4: parseInt(element.dataValues.mutasi_masuk_r4) || 0,
+            pengesahan_r2: parseInt(element.dataValues.pengesahan_r2) || 0,
+            pengesahan_r4: parseInt(element.dataValues.pengesahan_r4) || 0,
+            samolnas_r2: parseInt(element.dataValues.samolnas_r2) || 0,
+            samolnas_r4: parseInt(element.dataValues.samolnas_r4) || 0,
+            total_bbn: parseInt(element.dataValues.total_bbn) || 0,
+            total_perubahan: parseInt(element.dataValues.total_perubahan) || 0,
+            total_perpanjangan:
+              parseInt(element.dataValues.total_perpanjangan) || 0,
+            total_mutasi_keluar:
+              parseInt(element.dataValues.total_mutasi_keluar) || 0,
+            total_mutasi_masuk:
+              parseInt(element.dataValues.total_mutasi_masuk) || 0,
+            total_pengesahan:
+              parseInt(element.dataValues.total_pengesahan) || 0,
+            total_samolnas: parseInt(element.dataValues.total_samolnas) || 0,
+
+            total: parseInt(element.dataValues.total) || 0,
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -579,6 +920,30 @@ module.exports = class StnkController {
               baru: parseInt(data.baru),
               rubentina: parseInt(data.rubentina),
               perpanjangan: parseInt(data.perpanjangan),
+              bbn_1_r2: parseInt(data.bbn_1_r2) || 0,
+              bbn_1_r4: parseInt(data.bbn_1_r4) || 0,
+
+              perubahan_r2: parseInt(data.perubahan_r2) || 0,
+              perubahan_r4: parseInt(data.perubahan_r4) || 0,
+              perpanjangan_r2: parseInt(data.perpanjangan_r2) || 0,
+              perpanjangan_r4: parseInt(data.perpanjangan_r4) || 0,
+              mutasi_keluar_r2: parseInt(data.mutasi_keluar_r2) || 0,
+              mutasi_keluar_r4: parseInt(data.mutasi_keluar_r4) || 0,
+              mutasi_masuk_r2: parseInt(data.mutasi_masuk_r2) || 0,
+              mutasi_masuk_r4: parseInt(data.mutasi_masuk_r4) || 0,
+              pengesahan_r2: parseInt(data.pengesahan_r2) || 0,
+              pengesahan_r4: parseInt(data.pengesahan_r4) || 0,
+              samolnas_r2: parseInt(data.samolnas_r2) || 0,
+              samolnas_r4: parseInt(data.samolnas_r4) || 0,
+              total_bbn: parseInt(data.total_bbn) || 0,
+              total_perubahan: parseInt(data.total_perubahan) || 0,
+              total_perpanjangan: parseInt(data.total_perpanjangan) || 0,
+              total_mutasi_keluar: parseInt(data.total_mutasi_keluar) || 0,
+              total_mutasi_masuk: parseInt(data.total_mutasi_masuk) || 0,
+              total_pengesahan: parseInt(data.total_pengesahan) || 0,
+              total_samolnas: parseInt(data.total_samolnas) || 0,
+
+              total: parseInt(data.total) || 0,
               date: data.date,
             });
           } else {
@@ -586,6 +951,30 @@ module.exports = class StnkController {
               baru: 0,
               rubentina: 0,
               perpanjangan: 0,
+              bbn_1_r2: 0,
+              bbn_1_r4: 0,
+
+              perubahan_r2: 0,
+              perubahan_r4: 0,
+              perpanjangan_r2: 0,
+              perpanjangan_r4: 0,
+              mutasi_keluar_r2: 0,
+              mutasi_keluar_r4: 0,
+              mutasi_masuk_r2: 0,
+              mutasi_masuk_r4: 0,
+              pengesahan_r2: 0,
+              pengesahan_r4: 0,
+              samolnas_r2: 0,
+              samolnas_r4: 0,
+              total_bbn: 0,
+              total_perubahan: 0,
+              total_perpanjangan: 0,
+              total_mutasi_keluar: 0,
+              total_mutasi_masuk: 0,
+              total_pengesahan: 0,
+              total_samolnas: 0,
+
+              total: 0,
               date: item,
             });
           }
@@ -669,6 +1058,21 @@ module.exports = class StnkController {
           baru: item.baru,
           perpanjangan: item.perpanjangan,
           rubentina: item.rubentina,
+          bbn_1_r2: item.bbn_1_r2,
+          bbn_1_r4: item.bbn_1_r4,
+
+          perubahan_r2: item.perubahan_r2,
+          perubahan_r4: item.perubahan_r4,
+          perpanjangan_r2: item.perpanjangan_r2,
+          perpanjangan_r4: item.perpanjangan_r4,
+          mutasi_keluar_r2: item.mutasi_keluar_r2,
+          mutasi_keluar_r4: item.mutasi_keluar_r4,
+          mutasi_masuk_r2: item.mutasi_masuk_r2,
+          mutasi_masuk_r4: item.mutasi_masuk_r4,
+          pengesahan_r2: item.pengesahan_r2,
+          pengesahan_r4: item.pengesahan_r4,
+          samolnas_r2: item.samolnas_r2,
+          samolnas_r4: item.samolnas_r4,
         });
       });
 

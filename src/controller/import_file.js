@@ -1435,14 +1435,28 @@ module.exports = class ImportFileController {
                     const baru = value[i].baru
                     const perpanjangan = value[i].perpanjangan
                     const rubentina = value[i].rubentina
+                    const bbn_1_r2 = value[i].bbn_1_r2;
+                    const bbn_1_r4 = value[i].bbn_1_r4;
+                    const perubahan_r2 = value[i].perubahan_r2;
+                    const perubahan_r4 = value[i].perubahan_r4;
+                    const perpanjangan_r2 = value[i].perpanjangan_r2;
+                    const perpanjangan_r4 = value[i].perpanjangan_r4;
+                    const mutasi_keluar_r2 = value[i].mutasi_keluar_r2;
+                    const mutasi_keluar_r4 = value[i].mutasi_keluar_r4;
+                    const mutasi_masuk_r2 = value[i].mutasi_masuk_r2;
+                    const mutasi_masuk_r4 = value[i].mutasi_masuk_r4;
+                    const pengesahan_r2 = value[i].pengesahan_r2;
+                    const pengesahan_r4 = value[i].pengesahan_r4;
+                    const samolnas_r2 = value[i].samolnas_r2;
+                    const samolnas_r4 = value[i].samolnas_r4;
 
                     /**
                      * Get ID Polda
                      */
                     let getIdPolda = await Poldaa.findOne({
-                        where: {
-                            name_polda: polda_id
-                        }
+                      where: {
+                        name_polda: polda_id,
+                      },
                     });
 
                     /**
@@ -1458,13 +1472,27 @@ module.exports = class ImportFileController {
                      * Data Payload
                      */
                     Data.push({
-                        polda_id: getIdPolda.dataValues.id,
-                        // polres_id: getIdPolres.dataValues.id,
-                        date: date,
-                        baru: baru,
-                        perpanjangan: perpanjangan,
-                        rubentina: rubentina
-                    })
+                      polda_id: getIdPolda.dataValues.id,
+                      // polres_id: getIdPolres.dataValues.id,
+                      date: date,
+                      baru: baru,
+                      perpanjangan: perpanjangan,
+                      rubentina: rubentina,
+                      bbn_1_r2: bbn_1_r2,
+                      bbn_1_r4: bbn_1_r4,
+                      perubahan_r2: perubahan_r2,
+                      perubahan_r4: perubahan_r4,
+                      perpanjangan_r2: perpanjangan_r2,
+                      perpanjangan_r4: perpanjangan_r4,
+                      mutasi_keluar_r2: mutasi_keluar_r2,
+                      mutasi_keluar_r4: mutasi_keluar_r4,
+                      mutasi_masuk_r2: mutasi_masuk_r2,
+                      mutasi_masuk_r4: mutasi_masuk_r4,
+                      pengesahan_r2: pengesahan_r2,
+                      pengesahan_r4: pengesahan_r4,
+                      samolnas_r2: samolnas_r2,
+                      samolnas_r4: samolnas_r4,
+                    });
 
                     /**
                      * Check data if exist set to array destroy
