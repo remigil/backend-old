@@ -984,6 +984,28 @@ module.exports = class SimController {
           date: item.date,
           baru: item.baru,
           perpanjangan: item.perpanjangan,
+
+          baru_a: item.baru_a,
+          baru_c: item.baru_c,
+          baru_d: item.baru_d,
+
+          perpanjangan_a: item.perpanjangan_a,
+          perpanjangan_au: item.perpanjangan_au,
+          perpanjangan_c: item.perpanjangan_c,
+          perpanjangan_c1: item.perpanjangan_c1,
+          perpanjangan_c2: item.perpanjangan_c2,
+          perpanjangan_d: item.perpanjangan_d,
+          perpanjangan_d1: item.perpanjangan_d1,
+          perpanjangan_b1: item.perpanjangan_b1,
+          perpanjangan_b1u: item.perpanjangan_b1u,
+          perpanjangan_b2: item.perpanjangan_b2u,
+          perpanjangan_b2u: item.perpanjangan_b2u,
+
+          peningkatan_au: item.peningkatan_au,
+          peningkatan_b1: item.peningkatan_b1,
+          peningkatan_b1u: item.peningkatan_b1u,
+          peningkatan_b2: item.peningkatan_b2,
+          peningkatan_b2u: item.peningkatan_b2u,
         });
       });
       let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
