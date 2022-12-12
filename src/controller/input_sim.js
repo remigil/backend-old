@@ -351,7 +351,7 @@ module.exports = class SimController {
           [Sequelize.literal("SUM(baru_a + baru_c + baru_d)"), "baru"],
           [
             Sequelize.literal(
-              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+              "SUM(perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u)"
             ),
             "perpanjangan",
           ],
