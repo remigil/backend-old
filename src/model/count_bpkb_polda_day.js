@@ -27,12 +27,35 @@ Count_bpkb_polda_day.init(
     baru: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+      allowNull: true,
     },
     perpanjangan: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
+      allowNull: true,
     },
     rubentina: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+      allowNull: true,
+    },
+    bbn_1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    bbn_2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_masuk: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_keluar: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perubahan_pergantian: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },

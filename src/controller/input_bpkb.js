@@ -53,7 +53,24 @@ module.exports = class BpkbController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
-          [Sequelize.literal("SUM(baru + perpanjangan + rubentina)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1")), "bbn_1"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_2")), "bbn_2"],
+          [Sequelize.fn("sum", Sequelize.col("mutasi_masuk")), "mutasi_masuk"],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar")),
+            "mutasi_keluar",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perubahan_pergantian")),
+            "perubahan_pergantian",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1 + bbn_2 + mutasi_masuk + mutasi_keluar + perubahan_pergantian)"
+            ),
+            "total",
+          ],
         ],
         include: [
           {
@@ -106,6 +123,13 @@ module.exports = class BpkbController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           rubentina: parseInt(element.dataValues.rubentina) || 0,
+          bbn_1: parseInt(element.dataValues.bbn_1) || 0,
+          bbn_2: parseInt(element.dataValues.bbn_2) || 0,
+          mutasi_masuk: parseInt(element.dataValues.mutasi_masuk) || 0,
+          mutasi_keluar: parseInt(element.dataValues.mutasi_keluar) || 0,
+          perubahan_pergantian:
+            parseInt(element.dataValues.perubahan_pergantian) || 0,
+
           total: parseInt(element.dataValues.total) || 0,
         });
       });
@@ -147,7 +171,24 @@ module.exports = class BpkbController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
-          [Sequelize.literal("SUM(baru + perpanjangan + rubentina)"), "total"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1")), "bbn_1"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_2")), "bbn_2"],
+          [Sequelize.fn("sum", Sequelize.col("mutasi_masuk")), "mutasi_masuk"],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar")),
+            "mutasi_keluar",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perubahan_pergantian")),
+            "perubahan_pergantian",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1 + bbn_2 + mutasi_masuk + mutasi_keluar + perubahan_pergantian)"
+            ),
+            "total",
+          ],
         ],
         include: [
           {
@@ -200,6 +241,13 @@ module.exports = class BpkbController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           rubentina: parseInt(element.dataValues.rubentina) || 0,
+          bbn_1: parseInt(element.dataValues.bbn_1) || 0,
+          bbn_2: parseInt(element.dataValues.bbn_2) || 0,
+          mutasi_masuk: parseInt(element.dataValues.mutasi_masuk) || 0,
+          mutasi_keluar: parseInt(element.dataValues.mutasi_keluar) || 0,
+          perubahan_pergantian:
+            parseInt(element.dataValues.perubahan_pergantian) || 0,
+
           total: parseInt(element.dataValues.total) || 0,
         });
       });
@@ -277,6 +325,24 @@ module.exports = class BpkbController {
           [Sequelize.fn("sum", Sequelize.col("baru")), "baru"],
           [Sequelize.fn("sum", Sequelize.col("perpanjangan")), "perpanjangan"],
           [Sequelize.fn("sum", Sequelize.col("rubentina")), "rubentina"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_1")), "bbn_1"],
+          [Sequelize.fn("sum", Sequelize.col("bbn_2")), "bbn_2"],
+          [Sequelize.fn("sum", Sequelize.col("mutasi_masuk")), "mutasi_masuk"],
+          [
+            Sequelize.fn("sum", Sequelize.col("mutasi_keluar")),
+            "mutasi_keluar",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("perubahan_pergantian")),
+            "perubahan_pergantian",
+          ],
+
+          [
+            Sequelize.literal(
+              "SUM(bbn_1 + bbn_2 + mutasi_masuk + mutasi_keluar + perubahan_pergantian)"
+            ),
+            "total",
+          ],
         ],
         where: wheres,
       };
@@ -303,6 +369,12 @@ module.exports = class BpkbController {
               baru: parseInt(data.baru),
               rubentina: parseInt(data.rubentina),
               perpanjangan: parseInt(data.perpanjangan),
+              bbn_1: parseInt(data.bbn_1),
+              bbn_2: parseInt(data.bbn_2),
+              mutasi_masuk: parseInt(data.mutasi_masuk),
+              mutasi_keluar: parseInt(data.mutasi_keluar),
+              perubahan_pergantian: parseInt(data.perubahan_pergantian),
+              total: parseInt(data.total),
               date: data.date,
             });
           } else {
@@ -310,6 +382,12 @@ module.exports = class BpkbController {
               baru: 0,
               rubentina: 0,
               perpanjangan: 0,
+              bbn_1: 0,
+              bbn_2: 0,
+              mutasi_masuk: 0,
+              mutasi_keluar: 0,
+              perubahan_pergantian: 0,
+              total: 0,
               date: item,
             });
           }
@@ -320,6 +398,14 @@ module.exports = class BpkbController {
             baru: parseInt(element.dataValues.baru),
             rubentina: parseInt(element.dataValues.rubentina),
             perpanjangan: parseInt(element.dataValues.perpanjangan),
+            bbn_1: parseInt(element.dataValues.bbn_1),
+            bbn_2: parseInt(element.dataValues.bbn_2),
+            mutasi_masuk: parseInt(element.dataValues.mutasi_masuk),
+            mutasi_keluar: parseInt(element.dataValues.mutasi_keluar),
+            perubahan_pergantian: parseInt(
+              element.dataValues.perubahan_pergantian
+            ),
+            total: parseInt(element.dataValues.total),
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -331,6 +417,12 @@ module.exports = class BpkbController {
               baru: parseInt(data.baru),
               rubentina: parseInt(data.rubentina),
               perpanjangan: parseInt(data.perpanjangan),
+              bbn_1: parseInt(data.bbn_1),
+              bbn_2: parseInt(data.bbn_2),
+              mutasi_masuk: parseInt(data.mutasi_masuk),
+              mutasi_keluar: parseInt(data.mutasi_keluar),
+              perubahan_pergantian: parseInt(data.perubahan_pergantian),
+              total: parseInt(data.total),
               date: data.date,
             });
           } else {
@@ -338,6 +430,12 @@ module.exports = class BpkbController {
               baru: 0,
               rubentina: 0,
               perpanjangan: 0,
+              bbn_1: 0,
+              bbn_2: 0,
+              mutasi_masuk: 0,
+              mutasi_keluar: 0,
+              perubahan_pergantian: 0,
+              total: 0,
               date: item,
             });
           }
@@ -419,6 +517,11 @@ module.exports = class BpkbController {
           baru: item.baru,
           perpanjangan: item.perpanjangan,
           rubentina: item.rubentina,
+          bbn_1: item.bbn_1,
+          bbn_2: item.bbn_2,
+          mutasi_masuk: item.mutasi_masuk,
+          mutasi_keluar: item.mutasi_keluar,
+          perubahan_pergantian: item.perubahan_pergantian,
         });
       });
       let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {

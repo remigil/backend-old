@@ -1181,37 +1181,48 @@ module.exports = class ImportFileController {
                     const date = value[i].date
                     const baru = value[i].baru
                     const perpanjangan = value[i].perpanjangan
-                    const rubentina = value[i].rubentina
+               
+                    const rubentina = value[i].rubentina;
+                    const bbn_1 = value[i].bbn_1;
+                    const bbn_2 = value[i].bbn_2;
+                    const mutasi_masuk = value[i].mutasi_masuk;
+                    const mutasi_keluar = value[i].mutasi_keluar;
+                    const perubahan_pergantian = value[i].perubahan_pergantian;
 
                     /**
                      * Get ID Polda
                      */
                     let getIdPolda = await Poldaa.findOne({
-                        where: {
-                            name_polda: polda_id
-                        }
+                      where: {
+                        name_polda: polda_id,
+                      },
                     });
 
                     /**
                      * Get ID Polres
                      */
-                    let getIdPolres = await Polres.findOne({
-                        where: {
-                            name_polres: polres_name
-                        }
-                    });
+                    // let getIdPolres = await Polres.findOne({
+                    //   where: {
+                    //     name_polres: polres_name,
+                    //   },
+                    // });
 
                     /**
                      * Data Payload
                      */
                     Data.push({
-                        polda_id: getIdPolda.dataValues.id,
-                        // polres_id: getIdPolres.dataValues.id,
-                        date: date,
-                        baru: baru,
-                        perpanjangan: perpanjangan,
-                        rubentina: rubentina
-                    })
+                      polda_id: getIdPolda.dataValues.id,
+                      // polres_id: getIdPolres.dataValues.id,
+                      date: date,
+                      baru: baru,
+                      perpanjangan: perpanjangan,
+                      rubentina: rubentina,
+                      bbn_1: bbn_1,
+                      bbn_2: bbn_2,
+                      mutasi_masuk: mutasi_masuk,
+                      mutasi_keluar: mutasi_keluar,
+                      perubahan_pergantian: perubahan_pergantian,
+                    });
 
 
                     /**

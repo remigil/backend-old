@@ -791,13 +791,36 @@ Bpkb.init(
     },
     baru: {
       type: Sequelize.INTEGER,
+      allowNull: true,
       defaultValue: 0,
     },
     perpanjangan: {
       type: Sequelize.INTEGER,
+      allowNull: true,
       defaultValue: 0,
     },
     rubentina: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
+    },
+    bbn_1: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    bbn_2: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_masuk: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    mutasi_keluar: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    perubahan_pergantian: {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
