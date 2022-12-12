@@ -439,6 +439,10 @@ module.exports = class SimController {
           baru: parseInt(element.dataValues.baru) || 0,
           perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
           peningkatan: parseInt(element.dataValues.peningkatan) || 0,
+          total:
+            parseInt(element.dataValues.baru) +
+            parseInt(element.dataValues.perpanjangan) +
+            parseInt(element.dataValues.peningkatan),
         });
       });
 
