@@ -62,7 +62,7 @@ module.exports = class DitregidentController {
             attributes: [
               [
                 Sequelize.literal(
-                  "SUM(bpkb.baru + bpkb.perpanjangan + bpkb.rubentina)"
+                  "SUM(bpkb.bbn_1 + bpkb.bbn_2 + bpkb.mutasi_masuk + bpkb.mutasi_keluar + bpkb.perubahan_pergantian)"
                 ),
                 "total_bpkb",
               ],
@@ -75,7 +75,7 @@ module.exports = class DitregidentController {
             attributes: [
               [
                 Sequelize.literal(
-                  "SUM(stnk.baru + stnk.perpanjangan + stnk.rubentina)"
+                  "SUM(stnk.bbn_1_r2 + stnk.bbn_1_r4 + stnk.perubahan_r2 + stnk.perubahan_r4 + stnk.perpanjangan_r2 + stnk.perpanjangan_r4 + stnk.mutasi_keluar_r2 + stnk.mutasi_keluar_r4 + stnk.mutasi_masuk_r2 + stnk.mutasi_masuk_r4 + stnk.pengesahan_r2 + stnk.pengesahan_r4 + stnk.samolnas_r2 + stnk.samolnas_r4)"
                 ),
                 "total_stnk",
               ],
@@ -87,7 +87,9 @@ module.exports = class DitregidentController {
             as: "sim",
             attributes: [
               [
-                Sequelize.literal("SUM(sim.baru + sim.perpanjangan)"),
+                Sequelize.literal(
+                  "SUM(sim.baru_a + sim.baru_c + sim.baru_c1 + sim.baru_c2 + sim.baru_d + sim.baru_d1 + sim.perpanjangan_a + sim.perpanjangan_au + sim.perpanjangan_c + sim.perpanjangan_c1 + sim.perpanjangan_c2 + sim.perpanjangan_d + sim.perpanjangan_d1 + sim.perpanjangan_b1 + sim.perpanjangan_b1u + sim.perpanjangan_b2 + sim.perpanjangan_b2u + sim.peningkatan_au + sim.peningkatan_b1 + sim.peningkatan_b1u + sim.peningkatan_b2 + sim.peningkatan_b2u)"
+                ),
                 "total_sim",
               ],
             ],
