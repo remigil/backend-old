@@ -1008,7 +1008,10 @@ module.exports = class SimController {
             finals.push({
               baru_a: 0,
               baru_c: 0,
+              baru_c1: 0,
+              baru_c2: 0,
               baru_d: 0,
+              baru_d1:0,
 
               perpanjangan_a: 0,
               perpanjangan_au: 0,
