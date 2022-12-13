@@ -456,7 +456,7 @@ module.exports = class SimController {
           total:
             parseInt(element.dataValues.baru) +
             parseInt(element.dataValues.perpanjangan) +
-            parseInt(element.dataValues.peningkatan),
+            parseInt(element.dataValues.peningkatan) || 0
         });
       });
 
@@ -665,7 +665,7 @@ module.exports = class SimController {
            total:
             parseInt(element.dataValues.baru) +
             parseInt(element.dataValues.perpanjangan) +
-            parseInt(element.dataValues.peningkatan),
+            parseInt(element.dataValues.peningkatan) || 0
         });
       });
 
@@ -886,7 +886,7 @@ module.exports = class SimController {
               total:
                 parseInt(data.baru) +
                 parseInt(data.perpanjangan) +
-                parseInt(data.peningkatan),
+                parseInt(data.peningkatan) || 0
             });
           } else {
             finals.push({
@@ -960,7 +960,7 @@ module.exports = class SimController {
             total:
               parseInt(element.dataValues.baru) +
               parseInt(element.dataValues.perpanjangan) +
-              parseInt(element.dataValues.peningkatan),
+              parseInt(element.dataValues.peningkatan) || 0,
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -1001,7 +1001,7 @@ module.exports = class SimController {
               total:
                 parseInt(data.baru) +
                 parseInt(data.perpanjangan) +
-                parseInt(data.peningkatan),
+                parseInt(data.peningkatan) || 0,
               date: data.date,
             });
           } else {
