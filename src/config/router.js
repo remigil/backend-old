@@ -589,7 +589,7 @@ router.use(
 
 // Stackholder for mobile
 router.use(
-  "/v" + process.env.APP_VERSION + "/stackhoder",
+  "/v" + process.env.APP_VERSION + "/stackholder",
   // authMiddleware.jwtAuth,
   require("../router/stackholder")
 );
