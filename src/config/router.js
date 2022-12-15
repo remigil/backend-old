@@ -586,4 +586,12 @@ router.use(
   require("../router/exportExcel")
 );
 
+
+// Stackholder for mobile
+router.use(
+  "/v" + process.env.APP_VERSION + "/stackhoder",
+  // authMiddleware.jwtAuth,
+  require("../router/stackholder")
+);
+
 module.exports = router;
