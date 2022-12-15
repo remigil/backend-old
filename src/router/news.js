@@ -20,4 +20,6 @@ router.delete(
 );
 router.delete("/hardDelete", formValidation, NewsController.hardDelete);
 
+router.get("/newsbycategory/:id", NewsController.getNewsByCategory);
+
 module.exports = router;

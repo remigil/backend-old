@@ -270,4 +270,18 @@ module.exports = class NewsController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getNewsByCategory = async (req, res) => {
+    try {
+      const data = await News.findAll({
+        where: {
+          news_category: decAes(req.params.id),
+        },
+        order: [["created_at", "DESC"]],
+      });
+      response(res, true, "Succeed", data);
+    } catch (error) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 };
