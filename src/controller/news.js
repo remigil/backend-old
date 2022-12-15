@@ -36,10 +36,42 @@ const decAes = (token) =>
 module.exports = class NewsController {
   static get = async (req, res) => {
     try {
-      let { limit, page } = req.query;
+      let { limit = 10, page = 1, search = null } = req.query;
+
+      let getData = { where: null };
+      const modelAttr = Object.keys(News.getAttributes());
       page = page ? parseInt(page) : 1;
       const resPage = pagination.getPagination(limit, page);
+
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          if (
+            key != "id" &&
+            key != "created_at" &&
+            key != "updated_at" &&
+            key != "deleted_at"
+          ) {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(Sequelize.col(key), "varchar")
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          }
+        });
+        getData.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+
       const news = await News.findAndCountAll({
+        ...getData,
         order: [["date", "DESC"]],
         // raw: true,
         nest: true,
