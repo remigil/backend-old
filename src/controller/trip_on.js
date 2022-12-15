@@ -413,7 +413,13 @@ module.exports = class Trip_onController {
       let DuaHari = HariIni + 2 * 24 * 60 * 60 * 1000;
       let new_date = new Date(DuaHari);
       var validity = new_date.toISOString().replace("Z", "").replace("T", " ");
-      input["validity_period"] = validity;
+      // console.log(input["departure_date"]);
+      let valid_date = moment(input["departure_date"])
+        .add(2, "day")
+        .format("YYYY-MM-DD");
+
+      input["validity_period"] =
+        `${valid_date} ` + input["departure_time"];
       const coordinate = [
         {
           options: {},
@@ -464,17 +470,15 @@ module.exports = class Trip_onController {
       const [kabupaten_start] = await db.query(
         `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodestart.district.toLowerCase()}%'`
       );
-      input["kode_prov_start"] = provinsi_end.length
-        ? provinsi_end[0].kode
-        : "";
-      input["kode_kabkot_start"] = kabupaten_end.length
-        ? kabupaten_end[0].kode
-        : "";
-      input["kode_prov_end"] = provinsi_start.length
+      input["kode_prov_start"] = provinsi_start.length
         ? provinsi_start[0].kode
         : "";
-      input["kode_kabkot_end"] = kabupaten_start.length
+      input["kode_kabkot_start"] = kabupaten_start.length
         ? kabupaten_start[0].kode
+        : "";
+      input["kode_prov_end"] = provinsi_end.length ? provinsi_end[0].kode : "";
+      input["kode_kabkot_end"] = kabupaten_end.length
+        ? kabupaten_end[0].kode
         : "";
 
       let insertTripOn = await Trip_on.create(input, {
