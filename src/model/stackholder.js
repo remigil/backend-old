@@ -19,7 +19,7 @@ Stackholder.init(
       },
     },
     title: {
-      type: Sequelize.STRING(5),
+      type: Sequelize.STRING(100),
     },
     icon: {
       type: Sequelize.STRING(255),
