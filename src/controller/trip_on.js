@@ -418,8 +418,7 @@ module.exports = class Trip_onController {
         .add(2, "day")
         .format("YYYY-MM-DD");
 
-      input["validity_period"] =
-        `${valid_date} ` + input["departure_time"];
+      input["validity_period"] = `${valid_date} ` + input["departure_time"];
       const coordinate = [
         {
           options: {},
@@ -448,8 +447,8 @@ module.exports = class Trip_onController {
       };
 
       let directions = await direction_route(coordinate);
-      let geocodestart = await geocode(paramsgeocodeend);
-      let geocodeend = await geocode(paramsgeocodestart);
+      let geocodestart = await geocode(paramsgeocodestart);
+      let geocodeend = await geocode(paramsgeocodeend);
 
       input["route"] = directions.route;
       input["distance"] = directions.estimasi;
