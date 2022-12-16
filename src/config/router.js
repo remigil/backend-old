@@ -190,7 +190,7 @@ router.use(
 // -------- polda
 router.use(
   "/v" + process.env.APP_VERSION + "/polda",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/polda")
 );
 
@@ -202,7 +202,7 @@ router.use(
 
 router.use(
   "/v" + process.env.APP_VERSION + "/polres",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/polres")
 );
 
