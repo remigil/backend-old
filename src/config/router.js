@@ -156,7 +156,7 @@ router.use(
 // CCTV
 router.use(
   "/v" + process.env.APP_VERSION + "/cctv",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/cctv")
 );
 
@@ -585,7 +585,6 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/exportExcel")
 );
-
 
 // Stackholder for mobile
 router.use(
