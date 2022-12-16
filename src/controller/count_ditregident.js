@@ -270,7 +270,9 @@ module.exports = class DitregidentController {
         attributes: [
           custom_attributes,
           [
-            Sequelize.literal("SUM(baru + perpanjangan + rubentina)"),
+            Sequelize.literal(
+              "SUM(bbn_1 + bbn_2 + mutasi_masuk + mutasi_keluar + perubahan_pergantian)"
+            ),
             "total_bpkb",
           ],
         ],
@@ -283,7 +285,9 @@ module.exports = class DitregidentController {
         attributes: [
           custom_attributes,
           [
-            Sequelize.literal("SUM(baru + perpanjangan + rubentina)"),
+            Sequelize.literal(
+              "SUM(bbn_1_r2 + bbn_1_r4 + perubahan_r2 + perubahan_r4 + perpanjangan_r2 + perpanjangan_r4 + mutasi_keluar_r2 + mutasi_keluar_r4 + mutasi_masuk_r2 + mutasi_masuk_r4 + pengesahan_r2 + pengesahan_r4 + samolnas_r2 + samolnas_r4)"
+            ),
             "total_stnk",
           ],
         ],
@@ -295,7 +299,12 @@ module.exports = class DitregidentController {
         group: groups,
         attributes: [
           custom_attributes,
-          [Sequelize.literal("SUM(baru + perpanjangan)"), "total_sim"],
+          [
+            Sequelize.literal(
+              "SUM(baru_a + baru_c + baru_c1 + baru_c2 + baru_d + baru_d1 + perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+            ),
+            "total_sim",
+          ],
         ],
         raw: true,
         where: wheres,
