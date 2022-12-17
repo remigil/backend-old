@@ -161,10 +161,8 @@ module.exports = class Trip_onController {
 
   static getbycodetripon = async (req, res) => {
     try {
-      let { code } = req.query;
-
-      let data = [];
-      data = await Trip_on.findOne({
+      let code = req.query?.code;
+      let data = await Trip_on.findOne({
         where: {
           code: code,
         },
@@ -201,7 +199,7 @@ module.exports = class Trip_onController {
         countpassenger,
       });
     } catch (e) {
-      response(res, false, "Failed", e.message);
+      response(res, false, "Data Tidak Ditemukan", null);
     }
   };
 
