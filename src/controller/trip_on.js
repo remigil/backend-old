@@ -161,10 +161,12 @@ module.exports = class Trip_onController {
 
   static getbycodetripon = async (req, res) => {
     try {
+      let { code } = req.query;
+
       let data = [];
       data = await Trip_on.findOne({
         where: {
-          code: req.body.code,
+          code: code,
         },
         include: [
           {
