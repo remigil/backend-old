@@ -161,10 +161,10 @@ module.exports = class Trip_onController {
 
   static getbycodetripon = async (req, res) => {
     try {
-      let data = [];
-      data = await Trip_on.findOne({
+      let code = req.query?.code;
+      let data = await Trip_on.findOne({
         where: {
-          code: req.body.code,
+          code: code,
         },
         include: [
           {
@@ -199,7 +199,7 @@ module.exports = class Trip_onController {
         countpassenger,
       });
     } catch (e) {
-      response(res, false, "Failed", e.message);
+      response(res, false, "Data Tidak Ditemukan", null);
     }
   };
 
