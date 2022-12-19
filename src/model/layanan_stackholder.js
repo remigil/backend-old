@@ -5,8 +5,8 @@ const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
 const Model = Sequelize.Model;
 
-class Stackholder extends Model {}
-Stackholder.init(
+class Layanan_Stackholder extends Model {}
+Layanan_Stackholder.init(
   {
     id: {
       type: Sequelize.INTEGER,
@@ -27,41 +27,8 @@ Stackholder.init(
     url: {
       type: Sequelize.TEXT,
     },
-    alamat: {
-      type: Sequelize.TEXT,
-    },
-    no_telp: {
-      type: Sequelize.TEXT,
-    },
-    call_center: {
-      type: Sequelize.TEXT,
-    },
-    email: {
-      type: Sequelize.TEXT,
-    },
-    fax: {
-      type: Sequelize.TEXT,
-    },
-    facebook: {
-      type: Sequelize.TEXT,
-    },
-    twitter: {
-      type: Sequelize.TEXT,
-    },
-    instagram: {
-      type: Sequelize.TEXT,
-    },
-    youtube: {
-      type: Sequelize.TEXT,
-    },
-    latitude: {
-      type: Sequelize.TEXT,
-    },
-    longitude: {
-      type: Sequelize.TEXT,
-    },
-    link_playlist: {
-      type: Sequelize.TEXT,
+    stackholder_id: {
+      type: Sequelize.INTEGER,
     },
 
     ...StructureTimestamp,
@@ -82,12 +49,12 @@ Stackholder.init(
     deletedAt: "deleted_at",
     createdAt: "created_at",
     updatedAt: "updated_at",
-    tableName: "stackholder",
-    modelName: "stackholder",
+    tableName: "layanan_stackholder",
+    modelName: "layanan_stackholder",
     sequelize: db,
   }
 );
 (async () => {
-  Stackholder.sync({ alter: true });
+  Layanan_Stackholder.sync({ alter: true });
 })();
-module.exports = Stackholder;
+module.exports = Layanan_Stackholder;

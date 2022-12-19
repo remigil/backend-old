@@ -22,6 +22,9 @@ News.init(
     news_category: {
       type: Sequelize.INTEGER,
     },
+    sub_new_category: {
+      type: Sequelize.INTEGER,
+    },
     title: {
       type: Sequelize.TEXT,
     },
