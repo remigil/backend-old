@@ -30,4 +30,8 @@ router.delete(
 
 router.get("/list_tripon", Trip_onController.getWeb);
 
+router.get("/schedule", Trip_onController.getSchedule);
+router.get("/history", Trip_onController.getHistory);
+
+
 module.exports = router;

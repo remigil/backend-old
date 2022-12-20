@@ -725,4 +725,98 @@ module.exports = class Trip_onController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getSchedule = async (req, res) => {
+    try {
+      const data = await Trip_on.findAll({
+        where: {
+          [Op.and]: {
+            user_id: AESDecrypt(req.auth.uid, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+            validity_period: {
+              [Op.gte]: moment().format("YYYY-MM-DD"),
+            },
+          },
+        },
+        order: [["created_at", "DESC"]],
+        include: [
+          {
+            model: Society,
+            attributes: ["person_name", "foto", "nik", "nationality"],
+          },
+          {
+            model: Public_vehicle,
+            attributes: ["no_vehicle"],
+          },
+          {
+            model: Type_vehicle,
+            attributes: ["type_name"],
+          },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
+          {
+            model: Passenger_trip_on,
+            // required: true,
+            attributes: ["name", "nationality", "nik"],
+          },
+        ],
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static getHistory = async (req, res) => {
+    try {
+      const data = await Trip_on.findAll({
+        where: {
+          [Op.and]: {
+            user_id: AESDecrypt(req.auth.uid, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+            validity_period: {
+              [Op.lte]: moment().format("YYYY-MM-DD"),
+            },
+          },
+        },
+        order: [["created_at", "DESC"]],
+        include: [
+          {
+            model: Society,
+            attributes: ["person_name", "foto", "nik", "nationality"],
+          },
+          {
+            model: Public_vehicle,
+            attributes: ["no_vehicle"],
+          },
+          {
+            model: Type_vehicle,
+            attributes: ["type_name"],
+          },
+          {
+            model: Brand_vehicle,
+            attributes: ["brand_name"],
+          },
+          {
+            model: Passenger_trip_on,
+            // required: true,
+            attributes: ["name", "nationality", "nik"],
+          },
+        ],
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 };
