@@ -36,7 +36,19 @@ const field_stackholder = {
 module.exports = class StackController {
   static get = async (req, res) => {
     try {
-      let data = await Stackholder.findAll({
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = 0,
+        orderDirection = "asc",
+      } = req.query;
+      const modelAttr = Object.keys(Stackholder.getAttributes());
+      let getDataRules = {
+        where: null,
         include: [
           {
             model: Layanan_Stackholder,
@@ -44,10 +56,60 @@ module.exports = class StackController {
             required: false,
           },
         ],
+      };
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+      if (order <= modelAttr.length) {
+        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      }
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getDataRules.where = {
+          ...getDataRules.where,
+          ...filters,
+        };
+      }
+      const data = await Stackholder.findAll(getDataRules);
+      const count = await Stackholder.count({
+        where: getDataRules?.where,
       });
-
-      response(res, true, "Succeed", data);
-    } catch (error) {
+      response(res, true, "Succeed", {
+        data,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (e) {
       response(res, false, "Failed", e.message);
     }
   };
@@ -92,34 +154,55 @@ module.exports = class StackController {
     }
   };
 
+  static getId = async (req, res) => {
+    try {
+      const data = await Stackholder.findOne({
+        include: [{
+          model: Layanan_Stackholder,
+          as: 'layanan_stackholder',
+          required: false
+        }],
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+      });
+      response(res, true, "Succeed", {
+        data,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static add = async (req, res) => {
     const transaction = await db.transaction();
-    var icon = "";
     try {
-      let fieldValueData = {};
-      Object.keys(field_stackholder).forEach((key) => {
-        if (req.body[key]) {
-          if (key == "icon") {
+      let input = {};
+      Object.keys(field_stackholder).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "icon") {
             let path = req.body.icon.filepath;
             let file = req.body.icon;
-            let fileName = file.originalFilename;
+            let fileNameLogo = file.originalFilename;
             fs.renameSync(
               path,
-              "./public/uploads/stakeholder/" + fileName,
+              "./public/uploads/stakeholder/" + fileNameLogo,
               function (err) {
                 if (err) throw err;
               }
             );
-            fieldValueData[key] = fileName;
+            input[val] = fileNameLogo;
           } else {
-            fieldValueData[key] = req.body[key];
+            input[val] = req.body[val];
           }
         } else {
-          fieldValueData[key] = null;
+          input[val] = null;
         }
       });
-
-      let op = await Stackholder.create(fieldValueData, {
+      let op = await Stackholder.create(input, {
         transaction: transaction,
       });
       await transaction.commit();

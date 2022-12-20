@@ -16,6 +16,12 @@ const field_stackholder = {
   stackholder_id: null,
 };
 
+const decAes = (token) =>
+  AESDecrypt(token, {
+    isSafeUrl: true,
+    parseMode: "string",
+  });
+
 module.exports = class StackController {
   static get = async (req, res) => {
     try {
@@ -54,6 +60,7 @@ module.exports = class StackController {
         }
       });
 
+      fieldValueData["stackholder_id"] = decAes(req.body.stackholder_id);
       let op = await Layanan_Stackholder.create(fieldValueData, {
         transaction: transaction,
       });

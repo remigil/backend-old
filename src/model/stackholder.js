@@ -22,7 +22,7 @@ Stackholder.init(
       type: Sequelize.STRING(100),
     },
     icon: {
-      type: Sequelize.STRING(255),
+      type: Sequelize.TEXT,
     },
     url: {
       type: Sequelize.TEXT,
