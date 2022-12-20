@@ -21,6 +21,9 @@ Stackholder.init(
     title: {
       type: Sequelize.STRING(100),
     },
+    fullname: {
+      type: Sequelize.TEXT,
+    },
     icon: {
       type: Sequelize.TEXT,
     },

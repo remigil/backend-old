@@ -17,6 +17,7 @@ Stackholder.hasMany(Layanan_Stackholder, {
 
 const field_stackholder = {
   title: null,
+  fullname: null,
   icon: null,
   url: null,
   alamat: null,
