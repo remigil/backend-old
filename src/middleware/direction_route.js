@@ -29,9 +29,11 @@ module.exports = async (coordinate = []) => {
   });
   return {
     route: directions?.reverse(),
-    estimasi: (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
+    estimasi: (data.data.routes[0].distance / 1000).toFixed(1) + " Km",
+    // estimasi: (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
     estimasiWaktu: data?.data?.routes[0].duration
-      ? (data?.data?.routes[0].duration / 60).toFixed(2) + " Menit"
-      : "0 Menit",
+      ? Math.round(data?.data?.routes[0].duration / 60) + " Menit"
+      : // ? (data?.data?.routes[0].duration / 60).toFixed(2) + " Menit"
+        "0 Menit",
   };
 };
