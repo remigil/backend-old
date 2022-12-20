@@ -35,7 +35,13 @@ module.exports = async (coordinate = []) => {
     jam = x / 3600;
     menit = y / 60;
     detik = y % 60;
-    duration = Math.floor(jam) + " Jam " + Math.floor(menit) + " Menit ";
+    if (jam <= 1 || jam == 0) {
+      duration = Math.floor(menit) + " Menit ";
+    } else if (jam >= 1 || jam != 0) {
+      duration = Math.floor(jam) + " Jam " + Math.floor(menit) + " Menit ";
+    } else {
+      duration = "0 Menit";
+    }
   } else {
     duration = "0 Menit";
   }
