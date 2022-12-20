@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const ImportFile = require("../controller/import_file");
 
+
+router.get("/list_jenis_satker/:id", ImportFile.getJenisSatker);
+
 /**
  * Import Laporan Harian
  */
