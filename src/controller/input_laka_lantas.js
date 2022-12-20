@@ -284,6 +284,7 @@ module.exports = class LakaLantasController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -299,6 +300,14 @@ module.exports = class LakaLantasController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -346,6 +355,12 @@ module.exports = class LakaLantasController {
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
         ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
+        ]);
       }
 
       let rows = await Count_polda_day.findAll(getDataRules);
@@ -387,6 +402,40 @@ module.exports = class LakaLantasController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              meninggal_dunia: parseInt(data.meninggal_dunia),
+              luka_ringan: parseInt(data.luka_ringan),
+              luka_berat: parseInt(data.luka_berat),
+              kerugian_material: parseInt(data.kerugian_material),
+              insiden_kecelakaan: parseInt(data.insiden_kecelakaan),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              meninggal_dunia: 0,
+              luka_ringan: 0,
+              luka_berat: 0,
+              kerugian_material: 0,
+              insiden_kecelakaan: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            meninggal_dunia: parseInt(element.dataValues.meninggal_dunia),
+            luka_ringan: parseInt(element.dataValues.luka_ringan),
+            luka_berat: parseInt(element.dataValues.luka_berat),
+            kerugian_material: parseInt(element.dataValues.kerugian_material),
+            insiden_kecelakaan: parseInt(element.dataValues.insiden_kecelakaan),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

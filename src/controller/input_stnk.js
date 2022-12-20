@@ -680,6 +680,7 @@ module.exports = class StnkController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -695,6 +696,14 @@ module.exports = class StnkController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -800,6 +809,12 @@ module.exports = class StnkController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -914,6 +929,112 @@ module.exports = class StnkController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              baru: parseInt(data.baru),
+              rubentina: parseInt(data.rubentina),
+              perpanjangan: parseInt(data.perpanjangan),
+              bbn_1_r2: parseInt(data.bbn_1_r2) || 0,
+              bbn_1_r4: parseInt(data.bbn_1_r4) || 0,
+
+              perubahan_r2: parseInt(data.perubahan_r2) || 0,
+              perubahan_r4: parseInt(data.perubahan_r4) || 0,
+              perpanjangan_r2: parseInt(data.perpanjangan_r2) || 0,
+              perpanjangan_r4: parseInt(data.perpanjangan_r4) || 0,
+              mutasi_keluar_r2: parseInt(data.mutasi_keluar_r2) || 0,
+              mutasi_keluar_r4: parseInt(data.mutasi_keluar_r4) || 0,
+              mutasi_masuk_r2: parseInt(data.mutasi_masuk_r2) || 0,
+              mutasi_masuk_r4: parseInt(data.mutasi_masuk_r4) || 0,
+              pengesahan_r2: parseInt(data.pengesahan_r2) || 0,
+              pengesahan_r4: parseInt(data.pengesahan_r4) || 0,
+              samolnas_r2: parseInt(data.samolnas_r2) || 0,
+              samolnas_r4: parseInt(data.samolnas_r4) || 0,
+              total_bbn: parseInt(data.total_bbn) || 0,
+              total_perubahan: parseInt(data.total_perubahan) || 0,
+              total_perpanjangan: parseInt(data.total_perpanjangan) || 0,
+              total_mutasi_keluar: parseInt(data.total_mutasi_keluar) || 0,
+              total_mutasi_masuk: parseInt(data.total_mutasi_masuk) || 0,
+              total_pengesahan: parseInt(data.total_pengesahan) || 0,
+              total_samolnas: parseInt(data.total_samolnas) || 0,
+
+              total: parseInt(data.total) || 0,
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              baru: 0,
+              rubentina: 0,
+              perpanjangan: 0,
+              bbn_1_r2: 0,
+              bbn_1_r4: 0,
+
+              perubahan_r2: 0,
+              perubahan_r4: 0,
+              perpanjangan_r2: 0,
+              perpanjangan_r4: 0,
+              mutasi_keluar_r2: 0,
+              mutasi_keluar_r4: 0,
+              mutasi_masuk_r2: 0,
+              mutasi_masuk_r4: 0,
+              pengesahan_r2: 0,
+              pengesahan_r4: 0,
+              samolnas_r2: 0,
+              samolnas_r4: 0,
+              total_bbn: 0,
+              total_perubahan: 0,
+              total_perpanjangan: 0,
+              total_mutasi_keluar: 0,
+              total_mutasi_masuk: 0,
+              total_pengesahan: 0,
+              total_samolnas: 0,
+
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            baru: parseInt(element.dataValues.baru),
+            rubentina: parseInt(element.dataValues.rubentina),
+            perpanjangan: parseInt(element.dataValues.perpanjangan),
+            bbn_1_r2: parseInt(element.dataValues.bbn_1_r2) || 0,
+            bbn_1_r4: parseInt(element.dataValues.bbn_1_r4) || 0,
+
+            perubahan_r2: parseInt(element.dataValues.perubahan_r2) || 0,
+            perubahan_r4: parseInt(element.dataValues.perubahan_r4) || 0,
+            perpanjangan_r2: parseInt(element.dataValues.perpanjangan_r2) || 0,
+            perpanjangan_r4: parseInt(element.dataValues.perpanjangan_r4) || 0,
+            mutasi_keluar_r2:
+              parseInt(element.dataValues.mutasi_keluar_r2) || 0,
+            mutasi_keluar_r4:
+              parseInt(element.dataValues.mutasi_keluar_r4) || 0,
+            mutasi_masuk_r2: parseInt(element.dataValues.mutasi_masuk_r2) || 0,
+            mutasi_masuk_r4: parseInt(element.dataValues.mutasi_masuk_r4) || 0,
+            pengesahan_r2: parseInt(element.dataValues.pengesahan_r2) || 0,
+            pengesahan_r4: parseInt(element.dataValues.pengesahan_r4) || 0,
+            samolnas_r2: parseInt(element.dataValues.samolnas_r2) || 0,
+            samolnas_r4: parseInt(element.dataValues.samolnas_r4) || 0,
+            total_bbn: parseInt(element.dataValues.total_bbn) || 0,
+            total_perubahan: parseInt(element.dataValues.total_perubahan) || 0,
+            total_perpanjangan:
+              parseInt(element.dataValues.total_perpanjangan) || 0,
+            total_mutasi_keluar:
+              parseInt(element.dataValues.total_mutasi_keluar) || 0,
+            total_mutasi_masuk:
+              parseInt(element.dataValues.total_mutasi_masuk) || 0,
+            total_pengesahan:
+              parseInt(element.dataValues.total_pengesahan) || 0,
+            total_samolnas: parseInt(element.dataValues.total_samolnas) || 0,
+
+            total: parseInt(element.dataValues.total) || 0,
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

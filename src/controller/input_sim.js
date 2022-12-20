@@ -705,6 +705,7 @@ module.exports = class SimController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -720,6 +721,14 @@ module.exports = class SimController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -842,6 +851,12 @@ module.exports = class SimController {
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
         ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
+        ]);
       }
 
       let rows = await Count_polda_day.findAll(getDataRules);
@@ -885,8 +900,8 @@ module.exports = class SimController {
               peningkatan: parseInt(data.peningkatan) || 0,
               total:
                 parseInt(data.baru) +
-                parseInt(data.perpanjangan) +
-                parseInt(data.peningkatan) || 0
+                  parseInt(data.perpanjangan) +
+                  parseInt(data.peningkatan) || 0,
             });
           } else {
             finals.push({
@@ -959,8 +974,8 @@ module.exports = class SimController {
             peningkatan: parseInt(element.dataValues.peningkatan) || 0,
             total:
               parseInt(element.dataValues.baru) +
-              parseInt(element.dataValues.perpanjangan) +
-              parseInt(element.dataValues.peningkatan) || 0,
+                parseInt(element.dataValues.perpanjangan) +
+                parseInt(element.dataValues.peningkatan) || 0,
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -1000,8 +1015,8 @@ module.exports = class SimController {
               peningkatan: parseInt(data.peningkatan) || 0,
               total:
                 parseInt(data.baru) +
-                parseInt(data.perpanjangan) +
-                parseInt(data.peningkatan) || 0,
+                  parseInt(data.perpanjangan) +
+                  parseInt(data.peningkatan) || 0,
               date: data.date,
             });
           } else {
@@ -1011,7 +1026,123 @@ module.exports = class SimController {
               baru_c1: 0,
               baru_c2: 0,
               baru_d: 0,
-              baru_d1:0,
+              baru_d1: 0,
+
+              perpanjangan_a: 0,
+              perpanjangan_au: 0,
+              perpanjangan_c: 0,
+              perpanjangan_c1: 0,
+              perpanjangan_c2: 0,
+              perpanjangan_d: 0,
+              perpanjangan_d1: 0,
+              perpanjangan_b1: 0,
+              perpanjangan_b1u: 0,
+              perpanjangan_b2: 0,
+              perpanjangan_b2u: 0,
+
+              peningkatan_au: 0,
+              peningkatan_b1: 0,
+              peningkatan_b1u: 0,
+              peningkatan_b2: 0,
+              peningkatan_b2u: 0,
+
+              baru: 0,
+              perpanjangan: 0,
+              peningkatan: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            baru_a: parseInt(element.dataValues.baru_a) || 0,
+            baru_c: parseInt(element.dataValues.baru_c) || 0,
+            baru_c1: parseInt(element.dataValues.baru_c1) || 0,
+            baru_c2: parseInt(element.dataValues.baru_c2) || 0,
+
+            baru_d: parseInt(element.dataValues.baru_d) || 0,
+            baru_d1: parseInt(element.dataValues.baru_d1) || 0,
+
+            perpanjangan_a: parseInt(element.dataValues.perpanjangan_a) || 0,
+            perpanjangan_au: parseInt(element.dataValues.perpanjangan_au) || 0,
+            perpanjangan_c: parseInt(element.dataValues.perpanjangan_c) || 0,
+            perpanjangan_c1: parseInt(element.dataValues.perpanjangan_c1) || 0,
+            perpanjangan_c2: parseInt(element.dataValues.perpanjangan_c2) || 0,
+            perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
+            perpanjangan_d1: parseInt(element.dataValues.perpanjangan_d1) || 0,
+            perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
+            perpanjangan_b1u:
+              parseInt(element.dataValues.perpanjangan_b1u) || 0,
+            perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
+            perpanjangan_b2u:
+              parseInt(element.dataValues.perpanjangan_b2u) || 0,
+
+            peningkatan_au: parseInt(element.dataValues.peningkatan_au) || 0,
+            peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
+            peningkatan_b1u: parseInt(element.dataValues.peningkatan_b1u) || 0,
+            peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
+            peningkatan_b2u: parseInt(element.dataValues.peningkatan_b2u) || 0,
+
+            baru: parseInt(element.dataValues.baru) || 0,
+            perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
+            peningkatan: parseInt(element.dataValues.peningkatan) || 0,
+            total:
+              parseInt(element.dataValues.baru) +
+                parseInt(element.dataValues.perpanjangan) +
+                parseInt(element.dataValues.peningkatan) || 0,
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              baru_a: parseInt(data.baru_a) || 0,
+              baru_c: parseInt(data.baru_c) || 0,
+              baru_c1: parseInt(data.baru_c1) || 0,
+              baru_c2: parseInt(data.baru_c2) || 0,
+
+              baru_d: parseInt(data.baru_d) || 0,
+              baru_d1: parseInt(data.baru_d1) || 0,
+
+              perpanjangan_a: parseInt(data.perpanjangan_a) || 0,
+              perpanjangan_au: parseInt(data.perpanjangan_au) || 0,
+              perpanjangan_c: parseInt(data.perpanjangan_c) || 0,
+              perpanjangan_c1: parseInt(data.perpanjangan_c1) || 0,
+              perpanjangan_c2: parseInt(data.perpanjangan_c2) || 0,
+              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
+              perpanjangan_d1: parseInt(data.perpanjangan_d1) || 0,
+              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
+              perpanjangan_b1u: parseInt(data.perpanjangan_b1u) || 0,
+              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
+              perpanjangan_b2u: parseInt(data.perpanjangan_b2u) || 0,
+
+              peningkatan_au: parseInt(data.peningkatan_au) || 0,
+              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
+              peningkatan_b1u: parseInt(data.peningkatan_b1u) || 0,
+              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
+              peningkatan_b2u: parseInt(data.peningkatan_b2u) || 0,
+
+              baru: parseInt(data.baru) || 0,
+              perpanjangan: parseInt(data.perpanjangan) || 0,
+              peningkatan: parseInt(data.peningkatan) || 0,
+              total:
+                parseInt(data.baru) +
+                  parseInt(data.perpanjangan) +
+                  parseInt(data.peningkatan) || 0,
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              baru_a: 0,
+              baru_c: 0,
+              baru_c1: 0,
+              baru_c2: 0,
+              baru_d: 0,
+              baru_d1: 0,
 
               perpanjangan_a: 0,
               perpanjangan_au: 0,

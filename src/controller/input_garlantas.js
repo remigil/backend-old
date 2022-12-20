@@ -282,6 +282,7 @@ module.exports = class GarlantasController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -297,6 +298,14 @@ module.exports = class GarlantasController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -343,6 +352,12 @@ module.exports = class GarlantasController {
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
         ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
+        ]);
       }
 
       let rows = await Count_polda_day.findAll(getDataRules);
@@ -381,6 +396,37 @@ module.exports = class GarlantasController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              pelanggaran_berat: parseInt(data.pelanggaran_berat),
+              pelanggaran_ringan: parseInt(data.pelanggaran_ringan),
+              pelanggaran_sedang: parseInt(data.pelanggaran_sedang),
+              teguran: parseInt(data.teguran),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              pelanggaran_berat: 0,
+              pelanggaran_ringan: 0,
+              pelanggaran_sedang: 0,
+              teguran: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            pelanggaran_berat: parseInt(element.dataValues.pelanggaran_berat),
+            pelanggaran_ringan: parseInt(element.dataValues.pelanggaran_ringan),
+            pelanggaran_sedang: parseInt(element.dataValues.pelanggaran_sedang),
+            teguran: parseInt(element.dataValues.teguran),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

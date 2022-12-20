@@ -288,6 +288,7 @@ module.exports = class BpkbController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -303,6 +304,14 @@ module.exports = class BpkbController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -355,6 +364,12 @@ module.exports = class BpkbController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -411,6 +426,54 @@ module.exports = class BpkbController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              baru: parseInt(data.baru),
+              rubentina: parseInt(data.rubentina),
+              perpanjangan: parseInt(data.perpanjangan),
+              bbn_1: parseInt(data.bbn_1),
+              bbn_2: parseInt(data.bbn_2),
+              mutasi_masuk: parseInt(data.mutasi_masuk),
+              mutasi_keluar: parseInt(data.mutasi_keluar),
+              perubahan_pergantian: parseInt(data.perubahan_pergantian),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              baru: 0,
+              rubentina: 0,
+              perpanjangan: 0,
+              bbn_1: 0,
+              bbn_2: 0,
+              mutasi_masuk: 0,
+              mutasi_keluar: 0,
+              perubahan_pergantian: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            baru: parseInt(element.dataValues.baru),
+            rubentina: parseInt(element.dataValues.rubentina),
+            perpanjangan: parseInt(element.dataValues.perpanjangan),
+            bbn_1: parseInt(element.dataValues.bbn_1),
+            bbn_2: parseInt(element.dataValues.bbn_2),
+            mutasi_masuk: parseInt(element.dataValues.mutasi_masuk),
+            mutasi_keluar: parseInt(element.dataValues.mutasi_keluar),
+            perubahan_pergantian: parseInt(
+              element.dataValues.perubahan_pergantian
+            ),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

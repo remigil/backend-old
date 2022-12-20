@@ -262,6 +262,7 @@ module.exports = class RanmorController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -277,6 +278,14 @@ module.exports = class RanmorController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -317,6 +326,12 @@ module.exports = class RanmorController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -359,6 +374,40 @@ module.exports = class RanmorController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              mobil_penumpang: parseInt(data.mobil_penumpang),
+              mobil_barang: parseInt(data.mobil_barang),
+              mobil_bus: parseInt(data.mobil_bus),
+              sepeda_motor: parseInt(data.sepeda_motor),
+              ransus: parseInt(data.ransus),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              mobil_penumpang: 0,
+              mobil_barang: 0,
+              mobil_bus: 0,
+              sepeda_motor: 0,
+              ransus: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            mobil_penumpang: parseInt(element.dataValues.mobil_penumpang),
+            mobil_barang: parseInt(element.dataValues.mobil_barang),
+            mobil_bus: parseInt(element.dataValues.mobil_bus),
+            sepeda_motor: parseInt(element.dataValues.sepeda_motor),
+            ransus: parseInt(element.dataValues.ransus),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

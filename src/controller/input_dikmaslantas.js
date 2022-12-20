@@ -259,6 +259,7 @@ module.exports = class DikmaslantasController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -274,6 +275,14 @@ module.exports = class DikmaslantasController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -314,6 +323,12 @@ module.exports = class DikmaslantasController {
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
         ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
+        ]);
       }
 
       let rows = await Count_polda_day.findAll(getDataRules);
@@ -352,6 +367,37 @@ module.exports = class DikmaslantasController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              media_cetak: parseInt(data.media_cetak),
+              media_sosial: parseInt(data.media_sosial),
+              media_elektronik: parseInt(data.media_elektronik),
+              laka_langgar: parseInt(data.laka_langgar),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              media_cetak: 0,
+              media_elektronik: 0,
+              media_sosial: 0,
+              laka_langgar: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            media_cetak: parseInt(element.dataValues.media_cetak),
+            media_sosial: parseInt(element.dataValues.media_sosial),
+            media_elektronik: parseInt(element.dataValues.media_elektronik),
+            laka_langgar: parseInt(element.dataValues.laka_langgar),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

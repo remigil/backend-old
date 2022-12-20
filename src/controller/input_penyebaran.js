@@ -259,6 +259,7 @@ module.exports = class PenyebaranController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -274,6 +275,14 @@ module.exports = class PenyebaranController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -311,6 +320,12 @@ module.exports = class PenyebaranController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -353,6 +368,40 @@ module.exports = class PenyebaranController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              spanduk: parseInt(data.spanduk),
+              stiker: parseInt(data.stiker),
+              leaflet: parseInt(data.leaflet),
+              billboard: parseInt(data.billboard),
+              jemensosprek: parseInt(data.jemensosprek),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              spanduk: 0,
+              stiker: 0,
+              leaflet: 0,
+              billboard: 0,
+              jemensosprek: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            spanduk: parseInt(element.dataValues.spanduk),
+            stiker: parseInt(element.dataValues.stiker),
+            leaflet: parseInt(element.dataValues.leaflet),
+            billboard: parseInt(element.dataValues.billboard),
+            jemensosprek: parseInt(element.dataValues.jemensosprek),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

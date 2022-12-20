@@ -519,6 +519,7 @@ module.exports = class TurjagwaliController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       for (
         var m = moment(start_date);
@@ -534,6 +535,14 @@ module.exports = class TurjagwaliController {
         m.add(1, "month")
       ) {
         list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
       }
 
       let wheres = {};
@@ -553,18 +562,9 @@ module.exports = class TurjagwaliController {
 
       const getDataRules = {
         attributes: [
-          [
-            Sequelize.fn("sum", Sequelize.col("pengaturan")),
-            "pengaturan",
-          ],
-          [
-            Sequelize.fn("sum", Sequelize.col("penjagaan")),
-            "penjagaan",
-          ],
-          [
-            Sequelize.fn("sum", Sequelize.col("pengawalan")),
-            "pengawalan",
-          ],
+          [Sequelize.fn("sum", Sequelize.col("pengaturan")), "pengaturan"],
+          [Sequelize.fn("sum", Sequelize.col("penjagaan")), "penjagaan"],
+          [Sequelize.fn("sum", Sequelize.col("pengawalan")), "pengawalan"],
           // [Sequelize.fn("date_trunc", "month", Sequelize.col("date")), "year"],
           [Sequelize.fn("sum", Sequelize.col("patroli")), "patroli"],
         ],
@@ -579,6 +579,12 @@ module.exports = class TurjagwaliController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -618,6 +624,37 @@ module.exports = class TurjagwaliController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              pengaturan: parseInt(data.pengaturan),
+              pengawalan: parseInt(data.pengawalan),
+              penjagaan: parseInt(data.penjagaan),
+              patroli: parseInt(data.patroli),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              pengaturan: 0,
+              pengawalan: 0,
+              penjagaan: 0,
+              patroli: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            pengaturan: parseInt(element.dataValues.pengaturan),
+            pengawalan: parseInt(element.dataValues.pengawalan),
+            penjagaan: parseInt(element.dataValues.penjagaan),
+            patroli: parseInt(element.dataValues.patroli),
+            date: moment(element.dataValues.month).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({
