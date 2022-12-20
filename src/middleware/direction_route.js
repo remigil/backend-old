@@ -27,13 +27,25 @@ module.exports = async (coordinate = []) => {
       });
     });
   });
+  var x = data?.data?.routes[0].duration;
+  var duration = "";
+
+  if (x) {
+    y = x % 3600;
+    jam = x / 3600;
+    menit = y / 60;
+    detik = y % 60;
+    duration = Math.floor(jam) + " Jam " + Math.floor(menit) + " Menit ";
+  } else {
+    duration = "0 Menit";
+  }
   return {
     route: directions?.reverse(),
     estimasi: (data.data.routes[0].distance / 1000).toFixed(1) + " Km",
     // estimasi: (data.data.routes[0].distance / 1000).toFixed(2) + " Km",
-    estimasiWaktu: data?.data?.routes[0].duration
-      ? Math.round(data?.data?.routes[0].duration / 60) + " Menit"
-      : // ? (data?.data?.routes[0].duration / 60).toFixed(2) + " Menit"
-        "0 Menit",
+    estimasiWaktu: duration,
+    // estimasiWaktu: data?.data?.routes[0].duration
+    //   ? (data?.data?.routes[0].duration / 60).toFixed(2) + " Menit"
+    //   : "0 Menit",
   };
 };
