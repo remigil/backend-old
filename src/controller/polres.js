@@ -36,7 +36,14 @@ module.exports = class PolresController {
         orderDirection = "asc",
       } = req.query;
       const modelAttr = Object.keys(Polres.getAttributes());
-      let getDataRules = { where: null };
+      let getDataRules = {
+        where: null,
+        include: [
+          {
+            model: Polda,
+          },
+        ],
+      };
       if (serverSide?.toLowerCase() === "true") {
         const resPage = pagination.getPagination(length, start);
         getDataRules.limit = resPage.limit;
