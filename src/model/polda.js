@@ -54,6 +54,9 @@ Polda.init(
     file_shp: {
       type: Sequelize.TEXT,
     },
+    urutan: {
+      type: Sequelize.INTEGER,
+    },
     open_time: {
       type: Sequelize.TIME,
     },

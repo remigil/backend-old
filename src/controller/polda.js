@@ -83,44 +83,10 @@ module.exports = class PoldaController {
           ...filters,
         };
       }
-      const getData = await Polda.findAll(getDataRules);
-
-      const data = [
-        getData[4],
-        getData[0],
-        getData[33],
-        getData[9],
-        getData[21],
-        getData[3],
-        getData[1],
-        getData[2],
-        getData[5],
-        getData[6],
-        getData[7],
-        getData[8],
-        getData[11],
-        getData[12],
-        getData[13],
-        getData[14],
-        getData[15],
-        getData[16],
-        getData[17],
-        getData[18],
-        getData[19],
-        getData[20],
-        getData[22],
-        getData[23],
-        getData[24],
-        getData[25],
-        getData[26],
-        getData[27],
-        getData[28],
-        getData[29],
-        getData[30],
-        getData[31],
-        getData[32],
-        getData[34],
-      ];
+      const data = await Polda.findAll({
+        getDataRules,
+        order: [["urutan", "ASC"]],
+      });
       const count = await Polda.count({
         where: getDataRules?.where,
       });
