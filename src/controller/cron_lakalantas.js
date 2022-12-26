@@ -91,10 +91,9 @@ const update_polda_day = async () => {
         await Count_polda_day.create(data);
       }
     }
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    response(res, false, "Failed", e.message);
   }
- 
 };
 
 const update_polda_month = async () => {
