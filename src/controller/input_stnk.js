@@ -764,7 +764,6 @@ module.exports = class StnkController {
           ],
           [Sequelize.fn("sum", Sequelize.col("samolnas_r2")), "samolnas_r2"],
           [Sequelize.fn("sum", Sequelize.col("samolnas_r4")), "samolnas_r4"],
-
           [Sequelize.literal("SUM(bbn_1_r2 + bbn_1_r4)"), "total_bbn"],
           [
             Sequelize.literal("SUM(perubahan_r2 + perubahan_r4)"),
@@ -826,34 +825,36 @@ module.exports = class StnkController {
           const data = rows.find((x) => x.dataValues.date == item);
           if (data) {
             finals.push({
-              baru: parseInt(data.baru),
-              rubentina: parseInt(data.rubentina),
-              perpanjangan: parseInt(data.perpanjangan),
-              bbn_1_r2: parseInt(data.bbn_1_r2) || 0,
-              bbn_1_r4: parseInt(data.bbn_1_r4) || 0,
+              baru: parseInt(data.dataValues.baru),
+              rubentina: parseInt(data.dataValues.rubentina),
+              perpanjangan: parseInt(data.dataValues.perpanjangan),
+              bbn_1_r2: parseInt(data.dataValues.bbn_1_r2),
+              bbn_1_r4: parseInt(data.dataValues.bbn_1_r4),
 
-              perubahan_r2: parseInt(data.perubahan_r2) || 0,
-              perubahan_r4: parseInt(data.perubahan_r4) || 0,
-              perpanjangan_r2: parseInt(data.perpanjangan_r2) || 0,
-              perpanjangan_r4: parseInt(data.perpanjangan_r4) || 0,
-              mutasi_keluar_r2: parseInt(data.mutasi_keluar_r2) || 0,
-              mutasi_keluar_r4: parseInt(data.mutasi_keluar_r4) || 0,
-              mutasi_masuk_r2: parseInt(data.mutasi_masuk_r2) || 0,
-              mutasi_masuk_r4: parseInt(data.mutasi_masuk_r4) || 0,
-              pengesahan_r2: parseInt(data.pengesahan_r2) || 0,
-              pengesahan_r4: parseInt(data.pengesahan_r4) || 0,
-              samolnas_r2: parseInt(data.samolnas_r2) || 0,
-              samolnas_r4: parseInt(data.samolnas_r4) || 0,
-              total_bbn: parseInt(data.total_bbn) || 0,
-              total_perubahan: parseInt(data.total_perubahan) || 0,
-              total_perpanjangan: parseInt(data.total_perpanjangan) || 0,
-              total_mutasi_keluar: parseInt(data.total_mutasi_keluar) || 0,
-              total_mutasi_masuk: parseInt(data.total_mutasi_masuk) || 0,
-              total_pengesahan: parseInt(data.total_pengesahan) || 0,
-              total_samolnas: parseInt(data.total_samolnas) || 0,
+              perubahan_r2: parseInt(data.dataValues.perubahan_r2),
+              perubahan_r4: parseInt(data.dataValues.perubahan_r4),
+              perpanjangan_r2: parseInt(data.dataValues.perpanjangan_r2),
+              perpanjangan_r4: parseInt(data.dataValues.perpanjangan_r4),
+              mutasi_keluar_r2: parseInt(data.dataValues.mutasi_keluar_r2),
+              mutasi_keluar_r4: parseInt(data.dataValues.mutasi_keluar_r4),
+              mutasi_masuk_r2: parseInt(data.dataValues.mutasi_masuk_r2),
+              mutasi_masuk_r4: parseInt(data.dataValues.mutasi_masuk_r4),
+              pengesahan_r2: parseInt(data.dataValues.pengesahan_r2),
+              pengesahan_r4: parseInt(data.dataValues.pengesahan_r4),
+              samolnas_r2: parseInt(data.dataValues.samolnas_r2),
+              samolnas_r4: parseInt(data.dataValues.samolnas_r4),
+              total_bbn: parseInt(data.dataValues.total_bbn),
+              total_perubahan: parseInt(data.dataValues.total_perubahan),
+              total_perpanjangan: parseInt(data.dataValues.total_perpanjangan),
+              total_mutasi_keluar: parseInt(
+                data.dataValues.total_mutasi_keluar
+              ),
+              total_mutasi_masuk: parseInt(data.dataValues.total_mutasi_masuk),
+              total_pengesahan: parseInt(data.dataValues.total_pengesahan),
+              total_samolnas: parseInt(data.dataValues.total_samolnas),
 
-              total: parseInt(data.total) || 0,
-              date: data.date,
+              total: parseInt(data.dataValues.total),
+              date: data.dataValues.date,
             });
           } else {
             finals.push({
