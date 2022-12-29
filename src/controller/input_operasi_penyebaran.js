@@ -138,6 +138,7 @@ module.exports = class OperasiPenyebaranController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
@@ -169,19 +170,39 @@ module.exports = class OperasiPenyebaranController {
         list_month.push(m.format("MMMM"));
       }
 
-      let wheres = {};
+      for (
+        var m = moment(start_operation);
+        m.isSameOrBefore(end_operation);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
+
+      let wheres = [];
       if (date) {
-        wheres.date = date;
+        wheres.push({
+          date: date,
+        });
       }
 
       if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
+        wheres.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
       }
 
       if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
+        wheres.push({
+          polda_id: decAes(polda_id),
+        });
+      }
+
+      if (operasi_id) {
+        wheres.push({
+          operasi_id: decAes(operasi_id),
+        });
       }
 
       const getDataRules = {
@@ -195,7 +216,9 @@ module.exports = class OperasiPenyebaranController {
             "total",
           ],
         ],
-        where: wheres,
+        where: {
+          [Op.and]: wheres,
+        },
       };
 
       if (type === "day") {
@@ -206,6 +229,12 @@ module.exports = class OperasiPenyebaranController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -249,6 +278,40 @@ module.exports = class OperasiPenyebaranController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              spanduk: parseInt(data.spanduk),
+              leaflet: parseInt(data.leaflet),
+              billboard: parseInt(data.billboard),
+              stiker: parseInt(data.stiker),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              spanduk: 0,
+              leaflet: 0,
+              billboard: 0,
+              stiker: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            spanduk: parseInt(element.dataValues.spanduk),
+            leaflet: parseInt(element.dataValues.leaflet),
+            billboard: parseInt(element.dataValues.billboard),
+            stiker: parseInt(element.dataValues.stiker),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

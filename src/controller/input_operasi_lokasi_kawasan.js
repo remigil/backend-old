@@ -142,6 +142,7 @@ module.exports = class OperasiLokasiKawasanController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
@@ -173,19 +174,39 @@ module.exports = class OperasiLokasiKawasanController {
         list_month.push(m.format("MMMM"));
       }
 
-      let wheres = {};
+      for (
+        var m = moment(start_operation);
+        m.isSameOrBefore(end_operation);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
+
+      let wheres = [];
       if (date) {
-        wheres.date = date;
+        wheres.push({
+          date: date,
+        });
       }
 
       if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
+        wheres.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
       }
 
       if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
+        wheres.push({
+          polda_id: decAes(polda_id),
+        });
+      }
+
+      if (operasi_id) {
+        wheres.push({
+          operasi_id: decAes(operasi_id),
+        });
       }
 
       const getDataRules = {
@@ -202,7 +223,9 @@ module.exports = class OperasiLokasiKawasanController {
             "total",
           ],
         ],
-        where: wheres,
+        where: {
+          [Op.and]: wheres,
+        },
       };
 
       if (type === "day") {
@@ -213,6 +236,12 @@ module.exports = class OperasiLokasiKawasanController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -259,6 +288,43 @@ module.exports = class OperasiLokasiKawasanController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              pemukiman: parseInt(data.pemukiman),
+              perbelanjaan: parseInt(data.perbelanjaan),
+              industri: parseInt(data.industri),
+              wisata: parseInt(data.wisata),
+              perkantoran: parseInt(data.perkantoran),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              pemukiman: 0,
+              perbelanjaan: 0,
+              industri: 0,
+              wisata: 0,
+              perkantoran: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            pemukiman: parseInt(element.dataValues.pemukiman),
+            perbelanjaan: parseInt(element.dataValues.perbelanjaan),
+            industri: parseInt(element.dataValues.industri),
+            wisata: parseInt(element.dataValues.wisata),
+            perkantoran: parseInt(element.dataValues.perkantoran),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

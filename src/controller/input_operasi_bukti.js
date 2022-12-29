@@ -135,6 +135,7 @@ module.exports = class OperasiBuktiController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
@@ -166,19 +167,39 @@ module.exports = class OperasiBuktiController {
         list_month.push(m.format("MMMM"));
       }
 
-      let wheres = {};
+      for (
+        var m = moment(start_operation);
+        m.isSameOrBefore(end_operation);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
+
+      let wheres = [];
       if (date) {
-        wheres.date = date;
+        wheres.push({
+          date: date,
+        });
       }
 
       if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
+        wheres.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
       }
 
       if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
+        wheres.push({
+          polda_id: decAes(polda_id),
+        });
+      }
+
+      if (operasi_id) {
+        wheres.push({
+          operasi_id: decAes(operasi_id),
+        });
       }
 
       const getDataRules = {
@@ -191,7 +212,9 @@ module.exports = class OperasiBuktiController {
           ],
           [Sequelize.literal("SUM(sim + stnk + kendaraan_bermotor)"), "total"],
         ],
-        where: wheres,
+        where: {
+          [Op.and]: wheres,
+        },
       };
 
       if (type === "day") {
@@ -203,6 +226,12 @@ module.exports = class OperasiBuktiController {
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
         ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
+        ]);
       }
 
       let rows = await Input_operasi_bukti.findAll(getDataRules);
@@ -211,7 +240,7 @@ module.exports = class OperasiBuktiController {
       if (type === "day") {
         const asd = list_day.map((item, index) => {
           const data = rows.find((x) => x.dataValues.date == item);
-          console.log(data);
+
           if (data) {
             finals.push({
               sim: parseInt(data.dataValues.sim),
@@ -243,6 +272,38 @@ module.exports = class OperasiBuktiController {
 
         const asd = list_month.map((item, index) => {
           const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              sim: parseInt(data.sim),
+              stnk: parseInt(data.stnk),
+              kendaraan_bermotor: parseInt(data.kendaraan_bermotor),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              sim: 0,
+              stnk: 0,
+              kendaraan_bermotor: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            sim: parseInt(element.dataValues.sim),
+            stnk: parseInt(element.dataValues.stnk),
+            kendaraan_bermotor: parseInt(element.dataValues.kendaraan_bermotor),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+
           if (data) {
             finals.push({
               sim: parseInt(data.sim),

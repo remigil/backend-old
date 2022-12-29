@@ -154,6 +154,7 @@ module.exports = class OperasiUsiaController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
@@ -185,21 +186,40 @@ module.exports = class OperasiUsiaController {
         list_month.push(m.format("MMMM"));
       }
 
-      let wheres = {};
+      for (
+        var m = moment(start_operation);
+        m.isSameOrBefore(end_operation);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
+
+      let wheres = [];
       if (date) {
-        wheres.date = date;
+        wheres.push({
+          date: date,
+        });
       }
 
       if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
+        wheres.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
       }
 
       if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
+        wheres.push({
+          polda_id: decAes(polda_id),
+        });
       }
 
+      if (operasi_id) {
+        wheres.push({
+          operasi_id: decAes(operasi_id),
+        });
+      }
       const getDataRules = {
         attributes: [
           [Sequelize.fn("sum", Sequelize.col("max_15")), "max_15"],
@@ -220,7 +240,9 @@ module.exports = class OperasiUsiaController {
             "total",
           ],
         ],
-        where: wheres,
+        where: {
+          [Op.and]: wheres,
+        },
       };
 
       if (type === "day") {
@@ -231,6 +253,12 @@ module.exports = class OperasiUsiaController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -295,6 +323,61 @@ module.exports = class OperasiUsiaController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              max_15: parseInt(data.max_15),
+              max_20: parseInt(data.max_20),
+              max_25: parseInt(data.max_25),
+              max_30: parseInt(data.max_30),
+              max_35: parseInt(data.max_35),
+              max_40: parseInt(data.max_40),
+              max_45: parseInt(data.max_45),
+              max_50: parseInt(data.max_50),
+              max_55: parseInt(data.max_55),
+              max_60: parseInt(data.max_60),
+              lain_lain: parseInt(data.lain_lain),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              max_15: 0,
+              max_20: 0,
+              max_25: 0,
+              max_30: 0,
+              max_35: 0,
+              max_40: 0,
+              max_45: 0,
+              max_50: 0,
+              max_55: 0,
+              max_60: 0,
+              lain_lain: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            max_15: parseInt(element.dataValues.max_15),
+            max_20: parseInt(element.dataValues.max_20),
+            max_25: parseInt(element.dataValues.max_25),
+            max_30: parseInt(element.dataValues.max_30),
+            max_35: parseInt(element.dataValues.max_35),
+            max_40: parseInt(element.dataValues.max_40),
+            max_45: parseInt(element.dataValues.max_45),
+            max_50: parseInt(element.dataValues.max_50),
+            max_55: parseInt(element.dataValues.max_55),
+            max_60: parseInt(element.dataValues.max_60),
+            lain_lain: parseInt(element.dataValues.lain_lain),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

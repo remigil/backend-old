@@ -153,6 +153,7 @@ module.exports = class OperasiLanggarMobilController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
@@ -183,20 +184,39 @@ module.exports = class OperasiLanggarMobilController {
       ) {
         list_month.push(m.format("MMMM"));
       }
+      for (
+        var m = moment(start_operation);
+        m.isSameOrBefore(end_operation);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
 
-      let wheres = {};
+      let wheres = [];
       if (date) {
-        wheres.date = date;
+        wheres.push({
+          date: date,
+        });
       }
 
       if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
+        wheres.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
       }
 
       if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
+        wheres.push({
+          polda_id: decAes(polda_id),
+        });
+      }
+
+      if (operasi_id) {
+        wheres.push({
+          operasi_id: decAes(operasi_id),
+        });
       }
 
       const getDataRules = {
@@ -221,7 +241,9 @@ module.exports = class OperasiLanggarMobilController {
             "total",
           ],
         ],
-        where: wheres,
+        where: {
+          [Op.and]: wheres,
+        },
       };
 
       if (type === "day") {
@@ -232,6 +254,12 @@ module.exports = class OperasiLanggarMobilController {
         getDataRules.attributes.push([
           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
           "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+          "year",
         ]);
       }
 
@@ -284,6 +312,49 @@ module.exports = class OperasiLanggarMobilController {
         });
 
         const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              lawan_arus: parseInt(data.lawan_arus),
+              bermain_hp: parseInt(data.bermain_hp),
+              pengaruh_alkohol: parseInt(data.pengaruh_alkohol),
+              max_kecepatan: parseInt(data.max_kecepatan),
+              dibawah_umur: parseInt(data.dibawah_umur),
+              tanpa_sabuk: parseInt(data.tanpa_sabuk),
+              lain_lain: parseInt(data.lain_lain),
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              lawan_arus: 0,
+              bermain_hp: 0,
+              pengaruh_alkohol: 0,
+              max_kecepatan: 0,
+              dibawah_umur: 0,
+              tanpa_sabuk: 0,
+              lain_lain: 0,
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            lawan_arus: parseInt(element.dataValues.lawan_arus),
+            bermain_hp: parseInt(element.dataValues.bermain_hp),
+            pengaruh_alkohol: parseInt(element.dataValues.pengaruh_alkohol),
+            max_kecepatan: parseInt(element.dataValues.max_kecepatan),
+            dibawah_umur: parseInt(element.dataValues.dibawah_umur),
+            tanpa_sabuk: parseInt(element.dataValues.tanpa_sabuk),
+            lain_lain: parseInt(element.dataValues.lain_lain),
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
           const data = abc.find((x) => x.date == item);
           if (data) {
             finals.push({

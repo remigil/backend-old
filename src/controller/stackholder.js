@@ -32,6 +32,7 @@ const field_stackholder = {
   latitude: null,
   longitude: null,
   link_playlist: null,
+  link_gmaps: null,
 };
 
 module.exports = class StackController {

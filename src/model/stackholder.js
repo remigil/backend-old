@@ -66,7 +66,9 @@ Stackholder.init(
     link_playlist: {
       type: Sequelize.TEXT,
     },
-
+    link_gmaps: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {

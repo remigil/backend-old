@@ -177,128 +177,199 @@ module.exports = class OperasiProfesiController {
         list_month.push(m.format("MMMM"));
       }
 
-      let wheres = {};
-      if (date) {
-        wheres.date = date;
-      }
+       for (
+         var m = moment(start_operation);
+         m.isSameOrBefore(end_operation);
+         m.add(1, "year")
+       ) {
+         list_year.push(m.format("YYYY"));
+       }
 
-      if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
-      }
+       let wheres = [];
+       if (date) {
+         wheres.push({
+           date: date,
+         });
+       }
 
-      if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
-      }
+       if (filter) {
+         wheres.push({
+           date: {
+             [Op.between]: [start_date, end_date],
+           },
+         });
+       }
 
-      const getDataRules = {
-        attributes: [
-          [Sequelize.fn("sum", Sequelize.col("pns")), "pns"],
-          [Sequelize.fn("sum", Sequelize.col("karyawan")), "karyawan"],
-          [Sequelize.fn("sum", Sequelize.col("tni")), "tni"],
-          [Sequelize.fn("sum", Sequelize.col("polri")), "polri"],
-          [Sequelize.fn("sum", Sequelize.col("mahasiswa")), "mahasiswa"],
-          [Sequelize.fn("sum", Sequelize.col("pengemudi")), "pengemudi"],
-          [Sequelize.fn("sum", Sequelize.col("lain_lain")), "lain_lain"],
-          [
-            Sequelize.literal(
-              "SUM(pns + karyawan + tni + polri + mahasiswa + pengemudi + lain_lain)"
-            ),
-            "total",
-          ],
-        ],
-        where: wheres,
-      };
+       if (polda_id) {
+         wheres.push({
+           polda_id: decAes(polda_id),
+         });
+       }
 
-      if (type === "day") {
-        getDataRules.group = "date";
-        getDataRules.attributes.push("date");
-      } else if (type === "month") {
-        getDataRules.group = "month";
-        getDataRules.attributes.push([
-          Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
-          "month",
-        ]);
-      }
+       if (operasi_id) {
+         wheres.push({
+           operasi_id: decAes(operasi_id),
+         });
+       }
 
-      let rows = await Input_operasi_profesi.findAll(getDataRules);
+       const getDataRules = {
+         attributes: [
+           [Sequelize.fn("sum", Sequelize.col("pns")), "pns"],
+           [Sequelize.fn("sum", Sequelize.col("karyawan")), "karyawan"],
+           [Sequelize.fn("sum", Sequelize.col("tni")), "tni"],
+           [Sequelize.fn("sum", Sequelize.col("polri")), "polri"],
+           [Sequelize.fn("sum", Sequelize.col("mahasiswa")), "mahasiswa"],
+           [Sequelize.fn("sum", Sequelize.col("pengemudi")), "pengemudi"],
+           [Sequelize.fn("sum", Sequelize.col("lain_lain")), "lain_lain"],
+           [
+             Sequelize.literal(
+               "SUM(pns + karyawan + tni + polri + mahasiswa + pengemudi + lain_lain)"
+             ),
+             "total",
+           ],
+         ],
+         where: {
+           [Op.and]: wheres,
+         },
+       };
 
-      let finals = [];
-      if (type === "day") {
-        const asd = list_day.map((item, index) => {
-          const data = rows.find((x) => x.dataValues.date == item);
-          console.log(data);
-          if (data) {
-            finals.push({
-              pns: parseInt(data.dataValues.pns),
-              karyawan: parseInt(data.dataValues.karyawan),
-              tni: parseInt(data.dataValues.tni),
-              polri: parseInt(data.dataValues.polri),
-              mahasiswa: parseInt(data.dataValues.mahasiswa),
-              pengemudi: parseInt(data.dataValues.pengemudi),
-              lain_lain: parseInt(data.dataValues.lain_lain),
-              total: parseInt(data.dataValues.total),
-              date: data.dataValues.date,
-            });
-          } else {
-            finals.push({
-              pns: 0,
-              karyawan: 0,
-              tni: 0,
-              polri: 0,
-              mahasiswa: 0,
-              pengemudi: 0,
-              lain_lain: 0,
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      } else if (type === "month") {
-        let abc = rows.map((element, index) => {
-          return {
-            pns: parseInt(element.dataValues.pns),
-            karyawan: parseInt(element.dataValues.karyawan),
-            tni: parseInt(element.dataValues.tni),
-            polri: parseInt(element.dataValues.polri),
-            mahasiswa: parseInt(element.dataValues.mahasiswa),
-            pengemudi: parseInt(element.dataValues.pengemudi),
-            lain_lain: parseInt(element.dataValues.lain_lain),
-            total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("MMMM"),
-          };
-        });
+       if (type === "day") {
+         getDataRules.group = "date";
+         getDataRules.attributes.push("date");
+       } else if (type === "month") {
+         getDataRules.group = "month";
+         getDataRules.attributes.push([
+           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
+           "month",
+         ]);
+       } else if (type === "year") {
+         getDataRules.group = "year";
+         getDataRules.attributes.push([
+           Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+           "year",
+         ]);
+       }
 
-        const asd = list_month.map((item, index) => {
-          const data = abc.find((x) => x.date == item);
-          if (data) {
-            finals.push({
-              pns: parseInt(data.pns),
-              karyawan: parseInt(data.karyawan),
-              tni: parseInt(data.tni),
-              polri: parseInt(data.polri),
-              mahasiswa: parseInt(data.mahasiswa),
-              pengemudi: parseInt(data.pengemudi),
-              lain_lain: parseInt(data.lain_lain),
-              total: parseInt(data.total),
-              date: data.date,
-            });
-          } else {
-            finals.push({
-              pns: 0,
-              karyawan: 0,
-              tni: 0,
-              polri: 0,
-              mahasiswa: 0,
-              pengemudi: 0,
-              lain_lain: 0,
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      }
+       let rows = await Input_operasi_profesi.findAll(getDataRules);
+
+       let finals = [];
+       if (type === "day") {
+         const asd = list_day.map((item, index) => {
+           const data = rows.find((x) => x.dataValues.date == item);
+           console.log(data);
+           if (data) {
+             finals.push({
+               pns: parseInt(data.dataValues.pns),
+               karyawan: parseInt(data.dataValues.karyawan),
+               tni: parseInt(data.dataValues.tni),
+               polri: parseInt(data.dataValues.polri),
+               mahasiswa: parseInt(data.dataValues.mahasiswa),
+               pengemudi: parseInt(data.dataValues.pengemudi),
+               lain_lain: parseInt(data.dataValues.lain_lain),
+               total: parseInt(data.dataValues.total),
+               date: data.dataValues.date,
+             });
+           } else {
+             finals.push({
+               pns: 0,
+               karyawan: 0,
+               tni: 0,
+               polri: 0,
+               mahasiswa: 0,
+               pengemudi: 0,
+               lain_lain: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       } else if (type === "month") {
+         let abc = rows.map((element, index) => {
+           return {
+             pns: parseInt(element.dataValues.pns),
+             karyawan: parseInt(element.dataValues.karyawan),
+             tni: parseInt(element.dataValues.tni),
+             polri: parseInt(element.dataValues.polri),
+             mahasiswa: parseInt(element.dataValues.mahasiswa),
+             pengemudi: parseInt(element.dataValues.pengemudi),
+             lain_lain: parseInt(element.dataValues.lain_lain),
+             total: parseInt(element.dataValues.total),
+             date: moment(element.dataValues.month).format("MMMM"),
+           };
+         });
+
+         const asd = list_month.map((item, index) => {
+           const data = abc.find((x) => x.date == item);
+           if (data) {
+             finals.push({
+               pns: parseInt(data.pns),
+               karyawan: parseInt(data.karyawan),
+               tni: parseInt(data.tni),
+               polri: parseInt(data.polri),
+               mahasiswa: parseInt(data.mahasiswa),
+               pengemudi: parseInt(data.pengemudi),
+               lain_lain: parseInt(data.lain_lain),
+               total: parseInt(data.total),
+               date: data.date,
+             });
+           } else {
+             finals.push({
+               pns: 0,
+               karyawan: 0,
+               tni: 0,
+               polri: 0,
+               mahasiswa: 0,
+               pengemudi: 0,
+               lain_lain: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       } else if (type === "year") {
+         let abc = rows.map((element, index) => {
+           return {
+             pns: parseInt(element.dataValues.pns),
+             karyawan: parseInt(element.dataValues.karyawan),
+             tni: parseInt(element.dataValues.tni),
+             polri: parseInt(element.dataValues.polri),
+             mahasiswa: parseInt(element.dataValues.mahasiswa),
+             pengemudi: parseInt(element.dataValues.pengemudi),
+             lain_lain: parseInt(element.dataValues.lain_lain),
+             total: parseInt(element.dataValues.total),
+             date: moment(element.dataValues.year).format("YYYY"),
+           };
+         });
+
+         const asd = list_year.map((item, index) => {
+           const data = abc.find((x) => x.date == item);
+           if (data) {
+             finals.push({
+               pns: parseInt(data.pns),
+               karyawan: parseInt(data.karyawan),
+               tni: parseInt(data.tni),
+               polri: parseInt(data.polri),
+               mahasiswa: parseInt(data.mahasiswa),
+               pengemudi: parseInt(data.pengemudi),
+               lain_lain: parseInt(data.lain_lain),
+               total: parseInt(data.total),
+               date: data.date,
+             });
+           } else {
+             finals.push({
+               pns: 0,
+               karyawan: 0,
+               tni: 0,
+               polri: 0,
+               mahasiswa: 0,
+               pengemudi: 0,
+               lain_lain: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       }
       response(res, true, "Succeed", finals);
     } catch (error) {
       response(res, false, "Failed", error.message);

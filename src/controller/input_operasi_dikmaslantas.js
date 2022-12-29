@@ -144,144 +144,207 @@ module.exports = class OperasiDikmaslantasController {
 
       var list_day = [];
       var list_month = [];
+       var list_year = [];
 
-      let operasi = await Operasi.findOne({
-        where: {
-          id: decAes(operasi_id),
-        },
-      });
+       let operasi = await Operasi.findOne({
+         where: {
+           id: decAes(operasi_id),
+         },
+       });
 
-      let start_operation = operasi.dataValues.date_start_operation;
-      let end_operation = operasi.dataValues.date_end_operation;
+       let start_operation = operasi.dataValues.date_start_operation;
+       let end_operation = operasi.dataValues.date_end_operation;
 
-      if (start_date && end_date) {
-        start_operation = start_date;
-        end_operation = end_date;
-      }
+       if (start_date && end_date) {
+         start_operation = start_date;
+         end_operation = end_date;
+       }
 
-      for (
-        var m = moment(start_operation);
-        m.isSameOrBefore(end_operation);
-        m.add(1, "days")
-      ) {
-        list_day.push(m.format("YYYY-MM-DD"));
-      }
+       for (
+         var m = moment(start_operation);
+         m.isSameOrBefore(end_operation);
+         m.add(1, "days")
+       ) {
+         list_day.push(m.format("YYYY-MM-DD"));
+       }
 
-      for (
-        var m = moment(start_operation);
-        m.isSameOrBefore(end_operation);
-        m.add(1, "month")
-      ) {
-        list_month.push(m.format("MMMM"));
-      }
+       for (
+         var m = moment(start_operation);
+         m.isSameOrBefore(end_operation);
+         m.add(1, "month")
+       ) {
+         list_month.push(m.format("MMMM"));
+       }
 
-      let wheres = {};
-      if (date) {
-        wheres.date = date;
-      }
+       for (
+         var m = moment(start_operation);
+         m.isSameOrBefore(end_operation);
+         m.add(1, "year")
+       ) {
+         list_year.push(m.format("YYYY"));
+       }
 
-      if (filter) {
-        wheres.date = {
-          [Op.between]: [start_date, end_date],
-        };
-      }
+       let wheres = [];
+       if (date) {
+         wheres.push({
+           date: date,
+         });
+       }
 
-      if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
-      }
+       if (filter) {
+         wheres.push({
+           date: {
+             [Op.between]: [start_date, end_date],
+           },
+         });
+       }
 
-      const getDataRules = {
-        attributes: [
-          [Sequelize.fn("sum", Sequelize.col("media_cetak")), "media_cetak"],
-          [Sequelize.fn("sum", Sequelize.col("media_sosial")), "media_sosial"],
-          [
-            Sequelize.fn("sum", Sequelize.col("media_elektronik")),
-            "media_elektronik",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("laka_langgar")), "laka_langgar"],
-          [
-            Sequelize.literal(
-              "SUM(media_cetak + media_sosial + media_elektronik + laka_langgar)"
-            ),
-            "total",
-          ],
-        ],
-        where: wheres,
-      };
+       if (polda_id) {
+         wheres.push({
+           polda_id: decAes(polda_id),
+         });
+       }
 
-      if (type === "day") {
-        getDataRules.group = "date";
-        getDataRules.attributes.push("date");
-      } else if (type === "month") {
-        getDataRules.group = "month";
-        getDataRules.attributes.push([
-          Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
-          "month",
-        ]);
-      }
+       if (operasi_id) {
+         wheres.push({
+           operasi_id: decAes(operasi_id),
+         });
+       }
 
-      let rows = await Input_operasi_dikmaslantas.findAll(getDataRules);
+       const getDataRules = {
+         attributes: [
+           [Sequelize.fn("sum", Sequelize.col("media_cetak")), "media_cetak"],
+           [Sequelize.fn("sum", Sequelize.col("media_sosial")), "media_sosial"],
+           [
+             Sequelize.fn("sum", Sequelize.col("media_elektronik")),
+             "media_elektronik",
+           ],
+           [Sequelize.fn("sum", Sequelize.col("laka_langgar")), "laka_langgar"],
+           [
+             Sequelize.literal(
+               "SUM(media_cetak + media_sosial + media_elektronik + laka_langgar)"
+             ),
+             "total",
+           ],
+         ],
+         where: {
+           [Op.and]:wheres
+         },
+       };
 
-      let finals = [];
-      if (type === "day") {
-        const asd = list_day.map((item, index) => {
-          const data = rows.find((x) => x.dataValues.date == item);
-          console.log(data);
-          if (data) {
-            finals.push({
-              media_cetak: parseInt(data.dataValues.media_cetak),
-              media_sosial: parseInt(data.dataValues.media_sosial),
-              media_elektronik: parseInt(data.dataValues.media_elektronik),
-              laka_langgar: parseInt(data.dataValues.laka_langgar),
-              total: parseInt(data.dataValues.total),
-              date: data.dataValues.date,
-            });
-          } else {
-            finals.push({
-              media_cetak: 0,
-              media_sosial: 0,
-              media_elektronik: 0,
-              laka_langgar: 0,
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      } else if (type === "month") {
-        let abc = rows.map((element, index) => {
-          return {
-            media_cetak: parseInt(element.dataValues.media_cetak),
-            media_sosial: parseInt(element.dataValues.media_sosial),
-            media_elektronik: parseInt(element.dataValues.media_elektronik),
-            laka_langgar: parseInt(element.dataValues.laka_langgar),
-            total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("MMMM"),
-          };
-        });
+       if (type === "day") {
+         getDataRules.group = "date";
+         getDataRules.attributes.push("date");
+       } else if (type === "month") {
+         getDataRules.group = "month";
+         getDataRules.attributes.push([
+           Sequelize.fn("date_trunc", "month", Sequelize.col("date")),
+           "month",
+         ]);
+       } else if (type === "year") {
+         getDataRules.group = "year";
+         getDataRules.attributes.push([
+           Sequelize.fn("date_trunc", "year", Sequelize.col("date")),
+           "year",
+         ]);
+       }
 
-        const asd = list_month.map((item, index) => {
-          const data = abc.find((x) => x.date == item);
-          if (data) {
-            finals.push({
-              media_cetak: parseInt(data.media_cetak),
-              media_sosial: parseInt(data.media_sosial),
-              media_elektronik: parseInt(data.media_elektronik),
-              laka_langgar: parseInt(data.laka_langgar),
-              total: parseInt(data.total),
-              date: data.date,
-            });
-          } else {
-            finals.push({
-              media_cetak: 0,
-              media_sosial: 0,
-              media_elektronik: 0,
-              laka_langgar: 0,
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      }
+       let rows = await Input_operasi_dikmaslantas.findAll(getDataRules);
+
+       let finals = [];
+       if (type === "day") {
+         const asd = list_day.map((item, index) => {
+           const data = rows.find((x) => x.dataValues.date == item);
+           console.log(data);
+           if (data) {
+             finals.push({
+               media_cetak: parseInt(data.dataValues.media_cetak),
+               media_sosial: parseInt(data.dataValues.media_sosial),
+               media_elektronik: parseInt(data.dataValues.media_elektronik),
+               laka_langgar: parseInt(data.dataValues.laka_langgar),
+               total: parseInt(data.dataValues.total),
+               date: data.dataValues.date,
+             });
+           } else {
+             finals.push({
+               media_cetak: 0,
+               media_sosial: 0,
+               media_elektronik: 0,
+               laka_langgar: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       } else if (type === "month") {
+         let abc = rows.map((element, index) => {
+           return {
+             media_cetak: parseInt(element.dataValues.media_cetak),
+             media_sosial: parseInt(element.dataValues.media_sosial),
+             media_elektronik: parseInt(element.dataValues.media_elektronik),
+             laka_langgar: parseInt(element.dataValues.laka_langgar),
+             total: parseInt(element.dataValues.total),
+             date: moment(element.dataValues.month).format("MMMM"),
+           };
+         });
+
+         const asd = list_month.map((item, index) => {
+           const data = abc.find((x) => x.date == item);
+           if (data) {
+             finals.push({
+               media_cetak: parseInt(data.media_cetak),
+               media_sosial: parseInt(data.media_sosial),
+               media_elektronik: parseInt(data.media_elektronik),
+               laka_langgar: parseInt(data.laka_langgar),
+               total: parseInt(data.total),
+               date: data.date,
+             });
+           } else {
+             finals.push({
+               media_cetak: 0,
+               media_sosial: 0,
+               media_elektronik: 0,
+               laka_langgar: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       } else if (type === "year") {
+         let abc = rows.map((element, index) => {
+           return {
+             media_cetak: parseInt(element.dataValues.media_cetak),
+             media_sosial: parseInt(element.dataValues.media_sosial),
+             media_elektronik: parseInt(element.dataValues.media_elektronik),
+             laka_langgar: parseInt(element.dataValues.laka_langgar),
+             total: parseInt(element.dataValues.total),
+             date: moment(element.dataValues.year).format("YYYY"),
+           };
+         });
+
+         const asd = list_year.map((item, index) => {
+           const data = abc.find((x) => x.date == item);
+           if (data) {
+             finals.push({
+               media_cetak: parseInt(data.media_cetak),
+               media_sosial: parseInt(data.media_sosial),
+               media_elektronik: parseInt(data.media_elektronik),
+               laka_langgar: parseInt(data.laka_langgar),
+               total: parseInt(data.total),
+               date: data.date,
+             });
+           } else {
+             finals.push({
+               media_cetak: 0,
+               media_sosial: 0,
+               media_elektronik: 0,
+               laka_langgar: 0,
+               total: 0,
+               date: item,
+             });
+           }
+         });
+       }
       response(res, true, "Succeed", finals);
     } catch (error) {
       response(res, false, "Failed", error.message);
