@@ -67,6 +67,9 @@ Blankspot.init(
     route: {
       type: Sequelize.JSON,
     },
+    direction_route: {
+      type: Sequelize.JSON,
+    },
 
     ...StructureTimestamp,
   },

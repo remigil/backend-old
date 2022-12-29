@@ -56,8 +56,23 @@ Fasum.init(
     fasum_radius: {
       type: Sequelize.INTEGER,
     },
+    fasum_geoJson: {
+      type: Sequelize.JSON,
+    },
+    route: {
+      type: Sequelize.JSON,
+    },
+    fasum_color: {
+      type: Sequelize.STRING(255),
+    },
     polda_id: {
       type: Sequelize.INTEGER,
+    },
+    direction_route: {
+      type: Sequelize.JSON,
+    },
+    fasum_image: {
+      type: Sequelize.TEXT,
     },
     ...StructureTimestamp,
   },
