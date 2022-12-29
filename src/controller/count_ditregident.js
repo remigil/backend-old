@@ -21,6 +21,11 @@ const Ranmor_polda_day = require("../model/count_ranmor_polda_day");
 const Ranmor_polda_month = require("../model/count_ranmor_polda_month");
 
 
+const Tnkb_polda_day = require("../model/count_tnkb_polda_day");
+const Tckb_polda_day = require("../model/count_tckb_polda_day");
+const Stck_polda_day = require("../model/count_stck_polda_day");
+const Skukp_polda_day = require("../model/count_skukp_polda_day");
+
 const Polda = require("../model/polda");
 const Polres = require("../model/polres");
 
@@ -46,7 +51,17 @@ module.exports = class DitregidentController {
       } = req.query;
 
       const getDataRules = {
-        group: ["polda.id", "bpkb.id", "sim.id", "stnk.id", "ranmor.id"],
+        group: [
+          "polda.id",
+          "bpkb.id",
+          "sim.id",
+          "stnk.id",
+          "ranmor.id",
+          "tnkb.id",
+          "tckb.id",
+          "stck.id",
+          "skukp.id",
+        ],
         attributes: ["id", "name_polda"],
         include: [
           {
@@ -101,6 +116,32 @@ module.exports = class DitregidentController {
               ],
             ],
           },
+          {
+            model: Tnkb_polda_day,
+            required: false,
+            as: "tnkb",
+            attributes: [[Sequelize.literal("SUM(tnkb.tnkb)"), "total_tnkb"]],
+          },
+          {
+            model: Tckb_polda_day,
+            required: false,
+            as: "tckb",
+            attributes: [[Sequelize.literal("SUM(tckb.tckb)"), "total_tckb"]],
+          },
+          {
+            model: Stck_polda_day,
+            required: false,
+            as: "stck",
+            attributes: [[Sequelize.literal("SUM(stck.stck)"), "total_stck"]],
+          },
+          {
+            model: Skukp_polda_day,
+            required: false,
+            as: "skukp",
+            attributes: [
+              [Sequelize.literal("SUM(skukp.skukp)"), "total_skukp"],
+            ],
+          },
         ],
         nest: true,
         subQuery: false,
@@ -143,6 +184,10 @@ module.exports = class DitregidentController {
         var res_stnk = 0;
         var res_sim = 0;
         var res_ranmor = 0;
+        var res_tnkb = 0;
+        var res_tckb = 0;
+        var res_stck = 0;
+        var res_skukp = 0;
         for (let j = 0; j < data.bpkb.length; j++) {
           res_bpkb += parseInt(data.bpkb[j].dataValues.total_bpkb);
         }
@@ -159,6 +204,22 @@ module.exports = class DitregidentController {
           res_ranmor += parseInt(data.ranmor[j].dataValues.total_ranmor);
         }
 
+        for (let j = 0; j < data.tnkb.length; j++) {
+          res_tnkb += parseInt(data.tnkb[j].dataValues.total_tnkb);
+        }
+
+        for (let j = 0; j < data.tckb.length; j++) {
+          res_tckb += parseInt(data.tckb[j].dataValues.total_tckb);
+        }
+
+        for (let j = 0; j < data.stck.length; j++) {
+          res_stck += parseInt(data.stck[j].dataValues.total_stck);
+        }
+
+        for (let j = 0; j < data.skukp.length; j++) {
+          res_skukp += parseInt(data.skukp[j].dataValues.total_skukp);
+        }
+
         rows.push({
           id: finals[i].dataValues.id,
           name_polda: finals[i].dataValues.name_polda,
@@ -166,7 +227,27 @@ module.exports = class DitregidentController {
           stnk: res_stnk || 0,
           sim: res_sim || 0,
           ranmor: res_ranmor || 0,
-          total: res_bpkb + res_stnk + res_sim + res_ranmor,
+          tnkb: res_tnkb || 0,
+          tckb: res_tckb || 0,
+          stck: res_stck || 0,
+          skukp: res_skukp || 0,
+          total_sbst:
+            res_bpkb +
+            res_stnk +
+            res_sim +
+            res_tnkb +
+            res_tckb +
+            res_stck +
+            res_skukp,
+          total:
+            res_bpkb +
+            res_stnk +
+            res_sim +
+            res_ranmor +
+            res_tnkb +
+            res_tckb +
+            res_stck +
+            res_skukp,
         });
       }
 
@@ -319,6 +400,46 @@ module.exports = class DitregidentController {
         where: wheres,
       });
 
+      let tnkb = await Tnkb_polda_day.findAll({
+        group: groups,
+        attributes: [
+          custom_attributes,
+          [Sequelize.literal("SUM(tnkb)"), "total_tnkb"],
+        ],
+        raw: true,
+        where: wheres,
+      });
+
+      let tckb = await Tckb_polda_day.findAll({
+        group: groups,
+        attributes: [
+          custom_attributes,
+          [Sequelize.literal("SUM(tckb)"), "total_tckb"],
+        ],
+        raw: true,
+        where: wheres,
+      });
+
+      let stck = await Stck_polda_day.findAll({
+        group: groups,
+        attributes: [
+          custom_attributes,
+          [Sequelize.literal("SUM(stck)"), "total_stck"],
+        ],
+        raw: true,
+        where: wheres,
+      });
+
+      let skukp = await Skukp_polda_day.findAll({
+        group: groups,
+        attributes: [
+          custom_attributes,
+          [Sequelize.literal("SUM(skukp)"), "total_skukp"],
+        ],
+        raw: true,
+        where: wheres,
+      });
+
       let finals = [];
       let arr_bpkb = [];
       let arr_stnk = [];
@@ -330,6 +451,10 @@ module.exports = class DitregidentController {
           let stnk_data = stnk.find((x) => x.date == item);
           let sim_data = sim.find((x) => x.date == item);
           let ranmor_data = ranmor.find((x) => x.date == item);
+          let tnkb_data = tnkb.find((x) => x.date == item);
+          let tckb_data = tckb.find((x) => x.date == item);
+          let stck_data = stck.find((x) => x.date == item);
+          let skukp_data = skukp.find((x) => x.date == item);
 
           let obj = {};
           obj.date = item;
@@ -355,6 +480,30 @@ module.exports = class DitregidentController {
             obj.ranmor = parseInt(ranmor_data.total_ranmor);
           } else {
             obj.ranmor = 0;
+          }
+
+          if (tnkb_data) {
+            obj.tnkb = parseInt(tnkb_data.total_tnkb);
+          } else {
+            obj.tnkb = 0;
+          }
+
+          if (tckb_data) {
+            obj.tckb = parseInt(tckb_data.total_tckb);
+          } else {
+            obj.tckb = 0;
+          }
+
+          if (stck_data) {
+            obj.stck = parseInt(stck_data.total_stck);
+          } else {
+            obj.stck = 0;
+          }
+
+          if (skukp_data) {
+            obj.skukp = parseInt(skukp_data.total_skukp);
+          } else {
+            obj.skukp = 0;
           }
           finals.push(obj);
         });
@@ -373,6 +522,19 @@ module.exports = class DitregidentController {
             (x) => moment(x.month).format("MMMM") == item
           );
 
+          let tnkb_data = tnkb.find(
+            (x) => moment(x.month).format("MMMM") == item
+          );
+          let tckb_data = tckb.find(
+            (x) => moment(x.month).format("MMMM") == item
+          );
+          let stck_data = stck.find(
+            (x) => moment(x.month).format("MMMM") == item
+          );
+          let skukp_data = skukp.find(
+            (x) => moment(x.month).format("MMMM") == item
+          );
+
           let obj = {};
           obj.date = item;
           if (bpkb_data) {
@@ -397,6 +559,30 @@ module.exports = class DitregidentController {
             obj.ranmor = parseInt(ranmor_data.total_ranmor);
           } else {
             obj.ranmor = 0;
+          }
+
+          if (tnkb_data) {
+            obj.tnkb = parseInt(tnkb_data.total_tnkb);
+          } else {
+            obj.tnkb = 0;
+          }
+
+          if (tckb_data) {
+            obj.tckb = parseInt(tckb_data.total_tckb);
+          } else {
+            obj.tckb = 0;
+          }
+
+          if (stck_data) {
+            obj.stck = parseInt(stck_data.total_stck);
+          } else {
+            obj.stck = 0;
+          }
+
+          if (skukp_data) {
+            obj.skukp = parseInt(skukp_data.total_skukp);
+          } else {
+            obj.skukp = 0;
           }
           finals.push(obj);
         });
@@ -412,7 +598,18 @@ module.exports = class DitregidentController {
           let ranmor_data = ranmor.find(
             (x) => moment(x.year).format("YYYY") == item
           );
-
+          let tnkb_data = tnkb.find(
+            (x) => moment(x.year).format("YYYY") == item
+          );
+          let tckb_data = tckb.find(
+            (x) => moment(x.year).format("YYYY") == item
+          );
+          let stck_data = stck.find(
+            (x) => moment(x.year).format("YYYY") == item
+          );
+          let skukp_data = skukp.find(
+            (x) => moment(x.year).format("YYYY") == item
+          );
           let obj = {};
           obj.date = item;
           if (bpkb_data) {
@@ -437,6 +634,30 @@ module.exports = class DitregidentController {
             obj.ranmor = parseInt(ranmor_data.total_ranmor);
           } else {
             obj.ranmor = 0;
+          }
+
+          if (tnkb_data) {
+            obj.tnkb = parseInt(tnkb_data.total_tnkb);
+          } else {
+            obj.tnkb = 0;
+          }
+
+          if (tckb_data) {
+            obj.tckb = parseInt(tckb_data.total_tckb);
+          } else {
+            obj.tckb = 0;
+          }
+
+          if (stck_data) {
+            obj.stck = parseInt(stck_data.total_stck);
+          } else {
+            obj.stck = 0;
+          }
+
+          if (skukp_data) {
+            obj.skukp = parseInt(skukp_data.total_skukp);
+          } else {
+            obj.skukp = 0;
           }
           finals.push(obj);
         });
