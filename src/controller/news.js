@@ -309,6 +309,11 @@ module.exports = class NewsController {
         where: {
           news_category: decAes(req.params.id),
         },
+        include: [
+          {
+            model: CategoryNews,
+          },
+        ],
         order: [["created_at", "DESC"]],
       });
       response(res, true, "Succeed", data);

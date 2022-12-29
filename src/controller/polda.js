@@ -24,6 +24,7 @@ const field_polda = {
   twitter: null,
   facebook: null,
   instagram: null,
+  link_playlist: null,
 };
 module.exports = class PoldaController {
   static get = async (req, res) => {

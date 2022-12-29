@@ -75,6 +75,9 @@ Polda.init(
     instagram: {
       type: Sequelize.STRING(200),
     },
+    link_playlist: {
+      type: Sequelize.STRING(200),
+    },
 
     ...StructureTimestamp,
   },
