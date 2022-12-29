@@ -4,10 +4,9 @@ const moment = require("moment");
 const { default: axios } = require("axios");
 const { namePolda } = require("../lib/polda_nameParse");
 
-const Master_lakalantas = require("../model/input_laka_lantas");
+
 const Count_polda_day = require("../model/count_lakalantas_polda_day");
 const Count_polda_month = require("../model/count_lakalantas_polda_month");
-const Count_polres_month = require("../model/count_lakalantas_polres_month");
 const Polda = require("../model/polda");
 const { Op, Sequelize } = require("sequelize");
 exports.cronLakalantas = () => {

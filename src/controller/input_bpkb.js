@@ -10,19 +10,17 @@ const fs = require("fs");
 
 const Count_polda_day = require("../model/count_bpkb_polda_day");
 const Count_polda_month = require("../model/count_bpkb_polda_month");
-const Count_polres_month = require("../model/count_bpkb_polres_month");
+
 const Polda = require("../model/polda");
 const Polres = require("../model/polres");
 
-// Count_polda_month.belongsTo(Polda, { foreignKey: "polda_id", as: "polda" });
-// Count_polda_day.belongsTo(Polda, { foreignKey: "polda_id", as: "polda" });
+
 Polda.hasMany(Count_polda_day, { foreignKey: "polda_id", as: "bpkb" });
 Polda.hasMany(Count_polda_month, {
   foreignKey: "polda_id",
   as: "bpkb-month",
 });
-// Count_polres_month.belongsTo(Polda, { foreignKey: "polda_id", as: "polda" });
-// Count_polres_month.belongsTo(Polres, { foreignKey: "polres_id", as: "polres" });
+
 
 const decAes = (token) =>
   AESDecrypt(token, {

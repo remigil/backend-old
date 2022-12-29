@@ -4,20 +4,17 @@ const moment = require("moment");
 const Polda = require("../model/polda");
 const { Op, Sequelize } = require("sequelize");
 
-const Master_bpkb = require("../model/input_bpkb");
+
 const Count_polda_day = require("../model/count_bpkb_polda_day");
 const Count_polda_month = require("../model/count_bpkb_polda_month");
-const Count_polres_month = require("../model/count_bpkb_polres_month");
+
 const Polres = require("../model/polres");
 const { all } = require("../router/google_maps_api");
 
-// Polda.hasMany(Master_bpkb, { foreignKey: "polda_id", as: "bpkb" });
-// Polres.hasMany(Master_bpkb, { foreignKey: "polres_id", as: "bpkb" });
 exports.cronBpkb = () => {
   const scheduledJobFunction = cron.schedule(" */1 * * * *", () => {
     console.log("Cron bpkb is running");
     update_polda_month();
-    // update_polres_month();
   });
 
   scheduledJobFunction.start();

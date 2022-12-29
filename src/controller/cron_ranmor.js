@@ -2,10 +2,9 @@ const cron = require("node-cron");
 const db = require("../config/database");
 const moment = require("moment");
 
-const Master_ranmor = require("../model/input_ranmor");
 const Count_polda_day = require("../model/count_ranmor_polda_day");
 const Count_polda_month = require("../model/count_ranmor_polda_month");
-const Count_polres_month = require("../model/count_ranmor_polres_month");
+
 const Polda = require("../model/polda");
 const { Op, Sequelize } = require("sequelize");
 exports.cronRanmor = () => {

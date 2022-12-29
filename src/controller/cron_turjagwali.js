@@ -2,10 +2,10 @@ const cron = require("node-cron");
 const db = require("../config/database");
 const moment = require("moment");
 
-const Master_turjagwali = require("../model/input_turjagwali");
+
 const Count_polda_day = require("../model/count_turjagwali_polda_day");
 const Count_polda_month = require("../model/count_turjagwali_polda_month");
-const Count_polres_month = require("../model/count_turjagwali_polres_month");
+
 const { Op } = require("sequelize");
 exports.cronTurjagwali = () => {
   const scheduledJobFunction = cron.schedule(" */1 * * * *", () => {
