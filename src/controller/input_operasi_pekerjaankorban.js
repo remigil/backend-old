@@ -146,6 +146,7 @@ module.exports = class OperasiProfesiController {
 
       var list_day = [];
       var list_month = [];
+      var list_year = [];
 
       let operasi = await Operasi.findOne({
         where: {
