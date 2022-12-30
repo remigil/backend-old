@@ -15,6 +15,8 @@ router.get("/turjagwali", ExportLaphar.export_turjagwali);
 router.get("/ranmor", ExportLaphar.export_ranmor);
 router.get("/sim", ExportLaphar.export_sim);
 router.get("/stnk", ExportLaphar.export_stnk);
+router.get("/bpkb", ExportLaphar.export_bpkb);
+
 
 
 

@@ -14,6 +14,7 @@ const {
   tempRanmor,
   tempSim,
   tempStnk,
+  tempBpkb,
 } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
 const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
@@ -3725,6 +3726,162 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/laporan_harian_stnk${tgl}.xlsx`
       );
       res.download(`./public/export_laphar/laporan_harian_stnk${tgl}.xlsx`);
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+  static export_bpkb = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditregident = await Polda.findAll({
+        group: ["bpkb.id", "polda.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Bpkb_polda_day,
+            required: false,
+            as: "bpkb",
+            attributes: [
+              [Sequelize.fn("sum", Sequelize.col("bbn_1")), "bbn_1"],
+              [Sequelize.fn("sum", Sequelize.col("bbn_2")), "bbn_2"],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_masuk")),
+                "mutasi_masuk",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_keluar")),
+                "mutasi_keluar",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perubahan_pergantian")),
+                "perubahan_pergantian",
+              ],
+
+              [
+                Sequelize.literal(
+                  "SUM(bbn_1 + bbn_2 + mutasi_masuk + mutasi_keluar + perubahan_pergantian)"
+                ),
+                "total_bpkb",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+      let rows_jumlah_bpkb = [];
+      let rows_bbn_1 = [];
+      let rows_bbn_2 = [];
+      let rows_mutasi_masuk = [];
+      let rows_mutasi_keluar = [];
+      let rows_perubahan_pergantian = [];
+
+      for (let i = 0; i < ditregident.length; i++) {
+        let jumlah_bpkb = 0;
+        let bbn_1 = 0;
+        let bbn_2 = 0;
+        let mutasi_masuk = 0;
+        let mutasi_keluar = 0;
+        let perubahan_pergantian = 0;
+
+        for (let j = 0; j < ditregident[i].bpkb.length; j++) {
+          bbn_1 += parseInt(ditregident[i].bpkb[j].dataValues.bbn_1);
+          bbn_2 += parseInt(ditregident[i].bpkb[j].dataValues.bbn_2);
+          mutasi_masuk += parseInt(
+            ditregident[i].bpkb[j].dataValues.mutasi_masuk
+          );
+          mutasi_keluar += parseInt(
+            ditregident[i].bpkb[j].dataValues.mutasi_keluar
+          );
+          perubahan_pergantian += parseInt(
+            ditregident[i].bpkb[j].dataValues.perubahan_pergantian
+          );
+          jumlah_bpkb += parseInt(ditregident[i].bpkb[j].dataValues.total_bpkb);
+        }
+        rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_jumlah_bpkb.push(jumlah_bpkb);
+        rows_bbn_1.push(bbn_1);
+        rows_bbn_2.push(bbn_2);
+        rows_mutasi_masuk.push(mutasi_masuk);
+        rows_mutasi_keluar.push(mutasi_keluar);
+        rows_perubahan_pergantian.push(perubahan_pergantian);
+      }
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_jumlah_bpkb,
+        rows_bbn_1,
+        rows_bbn_2,
+        rows_mutasi_masuk,
+        rows_mutasi_keluar,
+        rows_perubahan_pergantian,
+      };
+
+      console.log(rows);
+      let results = tempBpkb(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_bpkb${tgl}.xlsx`
+      );
+      res.download(`./public/export_laphar/laporan_harian_bpkb${tgl}.xlsx`);
       // response(res, true, "Succeed", ditkamsel);
     } catch (error) {
       response(res, false, "Failed", error.message);
