@@ -5,7 +5,14 @@ const puppeteer = require("puppeteer");
 const ejs = require("ejs");
 const cron = require("node-cron");
 const { IDDays } = require("../lib/generalhelper");
-const { tempalteLaphar, templateLapharNew } = require("../lib/template_laphar");
+const {
+  tempalteLaphar,
+  templateLapharNew,
+  tempLaka,
+  tempLanggar,
+  tempTurjagwali,
+  tempRanmor,
+} = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
 const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
 const { AESDecrypt } = require("../lib/encryption");
@@ -1193,39 +1200,47 @@ module.exports = class ExportLapharController {
 
         name_yesterdays = yesterday;
       } else if (type === "weeks") {
-        let start_today_date = moment(date).format("YYYY-MM-DD");
+        let start_today_date = moment(date)
+          .clone()
+          .startOf("week")
+          .format("YYYY-MM-DD");
         let end_today_date = moment(date)
-          .subtract(6, "days")
+          .clone()
+          .endOf("week")
           .format("YYYY-MM-DD");
 
         let start_yesterday_date = moment(date)
-          .subtract(7, "days")
+          .clone()
+          .subtract(1, "week")
+          .startOf("week")
           .format("YYYY-MM-DD");
         let end_yesterday_date = moment(date)
-          .subtract(13, "days")
+          .clone()
+          .subtract(1, "week")
+          .endOf("week")
           .format("YYYY-MM-DD");
 
         rules_today = {
           date: {
-            [Op.between]: [end_today_date, start_today_date],
+            [Op.between]: [start_today_date, end_today_date],
           },
         };
 
         rules_yesterday = {
           date: {
-            [Op.between]: [end_yesterday_date, start_yesterday_date],
+            [Op.between]: [start_yesterday_date, end_yesterday_date],
           },
         };
 
         name_todays =
-          moment(end_today_date).locale("id").format("dddd DD-MM-YYYY") +
+          moment(start_today_date).locale("id").format("dddd DD-MM-YYYY") +
           " s.d " +
-          moment(start_today_date).locale("id").format("dddd DD-MM-YYYY");
+          moment(end_today_date).locale("id").format("dddd DD-MM-YYYY");
 
         name_yesterdays =
-          moment(end_yesterday_date).locale("id").format("dddd DD-MM-YYYY") +
+          moment(start_yesterday_date).locale("id").format("dddd DD-MM-YYYY") +
           " s.d " +
-          moment(start_yesterday_date).locale("id").format("dddd DD-MM-YYYY");
+          moment(end_yesterday_date).locale("id").format("dddd DD-MM-YYYY");
       } else if (type === "triwulan") {
         let start_today_date = moment(date).format("MM");
         let end_today_date = moment(date).subtract(2, "month").format("MM");
@@ -2520,6 +2535,621 @@ module.exports = class ExportLapharController {
         order: [["date", "DESC"]],
       });
       response(res, true, "Succeed", data);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_laka = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditgakkum = await Polda.findAll({
+        group: ["polda.id", "laka_lantas.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Lakalantas_polda_day,
+            required: false,
+            as: "laka_lantas",
+            attributes: [
+              [
+                Sequelize.fn("sum", Sequelize.col("meninggal_dunia")),
+                "meninggal_dunia",
+              ],
+              [Sequelize.fn("sum", Sequelize.col("luka_berat")), "luka_berat"],
+              [
+                Sequelize.fn("sum", Sequelize.col("luka_ringan")),
+                "luka_ringan",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("kerugian_material")),
+                "kerugian_material",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("insiden_kecelakaan")),
+                "total_lakalantas",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+      let rows_meninggal_dunia = [];
+      let rows_luka_berat = [];
+      let rows_luka_ringan = [];
+      let rows_kerugian_material = [];
+      let rows_jumlah_lakalantas = [];
+
+      for (let i = 0; i < ditgakkum.length; i++) {
+        let meninggal_dunia = 0;
+        let luka_berat = 0;
+        let luka_ringan = 0;
+        let kerugian_material = 0;
+        let jumlah_lakalantas = 0;
+
+        for (let j = 0; j < ditgakkum[i].laka_lantas.length; j++) {
+          meninggal_dunia += parseInt(
+            ditgakkum[i].laka_lantas[j].dataValues.meninggal_dunia
+          );
+          luka_berat += parseInt(
+            ditgakkum[i].laka_lantas[j].dataValues.luka_berat
+          );
+          luka_ringan += parseInt(
+            ditgakkum[i].laka_lantas[j].dataValues.luka_ringan
+          );
+          kerugian_material += parseInt(
+            ditgakkum[i].laka_lantas[j].dataValues.kerugian_material
+          );
+          jumlah_lakalantas += parseInt(
+            ditgakkum[i].laka_lantas[j].dataValues.total_lakalantas
+          );
+        }
+
+        rows_name_polda.push(ditgakkum[i].dataValues.name_polda);
+
+        rows_meninggal_dunia.push(meninggal_dunia);
+        rows_luka_berat.push(luka_berat);
+        rows_luka_ringan.push(luka_ringan);
+        rows_kerugian_material.push(kerugian_material);
+        rows_jumlah_lakalantas.push(jumlah_lakalantas);
+      }
+
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+
+        rows_meninggal_dunia,
+        rows_luka_berat,
+        rows_luka_ringan,
+        rows_kerugian_material,
+        rows_jumlah_lakalantas,
+      };
+
+      let results = tempLaka(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_lakalantas${tgl}.xlsx`
+      );
+      res.download(
+        `./public/export_laphar/laporan_harian_lakalantas${tgl}.xlsx`
+      );
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_langgar = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditgakkum = await Polda.findAll({
+        group: ["polda.id", "garlantas.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Garlantas_polda_day,
+            required: false,
+            as: "garlantas",
+            attributes: [
+              [
+                Sequelize.fn("sum", Sequelize.col("pelanggaran_berat")),
+                "pelanggaran_berat",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("pelanggaran_ringan")),
+                "pelanggaran_ringan",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("pelanggaran_sedang")),
+                "pelanggaran_sedang",
+              ],
+              [Sequelize.fn("sum", Sequelize.col("teguran")), "teguran"],
+              [
+                Sequelize.literal(
+                  "SUM(pelanggaran_berat + pelanggaran_ringan + pelanggaran_sedang + teguran)"
+                ),
+                "total_garlantas",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+      let rows_pelanggaran_berat = [];
+      let rows_pelanggaran_sedang = [];
+      let rows_pelanggaran_ringan = [];
+      let rows_teguran = [];
+      let rows_jumlah_garlantas = [];
+
+      for (let i = 0; i < ditgakkum.length; i++) {
+        let pelanggaran_berat = 0;
+        let pelanggaran_sedang = 0;
+        let pelanggaran_ringan = 0;
+        let teguran = 0;
+        let jumlah_garlantas = 0;
+
+        for (let j = 0; j < ditgakkum[i].garlantas.length; j++) {
+          pelanggaran_berat += parseInt(
+            ditgakkum[i].garlantas[j].dataValues.pelanggaran_berat
+          );
+          pelanggaran_sedang += parseInt(
+            ditgakkum[i].garlantas[j].dataValues.pelanggaran_sedang
+          );
+          pelanggaran_ringan += parseInt(
+            ditgakkum[i].garlantas[j].dataValues.pelanggaran_ringan
+          );
+          teguran += parseInt(ditgakkum[i].garlantas[j].dataValues.teguran);
+          jumlah_garlantas += parseInt(
+            ditgakkum[i].garlantas[j].dataValues.total_garlantas
+          );
+        }
+
+        rows_name_polda.push(ditgakkum[i].dataValues.name_polda);
+        rows_pelanggaran_berat.push(pelanggaran_berat);
+        rows_pelanggaran_sedang.push(pelanggaran_sedang);
+        rows_pelanggaran_ringan.push(pelanggaran_ringan);
+        rows_teguran.push(teguran);
+        rows_jumlah_garlantas.push(jumlah_garlantas);
+      }
+
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_pelanggaran_berat,
+        rows_pelanggaran_sedang,
+        rows_pelanggaran_ringan,
+        rows_teguran,
+        rows_jumlah_garlantas,
+      };
+      let results = tempLanggar(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_pelanggaran${tgl}.xlsx`
+      );
+      res.download(
+        `./public/export_laphar/laporan_harian_pelanggaran${tgl}.xlsx`
+      );
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_turjagwali = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditgakkum = await Polda.findAll({
+        group: ["polda.id", "turjagwali.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Turjagwali_polda_day,
+            required: false,
+            as: "turjagwali",
+            attributes: [
+              [Sequelize.fn("sum", Sequelize.col("pengaturan")), "pengaturan"],
+              [Sequelize.fn("sum", Sequelize.col("penjagaan")), "penjagaan"],
+              [Sequelize.fn("sum", Sequelize.col("pengawalan")), "pengawalan"],
+              [Sequelize.fn("sum", Sequelize.col("patroli")), "patroli"],
+              [
+                Sequelize.literal(
+                  "SUM(turjagwali.pengawalan + turjagwali.penjagaan + turjagwali.patroli + turjagwali.pengaturan)"
+                ),
+                "total_turjagwali",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+
+      let rows_pengaturan = [];
+      let rows_penjagaan = [];
+      let rows_pengawalan = [];
+      let rows_patroli = [];
+      let rows_jumlah_turjagwali = [];
+
+      for (let i = 0; i < ditgakkum.length; i++) {
+        let pengaturan = 0;
+        let pengawalan = 0;
+        let patroli = 0;
+        let penjagaan = 0;
+        let jumlah_turjagwali = 0;
+
+        for (let j = 0; j < ditgakkum[i].turjagwali.length; j++) {
+          pengaturan += parseInt(
+            ditgakkum[i].turjagwali[j].dataValues.pengaturan
+          );
+          penjagaan += parseInt(
+            ditgakkum[i].turjagwali[j].dataValues.penjagaan
+          );
+          pengawalan += parseInt(
+            ditgakkum[i].turjagwali[j].dataValues.pengawalan
+          );
+          patroli += parseInt(ditgakkum[i].turjagwali[j].dataValues.patroli);
+          jumlah_turjagwali += parseInt(
+            ditgakkum[i].turjagwali[j].dataValues.total_turjagwali
+          );
+        }
+
+        rows_name_polda.push(ditgakkum[i].dataValues.name_polda);
+
+        rows_pengaturan.push(pengaturan);
+        rows_penjagaan.push(penjagaan);
+        rows_pengawalan.push(pengawalan);
+        rows_patroli.push(patroli);
+        rows_jumlah_turjagwali.push(jumlah_turjagwali);
+      }
+
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_pengaturan,
+        rows_penjagaan,
+        rows_pengawalan,
+        rows_patroli,
+        rows_jumlah_turjagwali,
+      };
+      let results = tempTurjagwali(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_turjagwali${tgl}.xlsx`
+      );
+      res.download(
+        `./public/export_laphar/laporan_harian_turjagwali${tgl}.xlsx`
+      );
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_ranmor = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditregident = await Polda.findAll({
+        group: ["ranmor.id", "polda.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Ranmor_polda_day,
+            required: false,
+            as: "ranmor",
+            attributes: [
+              [
+                Sequelize.fn("sum", Sequelize.col("mobil_penumpang")),
+                "mobil_penumpang",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mobil_barang")),
+                "mobil_barang",
+              ],
+              [Sequelize.fn("sum", Sequelize.col("mobil_bus")), "mobil_bus"],
+              [Sequelize.fn("sum", Sequelize.col("ransus")), "ransus"],
+              [
+                Sequelize.fn("sum", Sequelize.col("sepeda_motor")),
+                "sepeda_motor",
+              ],
+              [
+                Sequelize.literal(
+                  "SUM(ranmor.mobil_penumpang + ranmor.mobil_barang + ranmor.mobil_bus + ranmor.ransus + ranmor.sepeda_motor)"
+                ),
+                "total_ranmor",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+
+      let rows_mobil_barang = [];
+      let rows_mobil_bus = [];
+      let rows_mobil_penumpang = [];
+      let rows_ransus = [];
+      let rows_sepeda_motor = [];
+      let rows_jumlah_ranmor = [];
+
+      for (let i = 0; i < ditregident.length; i++) {
+        let mobil_barang = 0;
+        let mobil_bus = 0;
+        let mobil_penumpang = 0;
+        let ransus = 0;
+        let sepeda_motor = 0;
+        let jumlah_ranmor = 0;
+
+        for (let j = 0; j < ditregident[i].ranmor.length; j++) {
+          mobil_barang += parseInt(
+            ditregident[i].ranmor[j].dataValues.mobil_barang
+          );
+          mobil_bus += parseInt(ditregident[i].ranmor[j].dataValues.mobil_bus);
+          mobil_penumpang += parseInt(
+            ditregident[i].ranmor[j].dataValues.mobil_penumpang
+          );
+          ransus += parseInt(ditregident[i].ranmor[j].dataValues.ransus);
+          sepeda_motor += parseInt(
+            ditregident[i].ranmor[j].dataValues.sepeda_motor
+          );
+          jumlah_ranmor += parseInt(
+            ditregident[i].ranmor[j].dataValues.total_ranmor
+          );
+        }
+ rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_mobil_barang.push(mobil_barang);
+        rows_mobil_penumpang.push(mobil_penumpang);
+        rows_mobil_bus.push(mobil_bus);
+        rows_sepeda_motor.push(sepeda_motor);
+        rows_ransus.push(ransus);
+        rows_jumlah_ranmor.push(jumlah_ranmor);
+      }
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_mobil_barang,
+        rows_mobil_bus,
+        rows_mobil_penumpang,
+        rows_sepeda_motor,
+        rows_ransus,
+        rows_jumlah_ranmor,
+      };
+      let results = tempRanmor(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_ranmor${tgl}.xlsx`
+      );
+      res.download(`./public/export_laphar/laporan_harian_ranmor${tgl}.xlsx`);
+      // response(res, true, "Succeed", ditkamsel);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
