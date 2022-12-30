@@ -458,6 +458,123 @@ exports.tempSim = (data, tgl) => {
   const table = dom.window.document.getElementById("table1");
   return table;
 };
+exports.tempStnk = (data, tgl) => {
+  const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
+        class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">
+        
+        <tbody>
+        <tr>
+                                <th colspan="7">Markas Besar</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Kepolisian Negara Republik Indonesia</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Corps Lalulintas</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Tanggal : ${tgl}</th>
+                            </tr>
+                              <tr>
+                                <th colspan="7">Laporan : STNK</th>
+                            </tr>
+                                  <tr>
+                                <th colspan="7"></th>
+                            </tr>
+                                <tr>
+                                <th colspan="7"></th>
+                            </tr>
+            <tr class="tableizer-firstrow">
+                <td>URAIAN</td>
+                ${data.rows_name_polda.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
+            </tr>
+            <tr>
+                <td>1. BBN 1 R2</td>
+                 ${data.rows_bbn_1_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>2. BBN 1 R4</td>
+                 ${data.rows_bbn_1_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>3. Perubahan R2</td>
+                 ${data.rows_perubahan_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>4. Perubahan R4</td>
+                 ${data.rows_perubahan_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>5. Mutasi Keluar R2</td>
+                 ${data.rows_mutasi_keluar_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>6. Mutasi Keluar R4</td>
+                 ${data.rows_mutasi_keluar_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td>7. Mutasi Masuk R2</td>
+                 ${data.rows_mutasi_masuk_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>8. Mutasi Masuk R4</td>
+                 ${data.rows_mutasi_masuk_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td>9. Pengesahan R2</td>
+                 ${data.rows_pengesahan_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>10. Pengesahan R4</td>
+                 ${data.rows_pengesahan_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>11. Samolnas R2</td>
+                 ${data.rows_samolnas_r2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>12. Samolnas R4</td>
+                 ${data.rows_samolnas_r4.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td style="font-weight:bold;">Total (1+2+3)</td>
+                ${data.rows_jumlah_stnk.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
+            </tr>
+        </tbody>
+    </table>`;
+
+  const dom = new JSDOM(htmlString);
+  const table = dom.window.document.getElementById("table1");
+  return table;
+};
 exports.templateLapharNew = (data, tgl) => {
   const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
         class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">

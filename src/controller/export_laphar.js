@@ -12,7 +12,8 @@ const {
   tempLanggar,
   tempTurjagwali,
   tempRanmor,
-  tempSim
+  tempSim,
+  tempStnk,
 } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
 const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
@@ -3464,6 +3465,266 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/laporan_harian_sim${tgl}.xlsx`
       );
       res.download(`./public/export_laphar/laporan_harian_sim${tgl}.xlsx`);
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_stnk = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = "Keseluruhan";
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditregident = await Polda.findAll({
+        group: ["stnk.id", "polda.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Stnk_polda_day,
+            required: false,
+            as: "stnk",
+            attributes: [
+              [Sequelize.fn("sum", Sequelize.col("bbn_1_r2")), "bbn_1_r2"],
+              [Sequelize.fn("sum", Sequelize.col("bbn_1_r4")), "bbn_1_r4"],
+              [
+                Sequelize.fn("sum", Sequelize.col("perubahan_r2")),
+                "perubahan_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perubahan_r4")),
+                "perubahan_r4",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_r2")),
+                "perpanjangan_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_r4")),
+                "perpanjangan_r4",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r2")),
+                "mutasi_keluar_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_keluar_r4")),
+                "mutasi_keluar_r4",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r2")),
+                "mutasi_masuk_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("mutasi_masuk_r4")),
+                "mutasi_masuk_r4",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("pengesahan_r2")),
+                "pengesahan_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("pengesahan_r4")),
+                "pengesahan_r4",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("samolnas_r2")),
+                "samolnas_r2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("samolnas_r4")),
+                "samolnas_r4",
+              ],
+              [
+                Sequelize.literal(
+                  "SUM(bbn_1_r2 + bbn_1_r4 + perubahan_r2 + perubahan_r4 + perpanjangan_r2 + perpanjangan_r4 + mutasi_keluar_r2 + mutasi_keluar_r4 + mutasi_masuk_r2 + mutasi_masuk_r4 + pengesahan_r2 + pengesahan_r4 + samolnas_r2 + samolnas_r4)"
+                ),
+                "total_stnk",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+
+      let rows_jumlah_stnk = [];
+      let rows_bbn_1_r2 = [];
+      let rows_bbn_1_r4 = [];
+
+      let rows_perubahan_r2 = [];
+      let rows_perubahan_r4 = [];
+      let rows_perpanjangan_r2 = [];
+      let rows_perpanjangan_r4 = [];
+      let rows_mutasi_keluar_r2 = [];
+      let rows_mutasi_keluar_r4 = [];
+      let rows_mutasi_masuk_r2 = [];
+      let rows_mutasi_masuk_r4 = [];
+      let rows_pengesahan_r2 = [];
+      let rows_pengesahan_r4 = [];
+      let rows_samolnas_r2 = [];
+      let rows_samolnas_r4 = [];
+
+      for (let i = 0; i < ditregident.length; i++) {
+        let bbn_1_r2 = 0;
+        let bbn_1_r4 = 0;
+
+        let perubahan_r2 = 0;
+        let perubahan_r4 = 0;
+        let perpanjangan_r2 = 0;
+        let perpanjangan_r4 = 0;
+        let mutasi_keluar_r2 = 0;
+        let mutasi_keluar_r4 = 0;
+        let mutasi_masuk_r2 = 0;
+        let mutasi_masuk_r4 = 0;
+        let pengesahan_r2 = 0;
+        let pengesahan_r4 = 0;
+        let samolnas_r2 = 0;
+        let samolnas_r4 = 0;
+
+        let jumlah_stnk = 0;
+
+        for (let j = 0; j < ditregident[i].stnk.length; j++) {
+          bbn_1_r2 += parseInt(ditregident[i].stnk[j].dataValues.bbn_1_r2);
+          bbn_1_r4 += parseInt(ditregident[i].stnk[j].dataValues.bbn_1_r4);
+
+          perubahan_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.perubahan_r2
+          );
+          perubahan_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.perubahan_r4
+          );
+          perpanjangan_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.perpanjangan_r2
+          );
+          perpanjangan_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.perpanjangan_r4
+          );
+          mutasi_keluar_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.mutasi_keluar_r2
+          );
+          mutasi_keluar_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.mutasi_keluar_r4
+          );
+          mutasi_masuk_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.mutasi_masuk_r2
+          );
+          mutasi_masuk_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.mutasi_masuk_r4
+          );
+          pengesahan_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.pengesahan_r2
+          );
+          pengesahan_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.pengesahan_r4
+          );
+          samolnas_r2 += parseInt(
+            ditregident[i].stnk[j].dataValues.samolnas_r2
+          );
+          samolnas_r4 += parseInt(
+            ditregident[i].stnk[j].dataValues.samolnas_r4
+          );
+          jumlah_stnk += parseInt(ditregident[i].stnk[j].dataValues.total_stnk);
+        }
+        rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_jumlah_stnk.push(jumlah_stnk);
+        rows_bbn_1_r2.push(bbn_1_r2);
+        rows_bbn_1_r4.push(bbn_1_r4);
+
+        rows_perubahan_r2.push(perubahan_r2);
+        rows_perubahan_r4.push(perubahan_r4);
+        rows_perpanjangan_r2.push(perpanjangan_r2);
+        rows_perpanjangan_r4.push(perpanjangan_r4);
+        rows_mutasi_keluar_r2.push(mutasi_keluar_r2);
+        rows_mutasi_keluar_r4.push(mutasi_keluar_r4);
+        rows_mutasi_masuk_r2.push(mutasi_masuk_r2);
+        rows_mutasi_masuk_r4.push(mutasi_keluar_r4);
+        rows_pengesahan_r2.push(pengesahan_r2);
+        rows_pengesahan_r4.push(pengesahan_r4);
+        rows_samolnas_r2.push(samolnas_r2);
+        rows_samolnas_r4.push(samolnas_r4);
+      }
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_jumlah_stnk,
+        rows_bbn_1_r2,
+        rows_bbn_1_r4,
+
+        rows_perubahan_r2,
+        rows_perubahan_r4,
+        rows_perpanjangan_r2,
+        rows_perpanjangan_r4,
+        rows_mutasi_keluar_r2,
+        rows_mutasi_keluar_r4,
+        rows_mutasi_masuk_r2,
+        rows_mutasi_masuk_r4,
+        rows_pengesahan_r2,
+        rows_pengesahan_r4,
+        rows_samolnas_r2,
+        rows_samolnas_r4,
+      };
+      let results = tempStnk(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_stnk${tgl}.xlsx`
+      );
+      res.download(`./public/export_laphar/laporan_harian_stnk${tgl}.xlsx`);
       // response(res, true, "Succeed", ditkamsel);
     } catch (error) {
       response(res, false, "Failed", error.message);
