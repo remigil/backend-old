@@ -1,7 +1,7 @@
 const db = require("../config/database");
 const response = require("../lib/response");
 const moment = require("moment");
-const Input_sim = require("../model/input_sim");
+const Input_sdm_polantas = require("../model/bagrenmin_sdm_polantas");
 const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
@@ -26,14 +26,14 @@ const decAes = (token) =>
     isSafeUrl: true,
     parseMode: "string",
   });
-module.exports = class SimController {
+module.exports = class sdm_polantasController {
   static get = async (req, res) => {
     try {
       const { nasional, polda, polda_id, polres, polres_id, filter, month } =
         req.query;
       let finalResponse = "";
       if (nasional) {
-        let sim = await Count_polda_month.findAll({
+        let sdm_polantas = await Count_polda_month.findAll({
           include: [{ model: Polda, as: "polda" }],
         });
 
@@ -42,7 +42,7 @@ module.exports = class SimController {
         });
 
         let arrayResponse = [];
-        let reduce_nasional = sim.reduce((prevVal, currVal) => {
+        let reduce_nasional = sdm_polantas.reduce((prevVal, currVal) => {
           Object.keys(currVal.dataValues).forEach(function (key) {
             if (
               key === "polda_id" ||
@@ -62,7 +62,7 @@ module.exports = class SimController {
         }, {});
 
         let result = Object.values(
-          sim.reduce((a, { polda_id, ...props }) => {
+          sdm_polantas.reduce((a, { polda_id, ...props }) => {
             if (!a[polda_id])
               a[polda_id] = Object.assign({}, { polda_id, data: [props] });
             else a[polda_id].data.push(props);
@@ -119,7 +119,7 @@ module.exports = class SimController {
 
       if (polda) {
         let arrayResponse = [];
-        let sim = await Count_polres_month.findAll({
+        let sdm_polantas = await Count_polres_month.findAll({
           include: [
             { model: Polda, as: "polda" },
             { model: Polres, as: "polres" },
@@ -129,7 +129,7 @@ module.exports = class SimController {
           },
         });
 
-        if (sim.length > 0) {
+        if (sdm_polantas.length > 0) {
           let dataPolres = await Polres.findAll({
             attributes: ["id", "polda_id", "name_polres"],
             where: {
@@ -137,7 +137,7 @@ module.exports = class SimController {
             },
           });
 
-          let reduce_polda = sim.reduce((prevVal, currVal) => {
+          let reduce_polda = sdm_polantas.reduce((prevVal, currVal) => {
             Object.keys(currVal.dataValues).forEach(function (key) {
               if (
                 key === "polda_id" ||
@@ -158,7 +158,7 @@ module.exports = class SimController {
           }, {});
 
           let result = Object.values(
-            sim.reduce((a, { polres_id, ...props }) => {
+            sdm_polantas.reduce((a, { polres_id, ...props }) => {
               if (!a[polres_id])
                 a[polres_id] = Object.assign({}, { polres_id, data: [props] });
               else a[polres_id].data.push(props);
@@ -219,14 +219,14 @@ module.exports = class SimController {
       }
 
       if (polres) {
-        let sim = await Count_polres_month.findAll({
+        let sdm_polantas = await Count_polres_month.findAll({
           include: [{ model: Polres, as: "polres" }],
           where: {
             polres_id: polres_id,
           },
         });
 
-        let reduce_polres = sim.reduce((prevVal, currVal) => {
+        let reduce_polres = sdm_polantas.reduce((prevVal, currVal) => {
           Object.keys(currVal.dataValues).forEach(function (key) {
             if (
               key === "polda_id" ||
@@ -306,7 +306,7 @@ module.exports = class SimController {
           {
             model: Count_polda_day,
             required: false,
-            as: "sim",
+            as: "sdm_polantas",
             attributes: [],
           },
         ],
@@ -351,214 +351,37 @@ module.exports = class SimController {
           id: element.id,
           name_polda: element.name_polda,
           irjen: parseInt(element.dataValues.irjen) || 0,
-          baru_c: parseInt(element.dataValues.baru_c) || 0,
           brigjen: parseInt(element.dataValues.brigjen) || 0,
           kbp: parseInt(element.dataValues.kbp) || 0,
-
-          baru_d: parseInt(element.dataValues.baru_d) || 0,
           akbp: parseInt(element.dataValues.akbp) || 0,
-
           bripda: parseInt(element.dataValues.bripda) || 0,
           kp: parseInt(element.dataValues.kp) || 0,
           pns: parseInt(element.dataValues.pns) || 0,
           akp: parseInt(element.dataValues.akp) || 0,
           iptu: parseInt(element.dataValues.iptu) || 0,
-          perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
           ipda: parseInt(element.dataValues.ipda) || 0,
-          perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
           aiptu: parseInt(element.dataValues.aiptu) || 0,
-          perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
           aipda: parseInt(element.dataValues.aipda) || 0,
-
           bripka: parseInt(element.dataValues.bripka) || 0,
-          peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
           brigdr: parseInt(element.dataValues.brigdr) || 0,
-          peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
           briptu: parseInt(element.dataValues.briptu) || 0,
 
-          baru: parseInt(element.dataValues.baru) || 0,
-          perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-          peningkatan: parseInt(element.dataValues.peningkatan) || 0,
           total:
-            parseInt(element.dataValues.baru) +
-              parseInt(element.dataValues.perpanjangan) +
-              parseInt(element.dataValues.peningkatan) || 0,
-        });
-      });
-
-      if (topPolda) {
-        rows.sort((a, b) => b.total - a.total);
-        rows = rows.slice(0, limit);
-      }
-      response(res, true, "Succeed", {
-        rows,
-        recordsFiltered: count,
-        recordsTotal: count,
-      });
-    } catch (error) {
-      response(res, false, "Failed", error.message);
-    }
-  };
-
-  static get_monthly = async (req, res) => {
-    const modelAttr = Object.keys(Count_polda_day.getAttributes());
-    try {
-      const {
-        start_month = null,
-        end_month = null,
-        filter = null,
-        month = null,
-        serverSide = null,
-        length = null,
-        start = null,
-        polda_id = null,
-        topPolda = null,
-        limit = 34,
-      } = req.query;
-      const getDataRules = {
-        group: ["polda.id"],
-        attributes: [
-          "id",
-          "name_polda",
-          [Sequelize.fn("sum", Sequelize.col("irjen")), "irjen"],
-          [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
-          [Sequelize.fn("sum", Sequelize.col("brigjen")), "brigjen"],
-          [Sequelize.fn("sum", Sequelize.col("kbp")), "kbp"],
-
-          [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
-          [Sequelize.fn("sum", Sequelize.col("akbp")), "akbp"],
-
-          [Sequelize.fn("sum", Sequelize.col("bripda")), "bripda"],
-          [Sequelize.fn("sum", Sequelize.col("kp")), "kp"],
-          [Sequelize.fn("sum", Sequelize.col("pns")), "pns"],
-          [Sequelize.fn("sum", Sequelize.col("akp")), "akp"],
-          [Sequelize.fn("sum", Sequelize.col("iptu")), "iptu"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
-            "perpanjangan_d",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("ipda")), "ipda"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
-            "perpanjangan_b1",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("aiptu")), "aiptu"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
-            "perpanjangan_b2",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("aipda")), "aipda"],
-          [Sequelize.fn("sum", Sequelize.col("bripka")), "bripka"],
-          [
-            Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
-            "peningkatan_b1",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("brigdr")), "brigdr"],
-          [
-            Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
-            "peningkatan_b2",
-          ],
-          [Sequelize.fn("sum", Sequelize.col("briptu")), "briptu"],
-          [
-            Sequelize.literal(
-              "SUM(irjen + baru_c + brigjen + kbp + baru_d + akbp)"
-            ),
-            "baru",
-          ],
-          [
-            Sequelize.literal(
-              "SUM(bripda + kp + pns + akp + iptu + perpanjangan_d + ipda + perpanjangan_b1 + aiptu + perpanjangan_b2 + aipda)"
-            ),
-            "perpanjangan",
-          ],
-          [
-            Sequelize.literal(
-              "SUM(bripka + peningkatan_b1 + brigdr + peningkatan_b2 + briptu)"
-            ),
-            "peningkatan",
-          ],
-        ],
-        include: [
-          {
-            model: Count_polda_month,
-            required: false,
-            as: "sim-month",
-            attributes: [],
-          },
-        ],
-        nest: true,
-        subQuery: false,
-      };
-
-      if (month) {
-        getDataRules.include[0].where = {
-          date: month,
-        };
-      }
-
-      if (filter) {
-        getDataRules.include[0].where = {
-          date: {
-            [Op.between]: [start_month, end_month],
-          },
-        };
-      }
-
-      if (polda_id) {
-        getDataRules.where = {
-          id: decAes(polda_id),
-        };
-      }
-
-      if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
-      }
-
-      let finals = await Polda.findAll(getDataRules);
-      const count = await Polda.count({
-        where: getDataRules?.where,
-      });
-
-      let rows = [];
-
-      finals.map((element, index) => {
-        rows.push({
-          id: element.id,
-          name_polda: element.name_polda,
-          irjen: parseInt(element.dataValues.irjen) || 0,
-          baru_c: parseInt(element.dataValues.baru_c) || 0,
-          brigjen: parseInt(element.dataValues.brigjen) || 0,
-          kbp: parseInt(element.dataValues.kbp) || 0,
-
-          baru_d: parseInt(element.dataValues.baru_d) || 0,
-          akbp: parseInt(element.dataValues.akbp) || 0,
-
-          bripda: parseInt(element.dataValues.bripda) || 0,
-          kp: parseInt(element.dataValues.kp) || 0,
-          pns: parseInt(element.dataValues.pns) || 0,
-          akp: parseInt(element.dataValues.akp) || 0,
-          iptu: parseInt(element.dataValues.iptu) || 0,
-          perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
-          ipda: parseInt(element.dataValues.ipda) || 0,
-          perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
-          aiptu: parseInt(element.dataValues.aiptu) || 0,
-          perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
-          aipda: parseInt(element.dataValues.aipda) || 0,
-
-          bripka: parseInt(element.dataValues.bripka) || 0,
-          peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
-          brigdr: parseInt(element.dataValues.brigdr) || 0,
-          peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
-          briptu: parseInt(element.dataValues.briptu) || 0,
-
-          baru: parseInt(element.dataValues.baru) || 0,
-          perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-          peningkatan: parseInt(element.dataValues.peningkatan) || 0,
-          total:
-            parseInt(element.dataValues.baru) +
-              parseInt(element.dataValues.perpanjangan) +
-              parseInt(element.dataValues.peningkatan) || 0,
+            parseInt(element.dataValues.irjen) +
+            parseInt(element.dataValues.brigjen) +
+            parseInt(element.dataValues.kbp) +
+            parseInt(element.dataValues.akbp) +
+            parseInt(element.dataValues.bripda) +
+            parseInt(element.dataValues.kp) +
+            parseInt(element.dataValues.pns) +
+            parseInt(element.dataValues.akp) +
+            parseInt(element.dataValues.iptu) +
+            parseInt(element.dataValues.ipda) +
+            parseInt(element.dataValues.aiptu) +
+            parseInt(element.dataValues.aipda) +
+            parseInt(element.dataValues.bripka) +
+            parseInt(element.dataValues.brigdr) +
+            parseInt(element.dataValues.briptu),
         });
       });
 
@@ -642,61 +465,25 @@ module.exports = class SimController {
       const getDataRules = {
         attributes: [
           [Sequelize.fn("sum", Sequelize.col("irjen")), "irjen"],
-          [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
           [Sequelize.fn("sum", Sequelize.col("brigjen")), "brigjen"],
           [Sequelize.fn("sum", Sequelize.col("kbp")), "kbp"],
-
-          [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
           [Sequelize.fn("sum", Sequelize.col("akbp")), "akbp"],
-
           [Sequelize.fn("sum", Sequelize.col("bripda")), "bripda"],
           [Sequelize.fn("sum", Sequelize.col("kp")), "kp"],
           [Sequelize.fn("sum", Sequelize.col("pns")), "pns"],
           [Sequelize.fn("sum", Sequelize.col("akp")), "akp"],
           [Sequelize.fn("sum", Sequelize.col("iptu")), "iptu"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
-            "perpanjangan_d",
-          ],
           [Sequelize.fn("sum", Sequelize.col("ipda")), "ipda"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
-            "perpanjangan_b1",
-          ],
           [Sequelize.fn("sum", Sequelize.col("aiptu")), "aiptu"],
-          [
-            Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
-            "perpanjangan_b2",
-          ],
           [Sequelize.fn("sum", Sequelize.col("aipda")), "aipda"],
           [Sequelize.fn("sum", Sequelize.col("bripka")), "bripka"],
-          [
-            Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
-            "peningkatan_b1",
-          ],
           [Sequelize.fn("sum", Sequelize.col("brigdr")), "brigdr"],
-          [
-            Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
-            "peningkatan_b2",
-          ],
           [Sequelize.fn("sum", Sequelize.col("briptu")), "briptu"],
           [
             Sequelize.literal(
-              "SUM(irjen + baru_c + brigjen + kbp + baru_d + akbp)"
+              "SUM(irjen + brigjen + kbp + akbp + kp + akp + iptu + ipda + aiptu + aipda + bripka + brigdr + briptu + bripda + pns)"
             ),
-            "baru",
-          ],
-          [
-            Sequelize.literal(
-              "SUM(bripda + kp + pns + akp + iptu + perpanjangan_d + ipda + perpanjangan_b1 + aiptu + perpanjangan_b2 + aipda)"
-            ),
-            "perpanjangan",
-          ],
-          [
-            Sequelize.literal(
-              "SUM(bripka + peningkatan_b1 + brigdr + peningkatan_b2 + briptu)"
-            ),
-            "peningkatan",
+            "total",
           ],
         ],
         where: wheres,
@@ -730,69 +517,54 @@ module.exports = class SimController {
               date: data.date,
 
               irjen: parseInt(data.irjen) || 0,
-              baru_c: parseInt(data.baru_c) || 0,
               brigjen: parseInt(data.brigjen) || 0,
               kbp: parseInt(data.kbp) || 0,
-
-              baru_d: parseInt(data.baru_d) || 0,
               akbp: parseInt(data.akbp) || 0,
-
               bripda: parseInt(data.bripda) || 0,
               kp: parseInt(data.kp) || 0,
               pns: parseInt(data.pns) || 0,
               akp: parseInt(data.akp) || 0,
               iptu: parseInt(data.iptu) || 0,
-              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
               ipda: parseInt(data.ipda) || 0,
-              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
               aiptu: parseInt(data.aiptu) || 0,
-              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
               aipda: parseInt(data.aipda) || 0,
-
               bripka: parseInt(data.bripka) || 0,
-              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
               brigdr: parseInt(data.brigdr) || 0,
-              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
               briptu: parseInt(data.briptu) || 0,
-
-              baru: parseInt(data.baru) || 0,
-              perpanjangan: parseInt(data.perpanjangan) || 0,
-              peningkatan: parseInt(data.peningkatan) || 0,
               total:
-                parseInt(data.baru) +
-                  parseInt(data.perpanjangan) +
-                  parseInt(data.peningkatan) || 0,
+                parseInt(data.irjen) +
+                parseInt(data.brigjen) +
+                parseInt(data.kbp) +
+                parseInt(data.akbp) +
+                parseInt(data.bripda) +
+                parseInt(data.kp) +
+                parseInt(data.pns) +
+                parseInt(data.akp) +
+                parseInt(data.iptu) +
+                parseInt(data.ipda) +
+                parseInt(data.aiptu) +
+                parseInt(data.aipda) +
+                arseInt(data.bripka) +
+                parseInt(data.brigdr) +
+                parseInt(data.briptu) || 0,
             });
           } else {
             finals.push({
               irjen: 0,
-              baru_c: 0,
               brigjen: 0,
               kbp: 0,
-              baru_d: 0,
               akbp: 0,
-
               bripda: 0,
               kp: 0,
               pns: 0,
               akp: 0,
               iptu: 0,
-              perpanjangan_d: 0,
               ipda: 0,
-              perpanjangan_b1: 0,
               aiptu: 0,
-              perpanjangan_b2: 0,
               aipda: 0,
-
               bripka: 0,
-              peningkatan_b1: 0,
               brigdr: 0,
-              peningkatan_b2: 0,
               briptu: 0,
-
-              baru: 0,
-              perpanjangan: 0,
-              peningkatan: 0,
               total: 0,
               date: item,
             });
@@ -802,38 +574,37 @@ module.exports = class SimController {
         let abc = rows.map((element, index) => {
           return {
             irjen: parseInt(element.dataValues.irjen) || 0,
-            baru_c: parseInt(element.dataValues.baru_c) || 0,
             brigjen: parseInt(element.dataValues.brigjen) || 0,
             kbp: parseInt(element.dataValues.kbp) || 0,
-
-            baru_d: parseInt(element.dataValues.baru_d) || 0,
             akbp: parseInt(element.dataValues.akbp) || 0,
-
             bripda: parseInt(element.dataValues.bripda) || 0,
             kp: parseInt(element.dataValues.kp) || 0,
             pns: parseInt(element.dataValues.pns) || 0,
             akp: parseInt(element.dataValues.akp) || 0,
             iptu: parseInt(element.dataValues.iptu) || 0,
-            perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
             ipda: parseInt(element.dataValues.ipda) || 0,
-            perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
             aiptu: parseInt(element.dataValues.aiptu) || 0,
-            perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
             aipda: parseInt(element.dataValues.aipda) || 0,
 
             bripka: parseInt(element.dataValues.bripka) || 0,
-            peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
             brigdr: parseInt(element.dataValues.brigdr) || 0,
-            peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
             briptu: parseInt(element.dataValues.briptu) || 0,
-
-            baru: parseInt(element.dataValues.baru) || 0,
-            perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-            peningkatan: parseInt(element.dataValues.peningkatan) || 0,
             total:
-              parseInt(element.dataValues.baru) +
-                parseInt(element.dataValues.perpanjangan) +
-                parseInt(element.dataValues.peningkatan) || 0,
+              parseInt(element.dataValues.irjen) +
+                parseInt(element.dataValues.brigjen) +
+                parseInt(element.dataValues.kbp) +
+                parseInt(element.dataValues.akbp) +
+                parseInt(element.dataValues.bripda) +
+                parseInt(element.dataValues.kp) +
+                parseInt(element.dataValues.pns) +
+                parseInt(element.dataValues.akp) +
+                parseInt(element.dataValues.iptu) +
+                parseInt(element.dataValues.ipda) +
+                parseInt(element.dataValues.aiptu) +
+                parseInt(element.dataValues.aipda) +
+                arseInt(element.dataValues.bripka) +
+                parseInt(element.dataValues.brigdr) +
+                parseInt(element.dataValues.briptu) || 0,
             date: moment(element.dataValues.month).format("MMMM"),
           };
         });
@@ -843,70 +614,55 @@ module.exports = class SimController {
           if (data) {
             finals.push({
               irjen: parseInt(data.irjen) || 0,
-              baru_c: parseInt(data.baru_c) || 0,
               brigjen: parseInt(data.brigjen) || 0,
               kbp: parseInt(data.kbp) || 0,
-
-              baru_d: parseInt(data.baru_d) || 0,
               akbp: parseInt(data.akbp) || 0,
-
               bripda: parseInt(data.bripda) || 0,
               kp: parseInt(data.kp) || 0,
               pns: parseInt(data.pns) || 0,
               akp: parseInt(data.akp) || 0,
               iptu: parseInt(data.iptu) || 0,
-              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
               ipda: parseInt(data.ipda) || 0,
-              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
               aiptu: parseInt(data.aiptu) || 0,
-              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
               aipda: parseInt(data.aipda) || 0,
-
               bripka: parseInt(data.bripka) || 0,
-              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
               brigdr: parseInt(data.brigdr) || 0,
-              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
               briptu: parseInt(data.briptu) || 0,
-
-              baru: parseInt(data.baru) || 0,
-              perpanjangan: parseInt(data.perpanjangan) || 0,
-              peningkatan: parseInt(data.peningkatan) || 0,
               total:
-                parseInt(data.baru) +
-                  parseInt(data.perpanjangan) +
-                  parseInt(data.peningkatan) || 0,
+                parseInt(data.irjen) +
+                  parseInt(data.brigjen) +
+                  parseInt(data.kbp) +
+                  parseInt(data.akbp) +
+                  parseInt(data.bripda) +
+                  parseInt(data.kp) +
+                  parseInt(data.pns) +
+                  parseInt(data.akp) +
+                  parseInt(data.iptu) +
+                  parseInt(data.ipda) +
+                  parseInt(data.aiptu) +
+                  parseInt(data.aipda) +
+                  arseInt(data.bripka) +
+                  parseInt(data.brigdr) +
+                  parseInt(data.briptu) || 0,
               date: data.date,
             });
           } else {
             finals.push({
               irjen: 0,
-              baru_c: 0,
               brigjen: 0,
               kbp: 0,
-              baru_d: 0,
               akbp: 0,
-
               bripda: 0,
               kp: 0,
               pns: 0,
               akp: 0,
               iptu: 0,
-              perpanjangan_d: 0,
               ipda: 0,
-              perpanjangan_b1: 0,
               aiptu: 0,
-              perpanjangan_b2: 0,
               aipda: 0,
-
               bripka: 0,
-              peningkatan_b1: 0,
               brigdr: 0,
-              peningkatan_b2: 0,
               briptu: 0,
-
-              baru: 0,
-              perpanjangan: 0,
-              peningkatan: 0,
               total: 0,
               date: item,
             });
@@ -916,39 +672,37 @@ module.exports = class SimController {
         let abc = rows.map((element, index) => {
           return {
             irjen: parseInt(element.dataValues.irjen) || 0,
-            baru_c: parseInt(element.dataValues.baru_c) || 0,
             brigjen: parseInt(element.dataValues.brigjen) || 0,
             kbp: parseInt(element.dataValues.kbp) || 0,
-
-            baru_d: parseInt(element.dataValues.baru_d) || 0,
             akbp: parseInt(element.dataValues.akbp) || 0,
-
             bripda: parseInt(element.dataValues.bripda) || 0,
             kp: parseInt(element.dataValues.kp) || 0,
             pns: parseInt(element.dataValues.pns) || 0,
             akp: parseInt(element.dataValues.akp) || 0,
             iptu: parseInt(element.dataValues.iptu) || 0,
-            perpanjangan_d: parseInt(element.dataValues.perpanjangan_d) || 0,
             ipda: parseInt(element.dataValues.ipda) || 0,
-            perpanjangan_b1: parseInt(element.dataValues.perpanjangan_b1) || 0,
             aiptu: parseInt(element.dataValues.aiptu) || 0,
-            perpanjangan_b2: parseInt(element.dataValues.perpanjangan_b2) || 0,
             aipda: parseInt(element.dataValues.aipda) || 0,
-
             bripka: parseInt(element.dataValues.bripka) || 0,
-            peningkatan_b1: parseInt(element.dataValues.peningkatan_b1) || 0,
             brigdr: parseInt(element.dataValues.brigdr) || 0,
-            peningkatan_b2: parseInt(element.dataValues.peningkatan_b2) || 0,
             briptu: parseInt(element.dataValues.briptu) || 0,
-
-            baru: parseInt(element.dataValues.baru) || 0,
-            perpanjangan: parseInt(element.dataValues.perpanjangan) || 0,
-            peningkatan: parseInt(element.dataValues.peningkatan) || 0,
             total:
-              parseInt(element.dataValues.baru) +
-                parseInt(element.dataValues.perpanjangan) +
-                parseInt(element.dataValues.peningkatan) || 0,
-            date: moment(element.dataValues.month).format("YYYY"),
+              parseInt(element.dataValues.irjen) +
+                parseInt(element.dataValues.brigjen) +
+                parseInt(element.dataValues.kbp) +
+                parseInt(element.dataValues.akbp) +
+                parseInt(element.dataValues.bripda) +
+                parseInt(element.dataValues.kp) +
+                parseInt(element.dataValues.pns) +
+                parseInt(element.dataValues.akp) +
+                parseInt(element.dataValues.iptu) +
+                parseInt(element.dataValues.ipda) +
+                parseInt(element.dataValues.aiptu) +
+                parseInt(element.dataValues.aipda) +
+                arseInt(element.dataValues.bripka) +
+                parseInt(element.dataValues.brigdr) +
+                parseInt(element.dataValues.briptu) || 0,
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 
@@ -957,70 +711,55 @@ module.exports = class SimController {
           if (data) {
             finals.push({
               irjen: parseInt(data.irjen) || 0,
-              baru_c: parseInt(data.baru_c) || 0,
               brigjen: parseInt(data.brigjen) || 0,
               kbp: parseInt(data.kbp) || 0,
-
-              baru_d: parseInt(data.baru_d) || 0,
               akbp: parseInt(data.akbp) || 0,
-
               bripda: parseInt(data.bripda) || 0,
               kp: parseInt(data.kp) || 0,
               pns: parseInt(data.pns) || 0,
               akp: parseInt(data.akp) || 0,
               iptu: parseInt(data.iptu) || 0,
-              perpanjangan_d: parseInt(data.perpanjangan_d) || 0,
               ipda: parseInt(data.ipda) || 0,
-              perpanjangan_b1: parseInt(data.perpanjangan_b1) || 0,
               aiptu: parseInt(data.aiptu) || 0,
-              perpanjangan_b2: parseInt(data.perpanjangan_b2) || 0,
               aipda: parseInt(data.aipda) || 0,
-
               bripka: parseInt(data.bripka) || 0,
-              peningkatan_b1: parseInt(data.peningkatan_b1) || 0,
               brigdr: parseInt(data.brigdr) || 0,
-              peningkatan_b2: parseInt(data.peningkatan_b2) || 0,
               briptu: parseInt(data.briptu) || 0,
-
-              baru: parseInt(data.baru) || 0,
-              perpanjangan: parseInt(data.perpanjangan) || 0,
-              peningkatan: parseInt(data.peningkatan) || 0,
               total:
-                parseInt(data.baru) +
-                  parseInt(data.perpanjangan) +
-                  parseInt(data.peningkatan) || 0,
+                parseInt(data.irjen) +
+                  parseInt(data.brigjen) +
+                  parseInt(data.kbp) +
+                  parseInt(data.akbp) +
+                  parseInt(data.bripda) +
+                  parseInt(data.kp) +
+                  parseInt(data.pns) +
+                  parseInt(data.akp) +
+                  parseInt(data.iptu) +
+                  parseInt(data.ipda) +
+                  parseInt(data.aiptu) +
+                  parseInt(data.aipda) +
+                  arseInt(data.bripka) +
+                  parseInt(data.brigdr) +
+                  parseInt(data.briptu) || 0,
               date: data.date,
             });
           } else {
             finals.push({
               irjen: 0,
-              baru_c: 0,
               brigjen: 0,
               kbp: 0,
-              baru_d: 0,
               akbp: 0,
-
               bripda: 0,
               kp: 0,
               pns: 0,
               akp: 0,
               iptu: 0,
-              perpanjangan_d: 0,
               ipda: 0,
-              perpanjangan_b1: 0,
               aiptu: 0,
-              perpanjangan_b2: 0,
               aipda: 0,
-
               bripka: 0,
-              peningkatan_b1: 0,
               brigdr: 0,
-              peningkatan_b2: 0,
               briptu: 0,
-
-              baru: 0,
-              perpanjangan: 0,
-              peningkatan: 0,
               total: 0,
               date: item,
             });
