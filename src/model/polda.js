@@ -63,6 +63,9 @@ Polda.init(
     urutan: {
       type: Sequelize.INTEGER,
     },
+    youtube: {
+      type: Sequelize.TEXT,
+    },
 
     ...StructureTimestamp,
   },
@@ -87,7 +90,7 @@ Polda.init(
     sequelize: db,
   }
 );
-(async () => {
-  Polda.sync({ alter: true });
-})();
+// (async () => {
+//   Polda.sync({ alter: true });
+// })();
 module.exports = Polda;

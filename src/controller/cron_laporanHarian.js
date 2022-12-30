@@ -106,7 +106,7 @@ const laporan_harian_month = async () => {
     }
   } catch (error) {
     await transaction.rollback();
-    console.log(error);
+    response(res, false, "Failed", error.message);
   }
 };
 
