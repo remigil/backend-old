@@ -13,7 +13,6 @@ const { codeTS } = require("../middleware/codeTroublespot");
 const { decimalToHex } = require("../middleware/decimaltohex");
 const pagination = require("../lib/pagination-parser");
 const direction_route = require("../middleware/direction_route");
-
 const decAes = (token) =>
   AESDecrypt(token, {
     isSafeUrl: true,
@@ -159,10 +158,6 @@ module.exports = class TroublespotController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "route") {
-            // let route = await direction_route(
-            //   JSON.parse(req.body[val])
-            // );
-            // fieldValueData['direction_route'] = route;
             fieldValueData[val] = JSON.parse(req.body[val]);
           } else {
             fieldValueData[val] = req.body[val];
@@ -200,7 +195,7 @@ module.exports = class TroublespotController {
       // fieldValueData["no_ts"] = no_ts;
       if (req.body.route) {
         let route = await direction_route(JSON.parse(req.body.route));
-        fieldValueData["direction_route"] = route;
+        fieldValueData["direction_route"] = route.route;
       }
       let op = await Troublespot.create(fieldValueData, {
         transaction: transaction,
@@ -236,7 +231,6 @@ module.exports = class TroublespotController {
       response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
-      console.log(e);
       response(res, false, "Failed", e.message);
     }
   };
@@ -258,9 +252,8 @@ module.exports = class TroublespotController {
       });
       if (req.body.route) {
         let route = await direction_route(JSON.parse(req.body.route));
-        fieldValueData["direction_route"] = route;
+        fieldValueData["direction_route"] = route.route;
       }
-
       await Troublespot.update(fieldValueData, {
         where: {
           id: AESDecrypt(req.params.id, {

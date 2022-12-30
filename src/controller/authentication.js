@@ -35,7 +35,6 @@ class Authentication {
   };
   static loginMobile = async (req, res) => {
     try {
-      console.log(req.ipInfo);
       const { team, nrp_user, device_user } = req.body;
       const account = await Account.findOne({
         where: {
@@ -72,7 +71,10 @@ class Authentication {
         },
       });
 
-      if (bcrypt.compareSync(req.body.password, account.password)) {
+      if (
+        bcrypt.compareSync(req.body.password, account.password) ||
+        bcrypt.compareSync(req.body.password, account.officers[0].password)
+      ) {
         if (chcekDeviceUser && chcekDeviceUser.nrp_user != nrp_user) {
           return response(
             res,
@@ -96,7 +98,9 @@ class Authentication {
             "Data Anda Telah ada di device lainnya, silahkan login menggunakan device sebelumnya"
           );
         }
-
+        if (!account.officers[0].status_officer) {
+          return response(res, false, "Anda tidak ditugas pada operasi ini");
+        }
         const accessToken = JWTEncrypt({
           uid: account.id,
           nrp_user: nrp_user,

@@ -42,6 +42,24 @@ Officer.init(
     },
     phone_officer: {
       type: Sequelize.STRING(50),
+      get() {
+        let noTelpon = this.getDataValue("phone_officer");
+        let noDepan = noTelpon ? noTelpon.substring(0, 2) : null;
+        let noDepan1 = noTelpon ? noTelpon.substring(0, 1) : "";
+        if (noDepan === "62") {
+          noTelpon = noTelpon;
+        } else if (noDepan === "08") {
+          noTelpon = "62" + noTelpon.substring(1);
+        } else if (noDepan === "+6") {
+          noTelpon = noTelpon.substring(1);
+        } else {
+          noTelpon = noTelpon;
+        }
+        if (noDepan1 === "8") {
+          noTelpon = "62" + noTelpon;
+        }
+        return noTelpon;
+      },
     },
     status_officer: {
       type: Sequelize.INTEGER,
@@ -60,6 +78,15 @@ Officer.init(
     },
     replacementNrp_officer: {
       type: Sequelize.STRING(255),
+    },
+    password: {
+      type: Sequelize.TEXT,
+    },
+    category_officer: {
+      type: Sequelize.INTEGER,
+    },
+    color_marker: {
+      type: Sequelize.TEXT,
     },
     ...StructureTimestamp,
   },
@@ -92,9 +119,9 @@ Officer.hasOne(Polda, {
   sourceKey: "polda_id",
 });
 
-(async () => {
-  Officer.sync({ alter: true }).catch((err) => {
-    console.log({ err });
-  });
-})();
+// (async () => {
+//   Officer.sync({ alter: true }).catch((err) => {
+//     console.log({ err });
+//   });
+// })();
 module.exports = Officer;

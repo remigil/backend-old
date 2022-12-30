@@ -380,6 +380,7 @@ module.exports = class ReportController {
                 [Op.ne]: null,
               },
             },
+            limit: 10,
           })
             .then(async (token_fcm) => {
               await PanicButton.update(

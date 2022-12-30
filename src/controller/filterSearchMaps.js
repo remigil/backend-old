@@ -25,6 +25,7 @@ const Panic_button = require("../model/report");
 const Troublespot = require("../model/troublespot");
 const Blankspot = require("../model/blankspot");
 const Renpam = require("../model/renpam");
+const Vip = require("../model/vip");
 const dateParse = (date) => {
   const aaa = moment.tz(date, "Etc/GMT-5");
   return aaa.format("YYYY-MM-DD");
@@ -118,7 +119,9 @@ const fieldData = {
         },
       ],
       where: {
-        fasum_type: 9,
+        // fasum_type: 9,
+        fasum_status: 1,
+        fasum_type: [9, 22, 23, 24, 25, 26, 27, 28, 29, 31],
       },
     });
   },
@@ -132,21 +135,128 @@ const fieldData = {
         },
       ],
       where: {
+        fasum_status: 1,
         fasum_type: 4,
       },
     });
   },
   pos_pam: async (req) => {
-    return await Fasum.findAll({
+    return await Renpam.findAll({
       include: [
         {
-          model: CategoryFasum,
-          foreignKey: "fasum_type",
+          model: Schedule,
+          foreignKey: "schedule_id",
+          required: false,
+        },
+        {
+          model: Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: Vip,
+          as: "vips",
           required: false,
         },
       ],
       where: {
-        fasum_type: 18,
+        schedule_id: 88,
+      },
+    });
+  },
+  pos_yan: async (req) => {
+    return await Renpam.findAll({
+      include: [
+        {
+          model: Schedule,
+          foreignKey: "schedule_id",
+          required: false,
+        },
+        {
+          model: Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: Vip,
+          as: "vips",
+          required: false,
+        },
+      ],
+      where: {
+        schedule_id: 89,
+      },
+    });
+  },
+  pos_terpadu: async (req) => {
+    return await Renpam.findAll({
+      include: [
+        {
+          model: Schedule,
+          foreignKey: "schedule_id",
+          required: false,
+        },
+        {
+          model: Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: Vip,
+          as: "vips",
+          required: false,
+        },
+      ],
+      where: {
+        schedule_id: 90,
+      },
+    });
+  },
+  posko: async (req) => {
+    return await Renpam.findAll({
+      include: [
+        {
+          model: Schedule,
+          foreignKey: "schedule_id",
+          required: false,
+        },
+        {
+          model: Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: Vip,
+          as: "vips",
+          required: false,
+        },
+      ],
+      where: {
+        schedule_id: 91,
+      },
+    });
+  },
+  sat_pjr: async (req) => {
+    return await Renpam.findAll({
+      include: [
+        {
+          model: Schedule,
+          foreignKey: "schedule_id",
+          required: false,
+        },
+        {
+          model: Account,
+          as: "accounts",
+          required: false,
+        },
+        {
+          model: Vip,
+          as: "vips",
+          required: false,
+        },
+      ],
+      where: {
+        schedule_id: 92,
       },
     });
   },
@@ -160,7 +270,24 @@ const fieldData = {
         },
       ],
       where: {
+        fasum_status: 1,
         fasum_type: 19,
+      },
+    });
+  },
+  jalur: async () => {
+    return await Fasum.findAll({
+      where: {
+        fasum_status: 1,
+        fasum_type: 12,
+      },
+    });
+  },
+  gerbang_tol: async () => {
+    return await Fasum.findAll({
+      where: {
+        fasum_status: 1,
+        fasum_type: 30,
       },
     });
   },
@@ -173,6 +300,16 @@ const fieldData = {
   trouble_spot: async () => {
     const today = dateParse(moment());
     return await Troublespot.findAll({
+      include: [
+        {
+          model: Polda,
+          required: false,
+        },
+        {
+          model: Polres,
+          required: false,
+        },
+      ],
       // where: {
       //   report_date: {
       //     [Op.between]: [today, today],
@@ -256,6 +393,7 @@ const fieldData = {
         },
       ],
       where: {
+        fasum_status: 1,
         fasum_type: 10,
       },
     });
@@ -270,6 +408,7 @@ const fieldData = {
         },
       ],
       where: {
+        fasum_status: 1,
         fasum_type: 11,
       },
     });
@@ -279,11 +418,27 @@ const fieldData = {
   },
   operasi: null,
   renpam: async () => {
-    return await Renpam.findAll({
+    let getRenpam = await Renpam.findAll({
       where: {
+        // id: 1495,
         type_renpam: 6,
       },
     });
+    getRenpam = getRenpam.filter(
+      (list) =>
+        list.direction_route != null ||
+        list.direction_route_alter1 != null ||
+        list.direction_route_alter2 != null ||
+        list.direction_route_masyarakat != null ||
+        list.direction_route_umum != null
+    );
+    return getRenpam;
+    // return await Renpam.findAll({
+    //   where: {
+    //     // id: 1495,
+    //     type_renpam: 6,
+    //   },
+    // });
   },
 };
 
@@ -291,9 +446,9 @@ const nearByPlacesGoogle = ({ type, radius, coordinate }) => {
   return googleMapClient.placesNearby({
     params: {
       key: process.env.GOOGLE_MAPS_API_KEY,
-      radius: radius,
+      // radius: radius,
       type: type,
-      location: coordinate,
+      // location: coordinate,
       opennow: true,
     },
   });
@@ -302,7 +457,7 @@ const nearByPlacesGoogle = ({ type, radius, coordinate }) => {
 module.exports = class FilterSearchController {
   static get = async (req, res) => {
     try {
-      const { filter, type, coordinate, radius, polda_id } = req.query;
+      const { filter, type, coordinate, radius, polda_id, device } = req.query;
 
       let tampung = {};
       let tampungArr = [];
@@ -351,27 +506,29 @@ module.exports = class FilterSearchController {
             } else if (value == "fasum_khusus") {
               tampung[value] = true;
 
-              if (polda_id) {
-                var dummyData = Fasum.findAll({
-                  include: [
-                    {
-                      model: CategoryFasum,
-                      foreignKey: "fasum_type",
-                      required: false,
-                    },
-                  ],
-                  where: {
-                    fasum_type: 9,
-                    polda_id: AESDecrypt(polda_id, {
-                      isSafeUrl: true,
-                      parseMode: "string",
-                    }),
-                  },
-                });
-                tampungArr.push(dummyData);
-              } else {
-                tampungArr.push(fieldData[value](req));
-              }
+              // if (polda_id) {
+              //   var dummyData = Fasum.findAll({
+              //     include: [
+              //       {
+              //         model: CategoryFasum,
+              //         foreignKey: "fasum_type",
+              //         required: false,
+              //       },
+              //     ],
+              //     where: {
+              //       // fasum_type: 9,
+              //       fasum_status: 1,
+              //       fasum_type: [9, 22, 23, 24, 25, 26, 27, 28, 29],
+              //       polda_id: AESDecrypt(polda_id, {
+              //         isSafeUrl: true,
+              //         parseMode: "string",
+              //       }),
+              //     },
+              //   });
+              //   tampungArr.push(dummyData);
+              // } else {
+              tampungArr.push(fieldData[value](req));
+              // }
             } else if (value == "rest_area") {
               tampung[value] = true;
 
@@ -385,6 +542,7 @@ module.exports = class FilterSearchController {
                     },
                   ],
                   where: {
+                    fasum_status: 1,
                     fasum_type: 4,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
@@ -400,16 +558,162 @@ module.exports = class FilterSearchController {
               tampung[value] = true;
 
               if (polda_id) {
-                var dummyData = Fasum.findAll({
+                var dummyData = Renpam.findAll({
                   include: [
                     {
-                      model: CategoryFasum,
-                      foreignKey: "fasum_type",
+                      model: Schedule,
+                      foreignKey: "schedule_id",
+                      required: false,
+                    },
+                    {
+                      model: Account,
+                      as: "accounts",
+                      required: false,
+                    },
+                    {
+                      model: Vip,
+                      as: "vips",
                       required: false,
                     },
                   ],
                   where: {
-                    fasum_type: 18,
+                    schedule_id: 88,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "pos_yan") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Renpam.findAll({
+                  include: [
+                    {
+                      model: Schedule,
+                      foreignKey: "schedule_id",
+                      required: false,
+                    },
+                    {
+                      model: Account,
+                      as: "accounts",
+                      required: false,
+                    },
+                    {
+                      model: Vip,
+                      as: "vips",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    schedule_id: 89,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "pos_terpadu") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Renpam.findAll({
+                  include: [
+                    {
+                      model: Schedule,
+                      foreignKey: "schedule_id",
+                      required: false,
+                    },
+                    {
+                      model: Account,
+                      as: "accounts",
+                      required: false,
+                    },
+                    {
+                      model: Vip,
+                      as: "vips",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    schedule_id: 90,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "posko") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Renpam.findAll({
+                  include: [
+                    {
+                      model: Schedule,
+                      foreignKey: "schedule_id",
+                      required: false,
+                    },
+                    {
+                      model: Account,
+                      as: "accounts",
+                      required: false,
+                    },
+                    {
+                      model: Vip,
+                      as: "vips",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    schedule_id: 91,
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "sat_pjr") {
+              tampung[value] = true;
+
+              if (polda_id) {
+                var dummyData = Renpam.findAll({
+                  include: [
+                    {
+                      model: Schedule,
+                      foreignKey: "schedule_id",
+                      required: false,
+                    },
+                    {
+                      model: Account,
+                      as: "accounts",
+                      required: false,
+                    },
+                    {
+                      model: Vip,
+                      as: "vips",
+                      required: false,
+                    },
+                  ],
+                  where: {
+                    schedule_id: 92,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
                       parseMode: "string",
@@ -433,6 +737,7 @@ module.exports = class FilterSearchController {
                     },
                   ],
                   where: {
+                    fasum_status: 1,
                     fasum_type: 19,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
@@ -486,6 +791,26 @@ module.exports = class FilterSearchController {
               } else {
                 tampungArr.push(fieldData[value](req));
               }
+            } else if (value == "jalur") {
+              tampung[value] = true;
+
+              if (device && device == "web") {
+                var dummyData = Fasum.findAll({
+                  where: {
+                    fasum_status: 1,
+                    fasum_type: 12,
+                  },
+                  attributes: {
+                    exclude: ["direction_route"],
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
+            } else if (value == "gerbang_tol") {
+              tampung[value] = true;
+              tampungArr.push(fieldData[value](req));
             } else if (value == "titik_laporan") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));
@@ -517,6 +842,7 @@ module.exports = class FilterSearchController {
                     },
                   ],
                   where: {
+                    fasum_status: 1,
                     fasum_type: 10,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,
@@ -541,6 +867,7 @@ module.exports = class FilterSearchController {
                     },
                   ],
                   where: {
+                    fasum_status: 1,
                     fasum_type: 11,
                     polda_id: AESDecrypt(polda_id, {
                       isSafeUrl: true,

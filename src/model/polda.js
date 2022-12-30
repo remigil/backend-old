@@ -54,29 +54,14 @@ Polda.init(
     file_shp: {
       type: Sequelize.TEXT,
     },
-    urutan: {
-      type: Sequelize.INTEGER,
-    },
     open_time: {
       type: Sequelize.TIME,
     },
     close_time: {
       type: Sequelize.TIME,
     },
-    youtube: {
-      type: Sequelize.STRING(200),
-    },
-    facebook: {
-      type: Sequelize.STRING(200),
-    },
-    twitter: {
-      type: Sequelize.STRING(200),
-    },
-    instagram: {
-      type: Sequelize.STRING(200),
-    },
-    link_playlist: {
-      type: Sequelize.STRING(200),
+    urutan: {
+      type: Sequelize.INTEGER,
     },
 
     ...StructureTimestamp,

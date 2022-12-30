@@ -20,11 +20,6 @@ const field_polda = {
   longitude: null,
   open_time: null,
   close_time: null,
-  youtube: null,
-  twitter: null,
-  facebook: null,
-  instagram: null,
-  link_playlist: null,
 };
 module.exports = class PoldaController {
   static get = async (req, res) => {
@@ -84,9 +79,102 @@ module.exports = class PoldaController {
           ...filters,
         };
       }
-      const data = await Polda.findAll({
-        getDataRules,
-        order: [["urutan", "ASC"]],
+      getDataRules.order = [["urutan", "ASC"]];
+      const data = await Polda.findAll(getDataRules).then((result) => {
+        const dummy = result.map((row) => {
+          //this returns all values of the instance,
+          //also invoking virtual getters
+          const el = row.get();
+          el["polda_id"] = AESDecrypt(el.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          });
+          return el;
+        });
+        return dummy;
+      });
+      const count = await Polda.count({
+        where: getDataRules?.where,
+      });
+      response(res, true, "Succeed", {
+        data,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
+  static getNoEncrypt = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = 0,
+        orderDirection = "asc",
+      } = req.query;
+      const modelAttr = Object.keys(Polda.getAttributes());
+      let getDataRules = { where: null };
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+      if (order <= modelAttr.length) {
+        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      }
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getDataRules.where = {
+          ...getDataRules.where,
+          ...filters,
+        };
+      }
+      const data = await Polda.findAll(getDataRules).then((result) => {
+        const dummy = result.map((row) => {
+          //this returns all values of the instance,
+          //also invoking virtual getters
+          const el = row.get();
+          el.id = AESDecrypt(el.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          });
+          return el;
+        });
+        return dummy;
       });
       const count = await Polda.count({
         where: getDataRules?.where,

@@ -17,10 +17,6 @@ const dateParse = (date) => {
   return aaa.format("YYYY-MM-DD");
 };
 const socketInstace = (server) => {
-  // const io = require("socket.io")(server, {
-
-  // })
-  // const io = new Server(server, {
   const io = require("socket.io")(server, {
     cors: "*",
     //pingTimeout: 60000,
@@ -71,11 +67,6 @@ const socketInstace = (server) => {
                     nrp_officer: socket.handshake.query.user_nrp,
                   },
                 },
-                // {
-                //   model: Officer,
-                //   as: "leader_team",
-                //   required: false,
-                // },
               ],
               where: {
                 name_account: username,
@@ -171,6 +162,7 @@ const socketInstace = (server) => {
         photo_officer: dataOfficer.photo_officer,
         rank_officer: dataOfficer.rank_officer,
         nrp_user: dataOfficer.nrp_officer,
+        color_marker: dataOfficer.color_marker,
         handphone: noTelpon,
         photo_officer_telp_biasa: "+" + noTelpon,
         name_country:

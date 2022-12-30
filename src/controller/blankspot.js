@@ -12,7 +12,7 @@ const moment = require("moment");
 const { codeTS } = require("../middleware/codeBlankspot");
 const { decimalToHex } = require("../middleware/decimaltohex");
 const pagination = require("../lib/pagination-parser");
-
+const direction_route = require("../middleware/direction_route");
 const decAes = (token) =>
   AESDecrypt(token, {
     isSafeUrl: true,
@@ -204,7 +204,25 @@ module.exports = class BlankspotController {
       let getSatpas = cekSatpas["code_satpas"];
 
       let nots = `BS/${moment().format("MMYY")}${code}/${getSatpas}`;
-
+      if (req.body.route) {
+        direction_route(JSON.parse(req.body.route))
+          .then(async (data) => {
+            console.log({ data });
+            await Blankspot.update(
+              {
+                direction_route: data.route,
+              },
+              {
+                where: {
+                  id: getid,
+                },
+              }
+            );
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
       await Blankspot.update(
         { no_ts: nots },
         {
@@ -256,6 +274,28 @@ module.exports = class BlankspotController {
         },
         transaction: transaction,
       });
+      if (req.body.route) {
+        direction_route(JSON.parse(req.body.route))
+          .then(async (data) => {
+            console.log({ data });
+            await Blankspot.update(
+              {
+                direction_route: data.route,
+              },
+              {
+                where: {
+                  id: AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              }
+            );
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

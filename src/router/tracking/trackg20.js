@@ -5,6 +5,16 @@ const form_validation = require("../../middleware/form_validation");
 
 router.get("/getMe", authMiddleware.jwtAuth, LocationTrackController.get);
 router.get(
+  "/filterPetugas",
+  // authMiddleware.jwtAuth,
+  LocationTrackController.filterPetugas
+);
+router.get(
+  "/addAccount",
+  authMiddleware.jwtAuth,
+  LocationTrackController.addDataOfficerToSocket
+);
+router.get(
   "/getLogout",
   authMiddleware.jwtAuth,
   LocationTrackController.getLogout

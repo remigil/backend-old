@@ -34,6 +34,7 @@ const queryGlobal = ({ select, join, condition, account_id }) => {
               INNER JOIN renpam_account ra ON ra.renpam_id=r.id
               ${join}
               WHERE 1=1
+              AND r.type_renpam != 6
               AND ra.account_id=${AESDecrypt(account_id, {
                 isSafeUrl: true,
                 parseMode: "string",
@@ -359,18 +360,38 @@ module.exports = class ScheduleController {
         },
       });
 
-      let dataAccount = await Account.findOne({
-        where: {
-          id: account_id.account_id,
-        },
-        include: [
-          {
-            model: Officer,
-            as: "officers",
-            required: true,
-          },
-        ],
-      });
+      // let dataAccount = await Account.findOne({
+      //   where: {
+      //     id: account_id.account_id,
+      //   },
+      //   include: [
+      //     {
+      //       model: Officer,
+      //       as: "officers",
+      //       required: true,
+      //     },
+      //   ],
+      // });
+      let [result_petugas] = await db.query(
+        queryGlobal({
+          select: `
+            s.*,
+                s.id as id_schedule,
+                o.name_officer,
+                o.rank_officer,
+                o.nrp_officer,
+                o.phone_officer
+          `,
+          join: `
+          LEFT JOIN schedule s ON s.id=r.schedule_id
+          
+          INNER JOIN trx_account_officer tao ON tao.account_id=ra.account_id
+          INNER JOIN officer o ON o.id=tao.officer_id
+          `,
+          condition: "",
+          account_id: req.auth.uid,
+        })
+      );
 
       jumlah_data = {
         ...jumlah_data,
@@ -387,8 +408,10 @@ module.exports = class ScheduleController {
           data: kegiatanData,
         },
         petugas: {
-          jumlah: dataAccount?.officers?.length,
-          data: dataAccount?.officers,
+          jumlah: result_petugas?.length,
+          data: result_petugas,
+          // jumlah: dataAccount?.officers?.length,
+          // data: dataAccount?.officers,
         },
       };
 

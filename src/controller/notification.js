@@ -380,6 +380,7 @@ module.exports = class NotifikasiController {
             [Op.ne]: null,
           },
         },
+        limit: 10,
       })
         .then(async (ress) => {
           // console.log({ succ });

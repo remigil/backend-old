@@ -16,6 +16,7 @@ const Officer = require("../model/officer");
 const NotifikasiController = require("./notification");
 const notifHandler = require("../middleware/notifHandler");
 const TokenTrackNotif = require("../model/token_track_notif");
+const readXlsxFile = require("read-excel-file/node");
 const moment = require("moment");
 const { groupBy } = require("lodash");
 Renpam.hasOne(Schedule, {
@@ -50,6 +51,7 @@ const fieldData = {
   start_datetime_renpam: null,
   end_datetime_renpam: null,
   warnaRoute_renpam: "red",
+  polda_id: null,
 };
 
 module.exports = class RenpamController {
@@ -200,6 +202,216 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getCheckData = async (req, res) => {
+    try {
+      const {
+        length = 10,
+        start = 0,
+        serverSide = null,
+        search = null,
+        filter = [],
+        filterSearch = [],
+        order = null,
+        orderDirection = "asc",
+        start_date = null,
+        end_date = null,
+        schedule_id = "notNull", //null or notNull
+      } = req.query;
+      // return response(res, false, "Failed", start_date);
+      const modelAttr = Object.keys(Renpam.getAttributes());
+      let getDataRules = { where: null };
+      if (serverSide?.toLowerCase() === "true") {
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
+      }
+      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "asc",
+        ],
+      ];
+
+      let date_ob = new Date();
+      if (start_date != null && end_date != null) {
+        // console.log("tgl");
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      } else if (start_date == null && end_date != null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [date_ob, end_date],
+          },
+        };
+      } else if (start_date != null && end_date == null) {
+        var date = (
+          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
+        ).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        // var startDate = year + "-" + month + "-" + date;
+        // var endDate = year + "-" + month + "-" + date;
+        getDataRules.where = {
+          date: {
+            [Op.between]: [start_date, date_ob],
+          },
+        };
+      }
+
+      // null or notNull
+      if (schedule_id == "null") {
+        getDataRules.where = {
+          schedule_id: {
+            [Op.is]: null,
+          },
+        };
+      }
+
+      if (search != null) {
+        let whereBuilder = [];
+        modelAttr.forEach((key) => {
+          whereBuilder.push(
+            Sequelize.where(
+              Sequelize.fn(
+                "lower",
+                Sequelize.cast(Sequelize.col(key), "varchar")
+              ),
+              {
+                [Op.like]: `%${search.toLowerCase()}%`,
+              }
+            )
+          );
+        });
+        getDataRules.where = {
+          [Op.or]: whereBuilder,
+        };
+      }
+
+      if (
+        filter != null &&
+        filter.length > 0 &&
+        filterSearch != null &&
+        filterSearch.length > 0
+      ) {
+        const filters = [];
+        filter.forEach((fKey, index) => {
+          if (_.includes(modelAttr, fKey)) {
+            filters[fKey] = filterSearch[index];
+          }
+        });
+        getDataRules.where = {
+          ...getDataRules.where,
+          ...filters,
+        };
+      }
+      const data = await Renpam.findAll({
+        ...getDataRules,
+        include: [
+          {
+            model: Schedule,
+            foreignKey: "schedule_id",
+            required: false,
+          },
+          {
+            model: Account,
+            as: "accounts",
+            required: false,
+          },
+          {
+            model: Vip,
+            as: "vips",
+            required: false,
+          },
+        ],
+        attributes: {
+          exclude: [
+            "id",
+            "operation_id",
+            "schedule_id",
+            "type_renpam",
+            "category_renpam",
+            "total_vehicle",
+            "order_renpam",
+            "title_end",
+            "route",
+            "route_alternatif_1",
+            "route_alternatif_2",
+            "route_masyarakat",
+            "route_umum",
+            "direction_route",
+            "direction_route_alter1",
+            "direction_route_alter2",
+            "direction_route_masyarakat",
+            "direction_route_umum",
+            "estimasi",
+            "estimasi_alter1",
+            "estimasi_alter2",
+            "estimasi_masyarakat",
+            "estimasi_umum",
+            "estimasi_time",
+            "estimasi_time_alter1",
+            "estimasi_time_alter2",
+            "estimasi_time_masyarakat",
+            "estimasi_time_umum",
+            "coordinate_guarding",
+            "end_coordinate_renpam",
+            "polda_id",
+            "polres_id",
+            "choose_rute",
+            "date",
+            "start_time",
+            "start_datetime_renpam",
+            "end_datetime_renpam",
+            "end_time",
+            "status_renpam",
+            "note_kakor",
+            "warnaRoute_renpam",
+            "alamat",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "schedule",
+            "accounts",
+            "vips",
+          ],
+        },
+      }).then((result) => {
+        const dummy = result.map((row) => {
+          //this returns all values of the instance,
+          //also invoking virtual getters
+          const el = row.get();
+          el["st_akun"] = el.accounts.length > 0 ? "ada" : "tidak ada";
+          return el;
+        });
+        return dummy;
+      });
+      const count = await Renpam.count({
+        where: getDataRules?.where,
+      });
+      response(res, true, "Succeed", {
+        data,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (e) {
+      response(res, false, "Failed", e.message);
+    }
+  };
+
   static getMobile = async (req, res) => {
     try {
       const {
@@ -965,7 +1177,7 @@ module.exports = class RenpamController {
       let fieldValueAccount = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "operation_id" || val == "schedule_id") {
+          if (val == "schedule_id" || val == "polda_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
@@ -1115,6 +1327,81 @@ module.exports = class RenpamController {
     }
   };
 
+  static importExcell = async (req, res) => {
+    const t = await db.transaction();
+    try {
+      let path = req.body.file.filepath;
+      let file = req.body.file;
+      let fileName = file.originalFilename;
+      fs.renameSync(path, "./public/uploads/" + fileName, function (err) {
+        if (err) response(res, false, "Error", err.message);
+      });
+      let readExcell = await readXlsxFile("./public/uploads/" + fileName);
+      let index = 0;
+      let listPolres = [];
+      let idNotValid = [];
+      for (const iterator of readExcell) {
+        if (index == 0) {
+          // if (
+          //   iterator[1] != "1address_Fasum" &&
+          //   iterator[2] != "1vms_Fasum" &&
+          //   iterator[3] != "1jenis_Fasum" &&
+          //   iterator[4] != "1merek_Fasum" &&
+          //   iterator[5] != "1type_Fasum" &&
+          //   iterator[6] != "1ip_Fasum" &&
+          //   iterator[7] != "1gateway_Fasum" &&
+          //   iterator[8] != "1username_Fasum" &&
+          //   iterator[9] != "1password_Fasum" &&
+          //   iterator[10] != "1lat_Fasum" &&
+          //   iterator[11] != "1lng_Fasum"
+          // ) {
+          //   response(res, false, "Failed", null);
+          // }
+        } else {
+          var cord;
+          var latitude;
+          var longitude;
+          var kordinate;
+          // console.log({ a: iterator[2], b: iterator[7] });
+          if (iterator[7] != null) {
+            cord = iterator[7].split(",");
+            latitude = parseFloat(cord[0]);
+            longitude = parseFloat(cord[1]);
+            kordinate = { lat: latitude, lng: longitude };
+          } else {
+            kordinate = null;
+          }
+
+          listPolres.push({
+            operation_id: iterator[0],
+            schedule_id: iterator[1],
+            name_renpam: iterator[2],
+            type_renpam: iterator[3],
+            category_renpam: iterator[4],
+            date: iterator[5],
+            start_time: iterator[6] || null,
+            coordinate_guarding: kordinate,
+            total_vehicle: iterator[8],
+            order_renpam: iterator[9],
+            title_start: iterator[10],
+            title_end: iterator[11] || null,
+            polda_id: iterator[12] || null,
+          });
+        }
+        index++;
+      }
+      const ress = await Renpam.bulkCreate(listPolres, {
+        transaction: t,
+      });
+      await t.commit();
+
+      response(res, true, "Succed", ress);
+    } catch (error) {
+      await t.rollback();
+      response(res, false, "Failed", error.message);
+    }
+  };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
@@ -1123,7 +1410,7 @@ module.exports = class RenpamController {
       let fieldValueAccount = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "operation_id" || val == "schedule_id") {
+          if (val == "schedule_id" || val == "polda_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
@@ -1522,20 +1809,6 @@ module.exports = class RenpamController {
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
-    }
-  };
-
-  static checkRouteRenpamByOne = async (req, res) => {
-    try {
-      const getData = await Renpam.findOne({
-        where: {
-          id: 1495,
-        },
-      });
-      let routeAlter2 = await direction_route(getData.route);
-      response(res, true, "Berhasil", routeAlter2);
-    } catch (e) {
-      response(res, false, e.message, e);
     }
   };
 };

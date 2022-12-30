@@ -9,7 +9,7 @@ const _ = require("lodash");
 const formidable = require("formidable");
 const CategoryFasum = require("../model/category_fasum");
 const pagination = require("../lib/pagination-parser");
-
+const direction_route = require("../middleware/direction_route");
 const fieldData = {
   fasum_type: null,
   fasum_name: null,
@@ -24,6 +24,10 @@ const fieldData = {
   fasum_status: 0,
   fasum_radius: 0,
   polda_id: null,
+  fasum_geoJson: null,
+  route: null,
+  fasum_color: null,
+  fasum_image: null,
 };
 module.exports = class FasumController {
   static get = async (req, res) => {
@@ -97,6 +101,9 @@ module.exports = class FasumController {
             required: false,
           },
         ],
+        attributes: {
+          exclude: ["direction_route"],
+        },
         subQuery: true,
       });
       const count = await Fasum.count({
@@ -134,7 +141,7 @@ module.exports = class FasumController {
     const transaction = await db.transaction();
     try {
       let fieldValue = {};
-      console.log(req.body);
+      // console.log(req.body);
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "fasum_logo") {
@@ -149,6 +156,20 @@ module.exports = class FasumController {
               }
             );
             fieldValue[val] = fileName;
+          } else if (val == "fasum_image") {
+            let path = req.body.fasum_image.filepath;
+            let file = req.body.fasum_image;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else if (val == "fasum_geoJson" || val == "route") {
+            fieldValue[val] = JSON.parse(req.body[val]);
           } else if (val == "polda_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
@@ -159,8 +180,30 @@ module.exports = class FasumController {
           }
         }
       });
-      await Fasum.create(fieldValue, { transaction: transaction });
+      const createDirectionRoute = await Fasum.create(fieldValue, {
+        transaction: transaction,
+      });
       await transaction.commit();
+      if (req.body.route) {
+        direction_route(JSON.parse(req.body.route))
+          .then(async (data) => {
+            console.log({ data });
+            await Fasum.update(
+              {
+                direction_route: data.route,
+              },
+              {
+                where: {
+                  id: createDirectionRoute.dataValues.id,
+                },
+              }
+            );
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
+
       response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();
@@ -211,6 +254,7 @@ module.exports = class FasumController {
             fasum_open_time: iterator[9],
             fasum_close_time: iterator[10],
             fasum_status: iterator[11],
+            fasum_image: iterator[12],
           });
         }
         index++;
@@ -236,20 +280,22 @@ module.exports = class FasumController {
       var fieldValue = {};
       for (let i = 0; i < input.length; i++) {
         fieldValue = {};
-        fieldValue["fasum_type"] = req.body.fasum_type;
-        fieldValue["fasum_name"] = input[i]["properties"]["nama"];
-        fieldValue["fasum_logo"] = input[i]["properties"]["foto"];
-        fieldValue["fasum_address"] = input[i]["properties"]["nama"];
-        fieldValue["fasum_phone"] = input[i]["properties"]["nama"];
-        fieldValue["fasum_lat"] = input[i]["properties"]["lat"];
-        fieldValue["fasum_lng"] = input[i]["properties"]["long"];
-        fieldValue["fasum_description"] = `<p>
-                                            Daftar Resto : ${input[i]["properties"]["dftr_resto"]} </br>
-                                            Daftar Mushola : ${input[i]["properties"]["dftr_musho"]} </br>
-                                            Daftar Mini Market : ${input[i]["properties"]["dftr_minim"]} </br>
-                                            Daftar ATM : ${input[i]["properties"]["dftr_atm"]} </br>
-                                            Daftar Bengekel : ${input[i]["properties"]["dftr_bengk"]}
-                                          </p>`;
+        fieldValue["fasum_type"] = input[i]["fasum_type"];
+        fieldValue["fasum_name"] = input[i]["fasum_name"];
+        fieldValue["fasum_logo"] = input[i]["fasum_logo"];
+        fieldValue["fasum_image"] = input[i]["fasum_image"];
+        // fieldValue["fasum_address"] = input[i]["properties"];
+        // fieldValue["fasum_phone"] = input[i]["properties"];
+        fieldValue["fasum_lat"] = input[i]["fasum_lat"];
+        fieldValue["fasum_lng"] = input[i]["fasum_lng"];
+        // fieldValue["fasum_description"] = `<p>
+        //                                     Daftar Resto : ${input[i]["properties"]["dftr_resto"]} </br>
+        //                                     Daftar Mushola : ${input[i]["properties"]["dftr_musho"]} </br>
+        //                                     Daftar Mini Market : ${input[i]["properties"]["dftr_minim"]} </br>
+        //                                     Daftar ATM : ${input[i]["properties"]["dftr_atm"]} </br>
+        //                                     Daftar Bengekel : ${input[i]["properties"]["dftr_bengk"]}
+        //                                   </p>`;
+        fieldValue["fasum_description"] = input[i]["fasum_description"];
         fieldValue["fasum_open_time"] = "00:00:00";
         fieldValue["fasum_close_time"] = "23:00:00";
         fieldValue["fasum_status"] = 1;
@@ -260,11 +306,10 @@ module.exports = class FasumController {
       }
 
       const data = await Fasum.bulkCreate(dummy, {
-        // updateOnDuplicate: ["file_shp"],
         transaction: transaction,
       });
       await transaction.commit();
-      response(res, true, "Succeed", data);
+      response(res, true, "Succeed", dummy);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -290,6 +335,20 @@ module.exports = class FasumController {
               }
             );
             fieldValue[val] = fileName;
+          } else if (val == "fasum_image") {
+            let path = req.body.fasum_image.filepath;
+            let file = req.body.fasum_image;
+            let fileName = file.originalFilename;
+            fs.renameSync(
+              path,
+              "./public/uploads/fasum_khusus/" + fileName,
+              function (err) {
+                if (err) throw err;
+              }
+            );
+            fieldValue[val] = fileName;
+          } else if (val == "fasum_geoJson" || val == "route") {
+            fieldValue[val] = JSON.parse(req.body[val]);
           } else if (val == "polda_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
@@ -310,6 +369,27 @@ module.exports = class FasumController {
         transaction: transaction,
       });
       await transaction.commit();
+      if (req.body.route) {
+        direction_route(JSON.parse(req.body.route))
+          .then(async (data) => {
+            await Fasum.update(
+              {
+                direction_route: data.route,
+              },
+              {
+                where: {
+                  id: AESDecrypt(req.params.id, {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  }),
+                },
+              }
+            );
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
       response(res, true, "Succeed", null);
     } catch (e) {
       await transaction.rollback();

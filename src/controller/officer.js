@@ -10,8 +10,11 @@ const Account = require("../model/account");
 const Vehicle = require("../model/vehicle");
 const { Client } = require("@googlemaps/google-maps-services-js");
 const pagination = require("../lib/pagination-parser");
-
+const bcrypt = require("bcrypt");
 const googleMapClient = new Client();
+const Polda = require("../model/polda");
+const Polres = require("../model/polres");
+
 const fieldData = {
   name_officer: null,
   photo_officer: null,
@@ -55,17 +58,24 @@ module.exports = class OfficerController {
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
-          whereBuilder.push(
-            Sequelize.where(
-              Sequelize.fn(
-                "lower",
-                Sequelize.cast(Sequelize.col(key), "varchar")
-              ),
-              {
-                [Op.like]: `%${search.toLowerCase()}%`,
-              }
-            )
-          );
+          if (
+            key != "id" &&
+            key != "created_at" &&
+            key != "updated_at" &&
+            key != "deleted_at"
+          ) {
+            whereBuilder.push(
+              Sequelize.where(
+                Sequelize.fn(
+                  "lower",
+                  Sequelize.cast(Sequelize.col(key), "varchar")
+                ),
+                {
+                  [Op.like]: `%${search.toLowerCase()}%`,
+                }
+              )
+            );
+          }
         });
         getData.where = {
           [Op.or]: whereBuilder,
@@ -88,7 +98,22 @@ module.exports = class OfficerController {
           ...filters,
         };
       }
-      const data = await Officer.findAll(getData);
+      const data = await Officer.findAll({
+        ...getData,
+        include: [
+          {
+            model: Polda,
+            as: "polda",
+            required: false,
+            // include: [
+            //   {
+            //     model: Polres,
+            //     required: false,
+            //   },
+            // ],
+          },
+        ],
+      });
       const count = await Officer.count({
         where: getData?.where,
       });
@@ -221,6 +246,11 @@ module.exports = class OfficerController {
                     }
                   );
                   fieldValueData[key] = fileName;
+                } else if (key == "polda_id") {
+                  fieldValueData[key] = AESDecrypt(req.body[key], {
+                    isSafeUrl: true,
+                    parseMode: "string",
+                  });
                 } else {
                   fieldValueData[key] = req.body[key];
                 }
@@ -262,6 +292,11 @@ module.exports = class OfficerController {
               }
             );
             fieldValueData[key] = fileName;
+          } else if (key == "polda_id") {
+            fieldValueData[key] = AESDecrypt(req.body[key], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
           } else {
             fieldValueData[key] = req.body[key];
           }
@@ -309,6 +344,47 @@ module.exports = class OfficerController {
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
+    }
+  };
+  static updatePassword = async (req, res) => {
+    try {
+      const { nrp_user } = req.auth;
+      const { password, verif_password } = req.body;
+
+      if (password != verif_password) {
+        response(
+          res,
+          false,
+          "Failed",
+          {
+            update_password: false,
+            message: "Password dan Verifikasi password tidak sesuai",
+          },
+          400
+        );
+      }
+      const getDataOfficer = await Officer.findOne({
+        where: {
+          nrp_officer: nrp_user,
+        },
+      });
+      if (!getDataOfficer) {
+        response(res, false, "Data Tidak Ditemukan", null, 404);
+      }
+      await Officer.update(
+        {
+          password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
+        },
+        {
+          where: {
+            nrp_officer: nrp_user,
+          },
+        }
+      );
+
+      response(res, true, "Berhasil", null, 200);
+    } catch (error) {
+      response(res, false, e.message, error);
     }
   };
 };

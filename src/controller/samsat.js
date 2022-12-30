@@ -108,16 +108,16 @@ module.exports = class SamsatController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-      Object.keys(fieldData).forEach((val, key) => {
-        if (req.body[val]) {
+      Object.keys(fieldData).forEach((val, key) =>{
+        if (req.body[val]){
           fieldValueData[val] = req.body[val];
-        } else {
+        }else{
           fieldValueData[val] = null;
         }
       });
       let op = await Samsat.create(fieldValueData, {
-        transaction: transaction,
-      });
+          transaction: transaction,
+        });
       await transaction.commit();
       response(res, true, "Succeed", op);
     } catch (e) {
@@ -129,22 +129,22 @@ module.exports = class SamsatController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-      Object.keys(fieldData).forEach((val, key) => {
-        if (req.body[val]) {
+        Object.keys(fieldData).forEach((val, key) =>{
+        if (req.body[val]){
           fieldValueData[val] = req.body[val];
-        } else {
+        }else{
           fieldValueData[val] = null;
         }
-      });
-      await Samsat.update(fieldValueData, {
-        where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-        transaction: transaction,
-      });
+        });
+          await Samsat.update(fieldValueData, {
+          where: {
+            id: AESDecrypt(req.params.id, {
+              isSafeUrl: true,
+              parseMode: "string",
+            }),
+          },
+          transaction: transaction,
+        });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {
@@ -191,24 +191,6 @@ module.exports = class SamsatController {
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
-    }
-  };
-
-  static get_by_polda = async (req, res) => {
-    try {
-      const data = await Samsat.findAll({
-        where: {
-          polda_id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-      response(res, true, "Succeed", {
-        data,
-      });
-    } catch (error) {
-      response(res, false, "Failed", error.message);
     }
   };
 };

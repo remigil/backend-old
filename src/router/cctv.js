@@ -10,6 +10,7 @@ router.post(
   formValidation,
   CctvController.add
 );
+router.post("/addGeoJson", formValidation, CctvController.addGeoJson);
 router.post("/import", formValidation, CctvController.importExcell);
 router.put("/edit/:id", CctvController.edit);
 router.delete(

@@ -3,7 +3,6 @@ const db = require("../config/database");
 const bcrypt = require("bcrypt");
 const { StructureTimestamp } = require("../constanta/db_structure");
 const { AESEncrypt } = require("../lib/encryption");
-const Schedule = require("./schedule");
 const Account = require("./account");
 const Vip = require("./vip");
 const Officer = require("./officer");
@@ -124,6 +123,12 @@ Renpam.init(
     end_coordinate_renpam: {
       type: Sequelize.JSON,
     },
+    polda_id: {
+      type: Sequelize.INTEGER,
+    },
+    polres_id: {
+      type: Sequelize.INTEGER,
+    },
 
     choose_rute: {
       type: Sequelize.INTEGER, // 1 = utama, 2=alternatif 1, 3= alternatif 2
@@ -151,6 +156,9 @@ Renpam.init(
     },
     warnaRoute_renpam: {
       type: Sequelize.STRING(20),
+    },
+    alamat: {
+      type: Sequelize.TEXT,
     },
     ...StructureTimestamp,
   },

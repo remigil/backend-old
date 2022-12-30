@@ -27,6 +27,7 @@ const collection = {
   fuel_vehicle: String,
   back_number_vehicle: String,
   bawa_penumpang: Number,
+  color_marker: String,
 };
 const DocumentSchema = mongoose.Schema(collection, {
   timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
