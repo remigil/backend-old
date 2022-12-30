@@ -593,4 +593,12 @@ router.use(
   require("../router/stackholder")
 );
 
+
+// Bagrenmin
+router.use(
+  "/v" + process.env.APP_VERSION + "/bagrenmin",
+  // authMiddleware.jwtAuth,
+  require("../router/bagrenmin")
+);
+
 module.exports = router;

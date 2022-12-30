@@ -3172,7 +3172,7 @@ module.exports = class ExportLapharController {
 
       let rules = [];
       let rules_polda = [];
-      let tgl = moment().format("YYYY-MM-DD");
+      let tgl = "Keseluruhan";
       if (date) {
         rules.push({
           date: date,
@@ -3390,7 +3390,7 @@ module.exports = class ExportLapharController {
           peningkatan_b2u += parseInt(ditregident[i].sim[j].peningkatan_b2u);
           jumlah_sim += parseInt(ditregident[i].sim[j].dataValues.total_sim);
         }
-          rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_name_polda.push(ditregident[i].dataValues.name_polda);
         rows_sim_baru.push(sim_baru);
         rows_sim_perpanjangan.push(sim_perpanjangan);
         rows_jumlah_sim.push(jumlah_sim);
