@@ -12,6 +12,7 @@ const {
   tempLanggar,
   tempTurjagwali,
   tempRanmor,
+  tempSim
 } = require("../lib/template_laphar");
 const { tempAnevGakkum } = require("../lib/anev_ditgakkum");
 const { tempAnevKamsel } = require("../lib/anev_ditkamsel");
@@ -3119,7 +3120,7 @@ module.exports = class ExportLapharController {
             ditregident[i].ranmor[j].dataValues.total_ranmor
           );
         }
- rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_name_polda.push(ditregident[i].dataValues.name_polda);
         rows_mobil_barang.push(mobil_barang);
         rows_mobil_penumpang.push(mobil_penumpang);
         rows_mobil_bus.push(mobil_bus);
@@ -3149,6 +3150,320 @@ module.exports = class ExportLapharController {
         `./public/export_laphar/laporan_harian_ranmor${tgl}.xlsx`
       );
       res.download(`./public/export_laphar/laporan_harian_ranmor${tgl}.xlsx`);
+      // response(res, true, "Succeed", ditkamsel);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static export_sim = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      let rules = [];
+      let rules_polda = [];
+      let tgl = moment().format("YYYY-MM-DD");
+      if (date) {
+        rules.push({
+          date: date,
+        });
+        tgl = date;
+      }
+
+      if (filter) {
+        rules.push({
+          date: {
+            [Op.between]: [start_date, end_date],
+          },
+        });
+        tgl = start_date + " s.d " + end_date;
+      }
+
+      if (polda_id) {
+        rules.push({
+          polda_id: decAes(polda_id),
+        });
+
+        rules_polda.push({
+          id: decAes(polda_id),
+        });
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let ditregident = await Polda.findAll({
+        group: ["sim.id", "polda.id"],
+        attributes: ["id", "name_polda"],
+        include: [
+          {
+            model: Sim_polda_day,
+            required: false,
+            as: "sim",
+            attributes: [
+              [Sequelize.fn("sum", Sequelize.col("baru_a")), "baru_a"],
+              [Sequelize.fn("sum", Sequelize.col("baru_c")), "baru_c"],
+              [Sequelize.fn("sum", Sequelize.col("baru_c1")), "baru_c1"],
+              [Sequelize.fn("sum", Sequelize.col("baru_c2")), "baru_c2"],
+
+              [Sequelize.fn("sum", Sequelize.col("baru_d")), "baru_d"],
+              [Sequelize.fn("sum", Sequelize.col("baru_d1")), "baru_d1"],
+
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_a")),
+                "perpanjangan_a",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_au")),
+                "perpanjangan_au",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_c")),
+                "perpanjangan_c",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_c1")),
+                "perpanjangan_c1",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_c2")),
+                "perpanjangan_c2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_d")),
+                "perpanjangan_d",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_d1")),
+                "perpanjangan_d1",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_b1")),
+                "perpanjangan_b1",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_b1u")),
+                "perpanjangan_b1u",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_b2")),
+                "perpanjangan_b2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("perpanjangan_b2u")),
+                "perpanjangan_b2u",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("peningkatan_au")),
+                "peningkatan_au",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("peningkatan_b1")),
+                "peningkatan_b1",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("peningkatan_b1u")),
+                "peningkatan_b1u",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("peningkatan_b2")),
+                "peningkatan_b2",
+              ],
+              [
+                Sequelize.fn("sum", Sequelize.col("peningkatan_b2u")),
+                "peningkatan_b2u",
+              ],
+              [
+                Sequelize.literal(
+                  "SUM(baru_a + baru_c + baru_c1 + baru_c2 + baru_d + baru_d1 + perpanjangan_a + perpanjangan_au + perpanjangan_c + perpanjangan_c1 + perpanjangan_c2 + perpanjangan_d + perpanjangan_d1 + perpanjangan_b1 + perpanjangan_b1u + perpanjangan_b2 + perpanjangan_b2u + peningkatan_au + peningkatan_b1 + peningkatan_b1u + peningkatan_b2 + peningkatan_b2u)"
+                ),
+                "total_sim",
+              ],
+            ],
+            where: {
+              [Op.and]: rules,
+            },
+          },
+        ],
+        where: {
+          [Op.and]: rules_polda,
+        },
+      });
+
+      let rows_name_polda = [];
+
+      let rows_sim_baru = [];
+      let rows_sim_perpanjangan = [];
+      let rows_jumlah_sim = [];
+
+      let rows_baru_a = [];
+      let rows_baru_c = [];
+      let rows_baru_c1 = [];
+      let rows_baru_c2 = [];
+
+      let rows_baru_d = [];
+      let rows_baru_d1 = [];
+
+      let rows_perpanjangan_a = [];
+      let rows_perpanjangan_au = [];
+      let rows_perpanjangan_c = [];
+      let rows_perpanjangan_c1 = [];
+      let rows_perpanjangan_c2 = [];
+      let rows_perpanjangan_d = [];
+      let rows_perpanjangan_d1 = [];
+      let rows_perpanjangan_b1 = [];
+      let rows_perpanjangan_b1u = [];
+      let rows_perpanjangan_b2 = [];
+      let rows_perpanjangan_b2u = [];
+
+      let rows_peningkatan_au = [];
+      let rows_peningkatan_b1 = [];
+      let rows_peningkatan_b1u = [];
+      let rows_peningkatan_b2 = [];
+      let rows_peningkatan_b2u = [];
+
+      for (let i = 0; i < ditregident.length; i++) {
+        let sim_baru = 0;
+        let sim_perpanjangan = 0;
+        let jumlah_sim = 0;
+        let baru_a = 0;
+        let baru_c = 0;
+        let baru_c1 = 0;
+        let baru_c2 = 0;
+        let baru_d = 0;
+        let baru_d1 = 0;
+        let perpanjangan_a = 0;
+        let perpanjangan_au = 0;
+        let perpanjangan_c = 0;
+        let perpanjangan_c1 = 0;
+        let perpanjangan_c2 = 0;
+        let perpanjangan_d = 0;
+        let perpanjangan_d1 = 0;
+        let perpanjangan_b1 = 0;
+        let perpanjangan_b1u = 0;
+        let perpanjangan_b2 = 0;
+        let perpanjangan_b2u = 0;
+
+        let peningkatan_au = 0;
+        let peningkatan_b1 = 0;
+        let peningkatan_b1u = 0;
+        let peningkatan_b2 = 0;
+        let peningkatan_b2u = 0;
+
+        for (let j = 0; j < ditregident[i].sim.length; j++) {
+          baru_a += parseInt(ditregident[i].sim[j].baru_a);
+          baru_c += parseInt(ditregident[i].sim[j].baru_c);
+          baru_c1 += parseInt(ditregident[i].sim[j].baru_c1);
+          baru_c2 += parseInt(ditregident[i].sim[j].baru_c2);
+
+          baru_d += parseInt(ditregident[i].sim[j].baru_d);
+          baru_d1 += parseInt(ditregident[i].sim[j].baru_d1);
+
+          perpanjangan_a += parseInt(ditregident[i].sim[j].perpanjangan_a);
+          perpanjangan_au += parseInt(ditregident[i].sim[j].perpanjangan_au);
+          perpanjangan_c += parseInt(ditregident[i].sim[j].perpanjangan_c);
+          perpanjangan_c1 += parseInt(ditregident[i].sim[j].perpanjangan_c1);
+          perpanjangan_c2 += parseInt(ditregident[i].sim[j].perpanjangan_c2);
+          perpanjangan_d += parseInt(ditregident[i].sim[j].perpanjangan_d);
+          perpanjangan_d1 += parseInt(ditregident[i].sim[j].perpanjangan_d1);
+          perpanjangan_b1 += parseInt(ditregident[i].sim[j].perpanjangan_b1);
+          perpanjangan_b1u += parseInt(ditregident[i].sim[j].perpanjangan_b1u);
+          perpanjangan_b2 += parseInt(ditregident[i].sim[j].perpanjangan_b2);
+          perpanjangan_b2u += parseInt(ditregident[i].sim[j].perpanjangan_b2u);
+
+          peningkatan_au += parseInt(ditregident[i].sim[j].peningkatan_au);
+          peningkatan_b1 += parseInt(ditregident[i].sim[j].peningkatan_b1);
+          peningkatan_b1u += parseInt(ditregident[i].sim[j].peningkatan_b1u);
+          peningkatan_b2 += parseInt(ditregident[i].sim[j].peningkatan_b2);
+          peningkatan_b2u += parseInt(ditregident[i].sim[j].peningkatan_b2u);
+          jumlah_sim += parseInt(ditregident[i].sim[j].dataValues.total_sim);
+        }
+          rows_name_polda.push(ditregident[i].dataValues.name_polda);
+        rows_sim_baru.push(sim_baru);
+        rows_sim_perpanjangan.push(sim_perpanjangan);
+        rows_jumlah_sim.push(jumlah_sim);
+
+        rows_baru_a.push(baru_a);
+        rows_baru_c.push(baru_c);
+        rows_baru_c1.push(baru_c1);
+        rows_baru_c2.push(baru_c2);
+
+        rows_baru_d.push(baru_d);
+        rows_baru_d1.push(baru_d1);
+
+        rows_perpanjangan_a.push(perpanjangan_a);
+        rows_perpanjangan_au.push(perpanjangan_au);
+        rows_perpanjangan_c.push(perpanjangan_c);
+        rows_perpanjangan_c1.push(perpanjangan_c1);
+        rows_perpanjangan_c2.push(perpanjangan_c2);
+        rows_perpanjangan_d.push(perpanjangan_d);
+        rows_perpanjangan_d1.push(perpanjangan_d1);
+        rows_perpanjangan_b1.push(perpanjangan_b1);
+        rows_perpanjangan_b1u.push(perpanjangan_b1u);
+        rows_perpanjangan_b2.push(perpanjangan_b2);
+        rows_perpanjangan_b2u.push(perpanjangan_b2u);
+
+        rows_peningkatan_au.push(peningkatan_au);
+        rows_peningkatan_b1.push(peningkatan_b1);
+        rows_peningkatan_b1u.push(peningkatan_b1u);
+        rows_peningkatan_b2.push(peningkatan_b2);
+        rows_peningkatan_b2u.push(peningkatan_b2u);
+      }
+
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, 10);
+      }
+      let rows = {
+        rows_name_polda,
+        rows_baru_a,
+        rows_baru_c,
+        rows_baru_c1,
+        rows_baru_c2,
+
+        rows_baru_d,
+        rows_baru_d1,
+
+        rows_perpanjangan_a,
+        rows_perpanjangan_au,
+        rows_perpanjangan_c,
+        rows_perpanjangan_c1,
+        rows_perpanjangan_c2,
+        rows_perpanjangan_d,
+        rows_perpanjangan_d1,
+        rows_perpanjangan_b1,
+        rows_perpanjangan_b1u,
+        rows_perpanjangan_b2,
+        rows_perpanjangan_b2u,
+
+        rows_peningkatan_au,
+        rows_peningkatan_b1,
+        rows_peningkatan_b1u,
+        rows_peningkatan_b2,
+        rows_peningkatan_b2u,
+        rows_jumlah_sim,
+      };
+      let results = tempSim(rows, tgl);
+      const workSheet = XLSX.utils.table_to_sheet(results);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Sheet 1");
+      XLSX.writeFile(
+        workBook,
+        `./public/export_laphar/laporan_harian_sim${tgl}.xlsx`
+      );
+      res.download(`./public/export_laphar/laporan_harian_sim${tgl}.xlsx`);
       // response(res, true, "Succeed", ditkamsel);
     } catch (error) {
       response(res, false, "Failed", error.message);

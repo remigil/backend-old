@@ -286,6 +286,178 @@ exports.tempRanmor = (data, tgl) => {
   const table = dom.window.document.getElementById("table1");
   return table;
 };
+
+exports.tempSim = (data, tgl) => {
+  const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
+        class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">
+        
+        <tbody>
+        <tr>
+                                <th colspan="7">Markas Besar</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Kepolisian Negara Republik Indonesia</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Corps Lalulintas</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Tanggal : ${tgl}</th>
+                            </tr>
+                              <tr>
+                                <th colspan="7">Laporan : SIM</th>
+                            </tr>
+                                  <tr>
+                                <th colspan="7"></th>
+                            </tr>
+                                <tr>
+                                <th colspan="7"></th>
+                            </tr>
+            <tr class="tableizer-firstrow">
+                <td>URAIAN</td>
+                ${data.rows_name_polda.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
+            </tr>
+            <tr>
+                <td>1. Baru A</td>
+                ${data.rows_baru_a.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
+            </tr>
+            <tr>
+                <td>2. Baru C</td>
+                 ${data.rows_baru_c.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>3. Baru C1</td>
+                 ${data.rows_baru_c1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>4. Baru C2</td>
+                 ${data.rows_baru_c2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td>5. Baru D</td>
+                 ${data.rows_baru_d.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>6. Baru D1</td>
+                 ${data.rows_baru_d1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+               <tr>
+                <td>7. Perpanjangan A</td>
+                 ${data.rows_perpanjangan_a.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>8. Perpanjangan AU</td>
+                 ${data.rows_perpanjangan_au.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+               <tr>
+                <td>9. Perpanjangan C</td>
+                 ${data.rows_perpanjangan_c.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>9. Perpanjangan C1</td>
+                 ${data.rows_perpanjangan_c1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>9. Perpanjangan C2</td>
+                 ${data.rows_perpanjangan_c2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>9. Perpanjangan D</td>
+                 ${data.rows_perpanjangan_d.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+                <tr>
+                <td>9. Perpanjangan D1</td>
+                 ${data.rows_perpanjangan_d1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+               <tr>
+                <td>9. Perpanjangan B1</td>
+                 ${data.rows_perpanjangan_b1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+                <tr>
+                <td>9. Perpanjangan B1U</td>
+                 ${data.rows_perpanjangan_b1u.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+                  <tr>
+                <td>9. Perpanjangan B2</td>
+                 ${data.rows_perpanjangan_b2.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+                    <tr>
+                <td>9. Perpanjangan B2U</td>
+                 ${data.rows_perpanjangan_b2u.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td>9. Peningkatan AU</td>
+                 ${data.rows_peningkatan_au.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+             <tr>
+                <td>9. Peningkatan B1</td>
+                 ${data.rows_peningkatan_b1.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>9. Peningkatan B1U</td>
+                 ${data.rows_peningkatan_b1u.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+              <tr>
+                <td>9. Peningkatan B2</td>
+                 ${data.rows_peningkatan_b2u.map((element) => {
+                   return `<td>${element}</td>`;
+                 })}
+            </tr>
+            <tr>
+                <td style="font-weight:bold;">Total (1+2)</td>
+                ${data.rows_jumlah_sim.map((element) => {
+                  return `<td>${element}</td>`;
+                })}
+            </tr>
+        </tbody>
+    </table>`;
+
+  const dom = new JSDOM(htmlString);
+  const table = dom.window.document.getElementById("table1");
+  return table;
+};
 exports.templateLapharNew = (data, tgl) => {
   const htmlString = `<table style="font-size: 12px; border:1px solid #CCC; font-family: Arial, Helvetica, sans-serif;" align="center"
         class="tableizer-table" cellpadding="0" cellspacing="0" id="table1">
