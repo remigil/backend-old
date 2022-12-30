@@ -64,7 +64,19 @@ Polda.init(
       type: Sequelize.INTEGER,
     },
     youtube: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING(200),
+    },
+    facebook: {
+      type: Sequelize.STRING(200),
+    },
+    twitter: {
+      type: Sequelize.STRING(200),
+    },
+    instagram: {
+      type: Sequelize.STRING(200),
+    },
+    link_playlist: {
+      type: Sequelize.STRING(200),
     },
 
     ...StructureTimestamp,
