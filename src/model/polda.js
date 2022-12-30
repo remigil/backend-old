@@ -63,21 +63,6 @@ Polda.init(
     urutan: {
       type: Sequelize.INTEGER,
     },
-    youtube: {
-      type: Sequelize.STRING(200),
-    },
-    facebook: {
-      type: Sequelize.STRING(200),
-    },
-    twitter: {
-      type: Sequelize.STRING(200),
-    },
-    instagram: {
-      type: Sequelize.STRING(200),
-    },
-    link_playlist: {
-      type: Sequelize.STRING(200),
-    },
 
     ...StructureTimestamp,
   },
@@ -102,7 +87,7 @@ Polda.init(
     sequelize: db,
   }
 );
-// (async () => {
-//   Polda.sync({ alter: true });
-// })();
+(async () => {
+  Polda.sync({ alter: true });
+})();
 module.exports = Polda;

@@ -32,6 +32,7 @@ const field_account = {
 //   foreignKey: "vehicle_id", // replaces `productId`
 //   sourceKey: "id",
 // });
+
 module.exports = class AccountController {
   static get = async (req, res) => {
     try {
@@ -164,11 +165,13 @@ module.exports = class AccountController {
         { header: "name_officer", key: "name_officer", width: 10 },
         { header: "nrp_officer", key: "nrp_officer", width: 10 },
         { header: "rank_officer", key: "rank_officer", width: 10 },
-        { header: "struktural_officer", key: "struktural_officer", width: 10 },
+        { header: "structural_officer", key: "structural_officer", width: 10 },
         { header: "pam_officer", key: "pam_officer", width: 10 },
         { header: "phone_officer", key: "phone_officer", width: 10 },
         { header: "status_officer", key: "status_officer", width: 10 },
         { header: "leader_team", key: "leader_team", width: 10 },
+        { header: "polda_id", key: "polda_id", width: 10 },
+        { header: "polres_id", key: "polres_id", width: 10 },
       ];
 
       await exportUser(
@@ -229,6 +232,53 @@ module.exports = class AccountController {
           worksheet3.getRow(1).eachCell((cell) => {
             cell.font = { bold: true };
           });
+          const worksheet4 = workbook.addWorksheet("Data Polda");
+          worksheet4.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "code_satpas", key: "code_satpas", width: 10 },
+            { header: "name_polda", key: "name_polda", width: 10 },
+          ];
+
+          // const getCountry = await Country.findAll();
+          const [getPolda] = await db.query(
+            `SELECT * FROM polda WHERE deleted_at is null ORDER BY id ASC`
+          );
+          getPolda.forEach((country) => {
+            country.id = country.id;
+            country.code_satpas = country.code_satpas;
+            country.name_polda = country.name_polda;
+
+            worksheet4.addRow(country);
+          });
+
+          worksheet4.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+          });
+          const worksheet5 = workbook.addWorksheet("Data Polres");
+          worksheet5.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "polda_id", key: "polda_id", width: 10 },
+            { header: "code_satpas", key: "code_satpas", width: 10 },
+            { header: "name_polres", key: "name_polres", width: 10 },
+          ];
+
+          // const getCountry = await Country.findAll();
+          const [getPolres] = await db.query(
+            `SELECT * FROM polres WHERE deleted_at is null ORDER BY id ASC`
+          );
+          getPolres.forEach((country) => {
+            country.id = country.id;
+            country.polda_id = country.polda_id;
+            country.code_satpas = country.code_satpas;
+            country.name_polres = country.name_polres;
+
+            worksheet5.addRow(country);
+          });
+
+          worksheet5.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+          });
+
           res.setHeader(
             "Content-Type",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -260,7 +310,7 @@ module.exports = class AccountController {
       let readExcell = await readXlsxFile("./public/uploads/excel/" + fileName);
       let index = 0;
       let listOfficer = [];
-      const officerCreate = [];
+      let officerCreate = [];
       const officerCreateError = [];
       const vehicleCreateError = [];
       const countryCreateError = [];
@@ -296,20 +346,24 @@ module.exports = class AccountController {
                   name_officer: iterator[5] || null,
                   nrp_officer: iterator[6] || null,
                   rank_officer: iterator[7] || null,
-                  struktural_officer: iterator[8] || null,
+                  structural_officer: iterator[8] || null,
                   pam_officer: iterator[9] || null,
                   phone_officer: iterator[10] || null,
                   status_officer: iterator[11] || null,
+                  polda_id: iterator[13] || null,
+                  polres_id: iterator[14] || null,
                 });
               } else {
                 officerCreate.push({
                   name_officer: iterator[5] || null,
                   nrp_officer: iterator[6] || null,
                   rank_officer: iterator[7] || null,
-                  struktural_officer: iterator[8] || null,
+                  structural_officer: iterator[8] || null,
                   pam_officer: iterator[9] || null,
                   phone_officer: iterator[10] || null,
                   status_officer: iterator[11] || null,
+                  polda_id: parseInt(iterator[13]) || null,
+                  polres_id: parseInt(iterator[14]) || null,
                 });
                 listOfficer.push({
                   name_account: iterator[1],
@@ -319,11 +373,13 @@ module.exports = class AccountController {
                   name_officer: iterator[5] || null,
                   nrp_officer: iterator[6] || null,
                   rank_officer: iterator[7] || null,
-                  struktural_officer: iterator[8] || null,
+                  structural_officer: iterator[8] || null,
                   pam_officer: iterator[9] || null,
                   phone_officer: iterator[10] || null,
                   status_officer: iterator[11] || null,
                   leader_team: iterator[11] || null,
+                  polda_id: parseInt(iterator[13]) || null,
+                  polres_id: parseInt(iterator[14]) || null,
                 });
               }
             } else {
@@ -332,7 +388,7 @@ module.exports = class AccountController {
                 name_officer: iterator[5] || null,
                 nrp_officer: iterator[6] || null,
                 rank_officer: iterator[7] || null,
-                struktural_officer: iterator[8] || null,
+                structural_officer: iterator[8] || null,
                 pam_officer: iterator[9] || null,
                 phone_officer: iterator[10] || null,
                 status_officer: iterator[11] || null,
@@ -341,63 +397,78 @@ module.exports = class AccountController {
           } else {
             vehicleCreateError.push({
               baris: index + 1,
-              name_account: iterator[1],
-              vehicle_id: iterator[2],
-              password: iterator[3],
-              country_id: iterator[4] || null,
               name_officer: iterator[5] || null,
               nrp_officer: iterator[6] || null,
               rank_officer: iterator[7] || null,
-              struktural_officer: iterator[8] || null,
+              structural_officer: iterator[8] || null,
               pam_officer: iterator[9] || null,
               phone_officer: iterator[10] || null,
               status_officer: iterator[11] || null,
-              leader_team: iterator[11] || null,
             });
           }
         }
         index++;
       }
+
+      let duplicates = officerCreate
+        .map((e) => e["nrp_officer"])
+        .map((e, i, final) => final.indexOf(e) !== i && i)
+        .filter((obj) => officerCreate[obj])
+        .map((e) => officerCreate[e]["nrp_officer"]);
+
+      listOfficer = listOfficer.filter(
+        (list) =>
+          `${list.nrp_officer}` !=
+          duplicates.find((dup) => `${dup}` == `${list.nrp_officer}`)
+      );
+      officerCreate = officerCreate.filter(
+        (list) =>
+          list.nrp_officer !=
+          duplicates.find((dup) => `${dup}` == `${list.nrp_officer}`)
+      );
       errorData = {
         officer_available: officerCreateError,
         country_not_found: countryCreateError,
         vehicle_not_found: vehicleCreateError,
       };
-
       const officerCreateDb = await Officer.bulkCreate(officerCreate, {
         transaction: t,
       });
+
       let accountData = [];
       let officerDataForTRX = [];
+      let errOfficerDataForTRX = [];
       for (const iterator of listOfficer) {
-        let leaderTeam = officerCreateDb.filter((officer) => {
+        let leaderTeam = officerCreateDb.find((officer) => {
           return `${officer.nrp_officer}` === `${iterator.nrp_officer}`;
         });
-
-        officerDataForTRX.push({
-          ...iterator,
-          name_account: iterator.name_account,
-          vehicle_id: iterator.vehicle_id,
-          password: iterator.password,
-          country_id: iterator.country_id,
-          leader_team: leaderTeam[0]?.dataValues?.id,
-          id: leaderTeam[0]?.dataValues?.id,
-        });
-        let checkData = accountData.filter(
-          (check) => check.name_account === iterator.name_account
-        );
-        if (!checkData.length) {
-          accountData.push({
+        // let leaderTeam2 = officerCreateDb.find((officer) => {
+        //   return `${officer.nrp_officer}` === `${iterator.nrp_officer}`;
+        // });
+        // console.log({ leaderTeam2 });
+        // if (leaderTeam.length) {
+        if (leaderTeam?.dataValues?.id) {
+          officerDataForTRX.push({
+            ...iterator,
             name_account: iterator.name_account,
-            id_vehicle: iterator.vehicle_id,
+            vehicle_id: iterator.vehicle_id,
             password: iterator.password,
             country_id: iterator.country_id,
-            leader_team: leaderTeam[0]?.dataValues?.id,
+            leader_team: leaderTeam?.dataValues?.id,
+            id: leaderTeam?.dataValues?.id,
           });
+          accountData.push({
+            name_account: iterator.name_account,
+            vehicle_id: iterator.vehicle_id,
+            password: iterator.password,
+            country_id: iterator.country_id,
+            leader_team: leaderTeam?.dataValues?.id,
+          });
+        } else {
+          errOfficerDataForTRX.push(iterator);
         }
       }
       const accountCreateDb = await Account.bulkCreate(accountData, {
-        // updateOnDuplicate: ["name_account"],
         transaction: t,
       });
       let trxAccountOfficerData = [];
@@ -405,56 +476,10 @@ module.exports = class AccountController {
         let account_id = accountCreateDb.filter((account) => {
           return `${account.name_account}` === `${iterator.name_account}`;
         });
-
         trxAccountOfficerData.push({
           officer_id: iterator.id,
-          account_id: account_id[0]?.dataValues?.id,
+          account_id: account_id[0].dataValues.id,
         });
-      }
-
-      for (const iterator of trxAccountOfficerData) {
-        if (!iterator.account_id) {
-          await t.rollback();
-          return response(
-            res,
-            true,
-            "Succed",
-            {
-              // listOfficer,
-              // officerDataForTRX,
-              // berhasil: {
-              //   officer: officerCreateDb,
-              //   account: accountCreateDb,
-              //   account_officer: accountOfficerTrx,
-              // },
-              gagal: {
-                ...errorData,
-                officer_account: { ...iterator, message: "account_id is null" },
-              },
-            },
-            200
-          );
-        }
-        if (!iterator.officer_id) {
-          await t.rollback();
-          return response(
-            res,
-            true,
-            "Succed",
-            {
-              // berhasil: {
-              //   officer: officerCreateDb,
-              //   account: accountCreateDb,
-              //   account_officer: accountOfficerTrx,
-              // },
-              gagal: {
-                ...errorData,
-                officer_account: { ...iterator, message: "officer_id is null" },
-              },
-            },
-            200
-          );
-        }
       }
 
       const accountOfficerTrx = await TrxAccountOfficer.bulkCreate(
@@ -464,20 +489,22 @@ module.exports = class AccountController {
         }
       );
       await t.commit();
-
+      // await t.rollback();
       response(
         res,
         true,
         "Succed",
         {
-          // listOfficer,
-          // officerDataForTRX,
           berhasil: {
             officer: officerCreateDb,
             account: accountCreateDb,
             account_officer: accountOfficerTrx,
           },
-          gagal: errorData,
+          gagal: {
+            ...errorData,
+            duplicate: duplicates,
+            errorFormat: errOfficerDataForTRX,
+          },
         },
         200
       );
@@ -494,6 +521,65 @@ module.exports = class AccountController {
       await t.rollback();
       response(res, false, error.message, error, 400);
     }
+  };
+  static testImport = async (req, res) => {
+    let geoJson = {};
+
+    let formatExcell = [
+      { header: "x", key: "x", width: 5 },
+      { header: "y", key: "y", width: 10 },
+      { header: "gid", key: "gid", width: 10 },
+      { header: "Name", key: "Name", width: 10 },
+      { header: "description", key: "description", width: 10 },
+    ];
+
+    await exportUser(
+      req,
+      res,
+      formatExcell,
+      "Format Import Officer",
+      "Officer",
+      async (worksheet, workbook) => {
+        // let dataJson = [];
+        let no = 1;
+
+        for (const iterator of geoJson.features) {
+          let descriptionData = "";
+          Object.keys(iterator.properties).forEach((val, key) => {
+            descriptionData += `${val}: ${iterator.properties[val]} \n`;
+          });
+          let dataJson = {};
+          dataJson.x = `${iterator.geometry.coordinates[1]},${iterator.geometry.coordinates[0]}`;
+          dataJson.y = `${iterator.geometry.coordinates[0]},${iterator.geometry.coordinates[1]}`;
+          dataJson.gid = no;
+          dataJson.Name = iterator.properties.NAMA;
+          dataJson.description = descriptionData;
+          worksheet.addRow(dataJson);
+          // dataJson.push({
+          //   x: `${iterator.geometry.coordinates[1]},${iterator.geometry.coordinates[0]}`,
+          //   y: `${iterator.geometry.coordinates[1]},${iterator.geometry.coordinates[0]}`,
+          //   Name: iterator.properties.NAMA,
+          //   gid: no,
+          //   description: ""
+          // })
+          no++;
+        }
+
+        res.setHeader(
+          "Content-Type",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=Format-Import-Officer.xlsx`
+        );
+
+        return workbook.xlsx.write(res).then(() => {
+          res.status(200);
+        });
+      }
+    );
+    // response(res, true, "Succeed", { dataJson });
   };
   static getOfficerAccount = async (req, res) => {
     try {

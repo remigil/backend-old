@@ -1,93 +1,26 @@
-const Sequelize = require("sequelize");
-const db = require("../config/database");
-const bcrypt = require("bcrypt");
-const { StructureTimestamp } = require("../constanta/db_structure");
-const { AESEncrypt } = require("../lib/encryption");
-const Model = Sequelize.Model;
-
-class Polda extends Model {}
-Polda.init(
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-      get() {
-        return AESEncrypt(String(this.getDataValue("id")), {
-          isSafeUrl: true,
-        });
-      },
-    },
-    code_satpas: {
-      type: Sequelize.STRING(5),
-    },
-    name_polda: {
-      type: Sequelize.STRING(255),
-    },
-    address: {
-      type: Sequelize.TEXT,
-    },
-    logo_polda: {
-      type: Sequelize.TEXT,
-    },
-    phone_polda: {
-      type: Sequelize.STRING(50),
-    },
-    image: {
-      type: Sequelize.STRING(200),
-    },
-    hotline: {
-      type: Sequelize.STRING(20),
-    },
-    website: {
-      type: Sequelize.TEXT,
-    },
-    latitude: {
-      type: Sequelize.TEXT,
-    },
-    longitude: {
-      type: Sequelize.TEXT,
-    },
-    zoomview: {
-      type: Sequelize.TEXT,
-    },
-    file_shp: {
-      type: Sequelize.TEXT,
-    },
-    open_time: {
-      type: Sequelize.TIME,
-    },
-    close_time: {
-      type: Sequelize.TIME,
-    },
-    urutan: {
-      type: Sequelize.INTEGER,
-    },
-
-    ...StructureTimestamp,
-  },
-  {
-    defaultScope: {
-      where: {
-        deleted_at: null,
-      },
-    },
-    scopes: {
-      deleted: {
-        where: {
-          deleted_at: null,
-        },
-      },
-    },
-    deletedAt: "deleted_at",
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    tableName: "polda",
-    modelName: "polda",
-    sequelize: db,
-  }
+const router = require("express").Router();
+const { body } = require("express-validator");
+const PoldaController = require("../controller/polda");
+const formValidation = require("../middleware/form_validation");
+router.get("/", PoldaController.get);
+router.get("/getNoEncrypt", PoldaController.getNoEncrypt);
+router.get("/getId/:id", PoldaController.getId);
+router.post(
+  "/add",
+  body("name_polda").notEmpty().isLength({ min: 3 }),
+  formValidation,
+  PoldaController.add
 );
-(async () => {
-  Polda.sync({ alter: true });
-})();
-module.exports = Polda;
+router.post("/import", formValidation, PoldaController.importExcell);
+router.put("/edit/:id", PoldaController.edit);
+router.put("/editJson", PoldaController.editJson);
+router.delete(
+  "/delete",
+  body("id").notEmpty().isLength({ min: 1 }),
+  formValidation,
+  PoldaController.delete
+);
+router.get("/getId/:id", PoldaController.getId);
+
+router.get("/get_web", PoldaController.get_web);
+module.exports = router;

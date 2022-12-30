@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 const OfficerController = require("../controller/officer");
 const formValidation = require("../middleware/form_validation");
 router.get("/", OfficerController.get);
+router.post("/update-password", OfficerController.updatePassword);
 router.get("/getId/:id", OfficerController.getId);
 router.get("/getProfileTrack", OfficerController.getUserTrack);
 router.post(

@@ -1,7 +1,9 @@
 const { AESDecrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const Vehicle = require("../model/vehicle");
+const fs = require("fs");
 const { Op, Sequelize } = require("sequelize");
+const readXlsxFile = require("read-excel-file/node");
 const _ = require("lodash");
 const db = require("../config/database");
 const pagination = require("../lib/pagination-parser");
@@ -122,6 +124,61 @@ module.exports = class VehicleController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static importExcell = async (req, res) => {
+    const t = await db.transaction();
+    try {
+      let path = req.body.file.filepath;
+      let file = req.body.file;
+      let fileName = file.originalFilename;
+      fs.renameSync(path, "./public/uploads/" + fileName, function (err) {
+        if (err) response(res, false, "Error", err.message);
+      });
+      let readExcell = await readXlsxFile("./public/uploads/" + fileName);
+      let index = 0;
+      let listPolres = [];
+      let idNotValid = [];
+      for (const iterator of readExcell) {
+        if (index == 0) {
+          // if (
+          //   iterator[1] != "1address_Fasum" &&
+          //   iterator[2] != "1vms_Fasum" &&
+          //   iterator[3] != "1jenis_Fasum" &&
+          //   iterator[4] != "1merek_Fasum" &&
+          //   iterator[5] != "1type_Fasum" &&
+          //   iterator[6] != "1ip_Fasum" &&
+          //   iterator[7] != "1gateway_Fasum" &&
+          //   iterator[8] != "1username_Fasum" &&
+          //   iterator[9] != "1password_Fasum" &&
+          //   iterator[10] != "1lat_Fasum" &&
+          //   iterator[11] != "1lng_Fasum"
+          // ) {
+          //   response(res, false, "Failed", null);
+          // }
+        } else {
+          listPolres.push({
+            no_vehicle: iterator[1],
+            type_vehicle: iterator[2],
+            brand_vehicle: iterator[3],
+            ownership_vehicle: iterator[4],
+            fuel_vehicle: iterator[5],
+            back_number_vehicle: iterator[6] || null,
+          });
+        }
+        index++;
+      }
+      const ress = await Vehicle.bulkCreate(listPolres, {
+        transaction: t,
+      });
+      await t.commit();
+
+      response(res, true, "Succed", ress);
+    } catch (error) {
+      await t.rollback();
+      response(res, false, "Failed", error.message);
+    }
+  };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
