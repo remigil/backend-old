@@ -601,4 +601,11 @@ router.use(
   require("../router/bagrenmin")
 );
 
+// Bagrenmin
+router.use(
+  "/v" + process.env.APP_VERSION + "/rekalantas",
+  // authMiddleware.jwtAuth,
+  require("../router/rekalantas")
+);
+
 module.exports = router;

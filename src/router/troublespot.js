@@ -7,7 +7,7 @@ router.get("/getid/:id", TroublespotController.getId);
 router.post(
   "/add",
   // body("no_ts").notEmpty().isLength({ min: 3 }),
-  formValidation,
+  // formValidation,
   TroublespotController.add
 );
 router.put("/edit/:id", TroublespotController.edit);
@@ -23,5 +23,10 @@ router.delete(
   formValidation,
   TroublespotController.hardDelete
 );
+
+router.get("/daily", TroublespotController.get_daily);
+router.get("/date", TroublespotController.get_by_date);
+router.get("/get_filter", TroublespotController.get_filter);
+
 
 module.exports = router;
