@@ -4,6 +4,7 @@ const moment = require("moment");
 const { default: axios } = require("axios");
 const { namePolda } = require("../lib/polda_nameParse");
 
+const response = require("../lib/response");
 
 const Count_polda_day = require("../model/count_lakalantas_polda_day");
 const Count_polda_month = require("../model/count_lakalantas_polda_month");
@@ -167,7 +168,7 @@ const update_polda_month = async () => {
         console.log("insert");
       }
     }
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    response(res, false, "Failed", e.message);
   }
 };
