@@ -397,7 +397,7 @@ module.exports = class PenyebaranController {
             leaflet: parseInt(element.dataValues.leaflet),
             billboard: parseInt(element.dataValues.billboard),
             jemensosprek: parseInt(element.dataValues.jemensosprek),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

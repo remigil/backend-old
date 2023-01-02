@@ -422,7 +422,7 @@ module.exports = class GarlantasController {
             pelanggaran_ringan: parseInt(element.dataValues.pelanggaran_ringan),
             pelanggaran_sedang: parseInt(element.dataValues.pelanggaran_sedang),
             teguran: parseInt(element.dataValues.teguran),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

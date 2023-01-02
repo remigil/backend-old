@@ -304,7 +304,7 @@ module.exports = class BpkbController {
             belanja_barang: parseInt(element.dataValues.belanja_barang),
             gaji_pegawai: parseInt(element.dataValues.gaji_pegawai),
             total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

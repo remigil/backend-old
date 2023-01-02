@@ -1031,7 +1031,7 @@ module.exports = class StnkController {
             total_samolnas: parseInt(element.dataValues.total_samolnas) || 0,
 
             total: parseInt(element.dataValues.total) || 0,
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

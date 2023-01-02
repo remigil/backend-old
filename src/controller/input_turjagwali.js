@@ -650,7 +650,7 @@ module.exports = class TurjagwaliController {
             pengawalan: parseInt(element.dataValues.pengawalan),
             penjagaan: parseInt(element.dataValues.penjagaan),
             patroli: parseInt(element.dataValues.patroli),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

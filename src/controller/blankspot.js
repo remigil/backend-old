@@ -549,7 +549,7 @@ module.exports = class BlankspotController {
         let abc = rows.map((element, index) => {
           return {
             total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

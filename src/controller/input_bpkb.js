@@ -467,7 +467,7 @@ module.exports = class BpkbController {
               element.dataValues.perubahan_pergantian
             ),
             total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

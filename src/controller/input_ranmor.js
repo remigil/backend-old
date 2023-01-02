@@ -403,7 +403,7 @@ module.exports = class RanmorController {
             mobil_bus: parseInt(element.dataValues.mobil_bus),
             sepeda_motor: parseInt(element.dataValues.sepeda_motor),
             ransus: parseInt(element.dataValues.ransus),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

@@ -393,7 +393,7 @@ module.exports = class DikmaslantasController {
             media_sosial: parseInt(element.dataValues.media_sosial),
             media_elektronik: parseInt(element.dataValues.media_elektronik),
             laka_langgar: parseInt(element.dataValues.laka_langgar),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

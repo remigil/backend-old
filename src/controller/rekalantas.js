@@ -405,7 +405,7 @@ module.exports = class RekalantasController {
             lain_lain: parseInt(element.dataValues.lain_lain),
             jalan_provinsi: parseInt(element.dataValues.jalan_provinsi),
             total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 

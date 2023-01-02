@@ -1092,7 +1092,7 @@ module.exports = class SimController {
               parseInt(element.dataValues.baru) +
                 parseInt(element.dataValues.perpanjangan) +
                 parseInt(element.dataValues.peningkatan) || 0,
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 
