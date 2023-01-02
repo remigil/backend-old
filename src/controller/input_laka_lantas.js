@@ -365,6 +365,7 @@ module.exports = class LakaLantasController {
 
       let rows = await Count_polda_day.findAll(getDataRules);
 
+
       let finals = [];
       if (type === "day") {
         const asd = list_day.map((item, index) => {
@@ -431,7 +432,7 @@ module.exports = class LakaLantasController {
             luka_berat: parseInt(element.dataValues.luka_berat),
             kerugian_material: parseInt(element.dataValues.kerugian_material),
             insiden_kecelakaan: parseInt(element.dataValues.insiden_kecelakaan),
-            date: moment(element.dataValues.month).format("YYYY"),
+            date: moment(element.dataValues.year).format("YYYY"),
           };
         });
 
