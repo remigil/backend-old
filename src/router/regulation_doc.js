@@ -25,4 +25,6 @@ router.delete(
   Regulation_docController.hardDelete
 );
 
+router.get("/bycategory/:id", Regulation_docController.getbycategory);
+
 module.exports = router;

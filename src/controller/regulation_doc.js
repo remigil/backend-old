@@ -288,4 +288,17 @@ module.exports = class Regulation_docController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static getbycategory = async (req, res) => {
+    try {
+      let data = await Regulation_doc.findAll({
+        where: {
+          regulation_category: req.params.id,
+        },
+      });
+      response(res, true, "Succeed", data);
+    } catch (error) {
+      response(res, false, "Failed", e.message);
+    }
+  };
 };
