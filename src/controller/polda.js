@@ -271,7 +271,7 @@ module.exports = class PoldaController {
 
   static getId = async (req, res) => {
     try {
-      const data = await Polda.findOne({
+      let data = await Polda.findOne({
         where: {
           id: AESDecrypt(req.params.id, {
             isSafeUrl: true,
@@ -279,6 +279,9 @@ module.exports = class PoldaController {
           }),
         },
       });
+
+      data.dataValues.polda_id = data.dataValues.id;
+      console.log(data);
       response(res, true, "Succeed", {
         data,
       });
@@ -486,21 +489,5 @@ module.exports = class PoldaController {
       response(res, false, "Failed", e.message);
     }
   };
-  static getId = async (req, res) => {
-    try {
-      const data = await Polda.findOne({
-        where: {
-          id: AESDecrypt(req.params.id, {
-            isSafeUrl: true,
-            parseMode: "string",
-          }),
-        },
-      });
-      response(res, true, "Succeed", {
-        data,
-      });
-    } catch (e) {
-      response(res, false, "Failed", e.message);
-    }
-  };
+
 };
