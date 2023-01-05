@@ -40,7 +40,7 @@ exports.cronLakalantas = () => {
   scheduledJobFunction2.start();
 };
 
-const update_polda_day = async () => {
+const update_polda_day = async (res) => {
   try {
     let getIrsms = await axios.get(
       "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
@@ -96,7 +96,7 @@ const update_polda_day = async () => {
   }
 };
 
-const update_polda_month = async () => {
+const update_polda_month = async (res) => {
   try {
     const transaction = await db.transaction();
 
