@@ -780,8 +780,6 @@ module.exports = class sdm_polantasController {
         dataInputPolda.push({
           polda_id: decAes(item.polda_id),
           date: item.date,
-          baru: item.baru,
-          perpanjangan: item.perpanjangan,
 
           irjen: item.irjen,
           baru_c: item.baru_c,
@@ -809,11 +807,13 @@ module.exports = class sdm_polantasController {
           briptu: item.briptu,
         });
       });
-      let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
-        transaction: transaction,
-      });
+      // let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
+      //   transaction: transaction,
+      // });
 
-      await transaction.commit();
+      console.log(dataInputPolda);
+
+      // await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (error) {
       await transaction.rollback();

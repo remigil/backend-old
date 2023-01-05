@@ -8,6 +8,7 @@ router.get("/rengar/date", Rencana_Anggaran.get_by_date);
 
 router.get("/sdm_polantas/daily", SDMPolantas.get_daily);
 router.get("/sdm_polantas/date", SDMPolantas.get_by_date);
+router.post("/sdm_polantas/add", SDMPolantas.add);
 
 // router.get("/", CountDitregident.get);
 // router.get("/count-month", CountDitregident.countByMonth);
