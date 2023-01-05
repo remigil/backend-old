@@ -160,6 +160,13 @@ router.use(
   require("../router/cctv")
 );
 
+// ETILANG
+router.use(
+  "/v" + process.env.APP_VERSION + "/etilang_perkara",
+  // authMiddleware.jwtAuth,
+  require("../router/etilang_perkara")
+);
+
 // bodycam
 router.use(
   "/v" + process.env.APP_VERSION + "/bodycam",
@@ -592,7 +599,6 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/stackholder")
 );
-
 
 // Bagrenmin
 router.use(
