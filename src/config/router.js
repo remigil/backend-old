@@ -284,7 +284,7 @@ router.use(
 
 router.use(
   "/v" + process.env.APP_VERSION + "/regulation_doc",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/regulation_doc")
 );
 
