@@ -78,6 +78,9 @@ Polda.init(
     link_playlist: {
       type: Sequelize.TEXT,
     },
+    link_cctv: {
+      type: Sequelize.TEXT,
+    },
     ...StructureTimestamp,
   },
   {

@@ -383,14 +383,14 @@ router.use(
 // -------------- samsat
 router.use(
   "/v" + process.env.APP_VERSION + "/samsat",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/samsat")
 );
 
 // -------------- satpas
 router.use(
   "/v" + process.env.APP_VERSION + "/satpas",
-  authMiddleware.jwtAuth,
+  // authMiddleware.jwtAuth,
   require("../router/satpas")
 );
 
