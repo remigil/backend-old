@@ -124,11 +124,17 @@ module.exports = class SamsatController {
           fieldValueData[val] = null;
         }
       });
-      let op = await Samsat.create(fieldValueData, {
+      Samsat.create(fieldValueData, {
         transaction: transaction,
-      });
-      await transaction.commit();
-      response(res, true, "Succeed", op);
+      })
+        .then(async (data) => {
+          await transaction.commit();
+          response(res, true, "Succeed", data);
+        })
+        .catch((err) => {
+          console.log({ err });
+          response(res, false, "Failed", err);
+        });
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
