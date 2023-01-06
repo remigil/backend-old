@@ -91,11 +91,11 @@ const update_polda_day = async (res) => {
         await Count_polda_day.create(data);
       }
     }
-    console.log({
-      task: "update_polda_day",
-      massage: "Succsess",
-      data: getIrsms,
-    });
+    // console.log({
+    //   task: "update_polda_day",
+    //   massage: "Succsess",
+    //   data: getIrsms,
+    // });
   } catch (e) {
     console.log({ task: "update_polda_day", massage: e.message });
   }
