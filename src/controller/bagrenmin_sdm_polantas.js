@@ -270,6 +270,7 @@ module.exports = class sdm_polantasController {
         polda_id = null,
         topPolda = null,
         limit = 34,
+        newest = null
       } = req.query;
       const getDataRules = {
         group: ["polda.id"],
@@ -318,6 +319,22 @@ module.exports = class sdm_polantasController {
         getDataRules.include[0].where = {
           date: date,
         };
+      }
+
+      if (newest) {
+
+        let checkData = await Count_polda_day.findAll({
+          limit: 1,
+          order:[['date','DESC']]
+        })
+       let asd_date = checkData[0].dataValues.date
+        let zxc_date = checkData[0].dataValues.date;
+
+        getDataRules.include[0].where = {
+          date: {
+            [Op.between]:[asd_date, zxc_date]
+          }
+        }
       }
 
       if (filter) {
@@ -776,16 +793,16 @@ module.exports = class sdm_polantasController {
     const transaction = await db.transaction();
     try {
       let dataInputPolda = [];
+      let date = "";
       req.body?.value.map((item) => {
+        date = item.date;
         dataInputPolda.push({
           polda_id: decAes(item.polda_id),
           date: item.date,
 
           irjen: item.irjen,
-          baru_c: item.baru_c,
           brigjen: item.brigjen,
           kbp: item.kbp,
-          baru_d: item.baru_d,
           akbp: item.akbp,
 
           bripda: item.bripda,
@@ -793,27 +810,38 @@ module.exports = class sdm_polantasController {
           pns: item.pns,
           akp: item.akp,
           iptu: item.iptu,
-          perpanjangan_d: item.perpanjangan_d,
           ipda: item.ipda,
-          perpanjangan_b1: item.perpanjangan_b1,
           aiptu: item.aiptu,
-          perpanjangan_b2: item.aipda,
           aipda: item.aipda,
 
           bripka: item.bripka,
-          peningkatan_b1: item.peningkatan_b1,
           brigdr: item.brigdr,
-          peningkatan_b2: item.peningkatan_b2,
           briptu: item.briptu,
         });
       });
-      // let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
-      //   transaction: transaction,
-      // });
 
-      console.log(dataInputPolda);
+      let checkData = await Count_polda_day.findAll({
+        where: {
+          date: date,
+        },
+      });
 
-      // await transaction.commit();
+      if (checkData.length > 0) {
+        let hapus = await Count_polda_day.destroy({
+          where: {
+            date: date,
+          },
+        });
+        let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
+          transaction: transaction,
+        });
+      } else {
+        let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
+          transaction: transaction,
+        });
+      }
+
+      await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (error) {
       await transaction.rollback();

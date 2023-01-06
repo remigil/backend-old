@@ -35,6 +35,7 @@ module.exports = class BpkbController {
         polda_id = null,
         topPolda = null,
         limit = 34,
+        newest = null,
       } = req.query;
       const getDataRules = {
         group: ["polda.id"],
@@ -76,6 +77,21 @@ module.exports = class BpkbController {
       if (date) {
         getDataRules.include[0].where = {
           date: date,
+        };
+      }
+
+      if (newest) {
+        let checkData = await Count_polda_day.findAll({
+          limit: 1,
+          order: [["date", "DESC"]],
+        });
+        let asd_date = checkData[0].dataValues.date;
+        let zxc_date = checkData[0].dataValues.date;
+
+        getDataRules.include[0].where = {
+          date: {
+            [Op.between]: [asd_date, zxc_date],
+          },
         };
       }
 
@@ -337,70 +353,14 @@ module.exports = class BpkbController {
     }
   };
 
-  // static add = async (req, res) => {
-  //   const transaction = await db.transaction();
-  //   try {
-  //     const { polda } = req.query;
-  //     if (polda) {
-  //       let dataInputPolda = [];
-  //       req.body?.value.map((item) => {
-  //         dataInputPolda.push({
-  //           polda_id: decAes(req.body.polda_id),
-  //           date: req.body.date,
-  //           polres_id: decAes(item.polres_id),
-  //           program_kegiatan: item.program_kegiatan,
-  //           belanja_barang: item.belanja_barang,
-  //           belanja_modal: item.belanja_modal,
-  //         });
-  //       });
-  //       let insertDataPolda = await Input_bpkb.bulkCreate(dataInputPolda, {
-  //         transaction: transaction,
-  //       });
-  //     } else {
-  //       let checkData = await Input_bpkb.findOne({
-  //         where: {
-  //           polda_id: decAes(req.body.polda_id),
-  //           polres_id: decAes(req.body.polres_id),
-  //           date: req.body.date,
-  //         },
-  //       });
-
-  //       let inputData = {
-  //         polda_id: decAes(req.body.polda_id),
-  //         polres_id: decAes(req.body.polres_id),
-  //         date: req.body.date,
-  //         program_kegiatan: req.body.program_kegiatan,
-  //         belanja_barang: req.body.belanja_barang,
-  //         belanja_modal: req.body.belanja_modal,
-  //       };
-  //       if (checkData) {
-  //         let updateData = await Input_bpkb.update(inputData, {
-  //           where: {
-  //             polda_id: decAes(req.body.polda_id),
-  //             polres_id: decAes(req.body.polres_id),
-  //             date: req.body.date,
-  //           },
-  //           transaction: transaction,
-  //         });
-  //       } else {
-  //         let insertData = await Input_bpkb.create(inputData, {
-  //           transaction: transaction,
-  //         });
-  //       }
-  //     }
-  //     await transaction.commit();
-  //     response(res, true, "Succeed", null);
-  //   } catch (error) {
-  //     await transaction.rollback();
-  //     response(res, false, "Failed", error.message);
-  //   }
-  // };
-
   static add = async (req, res) => {
+    const transaction = await db.transaction();
     try {
-      const transaction = await db.transaction();
       let dataInputPolda = [];
+      let date = "";
+
       req.body?.value.map((item) => {
+        date = item.date;
         dataInputPolda.push({
           polda_id: decAes(item.polda_id),
           date: item.date,
@@ -410,9 +370,28 @@ module.exports = class BpkbController {
           gaji_pegawai: item.gaji_pegawai,
         });
       });
-      let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
-        transaction: transaction,
+      let checkData = await Count_polda_day.findAll({
+        where: {
+          date: date,
+        },
       });
+
+      console.log(dataInputPolda);
+
+      if (checkData.length > 0) {
+        let hapus = await Count_polda_day.destroy({
+          where: {
+            date: date,
+          },
+        });
+        let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
+          transaction: transaction,
+        });
+      } else {
+        let insertDataPolda = await Count_polda_day.bulkCreate(dataInputPolda, {
+          transaction: transaction,
+        });
+      }
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (error) {

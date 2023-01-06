@@ -167,6 +167,12 @@ router.use(
   require("../router/etilang_perkara")
 );
 
+router.use(
+  "/v" + process.env.APP_VERSION + "/etilang_perkara_pasal",
+  // authMiddleware.jwtAuth,
+  require("../router/etilang_perkara_pasal")
+);
+
 // bodycam
 router.use(
   "/v" + process.env.APP_VERSION + "/bodycam",
@@ -612,6 +618,13 @@ router.use(
   "/v" + process.env.APP_VERSION + "/rekalantas",
   // authMiddleware.jwtAuth,
   require("../router/rekalantas")
+);
+
+// Bagtik
+router.use(
+  "/v" + process.env.APP_VERSION + "/bagtik",
+  // authMiddleware.jwtAuth,
+  require("../router/bagtik")
 );
 
 module.exports = router;
