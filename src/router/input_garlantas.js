@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { body } = require("express-validator");
 const InputGarlantas = require("../controller/input_garlantas");
 const formValidation = require("../middleware/form_validation");
+router.get("/", InputGarlantas.get);
 router.get("/daily", InputGarlantas.get_daily);
 router.get("/monthly", InputGarlantas.get_monthly);
 router.get("/date", InputGarlantas.get_by_date);

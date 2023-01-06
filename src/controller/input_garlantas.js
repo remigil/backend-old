@@ -15,6 +15,9 @@ const Count_polres_month = require("../model/count_garlantas_polres_month");
 const Polda = require("../model/polda");
 const Polres = require("../model/polres");
 
+const Etilang_perkara_pasal = require("../model/etilang_perkara_pasal");
+const Etilang_perkara = require("../model/etilang_perkara");
+
 // Count_polda_month.belongsTo(Polda, { foreignKey: "polda_id", as: "polda" });
 // Count_polda_day.belongsTo(Polda, { foreignKey: "polda_id", as: "polda" });
 
@@ -25,6 +28,8 @@ Polda.hasMany(Count_polda_month, {
   foreignKey: "polda_id",
   as: "garlantas-month",
 });
+
+Etilang_perkara.hasOne(Etilang_perkara_pasal, { foreignKey: "no_bayar" });
 // Polda.hasMany(Input_garlantas, { foreignKey: "polda_id", as: "garlantas" });
 // Polres.hasMany(Input_garlantas, { foreignKey: "polres_id", as: "garlantas" });
 
@@ -34,6 +39,84 @@ const decAes = (token) =>
     parseMode: "string",
   });
 module.exports = class GarlantasController {
+  static get = async (req, res) => {
+    try {
+      let start_date = moment().subtract(1, "days").unix();
+      let end_date = moment().unix();
+
+      console.log(start_date, end_date);
+
+      let data = await Etilang_perkara.findAll({
+        include: [
+          {
+            model: Etilang_perkara_pasal,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            required: true,
+          },
+        ],
+        where: {
+          tgl_perkara: {
+            [Op.between]: [start_date, end_date],
+          },
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        order: [["tgl_perkara", "DESC"]],
+      });
+
+      let finals = [];
+      data.map((element, index) => {
+        finals.push({
+          no_bayar: element.dataValues.no_bayar,
+          kepolisian_induk: element.dataValues.kepolisian_induk,
+          tgl_perkara: moment.unix(element.dataValues.tgl_perkara),
+          jenis_pelanggaran: element.dataValues.perkara_pasal.klasifikasi,
+        });
+      });
+
+      let result = Object.values(
+        finals.reduce((a, { kepolisian_induk, ...props }) => {
+          if (!a[kepolisian_induk])
+            a[kepolisian_induk] = Object.assign(
+              {},
+              { kepolisian_induk, data: [props] }
+            );
+          else a[kepolisian_induk].data.push(props);
+          return a;
+        }, {})
+      );
+      let rows = [];
+      for (let i = 0; i < result.length; i++) {
+        let asd = [];
+        for (let j = 0; j < result[i].data.length; j++) {
+          asd.push(result[i].data[j].jenis_pelanggaran);
+        }
+
+        let countedNames = asd.reduce((allNames, name) => {
+          const currCount = allNames[name] ?? 0;
+          return {
+            ...allNames,
+            [name]: currCount + 1,
+          };
+        }, {});
+        rows.push({
+          polda: result[i].kepolisian_induk,
+          date: moment(finals[i].tgl_perkara).format("YYYY-MM-DD"),
+          berat: countedNames.Berat || 0,
+          sedang: countedNames.Sedang || 0,
+          ringan: countedNames.Ringan || 0,
+        });
+      }
+
+      response(res, true, "Succeed", rows);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
   static get_daily = async (req, res) => {
     const modelAttr = Object.keys(Count_polda_day.getAttributes());
     try {
