@@ -5,6 +5,7 @@ const { Op, Sequelize } = require("sequelize");
 const _ = require("lodash");
 const { AESDecrypt } = require("../lib/encryption");
 const readXlsxFile = require("read-excel-file/node");
+const pagination = require("../lib/pagination-parser");
 const fs = require("fs");
 
 const fieldData = {
@@ -34,12 +35,19 @@ module.exports = class SamsatController {
       const modelAttr = Object.keys(Samsat.getAttributes());
       let getDataRules = { where: null };
       if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
+        const resPage = pagination.getPagination(length, start);
+        getDataRules.limit = resPage.limit;
+        getDataRules.offset = resPage.offset;
       }
-      if (order <= modelAttr.length) {
-        getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      }
+      // if (order <= modelAttr.length) {
+      //   getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
+      // }
+      getDataRules.order = [
+        [
+          order != null ? order : "id",
+          orderDirection != null ? orderDirection : "desc",
+        ],
+      ];
       if (search != null) {
         let whereBuilder = [];
         modelAttr.forEach((key) => {
