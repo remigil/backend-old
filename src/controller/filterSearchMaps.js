@@ -822,7 +822,19 @@ module.exports = class FilterSearchController {
               tampungArr.push(fieldData[value](req));
             } else if (value == "samsat") {
               tampung[value] = true;
-              tampungArr.push(fieldData[value](req));
+              if (polda_id) {
+                var dummyData = Samsat.findAll({
+                  where: {
+                    polda_id: AESDecrypt(polda_id, {
+                      isSafeUrl: true,
+                      parseMode: "string",
+                    }),
+                  },
+                });
+                tampungArr.push(dummyData);
+              } else {
+                tampungArr.push(fieldData[value](req));
+              }
             } else if (value == "sim_keliling") {
               tampung[value] = true;
               tampungArr.push(fieldData[value](req));

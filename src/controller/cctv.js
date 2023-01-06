@@ -145,59 +145,6 @@ module.exports = class CctvController {
     }
   };
 
-  static addGeoJson = async (req, res) => {
-    const transaction = await db.transaction();
-    try {
-      let input = req.body.features;
-      let dummy = [];
-
-      var fieldValue = {};
-      for (let i = 0; i < input.length; i++) {
-        var cord;
-        var latitude;
-        var longitude;
-        if (input[i]["geometry"]) {
-          // console.log(input[i]["geometry"]["coordinates"]);
-          cord = input[i]["geometry"]["coordinates"].split(",");
-          latitude = parseFloat(cord[1]);
-          longitude = parseFloat(cord[0]);
-        } else {
-          latitude = null;
-          longitude = null;
-        }
-        fieldValue = {};
-        fieldValue[
-          "address_cctv"
-        ] = `Arteri - ${input[i]["properties"]["nama"]}`;
-        fieldValue["vms_cctv"] = `Arteri - ${input[i]["properties"]["nama"]}`;
-        fieldValue["jenis_cctv"] = "cctv arteri";
-        fieldValue["merek_cctv"] = "cctv arteri";
-        fieldValue["type_cctv"] = "cctv arteri";
-        fieldValue["ip_cctv"] = "https://jid.jasamargalive.com";
-        fieldValue["gateway_cctv"] = "https://jid.jasamargalive.com";
-        fieldValue["username_cctv"] = "korlantas";
-        fieldValue["password_cctv"] = "korlantas";
-        fieldValue["lat_cctv"] = latitude;
-        fieldValue["lng_cctv"] = longitude;
-        fieldValue[
-          "link_cctv"
-        ] = `https://jid.jasamarga.com/cctv2/${input[i]["properties"]["key id"]}?tx=`;
-        fieldValue["status_cctv"] = 1;
-
-        dummy.push(fieldValue);
-      }
-
-      const data = await Cctv.bulkCreate(dummy, {
-        transaction: transaction,
-      });
-      await transaction.commit();
-      response(res, true, "Succeed", dummy);
-    } catch (e) {
-      await transaction.rollback();
-      response(res, false, "Failed", e.message);
-    }
-  };
-
   static importExcell = async (req, res) => {
     const t = await db.transaction();
     try {

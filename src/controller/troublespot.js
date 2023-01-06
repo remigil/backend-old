@@ -19,8 +19,6 @@ const decAes = (token) =>
     parseMode: "string",
   });
 
-Polda.hasMany(Troublespot, { foreignKey: "polda_id", as: "troublespot" });
-
 const fieldData = {
   no_ts: null,
   report_date: null,
@@ -168,64 +166,69 @@ module.exports = class TroublespotController {
           fieldValueData[val] = null;
         }
       });
-      // console.log(fieldValueData);
+      fieldValueData["polda_id"] = AESDecrypt(req.body["polda_id"], {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
+      fieldValueData["polres_id"] = AESDecrypt(req.body["polres_id"], {
+        isSafeUrl: true,
+        parseMode: "string",
+      });
 
-      if (req.body["polda_id"]) {
-        fieldValueData["polda_id"] = AESDecrypt(req.body["polda_id"], {
-          isSafeUrl: true,
-          parseMode: "string",
-        });
-      }
+      let cekSatpas = await Polres.findOne({
+        where: {
+          id: fieldValueData["polres_id"],
+        },
+      });
 
-      let cekSatpas;
-      if (req.body["polres_id"]) {
-        fieldValueData["polres_id"] = AESDecrypt(req.body["polres_id"], {
-          isSafeUrl: true,
-          parseMode: "string",
-        });
-        cekSatpas = await Polres.findOne({
-          where: {
-            id: fieldValueData["polres_id"],
-          },
-        });
-      }
+      // let cekNoTs = await Troublespot.findAll({
+      //   limit: 1,
+      //   order: [["id", "DESC"]],
+      // });
 
+      // let insertGetTs = decAes(cekNoTs[0].id);
+      // let test = parseInt(insertGetTs) + 1;
+      // let code = codeTS(test);
+
+      // let getSatpas = cekSatpas["code_satpas"];
+
+      // fieldValueData["no_ts"] = no_ts;
       if (req.body.route) {
         let route = await direction_route(JSON.parse(req.body.route));
         fieldValueData["direction_route"] = route.route;
       }
-      // fieldValueData["id"] = 180;
-
-      Troublespot.create(fieldValueData, {
+      let op = await Troublespot.create(fieldValueData, {
         transaction: transaction,
-      })
-        .then(async (op) => {
-          // console.log(op);
-          let getid = decAes(op["id"]);
-          let test = parseInt(getid);
-          let code = codeTS(test);
+      });
+      let getid = decAes(op["id"]);
+      let test = parseInt(getid);
+      let code = codeTS(test);
 
-          let getSatpas = cekSatpas["code_satpas"];
+      let getSatpas = cekSatpas["code_satpas"];
 
-          let nots = `TS/${moment().format("MMYY")}${code}/${getSatpas}`;
+      let nots = `TS/${moment().format("MMYY")}${code}/${getSatpas}`;
 
-          await Troublespot.update(
-            { no_ts: nots },
-            {
-              where: {
-                id: getid,
-              },
-              transaction: transaction,
-            }
-          );
+      await Troublespot.update(
+        { no_ts: nots },
+        {
+          where: {
+            id: getid,
+          },
+          transaction: transaction,
+        }
+      );
 
-          await transaction.commit();
-          response(res, true, "Succeed", op);
-        })
-        .catch((err) => {
-          console.log(err);
-          response(res, false, "Failed", err);
-        });
+      // await Trip_on.update(
+      //   { code: codetrp, barcode: barcode },
+      //   {
+      //     where: {
+      //       id: getId,
+      //     },
+      //     transaction: transaction,
+      //   }
+      // );
+      await transaction.commit();
+      response(res, true, "Succeed", op);
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
@@ -307,280 +310,6 @@ module.exports = class TroublespotController {
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
-    }
-  };
-
-  static get_daily = async (req, res) => {
-    try {
-      const {
-        start_date = null,
-        end_date = null,
-        filter = null,
-        date = null,
-        serverSide = null,
-        length = null,
-        start = null,
-        polda_id = null,
-        topPolda = null,
-        limit = 34,
-      } = req.query;
-      const getDataRules = {
-        group: ["polda.id"],
-        attributes: [
-          "id",
-          "name_polda",
-          [Sequelize.fn("count", Sequelize.col("polda_id")), "total"],
-        ],
-        include: [
-          {
-            model: Troublespot,
-            required: false,
-            as: "troublespot",
-            attributes: [],
-          },
-        ],
-        nest: true,
-        subQuery: false,
-      };
-
-      if (date) {
-        getDataRules.include[0].where = {
-          created_at: date,
-        };
-      }
-
-      if (filter) {
-        getDataRules.include[0].where = {
-          created_at: {
-            [Op.between]: [start_date, end_date],
-          },
-        };
-      }
-
-      if (polda_id) {
-        getDataRules.where = {
-          id: decAes(polda_id),
-        };
-      }
-
-      if (serverSide?.toLowerCase() === "true") {
-        getDataRules.limit = length;
-        getDataRules.offset = start;
-      }
-
-      let finals = await Polda.findAll(getDataRules);
-      const count = await Polda.count({
-        where: getDataRules?.where,
-      });
-
-      let rows = [];
-
-      finals.map((element, index) => {
-        rows.push({
-          id: element.id,
-          name_polda: element.name_polda,
-          total: parseInt(element.dataValues.total) || 0,
-        });
-      });
-
-      if (topPolda) {
-        rows.sort((a, b) => b.total - a.total);
-        rows = rows.slice(0, limit);
-      }
-      response(res, true, "Succeed", {
-        rows,
-        recordsFiltered: count,
-        recordsTotal: count,
-      });
-    } catch (error) {
-      response(res, false, "Failed", error.message);
-    }
-  };
-
-  static get_by_date = async (req, res) => {
-    let start_of_month = moment().startOf("years").format("YYYY-MM-DD");
-    let end_of_month = moment().endOf("years").format("YYYY-MM-DD");
-    try {
-      const {
-        type = null,
-        start_date = null,
-        end_date = null,
-        filter = null,
-        date = null,
-        serverSide = null,
-        length = null,
-        start = null,
-        polda_id = null,
-        topPolda = null,
-      } = req.query;
-
-      var list_day = [];
-      var list_month = [];
-      var list_year = [];
-
-      for (
-        var m = moment(start_date);
-        m.isSameOrBefore(end_date);
-        m.add(1, "days")
-      ) {
-        list_day.push(m.format("YYYY-MM-DD"));
-      }
-
-      for (
-        var m = moment(start_date);
-        m.isSameOrBefore(end_date);
-        m.add(1, "month")
-      ) {
-        list_month.push(m.format("MMMM"));
-      }
-
-      for (
-        var m = moment(start_date);
-        m.isSameOrBefore(end_date);
-        m.add(1, "year")
-      ) {
-        list_year.push(m.format("YYYY"));
-      }
-
-      let wheres = {};
-      if (date) {
-        wheres.created_at = date;
-      }
-
-      if (filter) {
-        wheres.created_at = {
-          [Op.between]: [start_date, end_date],
-        };
-      }
-
-      if (polda_id) {
-        wheres.polda_id = decAes(polda_id);
-      }
-
-      const getDataRules = {
-        attributes: [[Sequelize.fn("count", Sequelize.col("no_ts")), "total"]],
-        where: wheres,
-      };
-
-      if (type === "day") {
-        getDataRules.group = "day";
-        getDataRules.attributes.push([
-          Sequelize.fn("date_trunc", "day", Sequelize.col("created_at")),
-          "day",
-        ]);
-      } else if (type === "month") {
-        getDataRules.group = "month";
-        getDataRules.attributes.push([
-          Sequelize.fn("date_trunc", "month", Sequelize.col("created_at")),
-          "month",
-        ]);
-      } else if (type === "year") {
-        getDataRules.group = "year";
-        getDataRules.attributes.push([
-          Sequelize.fn("date_trunc", "year", Sequelize.col("created_at")),
-          "year",
-        ]);
-      }
-
-      let rows = await Troublespot.findAll(getDataRules);
-
-      let finals = [];
-      if (type === "day") {
-        let abc = rows.map((element, index) => {
-          return {
-            total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.day).format("YYYY-MM-DD"),
-          };
-        });
-
-        const asd = list_day.map((item, index) => {
-          const data = abc.find((x) => x.date == item);
-          if (data) {
-            finals.push({
-              total: parseInt(data.total),
-              date: data.date,
-            });
-          } else {
-            finals.push({
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      } else if (type === "month") {
-        let abc = rows.map((element, index) => {
-          return {
-            total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("MMMM"),
-          };
-        });
-
-        const asd = list_month.map((item, index) => {
-          const data = abc.find((x) => x.date == item);
-          if (data) {
-            finals.push({
-              total: parseInt(data.total),
-              date: data.date,
-            });
-          } else {
-            finals.push({
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      } else if (type === "year") {
-        let abc = rows.map((element, index) => {
-          return {
-            total: parseInt(element.dataValues.total),
-            date: moment(element.dataValues.month).format("YYYY"),
-          };
-        });
-
-        const asd = list_year.map((item, index) => {
-          const data = abc.find((x) => x.date == item);
-          if (data) {
-            finals.push({
-              total: parseInt(data.total),
-              date: data.date,
-            });
-          } else {
-            finals.push({
-              total: 0,
-              date: item,
-            });
-          }
-        });
-      }
-      response(res, true, "Succeed", finals);
-    } catch (error) {
-      response(res, false, "Failed", error.message);
-    }
-  };
-
-  static get_filter = async (req, res) => {
-    try {
-      const { start_date, end_date, polda_id } = req.query;
-      let finals = await Troublespot.findAll({
-        where: {
-          created_at: {
-            [Op.between]: [start_date, end_date],
-          },
-        },
-        include: [
-          {
-            model: Polda,
-            attributes: ["id", "name_polda"],
-          },
-          {
-            model: Polres,
-            attributes: ["id", "name_polres"],
-          },
-        ],
-      });
-      response(res, true, "Succeed", finals);
-    } catch (error) {
-      response(res, false, "Failed", error.message);
     }
   };
 };

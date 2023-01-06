@@ -3,7 +3,6 @@ const { body } = require("express-validator");
 const RenpamController = require("../controller/renpam");
 const formValidation = require("../middleware/form_validation");
 router.get("/", RenpamController.get);
-router.get("/getCheckData", RenpamController.getCheckData);
 router.get("/get-agenda-mobile", RenpamController.listAgenda);
 router.get("/get-mobile", RenpamController.listInstruksi);
 router.get("/get-mobile-today", RenpamController.listInstruksiToday);

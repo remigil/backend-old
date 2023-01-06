@@ -18,6 +18,8 @@ const fieldData = {
   logo: null,
   date_start_operation: null,
   date_end_operation: null,
+  latlng_center: null,
+  zoom_level: null,
   // level_operation: null,
 };
 Polda.hasMany(Polres, {

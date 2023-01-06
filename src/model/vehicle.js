@@ -36,6 +36,9 @@ Vehicle.init(
     ownership_vehicle: {
       type: Sequelize.STRING(255),
     },
+    no_engine: {
+      type: Sequelize.STRING(255),
+    },
     ...StructureTimestamp,
   },
   {

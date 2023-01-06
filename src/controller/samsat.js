@@ -8,13 +8,15 @@ const readXlsxFile = require("read-excel-file/node");
 const fs = require("fs");
 
 const fieldData = {
-          name_samsat: null,
-          address: null,
-          samsat_lat: null,
-          samsat_lng: null,
-          samsat_open_time: null,
-          samsat_close_time: null,
-}
+  name_samsat: null,
+  address: null,
+  samsat_lat: null,
+  samsat_lng: null,
+  samsat_open_time: null,
+  samsat_close_time: null,
+  polda_id: null,
+  polres_id: null,
+};
 
 module.exports = class SamsatController {
   static get = async (req, res) => {
@@ -108,16 +110,23 @@ module.exports = class SamsatController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-      Object.keys(fieldData).forEach((val, key) =>{
-        if (req.body[val]){
-          fieldValueData[val] = req.body[val];
-        }else{
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
+          if (val == "polda_id" || val == "polres_id") {
+            fieldValue[val] = AESDecrypt(req.body[val], {
+              isSafeUrl: true,
+              parseMode: "string",
+            });
+          } else {
+            fieldValueData[val] = req.body[val];
+          }
+        } else {
           fieldValueData[val] = null;
         }
       });
       let op = await Samsat.create(fieldValueData, {
-          transaction: transaction,
-        });
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", op);
     } catch (e) {
@@ -129,22 +138,22 @@ module.exports = class SamsatController {
     const transaction = await db.transaction();
     try {
       let fieldValueData = {};
-        Object.keys(fieldData).forEach((val, key) =>{
-        if (req.body[val]){
+      Object.keys(fieldData).forEach((val, key) => {
+        if (req.body[val]) {
           fieldValueData[val] = req.body[val];
-        }else{
+        } else {
           fieldValueData[val] = null;
         }
-        });
-          await Samsat.update(fieldValueData, {
-          where: {
-            id: AESDecrypt(req.params.id, {
-              isSafeUrl: true,
-              parseMode: "string",
-            }),
-          },
-          transaction: transaction,
-        });
+      });
+      await Samsat.update(fieldValueData, {
+        where: {
+          id: AESDecrypt(req.params.id, {
+            isSafeUrl: true,
+            parseMode: "string",
+          }),
+        },
+        transaction: transaction,
+      });
       await transaction.commit();
       response(res, true, "Succeed", null);
     } catch (e) {

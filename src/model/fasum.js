@@ -68,6 +68,9 @@ Fasum.init(
     polda_id: {
       type: Sequelize.INTEGER,
     },
+    polres_id: {
+      type: Sequelize.INTEGER,
+    },
     direction_route: {
       type: Sequelize.JSON,
     },

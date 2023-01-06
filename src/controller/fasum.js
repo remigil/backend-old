@@ -1,4 +1,4 @@
-const { AESDecrypt } = require("../lib/encryption");
+const { AESDecrypt, AESEncrypt } = require("../lib/encryption");
 const response = require("../lib/response");
 const Fasum = require("../model/fasum");
 const db = require("../config/database");
@@ -24,6 +24,7 @@ const fieldData = {
   fasum_status: 0,
   fasum_radius: 0,
   polda_id: null,
+  polres_id: null,
   fasum_geoJson: null,
   route: null,
   fasum_color: null,
@@ -105,6 +106,30 @@ module.exports = class FasumController {
           exclude: ["direction_route"],
         },
         subQuery: true,
+      }).then((result) => {
+        const dummy = result.map((row) => {
+          //this returns all values of the instance,
+          //also invoking virtual getters
+          const el = row.get();
+          if (el.polda_id != null) {
+            el["id_polda"] = AESEncrypt(String(el.polda_id), {
+              isSafeUrl: true,
+              // parseMode: "string",
+            });
+          } else {
+            el["id_polda"] = null;
+          }
+          if (el.polres_id != null) {
+            el["id_polres"] = AESEncrypt(String(el.polres_id), {
+              isSafeUrl: true,
+              // parseMode: "string",
+            });
+          } else {
+            el["id_polres"] = null;
+          }
+          return el;
+        });
+        return dummy;
       });
       const count = await Fasum.count({
         where: getData?.where,
@@ -128,6 +153,31 @@ module.exports = class FasumController {
             parseMode: "string",
           }),
         },
+      }).then((result) => {
+        // console.log(result.get());
+        // this returns all values of the instance,
+        // also invoking virtual getters
+
+        const el = result.get();
+        if (el.polda_id != null) {
+          el["id_polda"] = AESEncrypt(String(el.polda_id), {
+            isSafeUrl: true,
+            // parseMode: "string",
+          });
+        } else {
+          el["id_polda"] = null;
+        }
+        if (el.polres_id != null) {
+          el["id_polres"] = AESEncrypt(String(el.polres_id), {
+            isSafeUrl: true,
+            // parseMode: "string",
+          });
+        } else {
+          el["id_polres"] = null;
+        }
+        return el;
+
+        // return dummy;
       });
       response(res, true, "Succeed", {
         data,
@@ -170,7 +220,7 @@ module.exports = class FasumController {
             fieldValue[val] = fileName;
           } else if (val == "fasum_geoJson" || val == "route") {
             fieldValue[val] = JSON.parse(req.body[val]);
-          } else if (val == "polda_id") {
+          } else if (val == "polda_id" || val == "polres_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",

@@ -52,6 +52,7 @@ const fieldData = {
   end_datetime_renpam: null,
   warnaRoute_renpam: "red",
   polda_id: null,
+  polres_id: null,
 };
 
 module.exports = class RenpamController {
@@ -202,216 +203,6 @@ module.exports = class RenpamController {
       response(res, false, "Failed", e.message);
     }
   };
-
-  static getCheckData = async (req, res) => {
-    try {
-      const {
-        length = 10,
-        start = 0,
-        serverSide = null,
-        search = null,
-        filter = [],
-        filterSearch = [],
-        order = null,
-        orderDirection = "asc",
-        start_date = null,
-        end_date = null,
-        schedule_id = "notNull", //null or notNull
-      } = req.query;
-      // return response(res, false, "Failed", start_date);
-      const modelAttr = Object.keys(Renpam.getAttributes());
-      let getDataRules = { where: null };
-      if (serverSide?.toLowerCase() === "true") {
-        const resPage = pagination.getPagination(length, start);
-        getDataRules.limit = resPage.limit;
-        getDataRules.offset = resPage.offset;
-      }
-      // getDataRules.order = [[modelAttr[order], orderDirection.toUpperCase()]];
-      getDataRules.order = [
-        [
-          order != null ? order : "id",
-          orderDirection != null ? orderDirection : "asc",
-        ],
-      ];
-
-      let date_ob = new Date();
-      if (start_date != null && end_date != null) {
-        // console.log("tgl");
-        getDataRules.where = {
-          date: {
-            [Op.between]: [start_date, end_date],
-          },
-        };
-      } else if (start_date == null && end_date != null) {
-        var date = (
-          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
-        ).slice(-2);
-        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        let year = date_ob.getFullYear();
-
-        // var startDate = year + "-" + month + "-" + date;
-        // var endDate = year + "-" + month + "-" + date;
-        getDataRules.where = {
-          date: {
-            [Op.between]: [date_ob, end_date],
-          },
-        };
-      } else if (start_date != null && end_date == null) {
-        var date = (
-          "0" + new Date(new Date().setDate(new Date().getDate() - 1)).getDate()
-        ).slice(-2);
-        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        let year = date_ob.getFullYear();
-
-        // var startDate = year + "-" + month + "-" + date;
-        // var endDate = year + "-" + month + "-" + date;
-        getDataRules.where = {
-          date: {
-            [Op.between]: [start_date, date_ob],
-          },
-        };
-      }
-
-      // null or notNull
-      if (schedule_id == "null") {
-        getDataRules.where = {
-          schedule_id: {
-            [Op.is]: null,
-          },
-        };
-      }
-
-      if (search != null) {
-        let whereBuilder = [];
-        modelAttr.forEach((key) => {
-          whereBuilder.push(
-            Sequelize.where(
-              Sequelize.fn(
-                "lower",
-                Sequelize.cast(Sequelize.col(key), "varchar")
-              ),
-              {
-                [Op.like]: `%${search.toLowerCase()}%`,
-              }
-            )
-          );
-        });
-        getDataRules.where = {
-          [Op.or]: whereBuilder,
-        };
-      }
-
-      if (
-        filter != null &&
-        filter.length > 0 &&
-        filterSearch != null &&
-        filterSearch.length > 0
-      ) {
-        const filters = [];
-        filter.forEach((fKey, index) => {
-          if (_.includes(modelAttr, fKey)) {
-            filters[fKey] = filterSearch[index];
-          }
-        });
-        getDataRules.where = {
-          ...getDataRules.where,
-          ...filters,
-        };
-      }
-      const data = await Renpam.findAll({
-        ...getDataRules,
-        include: [
-          {
-            model: Schedule,
-            foreignKey: "schedule_id",
-            required: false,
-          },
-          {
-            model: Account,
-            as: "accounts",
-            required: false,
-          },
-          {
-            model: Vip,
-            as: "vips",
-            required: false,
-          },
-        ],
-        attributes: {
-          exclude: [
-            "id",
-            "operation_id",
-            "schedule_id",
-            "type_renpam",
-            "category_renpam",
-            "total_vehicle",
-            "order_renpam",
-            "title_end",
-            "route",
-            "route_alternatif_1",
-            "route_alternatif_2",
-            "route_masyarakat",
-            "route_umum",
-            "direction_route",
-            "direction_route_alter1",
-            "direction_route_alter2",
-            "direction_route_masyarakat",
-            "direction_route_umum",
-            "estimasi",
-            "estimasi_alter1",
-            "estimasi_alter2",
-            "estimasi_masyarakat",
-            "estimasi_umum",
-            "estimasi_time",
-            "estimasi_time_alter1",
-            "estimasi_time_alter2",
-            "estimasi_time_masyarakat",
-            "estimasi_time_umum",
-            "coordinate_guarding",
-            "end_coordinate_renpam",
-            "polda_id",
-            "polres_id",
-            "choose_rute",
-            "date",
-            "start_time",
-            "start_datetime_renpam",
-            "end_datetime_renpam",
-            "end_time",
-            "status_renpam",
-            "note_kakor",
-            "warnaRoute_renpam",
-            "alamat",
-            "created_at",
-            "updated_at",
-            "deleted_at",
-            "schedule",
-            "accounts",
-            "vips",
-          ],
-        },
-      }).then((result) => {
-        const dummy = result.map((row) => {
-          //this returns all values of the instance,
-          //also invoking virtual getters
-          const el = row.get();
-          el["st_akun"] = el.accounts.length > 0 ? "ada" : "tidak ada";
-          return el;
-        });
-        return dummy;
-      });
-      const count = await Renpam.count({
-        where: getDataRules?.where,
-      });
-      response(res, true, "Succeed", {
-        data,
-        recordsFiltered: count,
-        recordsTotal: count,
-      });
-    } catch (e) {
-      response(res, false, "Failed", e.message);
-    }
-  };
-
   static getMobile = async (req, res) => {
     try {
       const {
@@ -1177,7 +968,7 @@ module.exports = class RenpamController {
       let fieldValueAccount = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "schedule_id" || val == "polda_id") {
+          if (val == "schedule_id" || val == "polda_id" || val == "polres_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
@@ -1410,7 +1201,7 @@ module.exports = class RenpamController {
       let fieldValueAccount = {};
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
-          if (val == "schedule_id" || val == "polda_id") {
+          if (val == "schedule_id" || val == "polda_id" || val == "polres_id") {
             fieldValue[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",

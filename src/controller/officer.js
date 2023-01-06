@@ -246,7 +246,7 @@ module.exports = class OfficerController {
                     }
                   );
                   fieldValueData[key] = fileName;
-                } else if (key == "polda_id") {
+                } else if (key == "polda_id" || key == "polres_id") {
                   fieldValueData[key] = AESDecrypt(req.body[key], {
                     isSafeUrl: true,
                     parseMode: "string",
@@ -292,7 +292,7 @@ module.exports = class OfficerController {
               }
             );
             fieldValueData[key] = fileName;
-          } else if (key == "polda_id") {
+          } else if (key == "polda_id" || key == "polres_id") {
             fieldValueData[key] = AESDecrypt(req.body[key], {
               isSafeUrl: true,
               parseMode: "string",

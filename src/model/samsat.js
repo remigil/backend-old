@@ -39,6 +39,9 @@ Samsat.init(
     polda_id: {
       type: Sequelize.INTEGER,
     },
+    polres_id: {
+      type: Sequelize.INTEGER,
+    },
     ...StructureTimestamp,
   },
   {
