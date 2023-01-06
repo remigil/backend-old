@@ -24,8 +24,4 @@ router.delete(
   BlankspotController.hardDelete
 );
 
-router.get("/daily", BlankspotController.get_daily);
-router.get("/date", BlankspotController.get_by_date);
-router.get("/get_filter", BlankspotController.get_filter);
-
 module.exports = router;
