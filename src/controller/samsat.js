@@ -113,7 +113,7 @@ module.exports = class SamsatController {
       Object.keys(fieldData).forEach((val, key) => {
         if (req.body[val]) {
           if (val == "polda_id" || val == "polres_id") {
-            fieldValue[val] = AESDecrypt(req.body[val], {
+            fieldValueData[val] = AESDecrypt(req.body[val], {
               isSafeUrl: true,
               parseMode: "string",
             });
