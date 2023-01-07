@@ -1,36 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tabel Laporan Anev</title>
     <style>
         table {
             border-collapse: collapse;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
-        th, td {
-            padding: 10px;
+
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 310px;
+            max-width: 800px;
+            margin: 1em auto;
         }
-        th {
-            background-color: #006faf;
-            color: white;
+
+        .container {
+            height: 400px;
+        }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
         }
 
     </style>
 </head>
+<script src="https://code.jquery.com/jquery-3.6.1.slim.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/highcharts.js" crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js" crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/modules/exporting.js" crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/modules/export-data.js" crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js" crossorigin="anonymous"></script>
+<!-- <script
+      src="https://code.highcharts.com/themes/brand-dark.js"
+      crossorigin="anonymous"
+    ></script> -->
+<script src="https://code.highcharts.com/themes/brand-light.js" crossorigin="anonymous"></script>
+
 <body>
-    <div style="margin:30px">
-    <table width="100%" align="center">
-        <div>
-            <p>Selamat Pagi Komandan Melaporkan Anev Harian Laka dan Dakgar Lantas berdasarkan Rekapitulasi pada aplikasi IRSMS dan aplikasi Dakgar selama 1X24 Jam, <%= full_date %> sbb :</p>
-        </div>
+    <div style="margin: 30px">
+        <table width="100%" align="center">
+            <div>
+                <p>
+                    Selamat Pagi Komandan Melaporkan Anev Harian Laka dan Dakgar Lantas
+                    berdasarkan Rekapitulasi pada aplikasi IRSMS dan aplikasi Dakgar
+                    selama 1X24 Jam, <%= full_date %> sbb :
+                </p>
+            </div>
             <div>
                 <p>A. LAPORAN HARIAN ANEV KORBAN LAKA LANTAS</p>
             </div>
-            <div>
+            <div style="text-transform: uppercase">
+                <tr style="text-transform: uppercase">
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Uraian</th>
+                    <th colspan="2">Waktu</th>
+                    <th colspan="2">Trend</th>
+                    <th rowspan="2">Keterangan</th>
+                </tr>
+                <tr>
+                    <th>
+                        <%= name_yesterdays %>
+                    </th>
+                    <th>
+                        <%= name_todays %>
+                    </th>
+                    <th>ANGKA</th>
+                    <th>PERSEN %</th>
+                </tr>
+                <tr align="center">
+                    <td>1</td>
+                    <td>JUMLAH LAKA</td>
+                    <td>
+                        <%= anev_laka[0].insiden_kecelakaan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].insiden_kecelakaan_today %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].angka_insiden_kecelakaan %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].persen_insiden_kecelakaan %>%
+                    </td>
+                    <td>
+                        <%= anev_laka[0].status_insiden_kecelakaan %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>2</td>
+                    <td>MENINGGAL DUNIA</td>
+                    <td>
+                        <%= anev_laka[0].meninggal_dunia_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].meninggal_dunia_today %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].angka_meninggal_dunia %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].persen_meninggal_dunia %>%
+                    </td>
+                    <td>
+                        <%= anev_laka[0].status_meninggal_dunia %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>3</td>
+                    <td>LUKA BERAT</td>
+                    <td>
+                        <%= anev_laka[0].luka_berat_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].luka_berat_today %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].angka_luka_berat %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].persen_luka_berat %>%
+                    </td>
+                    <td>
+                        <%= anev_laka[0].status_luka_berat %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>4</td>
+                    <td>LUKA RINGAN</td>
+                    <td>
+                        <%= anev_laka[0].luka_ringan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].luka_ringan_today %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].angka_luka_ringan %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].persen_luka_ringan %>%
+                    </td>
+                    <td>
+                        <%= anev_laka[0].status_luka_ringan %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>5</td>
+                    <td>KERUGIAN MATERIAL</td>
+                    <td>
+                        <%= anev_laka[0].kerugian_material_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].kerugian_material_today %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].angka_kerugian_material %>
+                    </td>
+                    <td>
+                        <%= anev_laka[0].persen_kerugian_material %>%
+                    </td>
+                    <td>
+                        <%= anev_laka[0].status_kerugian_material %>
+                    </td>
+                </tr>
+            </div>
+        </table>
+
+        <p style="text-align: center; text-transform: uppercase">
+            Detail Laporan Kecelakaan perpolda
+        </p>
+        <p style="text-align: center; text-transform: uppercase">
+            <%= name_todays %>
+        </p>
+
+        <table width="100%" align="center">
+            <thead>
+                <tr style="text-transform: uppercase">
+                    <th>No</th>
+                    <th>Satuan Kerja</th>
+                    <th>Jumlah LP Laka</th>
+                    <th>Meninggal Dunia</th>
+                    <th>Luka Berat</th>
+                    <th>Luka Ringan</th>
+                    <th>Rumat</th>
+                    <th>Ket</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < rows_laka.length; i++) { %>
+                    <tr style="text-align: center; text-transform: uppercase">
+                        <td>
+                            <%= i+1 %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].name_polda %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].insiden_kecelakaan %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].meninggal_dunia %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].luka_berat %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].luka_ringan %>
+                        </td>
+                        <td>
+                            <%= rows_laka[i].kerugian_material %>
+                        </td>
+                        <td>
+                            <%= '' %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+
+        <figure class="highcharts-figure">
+            <div class="container">
+                <div id="chart_laka"></div>
+            </div>
+        </figure>
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <table width="100%" align="center">
+            <div style="margin-top: 30px">
+                <div>
+                    <p>B. LAPORAN HARIAN ANEV DATA DAKGAR</p>
+                </div>
                 <tr>
                     <th rowspan="2">No</th>
                     <th rowspan="2">Uraian</th>
@@ -39,186 +284,490 @@
                     <th rowspan="2">Keterangan</th>
                 </tr>
                 <tr>
-                   <th><%= name_yesterdays %></th>
-                    <th><%= name_todays %></th>
+                    <th>
+                        <%= name_yesterdays %>
+                    </th>
+                    <th>
+                        <%= name_todays %>
+                    </th>
                     <th>ANGKA</th>
                     <th>PERSEN %</th>
                 </tr>
-            <tr align="center">
-                <td>1</td>
-                <td>JUMLAH LAKA</td>
-                <td><%= anev_laka[0].insiden_kecelakaan_yesterday %></td>
-                <td><%= anev_laka[0].insiden_kecelakaan_today %></td>
-                <td><%= anev_laka[0].angka_insiden_kecelakaan %></td>
-                <td><%= anev_laka[0].persen_insiden_kecelakaan %>%</td>
-                <td><%= anev_laka[0].status_insiden_kecelakaan %></td>
-            </tr>
-            <tr align="center">
-                <td>2</td>
-                <td>MENINGGAL DUNIA</td>
-                 <td><%= anev_laka[0].meninggal_dunia_yesterday %></td>
-                <td><%= anev_laka[0].meninggal_dunia_today %></td>
-                <td><%= anev_laka[0].angka_meninggal_dunia %></td>
-                <td><%= anev_laka[0].persen_meninggal_dunia %>%</td>
-                <td><%= anev_laka[0].status_meninggal_dunia %></td>
-            </tr>
-            <tr align="center">
-                <td>3</td>
-                <td>LUKA BERAT</td>
-                 <td><%= anev_laka[0].luka_berat_yesterday %></td>
-                <td><%= anev_laka[0].luka_berat_today %></td>
-                <td><%= anev_laka[0].angka_luka_berat %></td>
-                <td><%= anev_laka[0].persen_luka_berat %>%</td>
-                <td><%= anev_laka[0].status_luka_berat %></td>
-            </tr>
-            <tr align="center">
-                <td>4</td>
-                <td>LUKA RINGAN</td>
-                 <td><%= anev_laka[0].luka_ringan_yesterday %></td>
-                <td><%= anev_laka[0].luka_ringan_today %></td>
-                <td><%= anev_laka[0].angka_luka_ringan %></td>
-                <td><%= anev_laka[0].persen_luka_ringan %>%</td>
-                <td><%= anev_laka[0].status_luka_ringan %></td>
-            </tr>
-            <tr align="center">
-                <td>5</td>
-                <td>KERUGIAN MATERIAL</td>
-                 <td><%= anev_laka[0].kerugian_material_yesterday %></td>
-                <td><%= anev_laka[0].kerugian_material_today %></td>
-                <td><%= anev_laka[0].angka_kerugian_material %></td>
-                <td><%= anev_laka[0].persen_kerugian_material %>%</td>
-                <td><%= anev_laka[0].status_kerugian_material %></td>
-            </tr>
+                <tr align="center">
+                    <td>1</td>
+                    <td>JUMLAH DAKGAR</td>
+                    <td>
+                        <%= anev_gar[0].total_garlantas_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].total_garlantas_today %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].angka_total_garlantas %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].persen_total_garlantas %>%
+                    </td>
+                    <td>
+                        <%= anev_gar[0].status_total_garlantas %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>2</td>
+                    <td>GAR BERAT</td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_berat_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_berat_today %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].angka_pelanggaran_berat %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].persen_pelanggaran_berat %>%
+                    </td>
+                    <td>
+                        <%= anev_gar[0].status_pelanggaran_berat %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>3</td>
+                    <td>GAR SEDANG</td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_sedang_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_sedang_today %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].angka_pelanggaran_sedang %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].persen_pelanggaran_sedang %>%
+                    </td>
+                    <td>
+                        <%= anev_gar[0].status_pelanggaran_sedang %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>4</td>
+                    <td>GAR RINGAN</td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_ringan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].pelanggaran_ringan_today %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].angka_pelanggaran_ringan %>
+                    </td>
+                    <td>
+                        <%= anev_gar[0].persen_pelanggaran_ringan %>%
+                    </td>
+                    <td>
+                        <%= anev_gar[0].status_pelanggaran_ringan %>
+                    </td>
+                </tr>
             </div>
-    </table>
+        </table>
 
-    <table width="100%" align="center" >
-        <div style="margin-top: 30px;">
-            <div>
-                <p>B. LAPORAN HARIAN ANEV DATA DAKGAR</p>
+        <p style="text-align: center; text-transform: uppercase">
+            Detail Laporan Pelanggaran perpolda
+        </p>
+        <p style="text-align: center; text-transform: uppercase">
+            <%= name_todays %>
+        </p>
+
+        <table width="100%" align="center">
+            <thead>
+                <tr style="text-transform: uppercase">
+                    <th>No</th>
+                    <th>Satuan Kerja</th>
+                    <th>Jumlah Dakgar</th>
+                    <th>Pelanggaran Berat</th>
+                    <th>Pelanggaran Sedang</th>
+                    <th>Pelanggaran Ringan</th>
+                    <th>Ket</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < rows_gar.length; i++) { %>
+                    <tr style="text-align: center; text-transform: uppercase">
+                        <td>
+                            <%= i+1 %>
+                        </td>
+                        <td>
+                            <%= rows_gar[i].name_polda %>
+                        </td>
+                        <td>
+                            <%= rows_gar[i].total%>
+                        </td>
+                        <td>
+                            <%= rows_gar[i].pelanggaran_berat %>
+                        </td>
+                        <td>
+                            <%= rows_gar[i].pelanggaran_sedang %>
+                        </td>
+                        <td>
+                            <%= rows_gar[i].pelanggaran_ringan %>
+                        </td>
+                        <td>
+                            <%= '' %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+
+        <figure class="highcharts-figure">
+            <div class="container">
+                <div id="chart_gar"></div>
             </div>
-            <tr>
-                <th rowspan="2">No</th>
-                <th rowspan="2">Uraian</th>
-                <th colspan="2">Waktu</th>
-                <th colspan="2">Trend</th>
-                <th rowspan="2">Keterangan</th>
-            </tr>
-            <tr>
-               <th><%= name_yesterdays %></th>
-                <th><%= name_todays %></th>
-                <th>ANGKA</th>
-                <th>PERSEN %</th>
-            </tr>
-            <tr align="center">
-                <td>1</td>
-                <td>JUMLAH DAKGAR</td>
-               <td><%= anev_gar[0].total_garlantas_yesterday %></td>
-                <td><%= anev_gar[0].total_garlantas_today %></td>
-                <td><%= anev_gar[0].angka_total_garlantas %></td>
-                <td><%= anev_gar[0].persen_total_garlantas %>%</td>
-                <td><%= anev_gar[0].status_total_garlantas %></td>
-            </tr>
-            <tr align="center">
-                <td>2</td>
-                <td>GAR BERAT</td>
-                 <td><%= anev_gar[0].pelanggaran_berat_yesterday %></td>
-                <td><%= anev_gar[0].pelanggaran_berat_today %></td>
-                <td><%= anev_gar[0].angka_pelanggaran_berat %></td>
-                <td><%= anev_gar[0].persen_pelanggaran_berat %>%</td>
-                <td><%= anev_gar[0].status_pelanggaran_berat %></td>
-            </tr>
-            <tr align="center">
-                <td>3</td>
-                <td>GAR SEDANG</td>
-                <td><%= anev_gar[0].pelanggaran_sedang_yesterday %></td>
-                <td><%= anev_gar[0].pelanggaran_sedang_today %></td>
-                <td><%= anev_gar[0].angka_pelanggaran_sedang %></td>
-                <td><%= anev_gar[0].persen_pelanggaran_sedang %>%</td>
-                <td><%= anev_gar[0].status_pelanggaran_sedang %></td>
-            </tr>
-            <tr align="center">
-                <td>4</td>
-                <td>GAR RINGAN</td>
-               <td><%= anev_gar[0].pelanggaran_ringan_yesterday %></td>
-                <td><%= anev_gar[0].pelanggaran_ringan_today %></td>
-                <td><%= anev_gar[0].angka_pelanggaran_ringan %></td>
-                <td><%= anev_gar[0].persen_pelanggaran_ringan %>%</td>
-                <td><%= anev_gar[0].status_pelanggaran_ringan %></td>
-            </tr>
+        </figure>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <table width="100%" align="center">
+            <div style="margin-top: 30px">
+                <div>
+                    <p>C. LAPORAN HARIAN ANEV DATA TURJAGWALI</p>
+                </div>
+                <tr>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Uraian</th>
+                    <th colspan="2">Waktu</th>
+                    <th colspan="2">Trend</th>
+                    <th rowspan="2">Keterangan</th>
+                </tr>
+                <tr>
+                    <th>
+                        <%= name_yesterdays %>
+                    </th>
+                    <th>
+                        <%= name_todays %>
+                    </th>
+                    <th>ANGKA</th>
+                    <th>PERSEN %</th>
+                </tr>
+                <tr align="center">
+                    <td>1</td>
+                    <td>PENGATURAN</td>
+                    <td>
+                        <%= anev_turjagwali[0].pengaturan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].pengaturan_today %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].angka_pengaturan %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].persen_pengaturan %>%
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].status_pengaturan %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>2</td>
+                    <td>PENJAGAAN</td>
+                    <td>
+                        <%= anev_turjagwali[0].penjagaan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].penjagaan_today %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].angka_penjagaan %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].persen_penjagaan %>%
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].status_penjagaan %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>3</td>
+                    <td>PENGAWALAN</td>
+                    <td>
+                        <%= anev_turjagwali[0].pengawalan_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].pengawalan_today %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].angka_pengawalan %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].persen_pengawalan %>%
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].status_pengawalan %>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>4</td>
+                    <td>PATROLI</td>
+                    <td>
+                        <%= anev_turjagwali[0].patroli_yesterday %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].patroli_today %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].angka_patroli %>
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].persen_patroli %>%
+                    </td>
+                    <td>
+                        <%= anev_turjagwali[0].status_patroli %>
+                    </td>
+                </tr>
+            </div>
+        </table>
+
+        <p style="text-align: center; text-transform: uppercase">
+            Detail Laporan Turjagwali perpolda
+        </p>
+        <p style="text-align: center; text-transform: uppercase">
+            <%= name_todays %>
+        </p>
+
+        <table width="100%" align="center">
+            <thead>
+                <tr style="text-transform: uppercase">
+                    <th>No</th>
+                    <th>Satuan Kerja</th>
+                    <th>Pengaturan</th>
+                    <th>Penjagaan</th>
+                    <th>Pengawalan</th>
+                    <th>Patroli</th>
+                    <th>Ket</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < rows_tur.length; i++) { %>
+                    <tr style="text-align: center; text-transform: uppercase">
+                        <td>
+                            <%= i+1 %>
+                        </td>
+                        <td>
+                            <%= rows_tur[i].name_polda %>
+                        </td>
+                        <td>
+                            <%= rows_tur[i].pengaturan%>
+                        </td>
+                        <td>
+                            <%= rows_tur[i].penjagaan %>
+                        </td>
+                        <td>
+                            <%= rows_tur[i].pengawalan %>
+                        </td>
+                        <td>
+                            <%= rows_tur[i].patroli %>
+                        </td>
+                        <td>
+                            <%= '' %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+
+        <figure class="highcharts-figure">
+            <div class="container">
+                <div id="chart_tur"></div>
+            </div>
+        </figure>
+        <br>
+
+        <div class="row">
+            <div class="col-2" style="float: right; text-align: center; margin-top: 20px">
+                <div>Jakarta, <%= full_date %>
+                </div>
+                <br />
+                <div>PENANGGUNG JAWAB</div>
+                <br />
+                <div>KANIT II NTMC BAG OPS KORLANTAS POLRI</div>
+                <div style="margin-top: 15vh">SUNARYO</div>
+                <br />
+                <div>IPDA / 71090054</div>
+                <br /><br /><br />
+            </div>
         </div>
-    </table>
 
-<table width="100%" align="center" >
-    <div style="margin-top: 30px;">
-        <div>
-            <p>C. LAPORAN HARIAN ANEV DATA TURJAGWALI</p>
-        </div>
-        <tr>
-            <th rowspan="2">No</th>
-            <th rowspan="2">Uraian</th>
-            <th colspan="2">Waktu</th>
-            <th colspan="2">Trend</th>
-            <th rowspan="2">Keterangan</th>
-        </tr>
-        <tr>
-            <th><%= name_yesterdays %></th>
-                    <th><%= name_todays %></th>
-            <th>ANGKA</th>
-            <th>PERSEN %</th>
-        </tr>
-        <tr align="center">
-            <td>1</td>
-            <td>PENGATURAN</td>
-             <td><%= anev_turjagwali[0].pengaturan_yesterday %></td>
-                <td><%= anev_turjagwali[0].pengaturan_today %></td>
-                <td><%= anev_turjagwali[0].angka_pengaturan %></td>
-                <td><%= anev_turjagwali[0].persen_pengaturan %>%</td>
-                <td><%= anev_turjagwali[0].status_pengaturan %></td>
-        </tr>
-        <tr align="center">
-            <td>2</td>
-            <td>PENJAGAAN</td>
-            <td><%= anev_turjagwali[0].penjagaan_yesterday %></td>
-                <td><%= anev_turjagwali[0].penjagaan_today %></td>
-                <td><%= anev_turjagwali[0].angka_penjagaan %></td>
-                <td><%= anev_turjagwali[0].persen_penjagaan %>%</td>
-                <td><%= anev_turjagwali[0].status_penjagaan %></td>
-        </tr>
-        <tr align="center">
-            <td>3</td>
-            <td>PENGAWALAN</td>
-           <td><%= anev_turjagwali[0].pengawalan_yesterday %></td>
-                <td><%= anev_turjagwali[0].pengawalan_today %></td>
-                <td><%= anev_turjagwali[0].angka_pengawalan %></td>
-                <td><%= anev_turjagwali[0].persen_pengawalan %>%</td>
-                <td><%= anev_turjagwali[0].status_pengawalan %></td>
-        </tr>
-        <tr align="center">
-            <td>4</td>
-            <td>PATROLI</td>
-            <td><%= anev_turjagwali[0].patroli_yesterday %></td>
-                <td><%= anev_turjagwali[0].patroli_today %></td>
-                <td><%= anev_turjagwali[0].angka_patroli %></td>
-                <td><%= anev_turjagwali[0].persen_patroli %>%</td>
-                <td><%= anev_turjagwali[0].status_patroli %></td>
-        </tr>
+        <div style="width: 100%; text-align: right; float: right; margin-top: 50px"></div>
     </div>
-</table>
 
-<div class="row">
-    <div class="col-2" style="float: right; text-align: center; margin-top: 50px;">
-        <div>Jakarta, <%= full_date %></div><br>
-        <div>PENANGGUNG JAWAB</div><br>
-        <div>KANIT II NTMC BAG OPS KORLANTAS POLRI</div>
-        <div style="margin-top: 15vh;">SUNARYO</div><br>
-        <div>IPDA / 71090054</div><br><br><br>
-    </div>
-</div>
+    <script>
+        $(document).ready(function () {
+            Highcharts.chart("chart_laka", {
+                chart: {
+                    type: "column",
+                },
+                title: {
+                    text: "Grafik Data Kecelakaan",
+                },
+                subtitle: {
+                    text: "",
+                },
+                xAxis: {
+                    categories: <%-JSON.stringify(labels) %>,
+                    crosshair: true,
+                },
+                yAxis: {
+                    min: 0,
+                    max:100
+                },
+                tooltip: {
+                    headerFormat:
+                        '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat:
+                        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    footerFormat: "</table>",
+                    shared: true,
+                    useHTML: true,
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0,
+                    },
+                },
+                series: [
+                    {
+                        name: "Jumlah Insiden",
+                        data: <%-JSON.stringify(labels_jk) %>,
+                    },
+                    {
+                        name: "Meninggal Dunia",
+                        data: <%-JSON.stringify(labels_md) %>,
+                    },
+                    {
+                        name: "Luka Berat",
+                        data: <%-JSON.stringify(labels_lb) %>,
+                    },
+                    {
+                        name: "Luka Ringan",
+                        data: <%-JSON.stringify(labels_lr) %>,
+                    },
+                ],
+            });
 
-    <div style=" width: 100%; text-align: right; float: right; margin-top: 50px;">
-        
-    </div>
-    </div>
+
+            Highcharts.chart("chart_gar", {
+                chart: {
+                    type: "column",
+                },
+                title: {
+                    text: "Grafik Data Pelanggaran",
+                },
+                subtitle: {
+                    text: "",
+                },
+                xAxis: {
+                    categories: <%-JSON.stringify(labels) %>,
+                    crosshair: true,
+                },
+                yAxis: {
+                    min: 0,
+                    max:100
+                },
+                tooltip: {
+                    headerFormat:
+                        '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat:
+                        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    footerFormat: "</table>",
+                    shared: true,
+                    useHTML: true,
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0,
+                    },
+                },
+                series: [
+                    {
+                        name: "Pelanggaran Berat",
+                        data: <%-JSON.stringify(labels_pb) %>,
+                    },
+                    {
+                        name: "Pelanggaran Sedang",
+                        data: <%-JSON.stringify(labels_ps) %>,
+                    },
+                    {
+                        name: "Pelanggaran Ringan",
+                        data: <%-JSON.stringify(labels_pr) %>,
+                    },
+                ],
+            });
+
+            Highcharts.chart("chart_tur", {
+                chart: {
+                    type: "column",
+                },
+                title: {
+                    text: "Grafik Data Turjagwali",
+                },
+                subtitle: {
+                    text: "",
+                },
+                xAxis: {
+                    categories: <%-JSON.stringify(labels) %>,
+                    crosshair: true,
+                },
+                yAxis: {
+                    min: 0,
+                    max:100
+                },
+                tooltip: {
+                    headerFormat:
+                        '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat:
+                        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    footerFormat: "</table>",
+                    shared: true,
+                    useHTML: true,
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0,
+                    },
+                },
+                series: [
+                    {
+                        name: "Pengaturan",
+                        data: <%-JSON.stringify(labels_tur) %>,
+                    },
+                    {
+                        name: "Penjagaan",
+                        data: <%-JSON.stringify(labels_jag) %>,
+                    },
+                    {
+                        name: "Pengawalan",
+                        data: <%-JSON.stringify(labels_wal) %>,
+                    },
+                    {
+                        name: "Patroli",
+                        data: <%-JSON.stringify(labels_li) %>,
+                    },
+                ],
+            });
+        });
+
+
+    </script>
 </body>
+
 </html>

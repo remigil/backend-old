@@ -268,6 +268,14 @@ router.use(
   authMiddleware.jwtAuth,
   require("../router/filterSearch")
 );
+
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/filter-search-web",
+  // authMiddleware.jwtAuth,
+  require("../router/filterSearch")
+);
+
 router.use(
   "/v" + process.env.APP_VERSION + "/panic-button",
   authMiddleware.jwtAuth,

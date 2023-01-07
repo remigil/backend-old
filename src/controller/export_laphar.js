@@ -1115,7 +1115,7 @@ module.exports = class ExportLapharController {
       let yesterday = "";
       let name_todays = "";
       let name_yesterdays = "";
-      let full_date = moment().locale("id").format("LL");
+      let full_date = moment(date).locale("id").format("LL");
       if (type === "day") {
         rules_today = { date: date };
         today = date;
@@ -1820,6 +1820,253 @@ module.exports = class ExportLapharController {
           status_total_turjagwali,
         });
       }
+      const getDataRules_laka = {
+        group: ["polda.id"],
+        attributes: [
+          "id",
+          "name_polda",
+          [
+            Sequelize.fn("sum", Sequelize.col("meninggal_dunia")),
+            "meninggal_dunia",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("luka_berat")), "luka_berat"],
+          [Sequelize.fn("sum", Sequelize.col("luka_ringan")), "luka_ringan"],
+          [
+            Sequelize.fn("sum", Sequelize.col("insiden_kecelakaan")),
+            "insiden_kecelakaan",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("total_korban")), "total_korban"],
+          [
+            Sequelize.fn("sum", Sequelize.col("kerugian_material")),
+            "kerugian_material",
+          ],
+          [
+            Sequelize.literal(
+              "SUM(meninggal_dunia + luka_berat + luka_ringan)"
+            ),
+            "total",
+          ],
+        ],
+        include: [
+          {
+            model: Lakalantas_polda_day,
+            required: false,
+            as: "laka_lantas",
+            attributes: [],
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      };
+
+      if (date) {
+        getDataRules_laka.include[0].where = {
+          date: date,
+        };
+      }
+
+      let rows_laka = [];
+      let finals_laka = await Polda.findAll(getDataRules_laka);
+      finals_laka.map((element, index) => {
+        rows_laka.push({
+          id: element.id,
+          name_polda: element.name_polda,
+          meninggal_dunia: parseInt(element.dataValues.meninggal_dunia) || 0,
+          luka_berat: parseInt(element.dataValues.luka_berat) || 0,
+          luka_ringan: parseInt(element.dataValues.luka_ringan) || 0,
+          insiden_kecelakaan:
+            parseInt(element.dataValues.insiden_kecelakaan) || 0,
+          kerugian_material:
+            parseInt(element.dataValues.kerugian_material) || 0,
+          total: parseInt(element.dataValues.total) || 0,
+        });
+      });
+
+      rows_laka.sort((a, b) => b.insiden_kecelakaan - a.insiden_kecelakaan);
+      rows_laka = rows_laka.slice(0, 40);
+
+      const getDataRules_gar = {
+        group: ["polda.id"],
+        attributes: [
+          "id",
+          "name_polda",
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_berat")),
+            "pelanggaran_berat",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_sedang")),
+            "pelanggaran_sedang",
+          ],
+          [
+            Sequelize.fn("sum", Sequelize.col("pelanggaran_ringan")),
+            "pelanggaran_ringan",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("teguran")), "teguran"],
+          [
+            Sequelize.literal(
+              "SUM(pelanggaran_berat + pelanggaran_ringan + pelanggaran_sedang + teguran)"
+            ),
+            "total",
+          ],
+        ],
+        include: [
+          {
+            model: Garlantas_polda_day,
+            required: false,
+            as: "garlantas",
+            attributes: [],
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      };
+
+      if (date) {
+        getDataRules_gar.include[0].where = {
+          date: date,
+        };
+      }
+
+      let finals_gar = await Polda.findAll(getDataRules_gar);
+
+      let rows_gar = [];
+
+      finals_gar.map((element, index) => {
+        rows_gar.push({
+          id: element.id,
+          name_polda: element.name_polda,
+          pelanggaran_berat:
+            parseInt(element.dataValues.pelanggaran_berat) || 0,
+          pelanggaran_ringan:
+            parseInt(element.dataValues.pelanggaran_ringan) || 0,
+          pelanggaran_sedang:
+            parseInt(element.dataValues.pelanggaran_sedang) || 0,
+          teguran: parseInt(element.dataValues.teguran) || 0,
+          total: parseInt(element.dataValues.total) || 0,
+        });
+      });
+
+      rows_gar.sort((a, b) => b.total - a.total);
+      rows_gar = rows_gar.slice(0, 40);
+
+      const getDataRules_tur = {
+        group: ["polda.id"],
+        attributes: [
+          "id",
+          "name_polda",
+          [Sequelize.fn("sum", Sequelize.col("pengaturan")), "pengaturan"],
+          [Sequelize.fn("sum", Sequelize.col("penjagaan")), "penjagaan"],
+          [Sequelize.fn("sum", Sequelize.col("pengawalan")), "pengawalan"],
+          [Sequelize.fn("sum", Sequelize.col("patroli")), "patroli"],
+          [
+            Sequelize.literal(
+              "SUM(pengaturan + penjagaan + pengawalan + patroli)"
+            ),
+            "total",
+          ],
+        ],
+        include: [
+          {
+            model: Turjagwali_polda_day,
+            required: false,
+            as: "turjagwali",
+            attributes: [],
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      };
+
+      if (date) {
+        getDataRules_tur.include[0].where = {
+          date: date,
+        };
+      }
+
+      let finals_tur = await Polda.findAll(getDataRules_tur);
+
+      let rows_tur = [];
+
+      finals_tur.map((element, index) => {
+        rows_tur.push({
+          id: element.id,
+          name_polda: element.name_polda,
+          pengaturan: parseInt(element.dataValues.pengaturan) || 0,
+          penjagaan: parseInt(element.dataValues.penjagaan) || 0,
+          pengawalan: parseInt(element.dataValues.pengawalan) || 0,
+          patroli: parseInt(element.dataValues.patroli) || 0,
+          total: parseInt(element.dataValues.total) || 0,
+        });
+      });
+
+      rows_tur.sort((a, b) => b.total - a.total);
+      rows_tur = rows_tur.slice(0, 40);
+
+      let labels = [];
+      let labels_md = [];
+      let labels_lb = [];
+      let labels_lr = [];
+      let labels_jk = [];
+
+      let labels_pb = [];
+      let labels_ps = [];
+      let labels_pr = [];
+
+      let labels_tur = [];
+      let labels_jag = [];
+      let labels_wal = [];
+      let labels_li = [];
+
+      labels.push(name_yesterdays, name_todays);
+      labels_md.push(
+        anev_laka[0].meninggal_dunia_yesterday,
+        anev_laka[0].meninggal_dunia_today
+      );
+      labels_lb.push(
+        anev_laka[0].luka_berat_yesterday,
+        anev_laka[0].luka_berat_today
+      );
+      labels_lr.push(
+        anev_laka[0].luka_ringan_yesterday,
+        anev_laka[0].luka_ringan_today
+      );
+      labels_jk.push(
+        anev_laka[0].insiden_kecelakaan_yesterday,
+        anev_laka[0].insiden_kecelakaan_today
+      );
+
+      labels_pb.push(
+        anev_gar[0].pelanggaran_berat_yesterday,
+        anev_gar[0].pelanggaran_berat_today
+      );
+
+      labels_ps.push(
+        anev_gar[0].pelanggaran_sedang_yesterday,
+        anev_gar[0].pelanggaran_sedang_today
+      );
+
+      labels_pr.push(
+        anev_gar[0].pelanggaran_ringan_yesterday,
+        anev_gar[0].pelanggaran_ringan_today
+      );
+
+      labels_tur.push(
+        anev_turjagwali[0].pengaturan_yesterday,
+        anev_turjagwali[0].pengaturan_today
+      );
+      labels_jag.push(
+        anev_turjagwali[0].penjagaan_yesterday,
+        anev_turjagwali[0].penjagaan_today
+      );
+      labels_wal.push(
+        anev_turjagwali[0].pengawalan_yesterday,
+        anev_turjagwali[0].pengawalan_today
+      );
+      labels_li.push(
+        anev_turjagwali[0].patroli_yesterday,
+        anev_turjagwali[0].patroli_today
+      );
 
       // let results = tempAnevGakkum(anev_laka, anev_gar, anev_turjagwali);
       // const workSheet = XLSX.utils.table_to_sheet(results);
@@ -1830,12 +2077,27 @@ module.exports = class ExportLapharController {
       //   `./public/export_laphar/anev_gakkum_${date}.xlsx`
       // );
       // res.download(`./public/export_laphar/anev_gakkum_${date}.xlsx`);
-      // response(res, true, "Succeed", anev_laka);
+      // response(res, true, "Succeed", {
+      //   anev_laka,
+      //   anev_gar,
+      //   anev_turjagwali,
+      //   name_todays,
+      //   name_yesterdays,
+      //   full_date,
+      //   rows_gar,
+      //   rows_laka,
+      //   labels,
+      //   labels_md,
+      //   labels_lb,
+      //   labels_lr,
+      //   labels_jk,
+      // });
       let browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox", "--disabled-setupid-sandbox"],
         executablePath: process.env.ANEV_CHROME_PATH,
       });
+
       const [page] = await browser.pages();
       const html = await ejs.renderFile(
         path.join("./src/view/template/anev_ditgakkum.ejs"),
@@ -1846,6 +2108,21 @@ module.exports = class ExportLapharController {
           name_todays,
           name_yesterdays,
           full_date,
+          rows_gar,
+          rows_laka,
+          rows_tur,
+          labels,
+          labels_md,
+          labels_lb,
+          labels_lr,
+          labels_jk,
+          labels_pb,
+          labels_ps,
+          labels_pr,
+          labels_tur,
+          labels_jag,
+          labels_wal,
+          labels_li,
         }
       );
       await page.setContent(html);
@@ -1911,7 +2188,7 @@ module.exports = class ExportLapharController {
       let yesterday = "";
       let name_todays = "";
       let name_yesterdays = "";
-      let full_date = moment().locale("id").format("LL");
+      let full_date = moment(date).locale("id").format("LL");
       if (type === "day") {
         rules_today = { date: date };
         today = date;
