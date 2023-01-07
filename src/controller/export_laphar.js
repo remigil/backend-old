@@ -1130,18 +1130,17 @@ module.exports = class ExportLapharController {
           .locale("id")
           .format("dddd DD-MM-YYYY");
       } else if (type === "month") {
-        let start_today_date = moment(date, "MM")
+        console.log(date);
+        let start_today_date = moment(date)
           .startOf("month")
           .format("YYYY-MM-DD");
-        let end_today_date = moment(date, "MM")
-          .endOf("month")
-          .format("YYYY-MM-DD");
+        let end_today_date = moment(date).endOf("month").format("YYYY-MM-DD");
 
-        let start_yesterday_date = moment(date, "MM")
+        let start_yesterday_date = moment(date)
           .subtract(1, "month")
           .startOf("month")
           .format("YYYY-MM-DD");
-        let end_yesterday_date = moment(date, "MM")
+        let end_yesterday_date = moment(date)
           .subtract(1, "month")
           .endOf("month")
           .format("YYYY-MM-DD");
@@ -1168,22 +1167,22 @@ module.exports = class ExportLapharController {
           .locale("id")
           .format("MMMM");
       } else if (type === "years") {
-        let start_today_date = moment(date, "YYYY")
+        let start_today_date = moment(date)
           .startOf("years")
           .format("YYYY-MM-DD");
-        let end_today_date = moment(date, "YYYY")
+        let end_today_date = moment(date)
           .endOf("years")
           .format("YYYY-MM-DD");
 
-        let start_yesterday_date = moment(date, "YYYY")
+        let start_yesterday_date = moment(date)
           .subtract(1, "years")
           .startOf("years")
           .format("YYYY-MM-DD");
-        let end_yesterday_date = moment(date, "YYYY")
+        let end_yesterday_date = moment(date)
           .subtract(1, "years")
           .endOf("years")
           .format("YYYY-MM-DD");
-
+        
         rules_today = {
           date: {
             [Op.between]: [start_today_date, end_today_date],
@@ -1859,11 +1858,9 @@ module.exports = class ExportLapharController {
         subQuery: false,
       };
 
-      if (date) {
-        getDataRules_laka.include[0].where = {
-          date: date,
-        };
-      }
+
+        getDataRules_laka.include[0].where = rules_today
+     
 
       let rows_laka = [];
       let finals_laka = await Polda.findAll(getDataRules_laka);
@@ -1922,11 +1919,8 @@ module.exports = class ExportLapharController {
         subQuery: false,
       };
 
-      if (date) {
-        getDataRules_gar.include[0].where = {
-          date: date,
-        };
-      }
+
+        getDataRules_gar.include[0].where = rules_today
 
       let finals_gar = await Polda.findAll(getDataRules_gar);
 
@@ -1978,11 +1972,9 @@ module.exports = class ExportLapharController {
         subQuery: false,
       };
 
-      if (date) {
-        getDataRules_tur.include[0].where = {
-          date: date,
-        };
-      }
+
+        getDataRules_tur.include[0].where = rules_today
+  
 
       let finals_tur = await Polda.findAll(getDataRules_tur);
 

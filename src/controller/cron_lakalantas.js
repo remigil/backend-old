@@ -40,7 +40,7 @@ exports.cronLakalantas = () => {
   scheduledJobFunction2.start();
 };
 
-const update_polda_day = async (res) => {
+const update_polda_day = async () => {
   try {
     let getIrsms = await axios.get(
       "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
@@ -101,7 +101,7 @@ const update_polda_day = async (res) => {
   }
 };
 
-const update_polda_month = async (res) => {
+const update_polda_month = async () => {
   try {
     const transaction = await db.transaction();
 
@@ -174,6 +174,6 @@ const update_polda_month = async (res) => {
       }
     }
   } catch (e) {
-    response(res, false, "Failed", e.message);
+    console.log({ task: "update_polda_month", massage: e.message });
   }
 };
