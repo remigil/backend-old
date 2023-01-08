@@ -53,8 +53,8 @@ exports.Laporan_Harian = () => {
 };
 
 const laporan_harian_day = async () => {
+  const transaction = await db.transaction();
   try {
-    const transaction = await db.transaction();
     let data = {
       date: moment().format("YYYY-MM-DD"),
       kategori_laporan: 1,
@@ -77,8 +77,8 @@ const laporan_harian_day = async () => {
 };
 
 const laporan_harian_month = async () => {
+  const transaction = await db.transaction();
   try {
-    const transaction = await db.transaction();
     let data = {
       date: moment().endOf("month").format("YYYY-MM-DD"),
       kategori_laporan: 2,
@@ -111,8 +111,8 @@ const laporan_harian_month = async () => {
 };
 
 const laporan_harian_year = async () => {
+  const transaction = await db.transaction();
   try {
-    const transaction = await db.transaction();
     let data = {
       date: moment().endOf("year").format("YYYY-MM-DD"),
       kategori_laporan: 3,

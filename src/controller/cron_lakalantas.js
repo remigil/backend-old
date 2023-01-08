@@ -41,8 +41,8 @@ exports.cronLakalantas = () => {
 };
 
 const update_polda_day = async () => {
+  const transaction = await db.transaction();
   try {
-    const transaction = await db.transaction();
     let getIrsms = await axios.get(
       "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
     );
@@ -95,6 +95,8 @@ const update_polda_day = async () => {
         });
       }
     }
+
+    await transaction.commit();
     // console.log({
     //   task: "update_polda_day",
     //   massage: "Succsess",
@@ -107,11 +109,10 @@ const update_polda_day = async () => {
 };
 
 const update_polda_month = async () => {
+  const transaction = await db.transaction();
   try {
-    const transaction = await db.transaction();
-
-    const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
-    const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
+    const startOfMonth = await moment().startOf("month").format("YYYY-MM-DD");
+    const endOfMonth = await moment().endOf("month").format("YYYY-MM-DD");
     let allCountPoldaDay = await Polda.findAll({
       group: ["polda.id"],
       attributes: [
@@ -167,6 +168,7 @@ const update_polda_month = async () => {
 
       if (checkData) {
         await Count_polda_month.update(data, {
+          transaction: transaction,
           where: {
             polda_id: allCountPoldaDay[i].id,
             date: startOfMonth,
@@ -174,11 +176,16 @@ const update_polda_month = async () => {
         });
         console.log("update");
       } else {
-        await Count_polda_month.create(data);
+        await Count_polda_month.create(data, {
+          transaction: transaction,
+        });
         console.log("insert");
       }
     }
+
+    await transaction.commit();
   } catch (e) {
+    await transaction.rollback();
     console.log({ task: "update_polda_month", massage: e.message });
   }
 };
