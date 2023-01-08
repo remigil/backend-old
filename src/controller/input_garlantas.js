@@ -41,77 +41,108 @@ const decAes = (token) =>
 module.exports = class GarlantasController {
   static get = async (req, res) => {
     try {
-      let start_date = moment().subtract(1, "days").unix();
-      let end_date = moment().unix();
+      const dates = moment(new Date())
+        .startOf("day")
+        .format("YYYY-MM-DD HH:mm:ss");
 
-      console.log(start_date, end_date);
+      let start_date = moment().subtract(1, "days").startOf("day").unix();
+      // let start_date = moment(dates).startOf("day").subtract(1, "days").unix();
+      let end_date = moment(dates).endOf("day").unix();
+
+      let changes = moment(dates).unix();
+
+      console.log({
+        tgl: `${moment().subtract(1, "days").startOf("day")} - ${moment(
+          dates
+        ).endOf("day")}`,
+        toUnix: changes,
+        start: start_date - 25200,
+        end: end_date,
+      });
 
       let data = await Etilang_perkara.findAll({
-        include: [
-          {
-            model: Etilang_perkara_pasal,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            required: true,
-          },
-        ],
+        // include: [
+        //   {
+        //     model: Etilang_perkara_pasal,
+        //     foreignKey: "no_bayar",
+        //     attributes: {
+        //       exclude: ["createdAt", "updatedAt"],
+        //     },
+        //     required: false,
+        //   },
+        // ],
         where: {
-          updated_on: {
-            [Op.between]: [start_date, end_date],
+          tgl_perkara: {
+            [Op.between]: [start_date - 25200, end_date],
           },
         },
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },
         order: [["tgl_perkara", "DESC"]],
+      }).then((result) => {
+        const dummy = result.map((row) => {
+          //this returns all values of the instance,
+          //also invoking virtual getters
+          const el = row.get();
+          // el.tgl_perkara = moment.unix(el.tgl_perkara);
+          el["tgl"] = `${dates} 00:00:00`;
+          el["start_date"] = moment(dates).subtract(1, "days");
+          el["end_date"] = moment(dates).endOf("day");
+
+          return el;
+        });
+        return dummy;
       });
 
-      let finals = [];
-      data.map((element, index) => {
-        finals.push({
-          no_bayar: element.dataValues.no_bayar,
-          kepolisian_induk: element.dataValues.kepolisian_induk,
-          tgl_perkara: moment.unix(element.dataValues.tgl_perkara),
-          jenis_pelanggaran: element.dataValues.perkara_pasal.klasifikasi,
-        });
-      });
+      // let finals = [];
+      // data.map((element, index) => {
+      //   finals.push({
+      //     no_bayar: element.dataValues.no_bayar,
+      //     kepolisian_induk: element.dataValues.kepolisian_induk,
+      //     tgl_perkara: moment.unix(element.dataValues.tgl_perkara),
+      //     jenis_pelanggaran: element.dataValues.perkara_pasal.klasifikasi,
+      //     tgl: element.dataValues.tgl_perkara,
+      //     start_date: moment(dates).subtract(1, "days"),
+      //     end_date: moment(dates).endOf("day"),
+      //   });
+      // });
 
-      let result = Object.values(
-        finals.reduce((a, { kepolisian_induk, ...props }) => {
-          if (!a[kepolisian_induk])
-            a[kepolisian_induk] = Object.assign(
-              {},
-              { kepolisian_induk, data: [props] }
-            );
-          else a[kepolisian_induk].data.push(props);
-          return a;
-        }, {})
-      );
-      let rows = [];
-      for (let i = 0; i < result.length; i++) {
-        let asd = [];
-        for (let j = 0; j < result[i].data.length; j++) {
-          asd.push(result[i].data[j].jenis_pelanggaran);
-        }
+      // let result = Object.values(
+      //   finals.reduce((a, { kepolisian_induk, ...props }) => {
+      //     if (!a[kepolisian_induk])
+      //       a[kepolisian_induk] = Object.assign(
+      //         {},
+      //         { kepolisian_induk, data: [props] }
+      //       );
+      //     else a[kepolisian_induk].data.push(props);
+      //     return a;
+      //   }, {})
+      // );
+      // let rows = [];
+      // for (let i = 0; i < result.length; i++) {
+      //   let asd = [];
+      //   for (let j = 0; j < result[i].data.length; j++) {
+      //     asd.push(result[i].data[j].jenis_pelanggaran);
+      //   }
 
-        let countedNames = asd.reduce((allNames, name) => {
-          const currCount = allNames[name] ?? 0;
-          return {
-            ...allNames,
-            [name]: currCount + 1,
-          };
-        }, {});
-        rows.push({
-          polda: result[i].kepolisian_induk,
-          date: moment(finals[i].tgl_perkara).format("YYYY-MM-DD"),
-          berat: countedNames.Berat || 0,
-          sedang: countedNames.Sedang || 0,
-          ringan: countedNames.Ringan || 0,
-        });
-      }
+      //   let countedNames = asd.reduce((allNames, name) => {
+      //     const currCount = allNames[name] ?? 0;
+      //     return {
+      //       ...allNames,
+      //       [name]: currCount + 1,
+      //     };
+      //   }, {});
+      //   rows.push({
+      //     polda: result[i].kepolisian_induk,
+      //     date: moment(finals[i].tgl_perkara).format("YYYY-MM-DD"),
+      //     berat: countedNames.Berat || 0,
+      //     sedang: countedNames.Sedang || 0,
+      //     ringan: countedNames.Ringan || 0,
+      //   });
+      // }
 
-      response(res, true, "Succeed", finals);
+      response(res, true, "Succeed", data);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
