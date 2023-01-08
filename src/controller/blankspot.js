@@ -345,4 +345,278 @@ module.exports = class BlankspotController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static get_daily = async (req, res) => {
+    try {
+      const {
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+        limit = 34,
+      } = req.query;
+      const getDataRules = {
+        group: ["polda.id"],
+        attributes: [
+          "id",
+          "name_polda",
+          [Sequelize.fn("count", Sequelize.col("polda_id")), "total"],
+        ],
+        include: [
+          {
+            model: Blankspot,
+            required: false,
+            as: "blankspot",
+            attributes: [],
+          },
+        ],
+        nest: true,
+        subQuery: false,
+      };
+
+      if (date) {
+        getDataRules.include[0].where = {
+          created_at: date,
+        };
+      }
+
+      if (filter) {
+        getDataRules.include[0].where = {
+          created_at: {
+            [Op.between]: [start_date, end_date],
+          },
+        };
+      }
+
+      if (polda_id) {
+        getDataRules.where = {
+          id: decAes(polda_id),
+        };
+      }
+
+      if (serverSide?.toLowerCase() === "true") {
+        getDataRules.limit = length;
+        getDataRules.offset = start;
+      }
+
+      let finals = await Polda.findAll(getDataRules);
+      const count = await Polda.count({
+        where: getDataRules?.where,
+      });
+
+      let rows = [];
+
+      finals.map((element, index) => {
+        rows.push({
+          id: element.id,
+          name_polda: element.name_polda,
+          total: parseInt(element.dataValues.total) || 0,
+        });
+      });
+
+      if (topPolda) {
+        rows.sort((a, b) => b.total - a.total);
+        rows = rows.slice(0, limit);
+      }
+      response(res, true, "Succeed", {
+        rows,
+        recordsFiltered: count,
+        recordsTotal: count,
+      });
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static get_by_date = async (req, res) => {
+    let start_of_month = moment().startOf("years").format("YYYY-MM-DD");
+    let end_of_month = moment().endOf("years").format("YYYY-MM-DD");
+    try {
+      const {
+        type = null,
+        start_date = null,
+        end_date = null,
+        filter = null,
+        date = null,
+        serverSide = null,
+        length = null,
+        start = null,
+        polda_id = null,
+        topPolda = null,
+      } = req.query;
+
+      var list_day = [];
+      var list_month = [];
+      var list_year = [];
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "days")
+      ) {
+        list_day.push(m.format("YYYY-MM-DD"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "month")
+      ) {
+        list_month.push(m.format("MMMM"));
+      }
+
+      for (
+        var m = moment(start_date);
+        m.isSameOrBefore(end_date);
+        m.add(1, "year")
+      ) {
+        list_year.push(m.format("YYYY"));
+      }
+
+      let wheres = {};
+      if (date) {
+        wheres.created_at = date;
+      }
+
+      if (filter) {
+        wheres.created_at = {
+          [Op.between]: [start_date, end_date],
+        };
+      }
+
+      if (polda_id) {
+        wheres.polda_id = decAes(polda_id);
+      }
+
+      const getDataRules = {
+        attributes: [[Sequelize.fn("count", Sequelize.col("no_ts")), "total"]],
+        where: wheres,
+      };
+
+      if (type === "day") {
+        getDataRules.group = "day";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "day", Sequelize.col("created_at")),
+          "day",
+        ]);
+      } else if (type === "month") {
+        getDataRules.group = "month";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "month", Sequelize.col("created_at")),
+          "month",
+        ]);
+      } else if (type === "year") {
+        getDataRules.group = "year";
+        getDataRules.attributes.push([
+          Sequelize.fn("date_trunc", "year", Sequelize.col("created_at")),
+          "year",
+        ]);
+      }
+
+      let rows = await Blankspot.findAll(getDataRules);
+
+      let finals = [];
+      if (type === "day") {
+        let abc = rows.map((element, index) => {
+          return {
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.day).format("YYYY-MM-DD"),
+          };
+        });
+
+        const asd = list_day.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "month") {
+        let abc = rows.map((element, index) => {
+          return {
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.month).format("MMMM"),
+          };
+        });
+
+        const asd = list_month.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      } else if (type === "year") {
+        let abc = rows.map((element, index) => {
+          return {
+            total: parseInt(element.dataValues.total),
+            date: moment(element.dataValues.year).format("YYYY"),
+          };
+        });
+
+        const asd = list_year.map((item, index) => {
+          const data = abc.find((x) => x.date == item);
+          if (data) {
+            finals.push({
+              total: parseInt(data.total),
+              date: data.date,
+            });
+          } else {
+            finals.push({
+              total: 0,
+              date: item,
+            });
+          }
+        });
+      }
+      response(res, true, "Succeed", finals);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
+
+  static get_filter = async (req, res) => {
+    try {
+      const { start_date, end_date, polda_id } = req.query;
+      let finals = await Blankspot.findAll({
+        where: {
+          created_at: {
+            [Op.between]: [start_date, end_date],
+          },
+        },
+        include: [
+          {
+            model: Polda,
+            attributes: ["id", "name_polda"],
+          },
+          {
+            model: Polres,
+            attributes: ["id", "name_polres"],
+          },
+        ],
+      });
+      response(res, true, "Succeed", finals);
+    } catch (error) {
+      response(res, false, "Failed", error.message);
+    }
+  };
 };
