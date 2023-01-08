@@ -42,15 +42,16 @@ exports.cronLakalantas = () => {
 
 const update_polda_day = async () => {
   try {
+    const transaction = await db.transaction();
     let getIrsms = await axios.get(
       "https://irsms.korlantas.polri.go.id/irsmsapi/api/bagops"
     );
 
-    var filterIrsms = getIrsms.data["result"].filter(function (e) {
+    var filterIrsms = await getIrsms.data["result"].filter(function (e) {
       return e.tgl_kejadian != null && e.name != "TOTAL";
     });
 
-    let finals = filterIrsms.map((Element, index) => {
+    let finals = await filterIrsms.map((Element, index) => {
       let a = namePolda(Element.name);
       date = Element.tgl_kejadian.split("/").reverse().join("-");
       // let date = moment(d).format('YYYY-MM-DD') ;)
@@ -82,13 +83,16 @@ const update_polda_day = async () => {
 
       if (checkData) {
         await Count_polda_day.update(data, {
+          transaction: transaction,
           where: {
             polda_id: finals[i].polda_id,
             date: finals[i].date,
           },
         });
       } else {
-        await Count_polda_day.create(data);
+        await Count_polda_day.create(data, {
+          transaction: transaction,
+        });
       }
     }
     // console.log({
@@ -97,6 +101,7 @@ const update_polda_day = async () => {
     //   data: getIrsms,
     // });
   } catch (e) {
+    await transaction.rollback();
     console.log({ task: "update_polda_day", massage: e.message });
   }
 };
