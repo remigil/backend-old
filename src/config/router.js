@@ -406,6 +406,12 @@ router.use(
   // authMiddleware.jwtAuth,
   require("../router/complaint")
 );
+// -------------- satisfactionsurvey
+router.use(
+  "/v" + process.env.APP_VERSION + "/satisfactionsurvey",
+  // authMiddleware.jwtAuth,
+  require("../router/satisfactionsurvey")
+);
 
 // -------------- satpas
 router.use(
