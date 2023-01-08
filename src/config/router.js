@@ -269,7 +269,6 @@ router.use(
   require("../router/filterSearch")
 );
 
-
 router.use(
   "/v" + process.env.APP_VERSION + "/filter-search-web",
   // authMiddleware.jwtAuth,
@@ -399,6 +398,13 @@ router.use(
   "/v" + process.env.APP_VERSION + "/samsat",
   // authMiddleware.jwtAuth,
   require("../router/samsat")
+);
+
+// -------------- complaint
+router.use(
+  "/v" + process.env.APP_VERSION + "/complaint",
+  // authMiddleware.jwtAuth,
+  require("../router/complaint")
 );
 
 // -------------- satpas
