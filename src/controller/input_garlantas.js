@@ -57,7 +57,7 @@ module.exports = class GarlantasController {
           },
         ],
         where: {
-          tgl_perkara: {
+          updated_on: {
             [Op.between]: [start_date, end_date],
           },
         },
@@ -111,7 +111,7 @@ module.exports = class GarlantasController {
         });
       }
 
-      response(res, true, "Succeed", rows);
+      response(res, true, "Succeed", finals);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
