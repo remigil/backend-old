@@ -141,13 +141,15 @@ module.exports = class SatisfactionController {
         },
       });
 
-      const design = {
-        1: design1,
-        2: design2,
-        3: design3,
-        4: design4,
-        5: design5,
-      };
+      let angka = [design1, design2, design3, design4, design5];
+      let huruf = [
+        "Sangat Bagus",
+        "Bagus",
+        "Kurang Bagus",
+        "Jelek",
+        "Jelek Sekali",
+      ];
+      const design = { angka: angka, huruf: huruf };
       response(res, true, "Succeed", design);
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -175,19 +177,9 @@ module.exports = class SatisfactionController {
           convenience_survey: 4,
         },
       });
-      const convenience5 = await Satisfaction.count({
-        where: {
-          convenience_survey: 5,
-        },
-      });
-
-      const convenience = {
-        1: convenience1,
-        2: convenience2,
-        3: convenience3,
-        4: convenience4,
-        5: convenience5,
-      };
+      let angka = [convenience1, convenience2, convenience3, convenience4];
+      let huruf = ["Sangat Mudah", "Mudah", "Kurang Mudah", "Tidak Mudah"];
+      const convenience = { angka: angka, huruf: huruf };
       response(res, true, "Succeed", convenience);
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -215,19 +207,10 @@ module.exports = class SatisfactionController {
           accurate_survey: 4,
         },
       });
-      const accurate5 = await Satisfaction.count({
-        where: {
-          accurate_survey: 5,
-        },
-      });
 
-      const accurate = {
-        1: accurate1,
-        2: accurate2,
-        3: accurate3,
-        4: accurate4,
-        5: accurate5,
-      };
+      let angka = [accurate1, accurate2, accurate3, accurate4];
+      let huruf = ["Sangat Puas", "Puas", "Kurang Puas", "Tidak Puas"];
+      const accurate = { angka: angka, huruf: huruf };
       response(res, true, "Succeed", accurate);
     } catch (e) {
       response(res, false, "Failed", e.message);
@@ -255,19 +238,9 @@ module.exports = class SatisfactionController {
           fast_survey: 4,
         },
       });
-      const fast5 = await Satisfaction.count({
-        where: {
-          fast_survey: 5,
-        },
-      });
-
-      const fast = {
-        1: fast1,
-        2: fast2,
-        3: fast3,
-        4: fast4,
-        5: fast5,
-      };
+      let angka = [fast1, fast2, fast3, fast4];
+      let huruf = ["Sangat Cepat", "Cepat", "Kurang Cepat", "Tidak Cepat"];
+      const fast = { angka: angka, huruf: huruf };
       response(res, true, "Succeed", fast);
     } catch (e) {
       response(res, false, "Failed", e.message);
