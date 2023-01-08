@@ -61,16 +61,16 @@ module.exports = class GarlantasController {
       });
 
       let data = await Etilang_perkara.findAll({
-        // include: [
-        //   {
-        //     model: Etilang_perkara_pasal,
-        //     foreignKey: "no_bayar",
-        //     attributes: {
-        //       exclude: ["createdAt", "updatedAt"],
-        //     },
-        //     required: false,
-        //   },
-        // ],
+        include: [
+          {
+            model: Etilang_perkara_pasal,
+            foreignKey: "no_bayar",
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            required: false,
+          },
+        ],
         where: {
           tgl_perkara: {
             [Op.between]: [start_date - 25200, end_date],
@@ -80,33 +80,20 @@ module.exports = class GarlantasController {
           exclude: ["createdAt", "updatedAt"],
         },
         order: [["tgl_perkara", "DESC"]],
-      }).then((result) => {
-        const dummy = result.map((row) => {
-          //this returns all values of the instance,
-          //also invoking virtual getters
-          const el = row.get();
-          // el.tgl_perkara = moment.unix(el.tgl_perkara);
-          el["tgl"] = `${dates} 00:00:00`;
-          el["start_date"] = moment(dates).subtract(1, "days");
-          el["end_date"] = moment(dates).endOf("day");
-
-          return el;
-        });
-        return dummy;
       });
 
-      // let finals = [];
-      // data.map((element, index) => {
-      //   finals.push({
-      //     no_bayar: element.dataValues.no_bayar,
-      //     kepolisian_induk: element.dataValues.kepolisian_induk,
-      //     tgl_perkara: moment.unix(element.dataValues.tgl_perkara),
-      //     jenis_pelanggaran: element.dataValues.perkara_pasal.klasifikasi,
-      //     tgl: element.dataValues.tgl_perkara,
-      //     start_date: moment(dates).subtract(1, "days"),
-      //     end_date: moment(dates).endOf("day"),
-      //   });
-      // });
+      let finals = [];
+      data.map((element, index) => {
+        finals.push({
+          no_bayar: element.dataValues.no_bayar,
+          kepolisian_induk: element.dataValues.kepolisian_induk,
+          tgl_perkara: moment.unix(element.dataValues.tgl_perkara),
+          jenis_pelanggaran: element.dataValues.perkara_pasal.klasifikasi,
+          tgl: element.dataValues.tgl_perkara,
+          start_date: moment(dates).subtract(1, "days"),
+          end_date: moment(dates).endOf("day"),
+        });
+      });
 
       // let result = Object.values(
       //   finals.reduce((a, { kepolisian_induk, ...props }) => {
@@ -142,7 +129,7 @@ module.exports = class GarlantasController {
       //   });
       // }
 
-      response(res, true, "Succeed", data);
+      response(res, true, "Succeed", finals);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }
