@@ -13,6 +13,9 @@ const { codeTS } = require("../middleware/codeTroublespot");
 const { decimalToHex } = require("../middleware/decimaltohex");
 const pagination = require("../lib/pagination-parser");
 const direction_route = require("../middleware/direction_route");
+
+Polda.hasMany(Troublespot, { foreignKey: "polda_id", as: "troublespot" });
+
 const decAes = (token) =>
   AESDecrypt(token, {
     isSafeUrl: true,
