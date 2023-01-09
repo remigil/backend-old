@@ -612,6 +612,13 @@ router.use(
   require("../router/laporan_media_ntmc")
 );
 
+
+router.use(
+  "/v" + process.env.APP_VERSION + "/laporan_media_ntmc",
+  // authMiddleware.jwtAuth,
+  require("../router/laporan_media_ntmc")
+);
+
 //import export officer account dan kendaraan
 router.use(
   "/v" + process.env.APP_VERSION + "/accounts",
@@ -645,6 +652,13 @@ router.use(
   "/v" + process.env.APP_VERSION + "/bagtik",
   // authMiddleware.jwtAuth,
   require("../router/bagtik")
+);
+
+// Upload Anev
+router.use(
+  "/v" + process.env.APP_VERSION + "/upload_anev",
+  // authMiddleware.jwtAuth,
+  require("../router/upload_anev")
 );
 
 module.exports = router;
