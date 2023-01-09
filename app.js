@@ -46,7 +46,7 @@ socketInstace(server);
 // cronPenyebaran.cronPenyebaran();
 cronLakalantas.cronLakalantas();
 cronLaporanHarian.Laporan_Harian();
-// cronGarlantas.cronGarlantas();
+cronGarlantas.cronGarlantas();
 // cronLakalanggar.cronLakalanggar();
 // cronTurjagwali.cronTurjagwali();
 // cronSim.cronSim();

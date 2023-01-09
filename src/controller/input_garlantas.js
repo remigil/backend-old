@@ -95,41 +95,43 @@ module.exports = class GarlantasController {
         });
       });
 
-      // let result = Object.values(
-      //   finals.reduce((a, { kepolisian_induk, ...props }) => {
-      //     if (!a[kepolisian_induk])
-      //       a[kepolisian_induk] = Object.assign(
-      //         {},
-      //         { kepolisian_induk, data: [props] }
-      //       );
-      //     else a[kepolisian_induk].data.push(props);
-      //     return a;
-      //   }, {})
-      // );
-      // let rows = [];
-      // for (let i = 0; i < result.length; i++) {
-      //   let asd = [];
-      //   for (let j = 0; j < result[i].data.length; j++) {
-      //     asd.push(result[i].data[j].jenis_pelanggaran);
-      //   }
+      let result = Object.values(
+        finals.reduce((a, { kepolisian_induk, ...props }) => {
+          if (!a[kepolisian_induk])
+            a[kepolisian_induk] = Object.assign(
+              {},
+              { kepolisian_induk, data: [props] }
+            );
+          else a[kepolisian_induk].data.push(props);
+          return a;
+        }, {})
+      );
+      let rows = [];
+      for (let i = 0; i < result.length; i++) {
+        let asd = [];
+        for (let j = 0; j < result[i].data.length; j++) {
+          asd.push(result[i].data[j].jenis_pelanggaran);
+        }
 
-      //   let countedNames = asd.reduce((allNames, name) => {
-      //     const currCount = allNames[name] ?? 0;
-      //     return {
-      //       ...allNames,
-      //       [name]: currCount + 1,
-      //     };
-      //   }, {});
-      //   rows.push({
-      //     polda: result[i].kepolisian_induk,
-      //     date: moment(finals[i].tgl_perkara).format("YYYY-MM-DD"),
-      //     berat: countedNames.Berat || 0,
-      //     sedang: countedNames.Sedang || 0,
-      //     ringan: countedNames.Ringan || 0,
-      //   });
-      // }
+        let countedNames = asd.reduce((allNames, name) => {
+          const currCount = allNames[name] ?? 0;
+          return {
+            ...allNames,
+            [name]: currCount + 1,
+          };
+        }, {});
+        rows.push({
+          polda: result[i].kepolisian_induk,
+          date: moment(finals[i].tgl_perkara).format("YYYY-MM-DD"),
+          start_date: result[i].start_date,
+          end_date: result[i].end_date,
+          berat: countedNames.Berat || 0,
+          sedang: countedNames.Sedang || 0,
+          ringan: countedNames.Ringan || 0,
+        });
+      }
 
-      response(res, true, "Succeed", finals);
+      response(res, true, "Succeed", rows);
     } catch (error) {
       response(res, false, "Failed", error.message);
     }

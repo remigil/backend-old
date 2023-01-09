@@ -178,3 +178,189 @@ exports.namePolda = (data) => {
 
   return { polda_id, polda_name };
 };
+
+exports.namePoldaGAR = (data) => {
+  let polda_id = "";
+  let polda_name = "";
+  switch (data) {
+    case "POLDA JATIM":
+      polda_id = 18;
+      polda_name = "Jawa Timur";
+      break;
+
+    case "POLDA LAMPUNG":
+      polda_id = 6;
+      polda_name = "Lampung";
+      break;
+
+    case "POLDA SULBAR":
+      polda_id = 33;
+      polda_name = "Sulawesi Barat";
+      break;
+
+    case "POLDA JAWABARAT":
+      polda_id = 11;
+      polda_name = "Jawa Barat";
+      break;
+
+    case "POLDA SULSEL":
+      polda_id = 13;
+      polda_name = "Sulawesi Selatan";
+      break;
+
+    case "POLDA JATENG":
+      polda_id = 23;
+      polda_name = "Jawa Tengah";
+      break;
+
+    case "POLDA BALI":
+      polda_id = 26;
+      polda_name = "Bali";
+      break;
+
+    case "POLDA BANTEN":
+      polda_id = 2;
+      polda_name = "Banten";
+      break;
+
+    case "POLDA BENGKULU":
+      polda_id = 17;
+      polda_name = "Bengkulu";
+      break;
+
+    case "POLDA DIY":
+      polda_id = 5;
+      polda_name = "DIY";
+      break;
+
+    case "POLDA GORONTALO":
+      polda_id = 9;
+      polda_name = "Gorontalo";
+      break;
+
+    case "POLDA JAMBI":
+      polda_id = 4;
+      polda_name = "Jambi";
+      break;
+
+    case "POLDA KALBAR":
+      polda_id = 24;
+      polda_name = "Kalimantan Barat";
+      break;
+
+    case "POLDA KALSEL":
+      polda_id = 12;
+      polda_name = "Kalimantan Selatan";
+      break;
+
+    case "POLDA KALTARA":
+      polda_id = 20;
+      polda_name = "Kalimantan Utara";
+      break;
+
+    case "POLDA KALTENG":
+      polda_id = 34;
+      polda_name = "Kalimantan Tengah";
+      break;
+
+    case "POLDA KALTIM":
+      polda_id = 19;
+      polda_name = "Kalimantan Timur";
+      break;
+
+    case "POLDA KEPRI":
+      polda_id = 8;
+      polda_name = "Kepulauan Riau";
+      break;
+
+    case "POLDA MALUKU":
+      polda_id = 14;
+      polda_name = "Maluku";
+      break;
+
+    case "POLDA MALUT":
+      polda_id = 7;
+      polda_name = "Maluku Utara";
+      break;
+
+    case "POLDA METRO JAYA":
+      polda_id = 35;
+      polda_name = "Metro Jaya";
+      break;
+
+    case "POLDA NTB":
+      polda_id = 31;
+      polda_name = "Nusa Tenggara Barat";
+      break;
+
+    case "POLDA NTT":
+      polda_id = 25;
+      polda_name = "Nusa Tenggara Timur";
+      break;
+
+    case "POLDA PAPUA":
+      polda_id = 28;
+      polda_name = "Papua";
+      break;
+
+    case "POLDA PAPUA BARAT":
+      polda_id = 22;
+      polda_name = "Papua Barat";
+      break;
+
+    case "POLDA RIAU":
+      polda_id = 16;
+      polda_name = "Riau";
+      break;
+
+    case "POLDA SULTENG":
+      polda_id = 3;
+      polda_name = "Sulawesi Tengah";
+      break;
+
+    case "POLDA SULTRA":
+      polda_id = 30;
+      polda_name = "Sulawesi Tenggara";
+      break;
+
+    case "POLDA SULUT":
+      polda_id = 32;
+      polda_name = "Sulawesi Utara";
+      break;
+
+    case "POLDA SUMBAR":
+      polda_id = 27;
+      polda_name = "Sumatera Barat";
+      break;
+
+    case "POLDA SUMSEL":
+      polda_id = 10;
+      polda_name = "Sumatera Selatan";
+      break;
+
+    case "POLDA ACEH":
+      polda_id = 21;
+      polda_name = "Aceh";
+      break;
+
+    case "POLDA SUMUT":
+      polda_id = 15;
+      polda_name = "Sumatera Utara";
+      break;
+
+    case "POLDA BABEL":
+      polda_id = 29;
+      polda_name = "Bangka Belitung";
+      break;
+
+    case "KORLANTAS":
+      polda_id = 36;
+      polda_name = "KORLANTAS";
+      break;
+
+    default:
+      break;
+  }
+
+  return polda_id;
+};
