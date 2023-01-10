@@ -104,8 +104,8 @@ Polda.init(
     sequelize: db,
   }
 );
-// (async () => {
-//   Polda.sync({ alter: true });
-// })();
+(async () => {
+  Polda.sync({ alter: true });
+})();
 
 module.exports = Polda;
