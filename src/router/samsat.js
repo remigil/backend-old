@@ -10,6 +10,8 @@ router.post(
   formValidation,
   SamsatController.add
 );
+
+router.post("/import", formValidation, SamsatController.importExcell);
 router.put("/edit/:id", SamsatController.edit);
 router.delete(
   "/delete",

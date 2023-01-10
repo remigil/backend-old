@@ -148,6 +148,48 @@ module.exports = class SamsatController {
       response(res, false, "Failed", e.message);
     }
   };
+
+  static importExcell = async (req, res) => {
+    const t = await db.transaction();
+    try {
+      let path = req.body.file.filepath;
+      let file = req.body.file;
+      let fileName = file.originalFilename;
+      fs.renameSync(path, "./public/uploads/" + fileName, function (err) {
+        if (err) response(res, false, "Error", err.message);
+      });
+      let readExcell = await readXlsxFile("./public/uploads/" + fileName);
+      let index = 0;
+      let listPolres = [];
+      let idNotValid = [];
+      for (const iterator of readExcell) {
+        if (index == 0) {
+        } else {
+          listPolres.push({
+            name_samsat: iterator[1],
+            address: iterator[2],
+            samsat_lat: iterator[3],
+            samsat_lng: iterator[4],
+            samsat_open_time: iterator[5] || null,
+            samsat_close_time: iterator[6] || null,
+            polda_id: iterator[7] || null,
+            polres_id: iterator[8] || null,
+          });
+        }
+        index++;
+      }
+      const ress = await Samsat.bulkCreate(listPolres, {
+        transaction: t,
+      });
+      await t.commit();
+
+      response(res, true, "Succed", ress);
+    } catch (error) {
+      await t.rollback();
+      response(res, false, "Failed", error.message);
+    }
+  };
+
   static edit = async (req, res) => {
     const transaction = await db.transaction();
     try {
