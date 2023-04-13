@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/korlantas-k3i/g20-backend.git"
+    "url": "git+https://github.com/remigil/backend-old.git"
   },
   "keywords": [
     "Korlantas",
@@ -19,9 +19,9 @@
   "author": "K3I Korlantas Polri",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/korlantas-k3i/g20-backend/issues"
+    "url": "https://github.com/remigil/backend-old.gitissues"
   },
-  "homepage": "https://gitlab.com/korlantas-k3i/g20-backend#readme",
+  "homepage": "https://github.com/remigil/backend-old.git#readme",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.16",
     "axios": "^0.27.2",
@@ -45,9 +45,12 @@
     "jsdom": "^20.0.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mariadb": "^3.0.2",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.39",
     "mongoose": "^6.5.2",
+    "mongoose-aggregate-paginate-v2": "^1.0.6",
+    "mysql2": "^2.3.3",
     "no-telp": "^1.0.2",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.8.0",
