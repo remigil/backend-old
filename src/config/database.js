@@ -3,7 +3,7 @@ require("dotenv").config();
 const moment = require("moment");
 const fs = require("fs");
 const db = new Sequelize(
-  process.env.INSTANCE_HOST,
+  process.env.DB_NAME,
   process.env.DB_USER,
   process.env.DB_PASS,
   {
