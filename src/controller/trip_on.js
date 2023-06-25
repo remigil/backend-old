@@ -383,168 +383,159 @@ module.exports = class Trip_onController {
         },
         order: [["id", "DESC"]],
       });
-      // if (!data) {
-      Object.keys(typeTripOn).forEach((val, key) => {
-        if (req.body[val]) {
-          input[val] = req.body[val];
-        } else {
-          input[val] = null;
-        }
-      });
-      input["vehicle_id"] = AESDecrypt(req.body["vehicle_id"], {
-        isSafeUrl: true,
-        parseMode: "string",
-      });
+      if (!data) {
+        Object.keys(typeTripOn).forEach((val, key) => {
+          if (req.body[val]) {
+            input[val] = req.body[val];
+          } else {
+            input[val] = null;
+          }
+        });
+        input["vehicle_id"] = AESDecrypt(req.body["vehicle_id"], {
+          isSafeUrl: true,
+          parseMode: "string",
+        });
 
-      let cekVehicle = await Public_vehicle.findOne({
-        where: {
-          id: input["vehicle_id"],
-        },
-      });
-      let latstartcoor = req.body["start_coordinate"]["latitude"];
-      let lngstartcoor = req.body["start_coordinate"]["longitude"];
-      let latendcoor = req.body["end_coordinate"]["latitude"];
-      let lngendcoor = req.body["end_coordinate"]["longitude"];
-      input["brand_id"] = cekVehicle.brand_id;
-      input["type_id"] = cekVehicle.type_id;
-      let typeVehicle = codeTripon(cekVehicle["type_id"]);
-      input["user_id"] = decAes(req.auth.uid);
-
-      let DuaHari = HariIni + 2 * 24 * 60 * 60 * 1000;
-      let new_date = new Date(DuaHari);
-      var validity = new_date.toISOString().replace("Z", "").replace("T", " ");
-      // console.log(input["departure_date"]);
-      let valid_date = moment(input["departure_date"])
-        .add(2, "day")
-        .format("YYYY-MM-DD");
-
-      input["validity_period"] = `${valid_date} ` + input["departure_time"];
-      const coordinate = [
-        {
-          options: {},
-          latLng: {
-            lat: latstartcoor,
-            lng: lngstartcoor,
-          },
-          _initHooksCalled: true,
-        },
-        {
-          options: {},
-          latLng: {
-            lat: latendcoor,
-            lng: lngendcoor,
-          },
-          _initHooksCalled: true,
-        },
-      ];
-      const paramsgeocodestart = {
-        lat: latstartcoor,
-        lng: lngstartcoor,
-      };
-      const paramsgeocodeend = {
-        lat: latendcoor,
-        lng: lngendcoor,
-      };
-
-      let directions = await direction_route(coordinate);
-      let geocodestart = await geocode(paramsgeocodestart);
-      let geocodeend = await geocode(paramsgeocodeend);
-
-      input["route"] = directions.route;
-      input["distance"] = directions.estimasi;
-      input["duration"] = directions.estimasiWaktu;
-      input["province_start"] = geocodestart.province;
-      input["district_start"] = geocodestart.district;
-      input["province_end"] = geocodeend.province;
-      input["district_end"] = geocodeend.district;
-      const [provinsi_end] = await db.query(
-        `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodeend.province.toLowerCase()}%'`
-      );
-      const [kabupaten_end] = await db.query(
-        `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodeend.district.toLowerCase()}%'`
-      );
-      const [provinsi_start] = await db.query(
-        `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodestart.province.toLowerCase()}%'`
-      );
-      const [kabupaten_start] = await db.query(
-        `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodestart.district.toLowerCase()}%'`
-      );
-      input["kode_prov_start"] = provinsi_start.length
-        ? provinsi_start[0].kode
-        : "";
-      input["kode_kabkot_start"] = kabupaten_start.length
-        ? kabupaten_start[0].kode
-        : "";
-      input["kode_prov_end"] = provinsi_end.length ? provinsi_end[0].kode : "";
-      input["kode_kabkot_end"] = kabupaten_end.length
-        ? kabupaten_end[0].kode
-        : "";
-
-      let insertTripOn = await Trip_on.create(input, {
-        transaction: transaction,
-      });
-      let getId = AESDecrypt(insertTripOn["id"], {
-        isSafeUrl: true,
-        parseMode: "string",
-      });
-      let tes = parseInt(getId);
-      let id = decimalToHex(tes);
-
-      let codetrp = `TRP/${moment().format("MMYY")}/${typeVehicle}/${id}`;
-      qrcode.toFile(`./public/uploads/qrcode/${id}.png`, codetrp, {
-        width: 300,
-        height: 300,
-      });
-      let barcode = id + ".png";
-
-      await Trip_on.update(
-        { code: codetrp, barcode: barcode },
-        {
+        let cekVehicle = await Public_vehicle.findOne({
           where: {
-            id: getId,
+            id: input["vehicle_id"],
           },
+        });
+        let latstartcoor = req.body["start_coordinate"]["latitude"];
+        let lngstartcoor = req.body["start_coordinate"]["longitude"];
+        let latendcoor = req.body["end_coordinate"]["latitude"];
+        let lngendcoor = req.body["end_coordinate"]["longitude"];
+        input["brand_id"] = cekVehicle.brand_id;
+        input["type_id"] = cekVehicle.type_id;
+        let typeVehicle = codeTripon(cekVehicle["type_id"]);
+        input["user_id"] = decAes(req.auth.uid);
+
+        let DuaHari = HariIni + 2 * 24 * 60 * 60 * 1000;
+        let new_date = new Date(DuaHari);
+        var validity = new_date
+          .toISOString()
+          .replace("Z", "")
+          .replace("T", " ");
+        input["validity_period"] = validity;
+        const coordinate = [
+          {
+            options: {},
+            latLng: {
+              lat: latstartcoor,
+              lng: lngstartcoor,
+            },
+            _initHooksCalled: true,
+          },
+          {
+            options: {},
+            latLng: {
+              lat: latendcoor,
+              lng: lngendcoor,
+            },
+            _initHooksCalled: true,
+          },
+        ];
+        const paramsgeocodestart = {
+          lat: latstartcoor,
+          lng: lngstartcoor,
+        };
+        const paramsgeocodeend = {
+          lat: latendcoor,
+          lng: lngendcoor,
+        };
+
+        let directions = await direction_route(coordinate);
+        let geocodestart = await geocode(paramsgeocodeend);
+        let geocodeend = await geocode(paramsgeocodestart);
+
+        input["route"] = directions.route;
+        input["distance"] = directions.estimasi;
+        input["duration"] = directions.estimasiWaktu;
+        input["province_start"] = geocodestart.province;
+        input["district_start"] = geocodestart.district;
+        input["province_end"] = geocodeend.province;
+        input["district_end"] = geocodeend.district;
+        const [provinsi_end] = await db.query(
+          `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodeend.province.toLowerCase()}%'`
+        );
+        const [kabupaten_end] = await db.query(
+          `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodeend.district.toLowerCase()}%'`
+        );
+        const [provinsi_start] = await db.query(
+          `SELECT * FROM provinsi WHERE lower(nama) LIKE '%${geocodestart.province.toLowerCase()}%'`
+        );
+        const [kabupaten_start] = await db.query(
+          `SELECT * FROM kabupaten WHERE lower(nama) LIKE '%${geocodestart.district.toLowerCase()}%'`
+        );
+        input["kode_prov_start"] = provinsi_end.length
+          ? provinsi_end[0].kode
+          : "";
+        input["kode_kabkot_start"] = kabupaten_end.length
+          ? kabupaten_end[0].kode
+          : "";
+        input["kode_prov_end"] = provinsi_start.length
+          ? provinsi_start[0].kode
+          : "";
+        input["kode_kabkot_end"] = kabupaten_start.length
+          ? kabupaten_start[0].kode
+          : "";
+        let insertTripOn = await Trip_on.create(input, {
           transaction: transaction,
-        }
-      );
+        });
+        let getId = AESDecrypt(insertTripOn["id"], {
+          isSafeUrl: true,
+          parseMode: "string",
+        });
+        let tes = parseInt(getId);
+        let id = decimalToHex(tes);
 
-      let penumpang = req.body?.passenger?.map((data) => ({
-        ...data,
-        trip_on_id: decAes(insertTripOn.id),
-      }));
-      const insertBulkPenumpang = await Passenger_trip_on.bulkCreate(
-        penumpang,
-        { transaction: transaction }
-      );
-      await transaction.commit();
-      let countpassenger = await Passenger_trip_on.count({
-        where: { trip_on_id: parseInt(getId) },
-      });
-      let countvehicle = await Public_vehicle.count({
-        where: {
-          id: input["vehicle_id"],
-        },
-      });
+        let codetrp = `TRP/${moment().format("MMYY")}/${typeVehicle}/${id}`;
+        qrcode.toFile(`./public/uploads/qrcode/${id}.png`, codetrp, {
+          width: 300,
+          height: 300,
+        });
+        let barcode = id + ".png";
 
-      response(res, true, "Succeed", {
-        ...insertTripOn.dataValues,
-        code: codetrp,
-        passenger: insertBulkPenumpang,
-        countpassenger: countpassenger,
-        countvehicle: countvehicle,
-      });
-      // } else {
-      //   response(
-      //     res,
-      //     false,
-      //     "Belum bisa mendaftarkan TripOn, karena masih dalam masa berlaku",
-      //     null
-      //   );
-      // }
+        await Trip_on.update(
+          { code: codetrp, barcode: barcode },
+          {
+            where: {
+              id: getId,
+            },
+            transaction: transaction,
+          }
+        );
+
+        let penumpang = req.body?.passenger?.map((data) => ({
+          ...data,
+          trip_on_id: decAes(insertTripOn.id),
+        }));
+        const insertBulkPenumpang = await Passenger_trip_on.bulkCreate(
+          penumpang,
+          { transaction: transaction }
+        );
+        await transaction.commit();
+
+        console.log(insertBulkPenumpang);
+        response(res, true, "Succeed", {
+          ...insertTripOn.dataValues,
+          code: codetrp,
+          passenger: insertBulkPenumpang,
+        });
+      } else {
+        response(
+          res,
+          false,
+          "Belum bisa mendaftarkan TripOn, karena masih dalam masa berlaku",
+          null
+        );
+      }
     } catch (e) {
       await transaction.rollback();
       response(res, false, "Failed", e.message);
     }
   };
+
 
   static edit = async (req, res) => {
     const transaction = await db.transaction();

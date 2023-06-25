@@ -427,11 +427,11 @@ router.use(
   require("../router/input_laka_langgar")
 );
 
-router.use(
-  "/v" + process.env.APP_VERSION + "/garlantas",
-  // authMiddleware.jwtAuth,
-  require("../router/input_garlantas")
-);
+// router.use(
+//   "/v" + process.env.APP_VERSION + "/garlantas",
+//   // authMiddleware.jwtAuth,
+//   require("../router/input_garlantas")
+// );
 
 router.use(
   "/v" + process.env.APP_VERSION + "/turjagwali",
