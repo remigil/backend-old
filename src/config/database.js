@@ -7,7 +7,7 @@ const db = new Sequelize(
   process.env.DB_USER,
   process.env.DB_PASS,
   {
-    host: process.env.INSTANCE_HOST,
+    host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
